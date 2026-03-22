@@ -1,0 +1,39 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cinemaBg" x1="88" y1="80" x2="424" y2="432" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7482FF"/>
+      <stop offset="1" stop-color="#5848DA"/>
+    </linearGradient>
+    <linearGradient id="boardFill" x1="152" y1="126" x2="352" y2="286" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#DEE5FF"/>
+    </linearGradient>
+    <linearGradient id="waveA" x1="120" y1="322" x2="392" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EEF2FF"/>
+      <stop offset="1" stop-color="#D6DEFF"/>
+    </linearGradient>
+    <linearGradient id="waveB" x1="132" y1="344" x2="384" y2="404" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D8DEFF"/>
+      <stop offset="1" stop-color="#F8FAFF"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="44" y="44" width="424" height="424" rx="116" fill="url(#cinemaBg)"/>
+  <circle cx="256" cy="188" r="114" fill="#223075" fill-opacity="0.15"/>
+
+  <rect x="144" y="118" width="224" height="154" rx="30" fill="url(#boardFill)"/>
+  <path d="M162 118H350L320 158H132L162 118Z" fill="#C8D2FF"/>
+  <path d="M194 118L164 158" stroke="#8C9BFF" stroke-width="12" stroke-linecap="round"/>
+  <path d="M244 118L214 158" stroke="#8C9BFF" stroke-width="12" stroke-linecap="round"/>
+  <path d="M294 118L264 158" stroke="#8C9BFF" stroke-width="12" stroke-linecap="round"/>
+  <path d="M344 118L314 158" stroke="#8C9BFF" stroke-width="12" stroke-linecap="round"/>
+
+  <rect x="172" y="170" width="168" height="78" rx="20" fill="#5148D9"/>
+  <path d="M210 191L255 210L210 229V191Z" fill="#EEF2FF"/>
+  <path d="M274 188H309" stroke="#EEF2FF" stroke-width="12" stroke-linecap="round"/>
+  <path d="M274 210H321" stroke="#EEF2FF" stroke-width="12" stroke-linecap="round"/>
+  <path d="M274 232H299" stroke="#EEF2FF" stroke-width="12" stroke-linecap="round"/>
+
+  <path d="M122 334C152 318 179 310 209 310C242 310 265 325 297 325C327 325 353 317 391 297" stroke="url(#waveA)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M134 364C163 348 188 341 214 341C243 341 267 355 297 355C327 355 351 348 380 336" stroke="url(#waveB)" stroke-width="12" stroke-linecap="round"/>
+</svg>
