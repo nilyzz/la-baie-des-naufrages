@@ -1,0 +1,349 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Baie des naufrages</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-glow background-glow-left"></div>
+    <div class="background-glow background-glow-right"></div>
+    <div class="page-actions">
+        <button id="pageBackButton" type="button" class="secondary-button page-action-button hidden" data-back-to-services="true">Changer de navire</button>
+        <button id="logoutButton" type="button" class="secondary-button page-action-button hidden">
+            <span class="logout-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M10 4H6.75C5.784 4 5 4.784 5 5.75V18.25C5 19.216 5.784 20 6.75 20H10" />
+                    <path d="M13 8L18 12L13 16" />
+                    <path d="M18 12H9" />
+                </svg>
+            </span>
+            <span>Quitter la baie</span>
+        </button>
+    </div>
+
+    <header id="siteHeader" class="site-header hidden" aria-hidden="true">
+        <div class="site-header-inner">
+            <div class="brand-mark">
+                <div class="brand-logo" aria-hidden="true">BN</div>
+                <div class="brand-copy">
+                    <p class="eyebrow">Journal privé</p>
+                    <h2>La Baie des naufrages</h2>
+                </div>
+            </div>
+
+            <nav id="cinemaHeaderNav" class="nav-tabs" aria-label="Navigation principale">
+                <button type="button" class="nav-button is-active" data-target="dashboardSection">Accueil</button>
+                <button type="button" class="nav-button" data-target="catalogSection">Catalogue</button>
+                <button type="button" class="nav-button" data-target="manageSection">Gestion</button>
+            </nav>
+
+            <nav id="gamesHeaderNav" class="nav-tabs hidden" aria-label="Jeux disponibles">
+                <button type="button" class="nav-button games-header-button is-active" data-game-tab="minesweeper">Démineur</button>
+                <button type="button" class="nav-button games-header-button" data-game-tab="snake">Snake</button>
+                <button type="button" class="nav-button games-header-button" data-game-tab="pong">Pong</button>
+                <button type="button" class="nav-button games-header-button" data-game-tab="sudoku">Sudoku</button>
+                <button type="button" class="nav-button games-header-button" data-game-tab="2048">2048</button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="app-shell">
+        <section id="loginView" class="view view-active">
+            <div class="card login-card">
+                <h1>La Baie des naufrages</h1>
+                <p class="eyebrow login-eyebrow">Accès réservé</p>
+
+                <form id="loginForm" class="login-form">
+                    <label class="field-label" for="passwordInput">Mot de passe</label>
+                    <input
+                        id="passwordInput"
+                        name="password"
+                        type="password"
+                        placeholder="Entre le mot de passe"
+                        autocomplete="current-password"
+                    >
+                    <button type="submit" class="primary-button">Entrer dans la baie</button>
+                    <p id="passwordMessage" class="feedback" aria-live="polite"></p>
+                </form>
+            </div>
+        </section>
+
+        <section id="servicesView" class="view" aria-hidden="true">
+            <div class="services-shell">
+                <div class="services-copy">
+                    <p class="eyebrow">Bienvenue sur le Quai de la Baie des naufrages</p>
+                    <h1>Quel navire veux-tu prendre ?</h1>
+                    <p class="intro">
+                        Choisis le navire qui t'emmène vers l'univers que tu veux explorer.
+                    </p>
+                </div>
+
+                <div class="service-grid" role="list" aria-label="Navires disponibles">
+                    <button type="button" class="service-card" data-service="cinema">
+                        <span class="service-card-art service-card-art-cinema" aria-hidden="true">
+                            <img src="assets/navire-cinema.svg" alt="">
+                        </span>
+                        <span class="service-card-title">Cinema</span>
+                    </button>
+
+                    <button type="button" class="service-card" data-service="games">
+                        <span class="service-card-art service-card-art-games" aria-hidden="true">
+                            <img src="assets/navire-jeux.svg" alt="">
+                        </span>
+                        <span class="service-card-title">Jeux</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="appView" class="view app-view" aria-hidden="true">
+            <section id="dashboardSection" class="panel panel-active">
+                <div class="hero card">
+                    <p class="section-tag">Accueil</p>
+                    <h3>Bienvenue à bord</h3>
+                    <p>
+                        La baie prend forme. Tu peux déjà parcourir ton catalogue et administrer tes films depuis la section Gestion.
+                    </p>
+                </div>
+
+                <div class="panel-grid">
+                    <article class="card info-card stat-card">
+                        <p class="section-tag">Collection</p>
+                        <h4 id="movieCount">0 film</h4>
+                        <p>Nombre total de films actuellement enregistrés dans la baie.</p>
+                    </article>
+
+                    <article class="card info-card stat-card">
+                        <p class="section-tag">Cap actuel</p>
+                        <h4 id="averageRating">0 / 20</h4>
+                        <p>Moyenne de tes notes personnelles sur 20.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section id="catalogSection" class="panel">
+                <div class="card section-header-card">
+                    <div>
+                        <p class="section-tag">Catalogue</p>
+                        <h3>Films vus</h3>
+                        <p>Retrouve tous tes films, bientôt avec tri et filtres plus poussés.</p>
+                    </div>
+
+                    <div class="catalog-tools">
+                        <label class="field-label" for="searchInput">Rechercher un film</label>
+                        <input
+                            id="searchInput"
+                            type="search"
+                            placeholder="Titre ou réalisateur"
+                        >
+                    </div>
+                </div>
+
+                <div id="catalogGrid" class="catalog-grid"></div>
+                <p id="emptyCatalogMessage" class="empty-state hidden">Aucun film ne correspond à cette recherche.</p>
+            </section>
+
+            <section id="manageSection" class="panel">
+                <div class="management-layout">
+                    <div class="card form-card">
+                        <p class="section-tag">Gestion</p>
+                        <h3>Ajouter ou modifier un film</h3>
+                        <p>Le champ affiche permet déjà de lier une image manuellement. Plus tard, on pourra automatiser la récupération depuis Internet.</p>
+
+                        <form id="movieForm" class="management-form">
+                            <input id="movieId" type="hidden">
+
+                            <div class="form-grid">
+                                <div class="field-group">
+                                    <label class="field-label" for="titleInput">Titre</label>
+                                    <input id="titleInput" name="title" type="text" placeholder="Ex: Pirates des Caraibes" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="directorInput">Realisateur</label>
+                                    <input id="directorInput" name="director" type="text" placeholder="Ex: Gore Verbinski" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="releaseDateInput">Date de sortie</label>
+                                    <input id="releaseDateInput" name="releaseDate" type="date" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="durationInput">Duree en minutes</label>
+                                    <input id="durationInput" name="duration" type="number" min="1" step="1" placeholder="Ex: 143" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="ratingInput">Note /20</label>
+                                    <input id="ratingInput" name="rating" type="number" min="0" max="20" step="0.5" placeholder="Ex: 16.5" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="posterInput">URL de l affiche</label>
+                                    <input id="posterInput" name="poster" type="url" placeholder="https://...">
+                                </div>
+                            </div>
+
+                            <div class="field-group">
+                                <label class="field-label" for="commentInput">Commentaire</label>
+                                <textarea id="commentInput" name="comment" rows="4" placeholder="Ton avis rapide sur le film"></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="primary-button">Enregistrer</button>
+                                <button id="resetFormButton" type="button" class="secondary-button">Vider le formulaire</button>
+                            </div>
+
+                            <p id="formMessage" class="feedback" aria-live="polite"></p>
+                        </form>
+                    </div>
+
+                    <div class="card manage-list-card">
+                        <p class="section-tag">Bibliotheque</p>
+                        <h3>Films enregistres</h3>
+                        <p>Utilise Modifier pour charger un film dans le formulaire, ou Supprimer pour le retirer apres confirmation.</p>
+                        <div id="manageList" class="manage-list"></div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section id="gamesView" class="view" aria-hidden="true">
+            <div class="games-layout">
+                <div id="minesweeperGame" class="card minesweeper-card games-panel games-panel-active">
+                    <div class="minesweeper-topbar">
+                        <div class="minesweeper-counter-block">
+                            <span class="minesweeper-counter-label">Mines</span>
+                            <strong id="mineCountDisplay" class="minesweeper-counter-value">10</strong>
+                        </div>
+
+                        <div class="minesweeper-center-stack">
+                            <button id="restartGameButton" type="button" class="minesweeper-face" aria-label="Relancer une partie">
+                                Aller en mer
+                            </button>
+                        </div>
+
+                        <div class="minesweeper-counter-block">
+                            <span class="minesweeper-counter-label">Temps</span>
+                            <strong id="timerDisplay" class="minesweeper-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="minesweeper-help">Clic gauche pour r&eacute;v&eacute;ler. Clic droit pour poser un drapeau.</p>
+                    <div id="minesweeperBoard" class="minesweeper-board" aria-label="Grille du D&eacute;mineur"></div>
+                </div>
+
+                <div id="snakeGame" class="card snake-card games-panel">
+                    <div class="snake-topbar">
+                        <div class="snake-counter-block">
+                            <span class="snake-counter-label">Score</span>
+                            <strong id="snakeScoreDisplay" class="snake-counter-value">0</strong>
+                        </div>
+
+                        <button id="snakeStartButton" type="button" class="snake-face">Lancer la travers&eacute;e</button>
+
+                        <div class="snake-counter-block">
+                            <span class="snake-counter-label">Record</span>
+                            <strong id="snakeBestScoreDisplay" class="snake-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="snake-help">Fl&egrave;ches ou ZQSD pour tourner. Attrape les lanternes sans percuter la coque.</p>
+                    <div id="snakeBoard" class="snake-board" aria-label="Plateau du Snake"></div>
+                </div>
+
+                <div id="pongGame" class="card pong-card games-panel">
+                    <div class="pong-topbar">
+                        <div class="pong-counter-block">
+                            <span class="pong-counter-label">Ton score</span>
+                            <strong id="pongPlayerScoreDisplay" class="pong-counter-value">0</strong>
+                        </div>
+
+                        <button id="pongStartButton" type="button" class="pong-face">Lancer le duel</button>
+
+                        <div class="pong-counter-block">
+                            <span class="pong-counter-label">IA</span>
+                            <strong id="pongAiScoreDisplay" class="pong-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="pong-help">Fl&egrave;ches haut/bas ou Z/S pour bouger ta pagaie. Premier &agrave; 7.</p>
+                    <div id="pongBoard" class="pong-board" aria-label="Plateau du Pong">
+                        <div class="pong-center-line" aria-hidden="true"></div>
+                        <div id="pongCountdown" class="pong-countdown hidden" aria-hidden="true"></div>
+                        <div id="pongPlayerPaddle" class="pong-paddle pong-paddle-player" aria-hidden="true"></div>
+                        <div id="pongAiPaddle" class="pong-paddle pong-paddle-ai" aria-hidden="true"></div>
+                        <div id="pongBall" class="pong-ball" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+                <div id="sudokuGame" class="card sudoku-card games-panel">
+                    <div class="sudoku-topbar">
+                        <div class="sudoku-counter-block">
+                            <span class="sudoku-counter-label">Score</span>
+                            <strong id="sudokuFilledDisplay" class="sudoku-counter-value">0</strong>
+                        </div>
+
+                        <button id="sudokuRestartButton" type="button" class="sudoku-face">Nouvelle grille</button>
+
+                        <div class="sudoku-counter-block">
+                            <span class="sudoku-counter-label">Erreurs</span>
+                            <strong id="sudokuDifficultyDisplay" class="sudoku-counter-value">0 / 3</strong>
+                        </div>
+                    </div>
+
+                    <p id="sudokuHelpText" class="sudoku-help">Clique une case vide puis tape de 1 &agrave; 9. Suppr ou retour arri&egrave;re pour effacer.</p>
+                    <div id="sudokuBoard" class="sudoku-board" aria-label="Grille du Sudoku"></div>
+                </div>
+
+                <div id="game2048" class="card game-2048-card games-panel">
+                    <div class="game-2048-topbar">
+                        <div class="game-2048-counter-block">
+                            <span class="game-2048-counter-label">Score</span>
+                            <strong id="game2048ScoreDisplay" class="game-2048-counter-value">0</strong>
+                        </div>
+
+                        <button id="game2048RestartButton" type="button" class="game-2048-face">Nouvelle mar&eacute;e</button>
+
+                        <div class="game-2048-counter-block">
+                            <span class="game-2048-counter-label">Record</span>
+                            <strong id="game2048BestScoreDisplay" class="game-2048-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="game-2048-help">Fl&egrave;ches ou ZQSD pour faire glisser les tuiles. Fusionne jusqu'&agrave; 2048.</p>
+                    <div id="game2048Board" class="game-2048-board" aria-label="Plateau du 2048"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="confirmModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-modal="true"></div>
+        <div class="modal-card card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+            <p class="section-tag">Confirmation</p>
+            <h3 id="confirmTitle">Supprimer ce film ?</h3>
+            <p id="confirmText">Cette action retirera le film du catalogue.</p>
+            <div class="form-actions">
+                <button id="cancelDeleteButton" type="button" class="secondary-button">Annuler</button>
+                <button id="confirmDeleteButton" type="button" class="danger-button">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameOverModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-game-over="true"></div>
+        <div class="modal-card card game-over-card" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+            <p class="section-tag">Naufrage</p>
+            <h3 id="gameOverTitle">C'est perdu</h3>
+            <p id="gameOverText">Le joueur s'est noy&eacute;.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
