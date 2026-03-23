@@ -279,7 +279,7 @@
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="battleship">
                             <span class="game-home-art game-home-art-battleship" aria-hidden="true"></span>
-                            <span class="game-home-title">Bataille navale</span>
+                            <span class="game-home-title">Bataille</span>
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="tetris">
                             <span class="game-home-art game-home-art-tetris" aria-hidden="true"></span>
@@ -303,7 +303,31 @@
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="flappy">
                             <span class="game-home-art game-home-art-flappy" aria-hidden="true"></span>
-                            <span class="game-home-title">Flappy Bird</span>
+                            <span class="game-home-title">Baiely Bird</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="flowFree">
+                            <span class="game-home-art game-home-art-flowfree" aria-hidden="true"></span>
+                            <span class="game-home-title">Rope Line</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="magicSort">
+                            <span class="game-home-art game-home-art-magicsort" aria-hidden="true"></span>
+                            <span class="game-home-title">Magic Sort</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="mentalMath">
+                            <span class="game-home-art game-home-art-mentalmath" aria-hidden="true"></span>
+                            <span class="game-home-title">Calcul</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="candyCrush">
+                            <span class="game-home-art game-home-art-candycrush" aria-hidden="true"></span>
+                            <span class="game-home-title">Coin Crush</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="harborRun">
+                            <span class="game-home-art game-home-art-harborrun" aria-hidden="true"></span>
+                            <span class="game-home-title">Navire 2D</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="stacker">
+                            <span class="game-home-art game-home-art-stacker" aria-hidden="true"></span>
+                            <span class="game-home-title">Stack 2D</span>
                         </button>
                     </div>
                 </div>
@@ -353,19 +377,24 @@
                 <div id="pongGame" class="card pong-card games-panel">
                     <div class="pong-topbar">
                         <div class="pong-counter-block">
-                            <span class="pong-counter-label">Ton score</span>
+                            <span class="pong-counter-label" id="pongLeftLabel">Joueur 1</span>
                             <strong id="pongPlayerScoreDisplay" class="pong-counter-value">0</strong>
                         </div>
 
                         <button id="pongStartButton" type="button" class="pong-face">Lancer le duel</button>
 
                         <div class="pong-counter-block">
-                            <span class="pong-counter-label">IA</span>
+                            <span class="pong-counter-label" id="pongRightLabel">IA</span>
                             <strong id="pongAiScoreDisplay" class="pong-counter-value">0</strong>
                         </div>
                     </div>
 
-                    <p class="pong-help">Fl&egrave;ches haut/bas ou Z/S pour bouger ta pagaie. Premier &agrave; 7.</p>
+                    <div class="pong-mode-switch" role="group" aria-label="Mode de jeu Pong">
+                        <button type="button" class="secondary-button pong-mode-button is-active" data-pong-mode="solo">1 joueur</button>
+                        <button type="button" class="secondary-button pong-mode-button" data-pong-mode="duo">2 joueurs</button>
+                    </div>
+
+                    <p class="pong-help" id="pongHelpText">Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l IA. Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas.</p>
                     <div id="pongBoard" class="pong-board" aria-label="Plateau du Pong">
                         <div class="pong-center-line" aria-hidden="true"></div>
                         <div id="pongCountdown" class="pong-countdown hidden" aria-hidden="true"></div>
@@ -433,6 +462,12 @@
                         </div>
                     </div>
 
+                    <div class="aim-duration-switch" role="group" aria-label="Durée de jeu OursAim">
+                        <button type="button" class="secondary-button aim-duration-button is-active" data-aim-duration="30">30s</button>
+                        <button type="button" class="secondary-button aim-duration-button" data-aim-duration="60">60s</button>
+                        <button type="button" class="secondary-button aim-duration-button" data-aim-duration="90">90s</button>
+                    </div>
+
                     <p class="aim-help">OursAim. Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l eau te co&ucirc;te des points.</p>
                     <div id="aimBoard" class="aim-board" aria-label="Zone de tir de la baie"></div>
                 </div>
@@ -471,7 +506,12 @@
                         </div>
                     </div>
 
-                    <p id="ticTacToeHelpText" class="tictactoe-help">Aligne trois symboles pour gagner le duel sur le pont.</p>
+                    <div class="tictactoe-mode-switch" role="group" aria-label="Mode de jeu Morpion">
+                        <button type="button" class="secondary-button tictactoe-mode-button is-active" data-tictactoe-mode="solo">1 joueur</button>
+                        <button type="button" class="secondary-button tictactoe-mode-button" data-tictactoe-mode="duo">2 joueurs</button>
+                    </div>
+
+                    <p id="ticTacToeHelpText" class="tictactoe-help">Mode 1 joueur: aligne trois symboles contre l IA pirate.</p>
                     <div id="ticTacToeBoard" class="tictactoe-board" aria-label="Plateau du Morpion"></div>
                 </div>
 
@@ -495,12 +535,12 @@
                     <div class="battleship-layout">
                         <div class="battleship-board-shell">
                             <p class="section-tag">Ta flotte</p>
-                            <div id="battleshipPlayerBoard" class="battleship-board" aria-label="Ta flotte"></div>
+                    <div id="battleshipPlayerBoard" class="battleship-board" aria-label="Plateau de Bataille"></div>
                         </div>
 
                         <div class="battleship-board-shell">
                             <p class="section-tag">Flotte ennemie</p>
-                            <div id="battleshipEnemyBoard" class="battleship-board" aria-label="Flotte ennemie"></div>
+                    <div id="battleshipEnemyBoard" class="battleship-board" aria-label="Plateau ennemi de Bataille"></div>
                         </div>
                     </div>
                 </div>
@@ -588,7 +628,12 @@
                         </div>
                     </div>
 
-                    <p id="connect4HelpText" class="connect4-help">Clique une colonne pour y larguer un jeton. Aligne quatre jetons avant l IA.</p>
+                    <div class="connect4-mode-switch" role="group" aria-label="Mode de jeu Puissance 4">
+                        <button type="button" class="secondary-button connect4-mode-button is-active" data-connect4-mode="solo">1 joueur</button>
+                        <button type="button" class="secondary-button connect4-mode-button" data-connect4-mode="duo">2 joueurs</button>
+                    </div>
+
+                    <p id="connect4HelpText" class="connect4-help">Mode 1 joueur: clique une colonne pour y larguer un jeton contre l IA.</p>
                     <div id="connect4Board" class="connect4-board" aria-label="Plateau du Puissance 4"></div>
                 </div>
 
@@ -632,7 +677,131 @@
                     </div>
 
                     <p id="flappyHelpText" class="flappy-help">Espace, clic ou tap pour battre des ailes et traverser les arches sans les toucher.</p>
-                    <div id="flappyBoard" class="flappy-board" aria-label="Plateau du Flappy Bird"></div>
+                    <div id="flappyBoard" class="flappy-board" aria-label="Plateau de Baiely Bird"></div>
+                </div>
+
+                <div id="flowFreeGame" class="card flowfree-card games-panel">
+                    <div class="flowfree-topbar">
+                        <div class="flowfree-counter-block">
+                            <span class="flowfree-counter-label">Liaisons</span>
+                            <strong id="flowFreePairsDisplay" class="flowfree-counter-value">0 / 0</strong>
+                        </div>
+
+                        <button id="flowFreeRestartButton" type="button" class="flowfree-face">Nouvelle corde</button>
+
+                        <div class="flowfree-counter-block">
+                            <span class="flowfree-counter-label">Coups</span>
+                            <strong id="flowFreeMovesDisplay" class="flowfree-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p id="flowFreeHelpText" class="flowfree-help">Relie chaque paire de clous avec une corde colorée et remplis toute la grille.</p>
+                    <div id="flowFreeBoard" class="flowfree-board" aria-label="Plateau de Rope Line"></div>
+                </div>
+
+                <div id="magicSortGame" class="card magicsort-card games-panel">
+                    <div class="magicsort-topbar">
+                        <div class="magicsort-counter-block">
+                            <span class="magicsort-counter-label">Triees</span>
+                            <strong id="magicSortSolvedDisplay" class="magicsort-counter-value">0 / 0</strong>
+                        </div>
+
+                        <button id="magicSortRestartButton" type="button" class="magicsort-face">Nouveau tri</button>
+
+                        <div class="magicsort-counter-block">
+                            <span class="magicsort-counter-label">Coups</span>
+                            <strong id="magicSortMovesDisplay" class="magicsort-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p id="magicSortHelpText" class="magicsort-help">Trie les couleurs dans les fioles jusqu à n avoir qu une couleur par fiole.</p>
+                    <div id="magicSortBoard" class="magicsort-board" aria-label="Plateau de Magic Sort"></div>
+                </div>
+
+                <div id="mentalMathGame" class="card mentalmath-card games-panel">
+                    <div class="mentalmath-topbar">
+                        <div class="mentalmath-counter-block">
+                            <span class="mentalmath-counter-label">Score</span>
+                            <strong id="mentalMathScoreDisplay" class="mentalmath-counter-value">0</strong>
+                        </div>
+
+                        <button id="mentalMathRestartButton" type="button" class="mentalmath-face">Nouveau quiz</button>
+
+                        <div class="mentalmath-counter-block">
+                            <span class="mentalmath-counter-label">Manche</span>
+                            <strong id="mentalMathRoundDisplay" class="mentalmath-counter-value">1 / 10</strong>
+                        </div>
+                    </div>
+
+                    <p id="mentalMathHelpText" class="mentalmath-help">Reponds vite aux calculs avant la fin des 10 manches.</p>
+                    <div class="mentalmath-stage">
+                        <div class="mentalmath-question-card">
+                            <p class="mentalmath-label">Question</p>
+                            <div id="mentalMathQuestion" class="mentalmath-question" aria-live="polite">12 + 8 = ?</div>
+                            <form id="mentalMathForm" class="mentalmath-form">
+                                <input id="mentalMathAnswerInput" type="number" inputmode="numeric" placeholder="Ta reponse" autocomplete="off">
+                                <button id="mentalMathSubmitButton" type="submit" class="primary-button">Valider</button>
+                            </form>
+                            <p id="mentalMathFeedback" class="feedback" aria-live="polite"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="candyCrushGame" class="card candycrush-card games-panel">
+                    <div class="candycrush-topbar">
+                        <div class="candycrush-counter-block">
+                            <span class="candycrush-counter-label">Score</span>
+                            <strong id="candyCrushScoreDisplay" class="candycrush-counter-value">0</strong>
+                        </div>
+
+                        <button id="candyCrushRestartButton" type="button" class="candycrush-face">Nouvelle cale</button>
+
+                        <div class="candycrush-counter-block">
+                            <span class="candycrush-counter-label">Coups</span>
+                            <strong id="candyCrushMovesDisplay" class="candycrush-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p id="candyCrushHelpText" class="candycrush-help">Glisse les bonbons marins pour former des lignes de 3 ou plus.</p>
+                    <div id="candyCrushBoard" class="candycrush-board" aria-label="Plateau de Coin Crush"></div>
+                </div>
+
+                <div id="harborRunGame" class="card harborrun-card games-panel">
+                    <div class="harborrun-topbar">
+                        <div class="harborrun-counter-block">
+                            <span class="harborrun-counter-label">Distance</span>
+                            <strong id="harborRunScoreDisplay" class="harborrun-counter-value">0</strong>
+                        </div>
+
+                        <button id="harborRunStartButton" type="button" class="harborrun-face">Prendre la mer</button>
+
+                        <div class="harborrun-counter-block">
+                            <span class="harborrun-counter-label">Record</span>
+                            <strong id="harborRunBestDisplay" class="harborrun-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p id="harborRunHelpText" class="harborrun-help">Guide le navire entre rochers, épaves et autres bateaux pendant que la vitesse monte.</p>
+                    <div id="harborRunBoard" class="harborrun-board" aria-label="Plateau de Navire 2D"></div>
+                </div>
+
+                <div id="stackerGame" class="card stacker-card games-panel">
+                    <div class="stacker-topbar">
+                        <div class="stacker-counter-block">
+                            <span class="stacker-counter-label">Etages</span>
+                            <strong id="stackerScoreDisplay" class="stacker-counter-value">0</strong>
+                        </div>
+
+                        <button id="stackerStartButton" type="button" class="stacker-face">Empiler</button>
+
+                        <div class="stacker-counter-block">
+                            <span class="stacker-counter-label">Record</span>
+                            <strong id="stackerBestDisplay" class="stacker-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p id="stackerHelpText" class="stacker-help">Empile les caisses de butin le plus proprement possible pour monter la tour.</p>
+                    <div id="stackerBoard" class="stacker-board" aria-label="Plateau de Stack 2D"></div>
                 </div>
             </div>
         </section>

@@ -119,6 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const pongPlayerScoreDisplay = document.getElementById('pongPlayerScoreDisplay');
     const pongAiScoreDisplay = document.getElementById('pongAiScoreDisplay');
     const pongStartButton = document.getElementById('pongStartButton');
+    const pongLeftLabel = document.getElementById('pongLeftLabel');
+    const pongRightLabel = document.getElementById('pongRightLabel');
+    const pongHelpText = document.getElementById('pongHelpText');
+    const pongModeButtons = document.querySelectorAll('[data-pong-mode]');
     const sudokuBoard = document.getElementById('sudokuBoard');
     const sudokuFilledDisplay = document.getElementById('sudokuFilledDisplay');
     const sudokuDifficultyDisplay = document.getElementById('sudokuDifficultyDisplay');
@@ -133,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const aimTimerDisplay = document.getElementById('aimTimerDisplay');
     const aimBestScoreDisplay = document.getElementById('aimBestScoreDisplay');
     const aimStartButton = document.getElementById('aimStartButton');
+    const aimDurationButtons = document.querySelectorAll('[data-aim-duration]');
     const memoryBoard = document.getElementById('memoryBoard');
     const memoryPairsDisplay = document.getElementById('memoryPairsDisplay');
     const memoryMovesDisplay = document.getElementById('memoryMovesDisplay');
@@ -142,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ticTacToeScoreDisplay = document.getElementById('ticTacToeScoreDisplay');
     const ticTacToeHelpText = document.getElementById('ticTacToeHelpText');
     const ticTacToeRestartButton = document.getElementById('ticTacToeRestartButton');
+    const ticTacToeModeButtons = document.querySelectorAll('[data-tictactoe-mode]');
     const battleshipPlayerBoard = document.getElementById('battleshipPlayerBoard');
     const battleshipEnemyBoard = document.getElementById('battleshipEnemyBoard');
     const battleshipPlayerShipsDisplay = document.getElementById('battleshipPlayerShipsDisplay');
@@ -172,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const connect4ScoreDisplay = document.getElementById('connect4ScoreDisplay');
     const connect4HelpText = document.getElementById('connect4HelpText');
     const connect4RestartButton = document.getElementById('connect4RestartButton');
+    const connect4ModeButtons = document.querySelectorAll('[data-connect4-mode]');
     const rhythmBoard = document.getElementById('rhythmBoard');
     const rhythmScoreDisplay = document.getElementById('rhythmScoreDisplay');
     const rhythmStreakDisplay = document.getElementById('rhythmStreakDisplay');
@@ -183,6 +190,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const flappyBestDisplay = document.getElementById('flappyBestDisplay');
     const flappyHelpText = document.getElementById('flappyHelpText');
     const flappyStartButton = document.getElementById('flappyStartButton');
+    const flowFreeGame = document.getElementById('flowFreeGame');
+    const flowFreeBoard = document.getElementById('flowFreeBoard');
+    const flowFreePairsDisplay = document.getElementById('flowFreePairsDisplay');
+    const flowFreeMovesDisplay = document.getElementById('flowFreeMovesDisplay');
+    const flowFreeHelpText = document.getElementById('flowFreeHelpText');
+    const flowFreeRestartButton = document.getElementById('flowFreeRestartButton');
+    const magicSortGame = document.getElementById('magicSortGame');
+    const magicSortBoard = document.getElementById('magicSortBoard');
+    const magicSortSolvedDisplay = document.getElementById('magicSortSolvedDisplay');
+    const magicSortMovesDisplay = document.getElementById('magicSortMovesDisplay');
+    const magicSortHelpText = document.getElementById('magicSortHelpText');
+    const magicSortRestartButton = document.getElementById('magicSortRestartButton');
+    const mentalMathGame = document.getElementById('mentalMathGame');
+    const mentalMathScoreDisplay = document.getElementById('mentalMathScoreDisplay');
+    const mentalMathRoundDisplay = document.getElementById('mentalMathRoundDisplay');
+    const mentalMathHelpText = document.getElementById('mentalMathHelpText');
+    const mentalMathRestartButton = document.getElementById('mentalMathRestartButton');
+    const mentalMathQuestion = document.getElementById('mentalMathQuestion');
+    const mentalMathForm = document.getElementById('mentalMathForm');
+    const mentalMathAnswerInput = document.getElementById('mentalMathAnswerInput');
+    const mentalMathSubmitButton = document.getElementById('mentalMathSubmitButton');
+    const mentalMathFeedback = document.getElementById('mentalMathFeedback');
+    const candyCrushGame = document.getElementById('candyCrushGame');
+    const candyCrushBoard = document.getElementById('candyCrushBoard');
+    const candyCrushScoreDisplay = document.getElementById('candyCrushScoreDisplay');
+    const candyCrushMovesDisplay = document.getElementById('candyCrushMovesDisplay');
+    const candyCrushHelpText = document.getElementById('candyCrushHelpText');
+    const candyCrushRestartButton = document.getElementById('candyCrushRestartButton');
+    const harborRunGame = document.getElementById('harborRunGame');
+    const harborRunBoard = document.getElementById('harborRunBoard');
+    const harborRunScoreDisplay = document.getElementById('harborRunScoreDisplay');
+    const harborRunBestDisplay = document.getElementById('harborRunBestDisplay');
+    const harborRunHelpText = document.getElementById('harborRunHelpText');
+    const harborRunStartButton = document.getElementById('harborRunStartButton');
+    const stackerGame = document.getElementById('stackerGame');
+    const stackerBoard = document.getElementById('stackerBoard');
+    const stackerScoreDisplay = document.getElementById('stackerScoreDisplay');
+    const stackerBestDisplay = document.getElementById('stackerBestDisplay');
+    const stackerHelpText = document.getElementById('stackerHelpText');
+    const stackerStartButton = document.getElementById('stackerStartButton');
     const mathPanels = document.querySelectorAll('.math-panel');
     const musicPanels = document.querySelectorAll('.music-panel');
     const calculatorDisplay = document.getElementById('calculatorDisplay');
@@ -225,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const GAME_2048_BEST_KEY = 'baie-des-naufrages-2048-best';
     const AIM_GRID_SIZE = 6;
     const AIM_TARGET_COUNT = 5;
-    const AIM_ROUND_SECONDS = 30;
+    const AIM_DEFAULT_ROUND_SECONDS = 30;
     const AIM_HIT_SCORE = 12;
     const AIM_MISS_SCORE = 5;
     const AIM_BEST_KEY = 'baie-des-naufrages-aim-best';
@@ -241,6 +288,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const RHYTHM_DURATION_MS = 20000;
     const RHYTHM_BEST_KEY = 'baie-des-naufrages-rhythm-best';
     const FLAPPY_BEST_KEY = 'baie-des-naufrages-flappy-best';
+    const HARBOR_RUN_BEST_KEY = 'baie-des-naufrages-harbor-run-best';
+    const STACKER_BEST_KEY = 'baie-des-naufrages-stacker-best';
+    const FLOW_FREE_SIZE = 7;
+    const FLOW_FREE_COLORS = ['#fb7185', '#38bdf8', '#facc15', '#34d399', '#c084fc', '#f97316', '#22d3ee', '#60a5fa', '#e879f9', '#84cc16'];
+    const MAGIC_SORT_COLORS = {
+        pink: '#f472b6',
+        gold: '#facc15',
+        mint: '#34d399',
+        sky: '#38bdf8',
+        coral: '#fb7185',
+        violet: '#a78bfa'
+    };
+    const MAGIC_SORT_TUBE_CAPACITY = 4;
+    const MAGIC_SORT_FILLED_TUBES = 6;
+    const MAGIC_SORT_EMPTY_TUBES = 2;
+    const MENTAL_MATH_TOTAL_ROUNDS = 10;
+    const CANDY_CRUSH_SIZE = 8;
+    const CANDY_CRUSH_TARGET_SCORE = 4000;
+    const CANDY_CRUSH_START_MOVES = 35;
+    const CANDY_CRUSH_TYPES = ['coral', 'lagoon', 'sun', 'mint', 'shell'];
+    const CANDY_CRUSH_COLORS = {
+        coral: 'linear-gradient(180deg, #fb7185, #be123c)',
+        lagoon: 'linear-gradient(180deg, #38bdf8, #1d4ed8)',
+        sun: 'linear-gradient(180deg, #facc15, #d97706)',
+        mint: 'linear-gradient(180deg, #34d399, #0f766e)',
+        shell: 'linear-gradient(180deg, #c084fc, #7c3aed)'
+    };
+    const HARBOR_RUN_LANES = [18, 50, 82];
+    const STACKER_TARGET_LAYERS = 12;
     const TETRIS_PIECES = {
         I: { color: '#38bdf8', shape: [[1, 1, 1, 1]] },
         O: { color: '#facc15', shape: [[1, 1], [1, 1]] },
@@ -393,6 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongPaused = false;
     let pongCountdownTimer = null;
     let pongCountdownCompleteTimer = null;
+    let pongMode = 'solo';
     let sudokuPuzzle = null;
     let sudokuBoardState = [];
     let sudokuSelectedCell = null;
@@ -418,7 +495,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let aimTargets = [];
     let aimScore = 0;
     let aimBestScore = Number(window.localStorage.getItem(AIM_BEST_KEY)) || 0;
-    let aimTimeRemaining = AIM_ROUND_SECONDS;
+    let aimRoundSeconds = AIM_DEFAULT_ROUND_SECONDS;
+    let aimTimeRemaining = AIM_DEFAULT_ROUND_SECONDS;
     let aimRoundRunning = false;
     let aimRoundCompleted = false;
     let aimTimerInterval = null;
@@ -436,6 +514,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let ticTacToeCurrentPlayer = 'anchor';
     let ticTacToeScores = { anchor: 0, skull: 0 };
     let ticTacToeFinished = false;
+    let ticTacToeMode = 'solo';
+    let ticTacToeAiTimeout = null;
     let battleshipPlayerGrid = [];
     let battleshipEnemyGrid = [];
     let battleshipPlayerRemainingShips = 0;
@@ -475,6 +555,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let connect4Scores = { player: 0, ai: 0 };
     let connect4Finished = false;
     let connect4AiTimeout = null;
+    let connect4Mode = 'solo';
+    let connect4DropAnimationKey = null;
+    let connect4DropAnimationState = null;
+    let connect4DropAnimationTimeout = null;
     let rhythmNotes = [];
     let rhythmScore = 0;
     let rhythmStreak = 0;
@@ -494,6 +578,50 @@ document.addEventListener('DOMContentLoaded', () => {
     let flappyAnimationFrame = null;
     let flappyLastFrame = 0;
     let flappySpawnTimer = 0;
+    let flappyBackdropOffset = 0;
+    let flowFreeCells = [];
+    let flowFreeLevel = null;
+    let flowFreePaths = new Map();
+    let flowFreeCompleted = new Set();
+    let flowFreeMoves = 0;
+    let flowFreeActiveColor = null;
+    let flowFreePointerDown = false;
+    let flowFreeRenderFrame = null;
+    let flowFreeLastHoverKey = null;
+    let flowFreeSpawning = new Set();
+    let flowFreeSpawnTimers = new Map();
+    let flowFreeDespawning = new Map();
+    let flowFreeDespawnTimer = null;
+    let magicSortTubes = [];
+    let magicSortSelectedTube = null;
+    let magicSortMoves = 0;
+    let mentalMathScore = 0;
+    let mentalMathRound = 0;
+    let mentalMathCurrentQuestion = null;
+    let candyCrushGrid = [];
+    let candyCrushSelectedCell = null;
+    let candyCrushScore = 0;
+    let candyCrushMoves = 18;
+    let candyCrushAnimating = false;
+    let candyCrushPointerStart = null;
+    let harborRunLane = 1;
+    let harborRunObstacles = [];
+    let harborRunScore = 0;
+    let harborRunBestScore = Number(window.localStorage.getItem(HARBOR_RUN_BEST_KEY)) || 0;
+    let harborRunRunning = false;
+    let harborRunAnimationFrame = null;
+    let harborRunLastFrame = 0;
+    let harborRunSpawnTimer = 0;
+    let harborRunSafeLane = 1;
+    let harborRunBackdropOffset = 0;
+    let stackerLayers = [];
+    let stackerCurrentLayer = null;
+    let stackerFragments = [];
+    let stackerScore = 0;
+    let stackerBestScore = Number(window.localStorage.getItem(STACKER_BEST_KEY)) || 0;
+    let stackerRunning = false;
+    let stackerAnimationFrame = null;
+    let stackerLastFrame = 0;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
     let pianoAudioContext = null;
@@ -1306,6 +1434,12 @@ document.addEventListener('DOMContentLoaded', () => {
         connect4Game.classList.toggle('games-panel-active', tabId === 'connect4');
         rhythmGame.classList.toggle('games-panel-active', tabId === 'rhythm');
         flappyGame.classList.toggle('games-panel-active', tabId === 'flappy');
+        flowFreeGame.classList.toggle('games-panel-active', tabId === 'flowFree');
+        magicSortGame.classList.toggle('games-panel-active', tabId === 'magicSort');
+        mentalMathGame.classList.toggle('games-panel-active', tabId === 'mentalMath');
+        candyCrushGame.classList.toggle('games-panel-active', tabId === 'candyCrush');
+        harborRunGame.classList.toggle('games-panel-active', tabId === 'harborRun');
+        stackerGame.classList.toggle('games-panel-active', tabId === 'stacker');
 
         if (tabId !== 'snake') {
             closeGameOverModal();
@@ -1381,6 +1515,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (previousTab === 'flappy' && nextTab !== 'flappy') {
             initializeFlappy();
         }
+
+        if (previousTab === 'flowFree' && nextTab !== 'flowFree') {
+            initializeFlowFree();
+        }
+
+        if (previousTab === 'magicSort' && nextTab !== 'magicSort') {
+            initializeMagicSort();
+        }
+
+        if (previousTab === 'mentalMath' && nextTab !== 'mentalMath') {
+            initializeMentalMath();
+        }
+
+        if (previousTab === 'candyCrush' && nextTab !== 'candyCrush') {
+            initializeCandyCrush();
+        }
+
+        if (previousTab === 'harborRun' && nextTab !== 'harborRun') {
+            initializeHarborRun();
+        }
+
+        if (previousTab === 'stacker' && nextTab !== 'stacker') {
+            initializeStacker();
+        }
     }
 
     function shuffleArray(items) {
@@ -1392,6 +1550,224 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return array;
+    }
+
+    function waitMs(duration) {
+        return new Promise((resolve) => {
+            window.setTimeout(resolve, duration);
+        });
+    }
+
+    function createFlowFreeBasePath(size) {
+        return Array.from({ length: size }, (_, rowIndex) => (
+            Array.from({ length: size }, (_, stepIndex) => ({
+                row: rowIndex,
+                col: rowIndex % 2 === 0 ? stepIndex : (size - 1 - stepIndex)
+            }))
+        )).flat();
+    }
+
+    function transformFlowFreePath(path, size) {
+        const transpose = Math.random() < 0.5;
+        const flipX = Math.random() < 0.5;
+        const flipY = Math.random() < 0.5;
+        const reversed = Math.random() < 0.5;
+
+        const transformed = path.map((cell) => {
+            let row = cell.row;
+            let col = cell.col;
+
+            if (transpose) {
+                [row, col] = [col, row];
+            }
+
+            if (flipY) {
+                row = size - 1 - row;
+            }
+
+            if (flipX) {
+                col = size - 1 - col;
+            }
+
+            return { row, col };
+        });
+
+        return reversed ? transformed.reverse() : transformed;
+    }
+
+    function generateFlowFreeSegmentLengths(totalCells) {
+        const lengths = [];
+        let remaining = totalCells;
+
+        while (remaining > 0) {
+            const remainingSlots = Math.ceil(remaining / 9);
+            const minLength = lengths.length >= 4 ? 5 : 6;
+            const maxLength = Math.min(10, remaining - ((remainingSlots - 1) * 4));
+            let nextLength = Math.min(maxLength, minLength + Math.floor(Math.random() * Math.max(1, maxLength - minLength + 1)));
+
+            if (remaining - nextLength > 0 && remaining - nextLength < 4) {
+                nextLength = remaining;
+            }
+
+            lengths.push(nextLength);
+            remaining -= nextLength;
+        }
+
+        if (lengths[lengths.length - 1] < 4 && lengths.length > 1) {
+            const deficit = 4 - lengths[lengths.length - 1];
+            lengths[lengths.length - 2] -= deficit;
+            lengths[lengths.length - 1] += deficit;
+        }
+
+        return lengths;
+    }
+
+    function generateFlowFreeLevel() {
+        const basePath = createFlowFreeBasePath(FLOW_FREE_SIZE);
+        const fullPath = transformFlowFreePath(basePath, FLOW_FREE_SIZE);
+        const segmentLengths = generateFlowFreeSegmentLengths(fullPath.length);
+        const colorPool = shuffleArray(FLOW_FREE_COLORS).slice(0, segmentLengths.length);
+        let offset = 0;
+
+        return {
+            size: FLOW_FREE_SIZE,
+            pairs: segmentLengths.map((length, index) => {
+                const cells = fullPath.slice(offset, offset + length);
+                offset += length;
+
+                return {
+                    color: colorPool[index],
+                    start: { ...cells[0] },
+                    end: { ...cells[cells.length - 1] },
+                    solution: cells.map((cell) => ({ ...cell }))
+                };
+            })
+        };
+    }
+
+    function getMagicSortValidMoves(tubes) {
+        const moves = [];
+
+        tubes.forEach((fromTube, fromIndex) => {
+            if (!fromTube.length) {
+                return;
+            }
+
+            const movingColor = fromTube[fromTube.length - 1];
+            let contiguousCount = 0;
+
+            for (let cursor = fromTube.length - 1; cursor >= 0; cursor -= 1) {
+                if (fromTube[cursor] !== movingColor) {
+                    break;
+                }
+                contiguousCount += 1;
+            }
+
+            tubes.forEach((toTube, toIndex) => {
+                if (fromIndex === toIndex || toTube.length >= 4) {
+                    return;
+                }
+
+                const topTarget = toTube[toTube.length - 1];
+                if (topTarget && topTarget !== movingColor) {
+                    return;
+                }
+
+                const amount = Math.min(contiguousCount, 4 - toTube.length);
+                if (!amount) {
+                    return;
+                }
+
+                moves.push({ fromIndex, toIndex, amount });
+            });
+        });
+
+        return moves;
+    }
+
+    function applyMagicSortMove(tubes, move) {
+        const fromTube = tubes[move.fromIndex];
+        const toTube = tubes[move.toIndex];
+
+        for (let step = 0; step < move.amount; step += 1) {
+            toTube.push(fromTube.pop());
+        }
+    }
+
+    function generateMagicSortLevel() {
+        const colorKeys = shuffleArray(Object.keys(MAGIC_SORT_COLORS)).slice(0, MAGIC_SORT_FILLED_TUBES);
+
+        function getTubeTopInfo(tube) {
+            if (!tube.length) {
+                return null;
+            }
+
+            const color = tube[tube.length - 1];
+            let count = 1;
+
+            for (let cursor = tube.length - 2; cursor >= 0; cursor -= 1) {
+                if (tube[cursor] !== color) {
+                    break;
+                }
+                count += 1;
+            }
+
+            return { color, count };
+        }
+
+        function getMixedTubeCount(tubes) {
+            return tubes.filter((tube) => tube.length > 1 && !tube.every((color) => color === tube[0])).length;
+        }
+
+        for (let attempt = 0; attempt < 24; attempt += 1) {
+            const tubes = colorKeys.map((color) => Array(MAGIC_SORT_TUBE_CAPACITY).fill(color));
+            tubes.push(...Array.from({ length: MAGIC_SORT_EMPTY_TUBES }, () => []));
+
+            const reverseMoves = 32 + Math.floor(Math.random() * 20);
+
+            for (let moveIndex = 0; moveIndex < reverseMoves; moveIndex += 1) {
+                const sourceOptions = tubes
+                    .map((tube, index) => ({ tube, index, top: getTubeTopInfo(tube) }))
+                    .filter(({ top }) => Boolean(top));
+
+                if (!sourceOptions.length) {
+                    break;
+                }
+
+                const { index: sourceIndex, top } = sourceOptions[Math.floor(Math.random() * sourceOptions.length)];
+                const destinationOptions = tubes
+                    .map((tube, index) => ({ tube, index }))
+                    .filter(({ tube, index }) => index !== sourceIndex && tube.length < MAGIC_SORT_TUBE_CAPACITY);
+
+                if (!destinationOptions.length) {
+                    continue;
+                }
+
+                const { index: destinationIndex, tube: destinationTube } = destinationOptions[Math.floor(Math.random() * destinationOptions.length)];
+                const movableCount = Math.min(top.count, MAGIC_SORT_TUBE_CAPACITY - destinationTube.length);
+                const amount = 1 + Math.floor(Math.random() * movableCount);
+
+                for (let step = 0; step < amount; step += 1) {
+                    destinationTube.push(tubes[sourceIndex].pop());
+                }
+            }
+
+            if (getMixedTubeCount(tubes) >= 3) {
+                return tubes.map((tube) => [...tube]);
+            }
+        }
+
+        const fallbackColors = colorKeys.slice(0, 4);
+        return [
+            [fallbackColors[0], fallbackColors[1], fallbackColors[2], fallbackColors[3]],
+            [fallbackColors[2], fallbackColors[3], fallbackColors[1], fallbackColors[0]],
+            [fallbackColors[1], fallbackColors[0], fallbackColors[3], fallbackColors[2]],
+            [fallbackColors[3], fallbackColors[2], fallbackColors[0], fallbackColors[1]],
+            [],
+            [],
+            [],
+            []
+        ];
     }
 
     function updateMemoryHud() {
@@ -1522,8 +1898,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateTicTacToeHud() {
         ticTacToeTurnDisplay.textContent = ticTacToeFinished
             ? '-'
-            : (ticTacToeCurrentPlayer === 'anchor' ? 'Toi' : 'IA');
-        ticTacToeScoreDisplay.textContent = `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
+            : (ticTacToeCurrentPlayer === 'anchor'
+                ? (ticTacToeMode === 'duo' ? 'Joueur 1' : 'Toi')
+                : (ticTacToeMode === 'duo' ? 'Joueur 2' : 'IA'));
+        ticTacToeScoreDisplay.textContent = ticTacToeMode === 'duo'
+            ? `J1 ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} J2`
+            : `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
+        ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
+            ? 'Mode 2 joueurs: jouez chacun votre tour sur la meme grille.'
+            : 'Mode 1 joueur: aligne trois symboles contre l IA pirate.';
+        ticTacToeModeButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
+        });
     }
 
     function renderTicTacToeBoard() {
@@ -1554,6 +1940,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeTicTacToe() {
+        if (ticTacToeAiTimeout) {
+            window.clearTimeout(ticTacToeAiTimeout);
+            ticTacToeAiTimeout = null;
+        }
         closeGameOverModal();
         ticTacToeBoardState = Array(9).fill('');
         ticTacToeCurrentPlayer = 'anchor';
@@ -1626,6 +2016,109 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleTicTacToeMove(chosenIndex, 'skull');
             }, 320);
         }
+    }
+
+    function updateTicTacToeHud() {
+        ticTacToeTurnDisplay.textContent = ticTacToeFinished
+            ? '-'
+            : (ticTacToeCurrentPlayer === 'anchor'
+                ? (ticTacToeMode === 'duo' ? 'Joueur 1' : 'Toi')
+                : (ticTacToeMode === 'duo' ? 'Joueur 2' : 'IA'));
+        ticTacToeScoreDisplay.textContent = ticTacToeMode === 'duo'
+            ? `J1 ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} J2`
+            : `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
+        ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
+            ? 'Mode 2 joueurs: jouez chacun votre tour sur la meme grille.'
+            : 'Mode 1 joueur: aligne trois symboles contre l IA pirate.';
+        ticTacToeModeButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
+        });
+    }
+
+    function initializeTicTacToe() {
+        if (ticTacToeAiTimeout) {
+            window.clearTimeout(ticTacToeAiTimeout);
+            ticTacToeAiTimeout = null;
+        }
+
+        closeGameOverModal();
+        ticTacToeBoardState = Array(9).fill('');
+        ticTacToeCurrentPlayer = 'anchor';
+        ticTacToeFinished = false;
+        updateTicTacToeHud();
+        renderTicTacToeBoard();
+    }
+
+    function finishTicTacToeRound(winner) {
+        ticTacToeFinished = true;
+
+        if (winner === 'anchor') {
+            ticTacToeScores.anchor += 1;
+            ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 1 tient le pont.' : 'Victoire. Ton equipage tient le pont.';
+            openGameOverModal('Victoire', ticTacToeMode === 'duo' ? 'Le joueur 1 remporte la manche de morpion.' : 'Tu as battu l IA pirate au morpion.');
+        } else if (winner === 'skull') {
+            ticTacToeScores.skull += 1;
+            ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont.' : 'Defaite. L IA pirate prend le pont.';
+            openGameOverModal(ticTacToeMode === 'duo' ? 'Joueur 2 gagne' : 'C est perdu', ticTacToeMode === 'duo' ? 'Le joueur 2 remporte le duel de morpion.' : 'L IA pirate remporte le duel.');
+        } else {
+            ticTacToeHelpText.textContent = 'Match nul. Personne ne prend l avantage.';
+            openGameOverModal('Match nul', 'La manche se termine sans vainqueur.');
+        }
+
+        updateTicTacToeHud();
+        renderTicTacToeBoard();
+    }
+
+    function handleTicTacToeMove(index, player = 'anchor') {
+        if (ticTacToeFinished || ticTacToeBoardState[index] || ticTacToeCurrentPlayer !== player) {
+            return;
+        }
+
+        ticTacToeBoardState[index] = player;
+        const winningLine = getTicTacToeWinner();
+
+        if (winningLine) {
+            finishTicTacToeRound(player);
+            return;
+        }
+
+        if (ticTacToeBoardState.every(Boolean)) {
+            finishTicTacToeRound('draw');
+            return;
+        }
+
+        ticTacToeCurrentPlayer = player === 'anchor' ? 'skull' : 'anchor';
+        updateTicTacToeHud();
+        renderTicTacToeBoard();
+
+        if (ticTacToeCurrentPlayer === 'skull' && ticTacToeMode === 'solo') {
+            ticTacToeHelpText.textContent = 'L IA pirate prepare sa riposte.';
+            ticTacToeAiTimeout = window.setTimeout(() => {
+                ticTacToeAiTimeout = null;
+                const emptyCells = getTicTacToeEmptyCells();
+
+                if (!emptyCells.length || ticTacToeFinished) {
+                    return;
+                }
+
+                const chosenIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                handleTicTacToeMove(chosenIndex, 'skull');
+            }, 320);
+        } else if (!ticTacToeFinished) {
+            ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
+                ? (ticTacToeCurrentPlayer === 'anchor' ? 'Au joueur 1 de jouer.' : 'Au joueur 2 de jouer.')
+                : 'A toi de jouer.';
+        }
+    }
+
+    function setTicTacToeMode(nextMode) {
+        if (!['solo', 'duo'].includes(nextMode)) {
+            return;
+        }
+
+        ticTacToeMode = nextMode;
+        ticTacToeScores = { anchor: 0, skull: 0 };
+        initializeTicTacToe();
     }
 
     function createBattleshipGrid() {
@@ -2735,20 +3228,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateConnect4Hud() {
-        connect4TurnDisplay.textContent = connect4CurrentPlayer === 'player' ? 'Toi' : 'IA';
-        connect4ScoreDisplay.textContent = `Toi ${connect4Scores.player} - ${connect4Scores.ai} IA`;
+        const currentPlayerLabel = connect4CurrentPlayer === 'player'
+            ? (connect4Mode === 'duo' ? 'Joueur 1' : 'Toi')
+            : (connect4Mode === 'duo' ? 'Joueur 2' : 'IA');
+        connect4TurnDisplay.textContent = currentPlayerLabel;
+        connect4ScoreDisplay.textContent = connect4Mode === 'duo'
+            ? `J1 ${connect4Scores.player} - ${connect4Scores.ai} J2`
+            : `Toi ${connect4Scores.player} - ${connect4Scores.ai} IA`;
+        connect4HelpText.textContent = connect4Mode === 'duo'
+            ? 'Mode 2 joueurs: cliquez chacun votre tour sur une colonne pour faire tomber un jeton.'
+            : 'Mode 1 joueur: clique une colonne pour y larguer un jeton contre l IA.';
+        connect4ModeButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.dataset.connect4Mode === connect4Mode);
+        });
     }
 
     function renderConnect4() {
-        connect4Board.innerHTML = connect4BoardState.map((row, rowIndex) => row.map((cell, colIndex) => `
+        connect4Board.innerHTML = `${connect4BoardState.map((row, rowIndex) => row.map((cell, colIndex) => `
             <button
                 type="button"
-                class="connect4-cell${cell === 'player' ? ' is-player' : ''}${cell === 'ai' ? ' is-ai' : ''}"
+                class="connect4-cell${cell === 'player' ? ' is-player' : ''}${cell === 'ai' ? ' is-ai' : ''}${connect4DropAnimationKey === `${rowIndex}-${colIndex}` ? ' is-drop-target' : ''}"
                 data-row="${rowIndex}"
                 data-col="${colIndex}"
+                ${cell ? `data-connect4-token="${cell}"` : ''}
                 aria-label="Colonne ${colIndex + 1}"
             ></button>
-        `).join('')).join('');
+        `).join('')).join('')}
+        ${connect4DropAnimationState ? `
+            <div
+                class="connect4-drop-piece ${connect4DropAnimationState.token === 'player' ? 'is-player' : 'is-ai'}"
+                style="left: ${connect4DropAnimationState.left}px; top: ${connect4DropAnimationState.top}px; width: ${connect4DropAnimationState.size}px; height: ${connect4DropAnimationState.size}px; --connect4-drop-distance: ${connect4DropAnimationState.distance}px;"
+                aria-hidden="true"
+            ><span class="connect4-drop-piece-skull">☠</span></div>
+        ` : ''}`;
     }
 
     function initializeConnect4() {
@@ -2756,12 +3268,17 @@ document.addEventListener('DOMContentLoaded', () => {
             window.clearTimeout(connect4AiTimeout);
             connect4AiTimeout = null;
         }
+        if (connect4DropAnimationTimeout) {
+            window.clearTimeout(connect4DropAnimationTimeout);
+            connect4DropAnimationTimeout = null;
+        }
 
         closeGameOverModal();
         connect4BoardState = Array.from({ length: CONNECT4_ROWS }, () => Array(CONNECT4_COLS).fill(null));
         connect4CurrentPlayer = 'player';
         connect4Finished = false;
-        connect4HelpText.textContent = 'Clique une colonne pour y larguer un jeton. Aligne quatre jetons avant l IA.';
+        connect4DropAnimationKey = null;
+        connect4DropAnimationState = null;
         updateConnect4Hud();
         renderConnect4();
     }
@@ -2855,12 +3372,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (winner === 'player') {
             connect4Scores.player += 1;
-            connect4HelpText.textContent = 'Victoire. Tu controles la colonne du pont.';
-            openGameOverModal('Victoire', 'Tu as battu l IA au Puissance 4.');
+            connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 1 aligne quatre jetons.' : 'Victoire. Tu controles la colonne du pont.';
+            openGameOverModal('Victoire', connect4Mode === 'duo' ? 'Le joueur 1 remporte la manche de Puissance 4.' : 'Tu as battu l IA au Puissance 4.');
         } else if (winner === 'ai') {
             connect4Scores.ai += 1;
-            connect4HelpText.textContent = 'L IA a aligne quatre jetons.';
-            openGameOverModal('C est perdu', 'L IA remporte la manche de Puissance 4.');
+            connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 2 aligne quatre jetons.' : 'L IA a aligne quatre jetons.';
+            openGameOverModal(connect4Mode === 'duo' ? 'Joueur 2 gagne' : 'C est perdu', connect4Mode === 'duo' ? 'Le joueur 2 remporte la manche de Puissance 4.' : 'L IA remporte la manche de Puissance 4.');
         } else {
             connect4HelpText.textContent = 'La grille est pleine. Aucun navire ne prend l avantage.';
             openGameOverModal('Match nul', 'Plus de place. La manche de Puissance 4 se termine sans vainqueur.');
@@ -2877,7 +3394,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         connect4BoardState[row][col] = token;
+        connect4DropAnimationKey = `${row}-${col}`;
         renderConnect4();
+        const targetCell = connect4Board.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+
+        if (targetCell) {
+            const boardPaddingTop = Number.parseFloat(window.getComputedStyle(connect4Board).paddingTop) || 0;
+            connect4DropAnimationState = {
+                token,
+                left: targetCell.offsetLeft,
+                top: targetCell.offsetTop,
+                size: targetCell.offsetWidth,
+                distance: Math.max(0, targetCell.offsetTop - boardPaddingTop + 6)
+            };
+            renderConnect4();
+        }
+
+        if (connect4DropAnimationTimeout) {
+            window.clearTimeout(connect4DropAnimationTimeout);
+        }
+        connect4DropAnimationTimeout = window.setTimeout(() => {
+            if (connect4DropAnimationKey === `${row}-${col}`) {
+                connect4DropAnimationKey = null;
+                connect4DropAnimationState = null;
+                renderConnect4();
+            }
+            connect4DropAnimationTimeout = null;
+        }, 380);
 
         const winningLine = getConnect4Winner(connect4BoardState, token);
 
@@ -2894,7 +3437,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function runConnect4AiTurn() {
-        if (connect4Finished) {
+        if (connect4Finished || connect4Mode !== 'solo') {
             return;
         }
 
@@ -2909,10 +3452,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleConnect4Move(col) {
         if (connect4Finished || connect4CurrentPlayer !== 'player') {
+            if (!(connect4Mode === 'duo' && !connect4Finished && connect4CurrentPlayer === 'ai')) {
+                return;
+            }
+        }
+
+        const activeToken = connect4CurrentPlayer;
+
+        if (!dropConnect4Token(col, activeToken) || connect4Finished) {
+            updateConnect4Hud();
             return;
         }
 
-        if (!dropConnect4Token(col, 'player') || connect4Finished) {
+        if (connect4Mode === 'duo') {
+            connect4CurrentPlayer = activeToken === 'player' ? 'ai' : 'player';
             updateConnect4Hud();
             return;
         }
@@ -2924,6 +3477,16 @@ document.addEventListener('DOMContentLoaded', () => {
             connect4AiTimeout = null;
             runConnect4AiTurn();
         }, 320);
+    }
+
+    function setConnect4Mode(nextMode) {
+        if (!['solo', 'duo'].includes(nextMode)) {
+            return;
+        }
+
+        connect4Mode = nextMode;
+        connect4Scores = { player: 0, ai: 0 };
+        initializeConnect4();
     }
 
     function updateRhythmHud(timeRemainingMs = RHYTHM_DURATION_MS) {
@@ -3071,11 +3634,26 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFlappy() {
         const boardWidth = flappyBoard.clientWidth;
         const boardHeight = flappyBoard.clientHeight;
-        const birdX = Math.max(24, boardWidth * 0.22);
-        const birdY = Math.max(12, Math.min(boardHeight - 90, flappyBirdY));
+        const birdX = Math.max(42, boardWidth * 0.24);
+        const birdY = Math.max(16, Math.min(boardHeight - 116, flappyBirdY));
+        const birdRotation = Math.max(-24, Math.min(68, flappyBirdVelocity * 4.4));
+        const farOffset = -(flappyBackdropOffset * 0.18);
+        const nearOffset = -(flappyBackdropOffset * 0.34);
+        const beachOffset = -(flappyBackdropOffset * 0.52);
+        const cloudAOffset = -(flappyBackdropOffset * 0.08);
+        const cloudBOffset = -(flappyBackdropOffset * 0.12);
 
         flappyBoard.innerHTML = `
-            <div class="flappy-bird" style="left:${birdX}px; top:${birdY}px; transform:rotate(${Math.max(-28, Math.min(70, flappyBirdVelocity * 3))}deg);"></div>
+            <div class="flappy-cloud flappy-cloud-a" style="transform:translateX(${cloudAOffset}px);"></div>
+            <div class="flappy-cloud flappy-cloud-b" style="transform:translateX(${cloudBOffset}px);"></div>
+            <div class="flappy-backdrop flappy-backdrop-far" style="transform:translateX(${farOffset}px);"></div>
+            <div class="flappy-backdrop flappy-backdrop-near" style="transform:translateX(${nearOffset}px);"></div>
+            <div class="flappy-cove" style="transform:translateX(${nearOffset}px);"></div>
+            <div class="flappy-rock-arch" style="transform:translateX(${nearOffset}px);"></div>
+            <div class="flappy-beach" style="transform:translateX(${beachOffset}px);"></div>
+            <div class="flappy-palm flappy-palm-left" style="transform:translateX(${beachOffset}px) scale(0.92);"></div>
+            <div class="flappy-palm flappy-palm-right" style="transform:translateX(${beachOffset}px) scale(1.04);"></div>
+            <div class="flappy-bird" style="left:${birdX}px; top:${birdY}px; transform:rotate(${birdRotation}deg);"></div>
             ${flappyPipes.map((pipe) => `
                 <div class="flappy-pipe flappy-pipe-top" style="left:${pipe.x}px; top:0; height:${pipe.gapTop}px;"></div>
                 <div class="flappy-pipe flappy-pipe-bottom" style="left:${pipe.x}px; bottom:0; height:${boardHeight - pipe.gapBottom}px;"></div>
@@ -3095,11 +3673,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function initializeFlappy() {
         stopFlappy();
         closeGameOverModal();
-        flappyBirdY = Math.max(40, flappyBoard.clientHeight * 0.38);
+        flappyBirdY = Math.max(64, flappyBoard.clientHeight * 0.4);
         flappyBirdVelocity = 0;
         flappyPipes = [];
         flappyScore = 0;
-        flappyHelpText.textContent = 'Espace, clic ou tap pour battre des ailes et traverser les arches sans les toucher.';
+        flappyBackdropOffset = 0;
+        flappyHelpText.textContent = 'Espace, clic ou tap pour faire battre les ailes du perroquet pirate et passer entre les mats.';
         flappyStartButton.textContent = 'Lancer le vol';
         flappyScoreDisplay.textContent = '0';
         flappyBestDisplay.textContent = String(flappyBestScore);
@@ -3119,7 +3698,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        flappyBirdVelocity = -6.8;
+        flappyBirdVelocity = -5.2;
     }
 
     function startFlappy() {
@@ -3128,7 +3707,7 @@ document.addEventListener('DOMContentLoaded', () => {
         flappyLastFrame = performance.now();
         flappySpawnTimer = 0;
         flappyStartButton.textContent = 'Vol en cours';
-        flappyBirdVelocity = -6.8;
+        flappyBirdVelocity = -5.2;
 
         const step = (timestamp) => {
             if (!flappyRunning) {
@@ -3139,30 +3718,32 @@ document.addEventListener('DOMContentLoaded', () => {
             flappyLastFrame = timestamp;
             const boardWidth = flappyBoard.clientWidth;
             const boardHeight = flappyBoard.clientHeight;
-            const groundTop = boardHeight * 0.84;
+            const groundTop = boardHeight * 0.86;
             const birdX = boardWidth * 0.22;
 
-            flappyBirdVelocity += delta * 0.018;
+            flappyBirdVelocity += delta * 0.0125;
             flappyBirdY += flappyBirdVelocity * (delta / 16);
             flappySpawnTimer += delta;
 
-            if (flappySpawnTimer >= 1500) {
+            if (flappySpawnTimer >= 1780) {
                 flappySpawnTimer = 0;
-                const gapSize = Math.max(108, boardHeight * 0.26);
-                const gapCenter = (boardHeight * 0.22) + (Math.random() * boardHeight * 0.38);
+                const gapSize = Math.max(168, boardHeight * 0.31);
+                const minCenter = boardHeight * 0.24;
+                const maxCenter = boardHeight * 0.62;
+                const gapCenter = minCenter + (Math.random() * (maxCenter - minCenter));
                 flappyPipes.push({
-                    x: boardWidth + 40,
-                    gapTop: Math.max(30, gapCenter - (gapSize / 2)),
-                    gapBottom: Math.min(groundTop - 30, gapCenter + (gapSize / 2)),
+                    x: boardWidth + 56,
+                    gapTop: Math.max(42, gapCenter - (gapSize / 2)),
+                    gapBottom: Math.min(groundTop - 36, gapCenter + (gapSize / 2)),
                     scored: false
                 });
             }
 
-            flappyPipes = flappyPipes.filter((pipe) => pipe.x > -90);
+            flappyPipes = flappyPipes.filter((pipe) => pipe.x > -120);
             flappyPipes.forEach((pipe) => {
-                pipe.x -= delta * 0.22;
+                pipe.x -= delta * 0.17;
 
-                if (!pipe.scored && pipe.x + 68 < birdX) {
+                if (!pipe.scored && pipe.x + 86 < birdX) {
                     pipe.scored = true;
                     flappyScore += 1;
                     flappyScoreDisplay.textContent = String(flappyScore);
@@ -3174,14 +3755,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+            flappyBackdropOffset += delta * 0.17;
 
-            const birdTop = flappyBirdY;
-            const birdBottom = flappyBirdY + 26;
-            const birdLeft = birdX;
-            const birdRight = birdX + 34;
+            const hitboxInsetX = 8;
+            const hitboxInsetTop = 6;
+            const hitboxInsetBottom = 8;
+            const birdTop = flappyBirdY + hitboxInsetTop;
+            const birdBottom = flappyBirdY + 36 - hitboxInsetBottom;
+            const birdLeft = birdX + hitboxInsetX;
+            const birdRight = birdX + 46 - hitboxInsetX;
             const hitPipe = flappyPipes.some((pipe) => (
                 birdRight > pipe.x
-                && birdLeft < pipe.x + 68
+                && birdLeft < pipe.x + 86
                 && (birdTop < pipe.gapTop || birdBottom > pipe.gapBottom)
             ));
 
@@ -3314,8 +3899,9 @@ document.addEventListener('DOMContentLoaded', () => {
         aimHitEffectKey = null;
         aimSpawnEffectKey = null;
         aimScore = 0;
-        aimTimeRemaining = AIM_ROUND_SECONDS;
+        aimTimeRemaining = aimRoundSeconds;
         aimRoundCompleted = false;
+        aimBoard.classList.remove('is-rumbling', 'is-splashing');
         createAimTargets();
         updateAimHud();
         renderAimBoard();
@@ -3412,9 +3998,57 @@ document.addEventListener('DOMContentLoaded', () => {
         aimBoard.classList.add('is-rumbling');
     }
 
+    function updateAimHud() {
+        aimScoreDisplay.textContent = String(aimScore);
+        aimTimerDisplay.textContent = String(aimTimeRemaining);
+        aimBestScoreDisplay.textContent = String(aimBestScore);
+        aimStartButton.textContent = aimRoundRunning ? 'Bordée en cours' : 'Nouvelle bordée';
+        aimDurationButtons.forEach((button) => {
+            button.classList.toggle('is-active', Number(button.dataset.aimDuration) === aimRoundSeconds);
+        });
+    }
+
+    function initializeAim() {
+        stopAimRound();
+        if (aimHitEffectTimeout) {
+            window.clearTimeout(aimHitEffectTimeout);
+            aimHitEffectTimeout = null;
+        }
+        if (aimSpawnEffectTimeout) {
+            window.clearTimeout(aimSpawnEffectTimeout);
+            aimSpawnEffectTimeout = null;
+        }
+        aimHitEffectKey = null;
+        aimSpawnEffectKey = null;
+        aimScore = 0;
+        aimTimeRemaining = aimRoundSeconds;
+        aimRoundCompleted = false;
+        aimBoard.classList.remove('is-rumbling', 'is-splashing');
+        createAimTargets();
+        updateAimHud();
+        renderAimBoard();
+    }
+
+    function setAimRoundDuration(seconds) {
+        if (![30, 60, 90].includes(seconds) || aimRoundSeconds === seconds) {
+            return;
+        }
+
+        aimRoundSeconds = seconds;
+        initializeAim();
+    }
+
     function updatePongHud() {
         pongPlayerScoreDisplay.textContent = String(pongPlayerScore);
         pongAiScoreDisplay.textContent = String(pongAiScore);
+        pongLeftLabel.textContent = pongMode === 'duo' ? 'Joueur 1' : 'Toi';
+        pongRightLabel.textContent = pongMode === 'duo' ? 'Joueur 2' : 'IA';
+        pongHelpText.innerHTML = pongMode === 'duo'
+            ? 'Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas. Premier &agrave; 7.'
+            : 'Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l IA. Premier &agrave; 7.';
+        pongModeButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.dataset.pongMode === pongMode);
+        });
         if (pongPaused) {
             pongStartButton.textContent = 'Reprendre le duel';
             return;
@@ -3445,12 +4079,13 @@ document.addEventListener('DOMContentLoaded', () => {
             aiY: centerY,
             aiTargetY: centerY,
             playerSpeed: 380,
-            aiSpeed: 320,
+            aiSpeed: pongMode === 'duo' ? 380 : 248,
             ballX: (boardWidth - ballSize) / 2,
             ballY: (boardHeight - ballSize) / 2,
             ballVelocityX: 388 * serveDirection,
             ballVelocityY: 228 * verticalDirection,
-            countdownActive: true
+            countdownActive: true,
+            aiDriftTimer: 0
         };
     }
 
@@ -3604,12 +4239,22 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePongHud();
 
         if (pongPlayerScore >= PONG_TARGET_SCORE || pongAiScore >= PONG_TARGET_SCORE) {
-            finishPongMatch(pongPlayerScore >= PONG_TARGET_SCORE);
+            finishPongOutcome(pongPlayerScore >= PONG_TARGET_SCORE);
             return;
         }
 
         resetPongRound();
         startPongCountdown();
+    }
+
+    function finishPongOutcome(playerWon) {
+        stopPong();
+        openGameOverModal(
+            playerWon ? 'Victoire' : (pongMode === 'duo' ? 'Joueur 2 gagne' : 'C est perdu'),
+            playerWon
+                ? (pongMode === 'duo' ? 'Le joueur 1 remporte le duel.' : 'Le duel est gagne. La baie t acclame.')
+                : (pongMode === 'duo' ? 'Le joueur 2 remporte le duel sur le clavier.' : 'L IA remporte la manche. Le courant t echappe.')
+        );
     }
 
     function updatePongFrame(timestamp) {
@@ -3624,26 +4269,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const delta = Math.min((timestamp - pongLastFrame) / 1000, 0.032);
         pongLastFrame = timestamp;
 
-        const playerDirection = (pongKeys.has('ArrowUp') || pongKeys.has('z') || pongKeys.has('Z') ? -1 : 0)
-            + (pongKeys.has('ArrowDown') || pongKeys.has('s') || pongKeys.has('S') ? 1 : 0);
+        const leftDirection = (pongKeys.has('z') || pongKeys.has('Z') || (pongMode === 'solo' && pongKeys.has('ArrowUp')) ? -1 : 0)
+            + (pongKeys.has('s') || pongKeys.has('S') || (pongMode === 'solo' && pongKeys.has('ArrowDown')) ? 1 : 0);
 
-        pongState.playerY += playerDirection * pongState.playerSpeed * delta;
+        pongState.playerY += leftDirection * pongState.playerSpeed * delta;
         pongState.playerY = Math.max(0, Math.min(pongState.playerY, pongState.boardHeight - pongState.paddleHeight));
 
-        const ballCenter = pongState.ballY + (pongState.ballSize / 2);
-        const anticipatedCenter = ballCenter + (pongState.ballVelocityY * 0.08);
-        const desiredAiY = Math.max(
-            0,
-            Math.min(
-                anticipatedCenter - (pongState.paddleHeight / 2),
-                pongState.boardHeight - pongState.paddleHeight
-            )
-        );
-        const trackingStrength = Math.min(1, delta * 5.4);
-        pongState.aiTargetY += (desiredAiY - pongState.aiTargetY) * trackingStrength;
-        const aiDelta = pongState.aiTargetY - pongState.aiY;
-        const aiStep = Math.sign(aiDelta) * Math.min(Math.abs(aiDelta), pongState.aiSpeed * delta);
-        pongState.aiY += aiStep;
+        if (pongMode === 'duo') {
+            const rightDirection = (pongKeys.has('ArrowUp') ? -1 : 0) + (pongKeys.has('ArrowDown') ? 1 : 0);
+            pongState.aiY += rightDirection * pongState.playerSpeed * delta;
+        } else {
+            const ballCenter = pongState.ballY + (pongState.ballSize / 2);
+            const anticipatedCenter = ballCenter + (pongState.ballVelocityY * 0.045);
+            const desiredAiY = Math.max(
+                0,
+                Math.min(
+                    anticipatedCenter - (pongState.paddleHeight / 2),
+                    pongState.boardHeight - pongState.paddleHeight
+                )
+            );
+            pongState.aiDriftTimer = Math.max(0, (pongState.aiDriftTimer || 0) - delta);
+            if (pongState.aiDriftTimer <= 0) {
+                pongState.aiTargetY = desiredAiY + ((Math.random() - 0.5) * 36);
+                pongState.aiDriftTimer = 0.16 + (Math.random() * 0.12);
+            }
+            const trackingStrength = Math.min(1, delta * 2.8);
+            pongState.aiY += (pongState.aiTargetY - pongState.aiY) * trackingStrength;
+        }
         pongState.aiY = Math.max(0, Math.min(pongState.aiY, pongState.boardHeight - pongState.paddleHeight));
 
         if (pongState.countdownActive) {
@@ -3714,6 +4366,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function initializePong() {
         stopPong();
         resetPongMatch();
+    }
+
+    function setPongMode(nextMode) {
+        if (!['solo', 'duo'].includes(nextMode)) {
+            return;
+        }
+
+        pongMode = nextMode;
+        initializePong();
     }
 
     function startPong() {
@@ -5272,6 +5933,1314 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordInput.focus();
     });
 
+    function getFlowFreePairByColor(color) {
+        return flowFreeLevel?.pairs.find((pair) => pair.color === color) || null;
+    }
+
+    function updateFlowFreeHud() {
+        flowFreePairsDisplay.textContent = `${flowFreeCompleted.size} / ${flowFreeLevel?.pairs.length || 0}`;
+        flowFreeMovesDisplay.textContent = String(flowFreeMoves);
+    }
+
+    function setFlowFreePath(color, nextPath) {
+        const previousPath = flowFreePaths.get(color) || [];
+        const previousKeys = new Set(previousPath.map((cell) => `${cell.row}-${cell.col}`));
+
+        flowFreeCells.forEach((row) => {
+            row.forEach((cell) => {
+                if (cell.color === color && !cell.isAnchor) {
+                    cell.color = null;
+                }
+            });
+        });
+
+        nextPath.forEach((cell, index) => {
+            if (index === 0) {
+                return;
+            }
+
+            const boardCell = flowFreeCells[cell.row][cell.col];
+            if (!boardCell.isAnchor) {
+                boardCell.color = color;
+                const key = `${cell.row}-${cell.col}`;
+                if (!previousKeys.has(key)) {
+                    flowFreeSpawning.add(key);
+
+                    const existingTimer = flowFreeSpawnTimers.get(key);
+                    if (existingTimer) {
+                        window.clearTimeout(existingTimer);
+                    }
+
+                    const timer = window.setTimeout(() => {
+                        flowFreeSpawning.delete(key);
+                        flowFreeSpawnTimers.delete(key);
+                        scheduleFlowFreeRender();
+                    }, 180);
+
+                    flowFreeSpawnTimers.set(key, timer);
+                }
+            }
+        });
+
+        flowFreePaths.set(color, nextPath.map((cell) => ({ ...cell })));
+    }
+
+    function renderFlowFree() {
+        flowFreeRenderFrame = null;
+        updateFlowFreeHud();
+        const connectionMap = new Map();
+
+        flowFreePaths.forEach((path, color) => {
+            path.forEach((cell, index) => {
+                const key = `${cell.row}-${cell.col}`;
+                const connections = connectionMap.get(key) || { top: 0, right: 0, bottom: 0, left: 0, color };
+                const previousCell = path[index - 1];
+                const nextCell = path[index + 1];
+
+                [previousCell, nextCell].forEach((linkedCell) => {
+                    if (!linkedCell) {
+                        return;
+                    }
+
+                    if (linkedCell.row === cell.row - 1 && linkedCell.col === cell.col) {
+                        connections.top = 1;
+                    } else if (linkedCell.row === cell.row + 1 && linkedCell.col === cell.col) {
+                        connections.bottom = 1;
+                    } else if (linkedCell.row === cell.row && linkedCell.col === cell.col - 1) {
+                        connections.left = 1;
+                    } else if (linkedCell.row === cell.row && linkedCell.col === cell.col + 1) {
+                        connections.right = 1;
+                    }
+                });
+
+                connectionMap.set(key, connections);
+            });
+        });
+
+        flowFreeDespawning.forEach((connection, key) => {
+            connectionMap.set(key, connection);
+        });
+
+        flowFreeBoard.innerHTML = flowFreeCells.map((row, rowIndex) => row.map((cell, colIndex) => {
+            const classes = ['flowfree-cell'];
+
+            if (cell.isAnchor) {
+                classes.push('is-anchor');
+            }
+
+            if (cell.color) {
+                classes.push('is-filled');
+            }
+
+            if (flowFreeActiveColor && cell.color === flowFreeActiveColor) {
+                classes.push('is-selected');
+            }
+
+            const connectionKey = `${rowIndex}-${colIndex}`;
+            const connection = connectionMap.get(connectionKey) || { top: 0, right: 0, bottom: 0, left: 0 };
+            const despawnConnection = flowFreeDespawning.get(connectionKey);
+            const top = connection.top;
+            const right = connection.right;
+            const bottom = connection.bottom;
+            const left = connection.left;
+
+            if (despawnConnection) {
+                classes.push('is-despawning');
+            }
+
+            if (flowFreeSpawning.has(connectionKey) && !despawnConnection) {
+                classes.push('is-spawning');
+            }
+
+            return `
+                <button
+                    type="button"
+                    class="${classes.join(' ')}"
+                    data-flow-row="${rowIndex}"
+                    data-flow-col="${colIndex}"
+                    style="
+                        --flow-color: ${(despawnConnection?.color || cell.color) || 'transparent'};
+                        --flow-top: ${top};
+                        --flow-right: ${right};
+                        --flow-bottom: ${bottom};
+                        --flow-left: ${left};
+                    "
+                ></button>
+            `;
+        }).join('')).join('');
+    }
+
+    function scheduleFlowFreeRender() {
+        if (flowFreeRenderFrame !== null) {
+            return;
+        }
+
+        flowFreeRenderFrame = window.requestAnimationFrame(() => {
+            renderFlowFree();
+        });
+    }
+
+    function buildFlowFreeConnectionMap(path, color) {
+        const connectionMap = new Map();
+
+        path.forEach((cell, index) => {
+            const key = `${cell.row}-${cell.col}`;
+            const connections = connectionMap.get(key) || { top: 0, right: 0, bottom: 0, left: 0, color };
+            const previousCell = path[index - 1];
+            const nextCell = path[index + 1];
+
+            [previousCell, nextCell].forEach((linkedCell) => {
+                if (!linkedCell) {
+                    return;
+                }
+
+                if (linkedCell.row === cell.row - 1 && linkedCell.col === cell.col) {
+                    connections.top = 1;
+                } else if (linkedCell.row === cell.row + 1 && linkedCell.col === cell.col) {
+                    connections.bottom = 1;
+                } else if (linkedCell.row === cell.row && linkedCell.col === cell.col - 1) {
+                    connections.left = 1;
+                } else if (linkedCell.row === cell.row && linkedCell.col === cell.col + 1) {
+                    connections.right = 1;
+                }
+            });
+
+            connectionMap.set(key, connections);
+        });
+
+        return connectionMap;
+    }
+
+    function despawnFlowFreePath(color) {
+        const path = flowFreePaths.get(color) || [];
+        if (path.length <= 1) {
+            return;
+        }
+
+        if (flowFreeDespawnTimer) {
+            window.clearTimeout(flowFreeDespawnTimer);
+            flowFreeDespawnTimer = null;
+        }
+
+        const despawnMap = buildFlowFreeConnectionMap(path, color);
+        const startCell = path[0];
+        despawnMap.delete(`${startCell.row}-${startCell.col}`);
+        flowFreeDespawning = despawnMap;
+        setFlowFreePath(color, [startCell]);
+        scheduleFlowFreeRender();
+
+        flowFreeDespawnTimer = window.setTimeout(() => {
+            flowFreeDespawning = new Map();
+            flowFreeDespawnTimer = null;
+            scheduleFlowFreeRender();
+        }, 220);
+    }
+
+    function initializeFlowFree() {
+        closeGameOverModal();
+        flowFreeLevel = generateFlowFreeLevel();
+        flowFreeBoard.style.gridTemplateColumns = `repeat(${flowFreeLevel.size}, minmax(0, 1fr))`;
+        flowFreeCells = Array.from({ length: flowFreeLevel.size }, () => (
+            Array.from({ length: flowFreeLevel.size }, () => ({ color: null, isAnchor: false }))
+        ));
+        flowFreePaths = new Map();
+        flowFreeCompleted = new Set();
+        flowFreeMoves = 0;
+        flowFreeActiveColor = null;
+        flowFreePointerDown = false;
+        flowFreeLastHoverKey = null;
+        flowFreeSpawning = new Set();
+        flowFreeSpawnTimers.forEach((timer) => window.clearTimeout(timer));
+        flowFreeSpawnTimers = new Map();
+        flowFreeDespawning = new Map();
+        if (flowFreeDespawnTimer) {
+            window.clearTimeout(flowFreeDespawnTimer);
+            flowFreeDespawnTimer = null;
+        }
+
+        flowFreeLevel.pairs.forEach((pair) => {
+            const startCell = flowFreeCells[pair.start.row][pair.start.col];
+            const endCell = flowFreeCells[pair.end.row][pair.end.col];
+            startCell.color = pair.color;
+            endCell.color = pair.color;
+            startCell.isAnchor = true;
+            endCell.isAnchor = true;
+            flowFreePaths.set(pair.color, [{ ...pair.start }]);
+        });
+
+        flowFreeHelpText.textContent = 'Relie chaque paire sans croiser les courants et couvre toutes les cases du plateau.';
+        renderFlowFree();
+    }
+
+    function startFlowFreePath(row, col) {
+        const cell = flowFreeCells[row][col];
+        if (!cell?.color) {
+            return;
+        }
+
+        const existingPath = flowFreePaths.get(cell.color) || [];
+        const existingIndex = existingPath.findIndex((pathCell) => pathCell.row === row && pathCell.col === col);
+
+        flowFreeMoves += 1;
+        flowFreeActiveColor = cell.color;
+        flowFreePointerDown = true;
+        flowFreeCompleted.delete(cell.color);
+        setFlowFreePath(
+            cell.color,
+            cell.isAnchor
+                ? [{ row, col }]
+                : existingIndex >= 0
+                    ? existingPath.slice(0, existingIndex + 1)
+                    : [{ row, col }]
+        );
+        flowFreeLastHoverKey = `${row}-${col}`;
+        flowFreeHelpText.textContent = 'Trace maintenant le courant jusqu a la bouee jumelle.';
+        scheduleFlowFreeRender();
+    }
+
+    function extendFlowFreePath(row, col) {
+        if (!flowFreePointerDown || !flowFreeActiveColor) {
+            return;
+        }
+
+        const path = flowFreePaths.get(flowFreeActiveColor) || [];
+        const lastCell = path[path.length - 1];
+
+        if (!lastCell) {
+            return;
+        }
+
+        const distance = Math.abs(lastCell.row - row) + Math.abs(lastCell.col - col);
+        if (distance !== 1) {
+            return;
+        }
+
+        const targetCell = flowFreeCells[row][col];
+        if (!targetCell) {
+            return;
+        }
+
+        const hoverKey = `${row}-${col}`;
+        if (flowFreeLastHoverKey === hoverKey) {
+            return;
+        }
+        flowFreeLastHoverKey = hoverKey;
+
+        const existingIndex = path.findIndex((cell) => cell.row === row && cell.col === col);
+        if (existingIndex >= 0) {
+            setFlowFreePath(flowFreeActiveColor, path.slice(0, existingIndex + 1));
+            flowFreeCompleted.delete(flowFreeActiveColor);
+            scheduleFlowFreeRender();
+            return;
+        }
+
+        if (targetCell.color && targetCell.color !== flowFreeActiveColor) {
+            return;
+        }
+
+        const pair = getFlowFreePairByColor(flowFreeActiveColor);
+        if (!pair) {
+            return;
+        }
+
+        const isOtherAnchor = targetCell.isAnchor
+            && ((row === pair.start.row && col === pair.start.col) || (row === pair.end.row && col === pair.end.col));
+
+        if (targetCell.isAnchor && !isOtherAnchor) {
+            return;
+        }
+
+        const nextPath = [...path, { row, col }];
+        setFlowFreePath(flowFreeActiveColor, nextPath);
+
+        const startCell = nextPath[0];
+        const reachedEnd = (startCell.row === pair.start.row && startCell.col === pair.start.col
+            && row === pair.end.row && col === pair.end.col)
+            || (startCell.row === pair.end.row && startCell.col === pair.end.col
+            && row === pair.start.row && col === pair.start.col);
+
+        if (reachedEnd) {
+            flowFreeCompleted.add(flowFreeActiveColor);
+            flowFreeHelpText.textContent = 'Un courant est ferme. Plus que quelques liaisons.';
+
+            const allCellsFilled = flowFreeCells.every((rowCells) => rowCells.every((cell) => Boolean(cell.color)));
+            if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
+                flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
+                renderFlowFree();
+                openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracés.`);
+                flowFreePointerDown = false;
+                flowFreeActiveColor = null;
+                return;
+            }
+            flowFreeHelpText.textContent = allCellsFilled
+                ? 'Toutes les cases sont remplies. Termine les dernieres liaisons.'
+                : 'Un courant est ferme. Les cases libres doivent aussi etre couvertes.';
+        } else {
+            flowFreeCompleted.delete(flowFreeActiveColor);
+        }
+
+        scheduleFlowFreeRender();
+    }
+
+    function stopFlowFreePath() {
+        const activeColor = flowFreeActiveColor;
+        flowFreePointerDown = false;
+        flowFreeActiveColor = null;
+        flowFreeLastHoverKey = null;
+        if (activeColor && !flowFreeCompleted.has(activeColor)) {
+            despawnFlowFreePath(activeColor);
+            return;
+        }
+
+        scheduleFlowFreeRender();
+    }
+
+    function updateMagicSortHud() {
+        const solvedTubes = magicSortTubes.filter((tube) => (
+            tube.length === 4 && tube.every((color) => color === tube[0])
+        )).length;
+        const targetTubes = new Set(magicSortTubes.flat().filter(Boolean)).size;
+
+        magicSortSolvedDisplay.textContent = `${solvedTubes} / ${targetTubes}`;
+        magicSortMovesDisplay.textContent = String(magicSortMoves);
+    }
+
+    function renderMagicSort() {
+        updateMagicSortHud();
+        magicSortBoard.innerHTML = magicSortTubes.map((tube, tubeIndex) => {
+            const slots = Array.from({ length: 4 }, (_, slotIndex) => {
+                const color = tube[slotIndex];
+                const fill = color ? MAGIC_SORT_COLORS[color] : 'rgba(255, 255, 255, 0.06)';
+                return `<span class="magicsort-layer" style="background: ${fill};"></span>`;
+            }).join('');
+
+            return `
+                <div class="magicsort-tube${magicSortSelectedTube === tubeIndex ? ' is-selected' : ''}">
+                    <button type="button" class="magicsort-tube-button" data-magic-sort-tube="${tubeIndex}">
+                        ${slots}
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function initializeMagicSort() {
+        closeGameOverModal();
+        magicSortTubes = generateMagicSortLevel();
+        magicSortSelectedTube = null;
+        magicSortMoves = 0;
+        magicSortHelpText.textContent = 'Verse les couleurs d un recipient a l autre pour obtenir des tubes uniformes. Chaque partie melange les fioles differemment.';
+        renderMagicSort();
+    }
+
+    function isMagicSortSolved() {
+        return magicSortTubes.every((tube) => (
+            tube.length === 0 || (tube.length === 4 && tube.every((color) => color === tube[0]))
+        ));
+    }
+
+    function handleMagicSortTubeClick(index) {
+        const sourceTube = magicSortTubes[index];
+
+        if (magicSortSelectedTube === null) {
+            if (!sourceTube.length) {
+                return;
+            }
+
+            magicSortSelectedTube = index;
+            magicSortHelpText.textContent = 'Choisis maintenant le tube de destination.';
+            renderMagicSort();
+            return;
+        }
+
+        if (magicSortSelectedTube === index) {
+            magicSortSelectedTube = null;
+            magicSortHelpText.textContent = 'Selection annulee.';
+            renderMagicSort();
+            return;
+        }
+
+        const fromTube = magicSortTubes[magicSortSelectedTube];
+        const toTube = magicSortTubes[index];
+
+        if (!fromTube.length || toTube.length === 4) {
+            magicSortSelectedTube = null;
+            renderMagicSort();
+            return;
+        }
+
+        const movingColor = fromTube[fromTube.length - 1];
+        const topTarget = toTube[toTube.length - 1];
+        if (topTarget && topTarget !== movingColor) {
+            magicSortHelpText.textContent = 'Les couleurs doivent correspondre pour verser.';
+            magicSortSelectedTube = null;
+            renderMagicSort();
+            return;
+        }
+
+        let contiguousCount = 0;
+        for (let cursor = fromTube.length - 1; cursor >= 0; cursor -= 1) {
+            if (fromTube[cursor] !== movingColor) {
+                break;
+            }
+            contiguousCount += 1;
+        }
+
+        const movableCount = Math.min(contiguousCount, 4 - toTube.length);
+        if (!movableCount) {
+            magicSortSelectedTube = null;
+            renderMagicSort();
+            return;
+        }
+
+        for (let step = 0; step < movableCount; step += 1) {
+            toTube.push(fromTube.pop());
+        }
+
+        magicSortMoves += 1;
+        magicSortSelectedTube = null;
+        magicSortHelpText.textContent = 'Bien joue. Continue de trier les fioles.';
+        renderMagicSort();
+
+        if (isMagicSortSolved()) {
+            magicSortHelpText.textContent = 'Toutes les fioles sont rangees.';
+            openGameOverModal('Tri reussi', `Les couleurs sont rangees en ${magicSortMoves} coups.`);
+        }
+    }
+
+    function updateMentalMathHud() {
+        mentalMathScoreDisplay.textContent = String(mentalMathScore);
+        mentalMathRoundDisplay.textContent = `${Math.min(mentalMathRound, MENTAL_MATH_TOTAL_ROUNDS)} / ${MENTAL_MATH_TOTAL_ROUNDS}`;
+    }
+
+    function generateMentalMathQuestion(round) {
+        const difficulty = Math.min(4, Math.floor((round - 1) / 3));
+        const operationRoll = Math.floor(Math.random() * 4);
+
+        if (operationRoll === 0) {
+            const a = 12 + Math.floor(Math.random() * (18 + (difficulty * 10)));
+            const b = 4 + Math.floor(Math.random() * (14 + (difficulty * 8)));
+            return { prompt: `${a} + ${b}`, answer: a + b };
+        }
+
+        if (operationRoll === 1) {
+            const a = 30 + Math.floor(Math.random() * (25 + (difficulty * 12)));
+            const b = 8 + Math.floor(Math.random() * (18 + (difficulty * 6)));
+            return { prompt: `${a} - ${b}`, answer: a - b };
+        }
+
+        if (operationRoll === 2) {
+            const a = 3 + Math.floor(Math.random() * (5 + difficulty));
+            const b = 4 + Math.floor(Math.random() * (7 + difficulty));
+            return { prompt: `${a} x ${b}`, answer: a * b };
+        }
+
+        const divisor = 2 + Math.floor(Math.random() * (5 + difficulty));
+        const quotient = 3 + Math.floor(Math.random() * (6 + difficulty));
+        return { prompt: `${divisor * quotient} / ${divisor}`, answer: quotient };
+    }
+
+    function renderMentalMathQuestion() {
+        updateMentalMathHud();
+        mentalMathQuestion.textContent = mentalMathCurrentQuestion?.prompt || '--';
+        mentalMathAnswerInput.value = '';
+        if (activeGameTab === 'mentalMath') {
+            mentalMathAnswerInput.focus();
+        }
+    }
+
+    function advanceMentalMathQuestion() {
+        if (mentalMathRound > MENTAL_MATH_TOTAL_ROUNDS) {
+            mentalMathHelpText.textContent = 'La traversee mentale est terminee.';
+            openGameOverModal('Quiz termine', `Tu as obtenu ${mentalMathScore} / ${MENTAL_MATH_TOTAL_ROUNDS}.`);
+            mentalMathRound = MENTAL_MATH_TOTAL_ROUNDS;
+            updateMentalMathHud();
+            return;
+        }
+
+        mentalMathCurrentQuestion = generateMentalMathQuestion(mentalMathRound);
+        renderMentalMathQuestion();
+    }
+
+    function initializeMentalMath() {
+        closeGameOverModal();
+        mentalMathScore = 0;
+        mentalMathRound = 1;
+        mentalMathCurrentQuestion = null;
+        mentalMathFeedback.textContent = '';
+        mentalMathHelpText.textContent = 'Resolvez 10 calculs avant la fin de la traversee.';
+        advanceMentalMathQuestion();
+    }
+
+    function submitMentalMathAnswer() {
+        if (!mentalMathCurrentQuestion) {
+            return;
+        }
+
+        const userAnswer = Number(mentalMathAnswerInput.value);
+        if (Number.isNaN(userAnswer)) {
+            mentalMathFeedback.textContent = 'Entre une reponse avant de valider.';
+            return;
+        }
+
+        if (userAnswer === mentalMathCurrentQuestion.answer) {
+            mentalMathScore += 1;
+            mentalMathFeedback.textContent = 'Bonne reponse.';
+            mentalMathHelpText.textContent = 'Le capitaine approuve ce calcul.';
+        } else {
+            mentalMathFeedback.textContent = `Presque. Il fallait ${mentalMathCurrentQuestion.answer}.`;
+            mentalMathHelpText.textContent = 'On garde le cap, meme apres une erreur.';
+        }
+
+        mentalMathRound += 1;
+        advanceMentalMathQuestion();
+    }
+
+    function getRandomCandyType() {
+        return CANDY_CRUSH_TYPES[Math.floor(Math.random() * CANDY_CRUSH_TYPES.length)];
+    }
+
+    function updateCandyCrushHud() {
+        candyCrushScoreDisplay.textContent = String(candyCrushScore);
+        candyCrushMovesDisplay.textContent = String(candyCrushMoves);
+    }
+
+    function renderCandyCrush() {
+        updateCandyCrushHud();
+        candyCrushBoard.innerHTML = candyCrushGrid.map((row, rowIndex) => row.map((cell, colIndex) => `
+            <button
+                type="button"
+                class="candycrush-cell${candyCrushSelectedCell?.row === rowIndex && candyCrushSelectedCell?.col === colIndex ? ' is-selected' : ''}"
+                data-candy-row="${rowIndex}"
+                data-candy-col="${colIndex}"
+                data-candy-type="${cell}"
+                style="--candy-fill: ${CANDY_CRUSH_COLORS[cell]}"
+            ></button>
+        `).join('')).join('');
+    }
+
+    async function animateCandyCrushFall(changedKeys = new Set()) {
+        changedKeys.forEach((key) => {
+            const [row, col] = key.split('-');
+            const element = candyCrushBoard.querySelector(`[data-candy-row="${row}"][data-candy-col="${col}"]`);
+            element?.classList.add('is-falling');
+        });
+
+        await waitMs(220);
+    }
+
+    function findCandyCrushMatches() {
+        const matches = new Set();
+
+        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
+            let streak = 1;
+
+            for (let colIndex = 1; colIndex <= CANDY_CRUSH_SIZE; colIndex += 1) {
+                const current = candyCrushGrid[rowIndex][colIndex];
+                const previous = candyCrushGrid[rowIndex][colIndex - 1];
+
+                if (current && current === previous) {
+                    streak += 1;
+                } else {
+                    if (streak >= 3) {
+                        for (let offset = 1; offset <= streak; offset += 1) {
+                            matches.add(`${rowIndex}-${colIndex - offset}`);
+                        }
+                    }
+                    streak = 1;
+                }
+            }
+        }
+
+        for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
+            let streak = 1;
+
+            for (let rowIndex = 1; rowIndex <= CANDY_CRUSH_SIZE; rowIndex += 1) {
+                const current = candyCrushGrid[rowIndex]?.[colIndex];
+                const previous = candyCrushGrid[rowIndex - 1]?.[colIndex];
+
+                if (current && current === previous) {
+                    streak += 1;
+                } else {
+                    if (streak >= 3) {
+                        for (let offset = 1; offset <= streak; offset += 1) {
+                            matches.add(`${rowIndex - offset}-${colIndex}`);
+                        }
+                    }
+                    streak = 1;
+                }
+            }
+        }
+
+        return matches;
+    }
+
+    function collapseCandyCrushGrid() {
+        const previousGrid = candyCrushGrid.map((row) => [...row]);
+        const changedKeys = new Set();
+
+        for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
+            const compacted = [];
+
+            for (let rowIndex = CANDY_CRUSH_SIZE - 1; rowIndex >= 0; rowIndex -= 1) {
+                const cell = candyCrushGrid[rowIndex][colIndex];
+                if (cell) {
+                    compacted.push(cell);
+                }
+            }
+
+            for (let rowIndex = CANDY_CRUSH_SIZE - 1; rowIndex >= 0; rowIndex -= 1) {
+                candyCrushGrid[rowIndex][colIndex] = compacted[CANDY_CRUSH_SIZE - 1 - rowIndex] || null;
+            }
+
+            for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
+                if (!candyCrushGrid[rowIndex][colIndex]) {
+                    candyCrushGrid[rowIndex][colIndex] = getRandomCandyType();
+                }
+            }
+        }
+
+        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
+            for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
+                if (candyCrushGrid[rowIndex][colIndex] !== previousGrid[rowIndex][colIndex]) {
+                    changedKeys.add(`${rowIndex}-${colIndex}`);
+                }
+            }
+        }
+
+        return changedKeys;
+    }
+
+    function hasCandyCrushPossibleMove() {
+        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
+            for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
+                const directions = [
+                    { row: 0, col: 1 },
+                    { row: 1, col: 0 }
+                ];
+
+                for (const direction of directions) {
+                    const nextRow = rowIndex + direction.row;
+                    const nextCol = colIndex + direction.col;
+
+                    if (nextRow >= CANDY_CRUSH_SIZE || nextCol >= CANDY_CRUSH_SIZE) {
+                        continue;
+                    }
+
+                    swapCandyCells({ row: rowIndex, col: colIndex }, { row: nextRow, col: nextCol });
+                    const hasMatch = findCandyCrushMatches().size > 0;
+                    swapCandyCells({ row: rowIndex, col: colIndex }, { row: nextRow, col: nextCol });
+
+                    if (hasMatch) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    function shuffleCandyCrushBoard() {
+        const candies = shuffleArray(candyCrushGrid.flat());
+        let cursor = 0;
+
+        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
+            for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
+                candyCrushGrid[rowIndex][colIndex] = candies[cursor];
+                cursor += 1;
+            }
+        }
+    }
+
+    function ensureCandyCrushPlayable() {
+        let attempts = 0;
+
+        while ((!hasCandyCrushPossibleMove() || findCandyCrushMatches().size > 0) && attempts < 20) {
+            shuffleCandyCrushBoard();
+            attempts += 1;
+        }
+    }
+
+    function resolveCandyCrushBoard() {
+        let chainCount = 0;
+
+        while (true) {
+            const matches = findCandyCrushMatches();
+            if (!matches.size) {
+                break;
+            }
+
+            chainCount += 1;
+            candyCrushScore += matches.size * (10 * chainCount);
+            matches.forEach((key) => {
+                const [row, col] = key.split('-').map(Number);
+                candyCrushGrid[row][col] = null;
+            });
+            collapseCandyCrushGrid();
+        }
+    }
+
+    function initializeCandyCrush() {
+        closeGameOverModal();
+        candyCrushGrid = Array.from({ length: CANDY_CRUSH_SIZE }, () => Array(CANDY_CRUSH_SIZE).fill(null));
+
+        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
+            for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
+                let nextCandy = getRandomCandyType();
+                while (
+                    (colIndex >= 2 && nextCandy === candyCrushGrid[rowIndex][colIndex - 1] && nextCandy === candyCrushGrid[rowIndex][colIndex - 2])
+                    || (rowIndex >= 2 && nextCandy === candyCrushGrid[rowIndex - 1][colIndex] && nextCandy === candyCrushGrid[rowIndex - 2][colIndex])
+                ) {
+                    nextCandy = getRandomCandyType();
+                }
+                candyCrushGrid[rowIndex][colIndex] = nextCandy;
+            }
+        }
+
+        candyCrushSelectedCell = null;
+        candyCrushScore = 0;
+        candyCrushMoves = CANDY_CRUSH_START_MOVES;
+        candyCrushAnimating = false;
+        candyCrushPointerStart = null;
+        ensureCandyCrushPlayable();
+        candyCrushHelpText.textContent = 'Fais glisser une piece vers une voisine pour former des alignements de 3 tresors ou plus.';
+        renderCandyCrush();
+    }
+
+    function areCandyCellsAdjacent(firstCell, secondCell) {
+        return Math.abs(firstCell.row - secondCell.row) + Math.abs(firstCell.col - secondCell.col) === 1;
+    }
+
+    function swapCandyCells(firstCell, secondCell) {
+        const temp = candyCrushGrid[firstCell.row][firstCell.col];
+        candyCrushGrid[firstCell.row][firstCell.col] = candyCrushGrid[secondCell.row][secondCell.col];
+        candyCrushGrid[secondCell.row][secondCell.col] = temp;
+    }
+
+    async function animateCandyCrushSwap(firstCell, secondCell, revert = false) {
+        const firstElement = candyCrushBoard.querySelector(`[data-candy-row="${firstCell.row}"][data-candy-col="${firstCell.col}"]`);
+        const secondElement = candyCrushBoard.querySelector(`[data-candy-row="${secondCell.row}"][data-candy-col="${secondCell.col}"]`);
+        if (!firstElement || !secondElement) {
+            return;
+        }
+
+        const firstRect = firstElement.getBoundingClientRect();
+        const secondRect = secondElement.getBoundingClientRect();
+        const deltaX = secondRect.left - firstRect.left;
+        const deltaY = secondRect.top - firstRect.top;
+
+        firstElement.style.transition = 'transform 180ms ease';
+        secondElement.style.transition = 'transform 180ms ease';
+        firstElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        secondElement.style.transform = `translate(${-deltaX}px, ${-deltaY}px)`;
+        if (revert) {
+            firstElement.classList.add('is-bouncing');
+            secondElement.classList.add('is-bouncing');
+        }
+
+        await waitMs(190);
+    }
+
+    async function animateCandyCrushMatches(matches) {
+        matches.forEach((key) => {
+            const [row, col] = key.split('-');
+            const element = candyCrushBoard.querySelector(`[data-candy-row="${row}"][data-candy-col="${col}"]`);
+            if (element) {
+                element.classList.add('is-crushing');
+                element.insertAdjacentHTML('beforeend', `
+                    <span class="candy-hit-particle candy-hit-particle-a" aria-hidden="true"></span>
+                    <span class="candy-hit-particle candy-hit-particle-b" aria-hidden="true"></span>
+                    <span class="candy-hit-particle candy-hit-particle-c" aria-hidden="true"></span>
+                    <span class="candy-hit-particle candy-hit-particle-d" aria-hidden="true"></span>
+                    <span class="candy-hit-particle candy-hit-particle-e" aria-hidden="true"></span>
+                `);
+            }
+        });
+
+        await waitMs(320);
+    }
+
+    async function resolveCandyCrushBoardAnimated() {
+        let chainCount = 0;
+
+        while (true) {
+            const matches = findCandyCrushMatches();
+            if (!matches.size) {
+                break;
+            }
+
+            chainCount += 1;
+            await animateCandyCrushMatches(matches);
+            candyCrushScore += matches.size * (10 * chainCount);
+            matches.forEach((key) => {
+                const [row, col] = key.split('-').map(Number);
+                candyCrushGrid[row][col] = null;
+            });
+            const changedKeys = collapseCandyCrushGrid();
+            renderCandyCrush();
+            await animateCandyCrushFall(changedKeys);
+        }
+    }
+
+    async function tryCandyCrushSwap(firstCell, secondCell) {
+        if (candyCrushAnimating || candyCrushMoves <= 0) {
+            return;
+        }
+
+        if (!areCandyCellsAdjacent(firstCell, secondCell)) {
+            candyCrushSelectedCell = secondCell;
+            renderCandyCrush();
+            return;
+        }
+
+        candyCrushAnimating = true;
+        candyCrushSelectedCell = null;
+        await animateCandyCrushSwap(firstCell, secondCell);
+        swapCandyCells(firstCell, secondCell);
+        renderCandyCrush();
+        const matches = findCandyCrushMatches();
+
+        if (!matches.size) {
+            await animateCandyCrushSwap(secondCell, firstCell, true);
+            swapCandyCells(firstCell, secondCell);
+            renderCandyCrush();
+            candyCrushHelpText.textContent = 'Aucun alignement. Essaie un autre glissement.';
+            candyCrushAnimating = false;
+            return;
+        }
+
+        candyCrushMoves -= 1;
+        candyCrushHelpText.textContent = 'Belle combinaison. Les tresors s effondrent dans la cale.';
+        renderCandyCrush();
+        await resolveCandyCrushBoardAnimated();
+        ensureCandyCrushPlayable();
+        renderCandyCrush();
+        candyCrushAnimating = false;
+
+        if (candyCrushScore >= CANDY_CRUSH_TARGET_SCORE) {
+            openGameOverModal('Cale videe', `Objectif atteint avec ${candyCrushScore} points.`);
+            return;
+        }
+
+        if (candyCrushMoves <= 0) {
+            openGameOverModal('Fin de reserve', `Plus de coups. Score final : ${candyCrushScore}.`);
+        }
+    }
+
+    function updateHarborRunHud() {
+        harborRunScoreDisplay.textContent = String(harborRunScore);
+        harborRunBestDisplay.textContent = String(harborRunBestScore);
+        harborRunStartButton.textContent = harborRunRunning ? 'En course' : 'Lancer la route';
+    }
+
+    function renderHarborRun() {
+        const farOffset = (harborRunBackdropOffset * 0.22) % 180;
+        const midOffset = (harborRunBackdropOffset * 0.42) % 210;
+        const nearOffset = (harborRunBackdropOffset * 0.72) % 160;
+        const foamOffset = (harborRunBackdropOffset * 0.95) % 140;
+        const backdropMarkup = `
+            <div class="harborrun-backdrop harborrun-backdrop-far" style="background-position: center ${farOffset}px;"></div>
+            <div class="harborrun-backdrop harborrun-backdrop-mid" style="background-position: center ${midOffset}px;"></div>
+            <div class="harborrun-waves harborrun-waves-near" style="background-position: center ${nearOffset}px;"></div>
+            <div class="harborrun-foam" style="background-position: center ${foamOffset}px;"></div>
+        `;
+        const playerMarkup = `<div class="harborrun-player" style="left: ${HARBOR_RUN_LANES[harborRunLane]}%;"></div>`;
+        const obstaclesMarkup = harborRunObstacles.map((obstacle) => `
+            <div
+                class="harborrun-obstacle type-${obstacle.type}"
+                style="left: ${HARBOR_RUN_LANES[obstacle.lane]}%; top: ${obstacle.y}%;"
+            ></div>
+        `).join('');
+
+        harborRunBoard.innerHTML = `${backdropMarkup}${playerMarkup}${obstaclesMarkup}`;
+        updateHarborRunHud();
+    }
+
+    function stopHarborRun() {
+        harborRunRunning = false;
+        if (harborRunAnimationFrame) {
+            window.cancelAnimationFrame(harborRunAnimationFrame);
+            harborRunAnimationFrame = null;
+        }
+        harborRunLastFrame = 0;
+        updateHarborRunHud();
+    }
+
+    function initializeHarborRun() {
+        closeGameOverModal();
+        stopHarborRun();
+        harborRunLane = 1;
+        harborRunSafeLane = 1;
+        harborRunObstacles = [];
+        harborRunScore = 0;
+        harborRunSpawnTimer = 0;
+        harborRunBackdropOffset = 0;
+        harborRunStartButton.textContent = 'Lancer la route';
+        harborRunHelpText.textContent = 'Guide ton navire entre navires, epaves et rochers avec plus de marge pour passer.';
+        renderHarborRun();
+    }
+
+    function moveHarborRun(direction) {
+        harborRunLane = Math.max(0, Math.min(HARBOR_RUN_LANES.length - 1, harborRunLane + direction));
+        renderHarborRun();
+    }
+
+    function startHarborRun() {
+        if (harborRunRunning) {
+            return;
+        }
+
+        closeGameOverModal();
+        initializeHarborRun();
+        harborRunRunning = true;
+        harborRunHelpText.textContent = 'Garde le cap. La mer s accelere peu a peu a mesure que tu avances.';
+        updateHarborRunHud();
+        harborRunAnimationFrame = window.requestAnimationFrame(runHarborRunFrame);
+    }
+
+    function runHarborRunFrame(timestamp) {
+        if (!harborRunRunning) {
+            return;
+        }
+
+        if (!harborRunLastFrame) {
+            harborRunLastFrame = timestamp;
+        }
+
+        const deltaMs = timestamp - harborRunLastFrame;
+        harborRunLastFrame = timestamp;
+        harborRunSpawnTimer += deltaMs;
+
+        if (harborRunSpawnTimer >= Math.max(560, 980 - (harborRunScore * 8))) {
+            const hasRecentWave = harborRunObstacles.some((obstacle) => obstacle.y < 28);
+
+            if (!hasRecentWave) {
+                harborRunSpawnTimer = 0;
+                const accessibleOpenLanes = [harborRunSafeLane - 1, harborRunSafeLane, harborRunSafeLane + 1]
+                    .filter((lane) => lane >= 0 && lane < HARBOR_RUN_LANES.length);
+                const nextOpenLane = accessibleOpenLanes[Math.floor(Math.random() * accessibleOpenLanes.length)];
+                harborRunSafeLane = nextOpenLane;
+                const blockedLanes = [0, 1, 2].filter((lane) => lane !== nextOpenLane);
+                const nearestObstacleY = harborRunObstacles.reduce((nearest, obstacle) => (
+                    obstacle.y > nearest ? obstacle.y : nearest
+                ), -100);
+                const canSpawnDouble = harborRunScore > 10 && nearestObstacleY > 42 && Math.random() < 0.18;
+                const obstacleLanes = canSpawnDouble
+                    ? blockedLanes
+                    : [blockedLanes[Math.floor(Math.random() * blockedLanes.length)]];
+
+                obstacleLanes.forEach((lane) => {
+                    harborRunObstacles.push({
+                        lane,
+                        y: -18,
+                        passed: false,
+                        type: ['ship', 'wreck', 'rock'][Math.floor(Math.random() * 3)]
+                    });
+                });
+            }
+        }
+
+        const speed = 28 + Math.min(54, harborRunScore * 1.45);
+        harborRunBackdropOffset += (deltaMs / 1000) * speed * 5.6;
+        harborRunObstacles.forEach((obstacle) => {
+            obstacle.y += (deltaMs / 1000) * speed;
+            if (!obstacle.passed && obstacle.y > 94) {
+                obstacle.passed = true;
+                harborRunScore += 1;
+                if (harborRunScore > harborRunBestScore) {
+                    harborRunBestScore = harborRunScore;
+                    window.localStorage.setItem(HARBOR_RUN_BEST_KEY, String(harborRunBestScore));
+                }
+            }
+        });
+
+        harborRunObstacles = harborRunObstacles.filter((obstacle) => obstacle.y < 118);
+        harborRunObstacles.sort((firstObstacle, secondObstacle) => firstObstacle.y - secondObstacle.y);
+
+        const collided = harborRunObstacles.some((obstacle) => (
+            obstacle.lane === harborRunLane
+            && obstacle.y > 78
+            && obstacle.y < 96
+        ));
+
+        if (collided) {
+            stopHarborRun();
+            harborRunHelpText.textContent = 'Collision dans le port.';
+            renderHarborRun();
+            openGameOverModal('Carambolage', `Distance parcourue : ${harborRunScore}.`);
+            return;
+        }
+
+        renderHarborRun();
+        harborRunAnimationFrame = window.requestAnimationFrame(runHarborRunFrame);
+    }
+
+    const STACKER_LAYER_HEIGHT = 26;
+    const STACKER_BASE_BOTTOM = 68;
+
+    function getStackerBottom(level) {
+        return STACKER_BASE_BOTTOM + ((level - 1) * (STACKER_LAYER_HEIGHT - 1));
+    }
+
+    function getStackerPalette(level) {
+        const palettes = [
+            { left: '#d4a15d', right: '#8b5a2b' },
+            { left: '#ca6b4a', right: '#7a3420' },
+            { left: '#4ea9a1', right: '#1f5d59' },
+            { left: '#d9b34f', right: '#8f6221' },
+            { left: '#7f8fc8', right: '#475281' },
+            { left: '#76a85a', right: '#44662e' }
+        ];
+
+        return palettes[level % palettes.length];
+    }
+
+    function getStackerCameraOffset() {
+        return Math.max(0, getStackerBottom(Math.max(0, stackerScore)) - 180);
+    }
+
+    function updateStackerHud() {
+        stackerScoreDisplay.textContent = String(stackerScore);
+        stackerBestDisplay.textContent = String(stackerBestScore);
+        stackerStartButton.textContent = stackerRunning ? 'Empiler' : 'Lancer la tour';
+    }
+
+    function renderStacker() {
+        const cameraOffset = getStackerCameraOffset();
+        const backdropOffset = Math.min(cameraOffset * 0.18, 48);
+        const foregroundOffset = Math.min(cameraOffset * 0.28, 72);
+        const layersMarkup = stackerLayers.map((layer) => `
+            <div
+                class="stacker-layer"
+                style="
+                    width: ${layer.width}%;
+                    left: ${layer.left}%;
+                    bottom: ${getStackerBottom(layer.level) - cameraOffset}px;
+                    --stack-left: ${layer.colorLeft};
+                    --stack-right: ${layer.colorRight};
+                "
+            ></div>
+        `).join('');
+        const fragmentsMarkup = stackerFragments.map((fragment) => `
+            <div
+                class="stacker-fragment"
+                style="
+                    width: ${fragment.width}%;
+                    left: ${fragment.left}%;
+                    bottom: ${fragment.bottom - cameraOffset}px;
+                    --stack-fragment-x: ${fragment.offsetX || 0}px;
+                    --stack-fragment-rotation: ${fragment.rotation || 0}deg;
+                    --stack-left: ${fragment.colorLeft};
+                    --stack-right: ${fragment.colorRight};
+                "
+            ></div>
+        `).join('');
+        const currentMarkup = stackerCurrentLayer ? `
+            <div
+                class="stacker-current"
+                style="
+                    width: ${stackerCurrentLayer.width}%;
+                    left: ${stackerCurrentLayer.left}%;
+                    bottom: ${getStackerBottom(stackerCurrentLayer.level) - cameraOffset}px;
+                    --stack-left: ${stackerCurrentLayer.colorLeft};
+                    --stack-right: ${stackerCurrentLayer.colorRight};
+                "
+            ></div>
+        ` : '';
+
+        stackerBoard.innerHTML = `
+            <div class="stacker-cloud stacker-cloud-a"></div>
+            <div class="stacker-cloud stacker-cloud-b"></div>
+            <div class="stacker-backdrop stacker-backdrop-far" style="transform: translateY(${backdropOffset}px);"></div>
+            <div class="stacker-backdrop stacker-backdrop-near" style="transform: translateY(${foregroundOffset}px);"></div>
+            ${layersMarkup}
+            ${fragmentsMarkup}
+            ${currentMarkup}
+            <div class="stacker-waterline" style="bottom: ${-cameraOffset}px;"></div>
+        `;
+        updateStackerHud();
+    }
+
+    function stopStacker() {
+        stackerRunning = false;
+        if (stackerAnimationFrame) {
+            window.cancelAnimationFrame(stackerAnimationFrame);
+            stackerAnimationFrame = null;
+        }
+        stackerLastFrame = 0;
+        updateStackerHud();
+    }
+
+    function createNextStackerLayer(level, width, fromLeft = true) {
+        const palette = getStackerPalette(level);
+        return {
+            level,
+            width,
+            left: fromLeft ? width / 2 : 100 - (width / 2),
+            direction: fromLeft ? 1 : -1,
+            speed: 34 + (level * 2),
+            colorLeft: palette.left,
+            colorRight: palette.right
+        };
+    }
+
+    function initializeStacker() {
+        closeGameOverModal();
+        stopStacker();
+        const basePalette = getStackerPalette(1);
+        stackerLayers = [{
+            level: 1,
+            width: 72,
+            left: 50,
+            colorLeft: basePalette.left,
+            colorRight: basePalette.right
+        }];
+        stackerFragments = [];
+        stackerCurrentLayer = createNextStackerLayer(2, 72, true);
+        stackerScore = 0;
+        stackerHelpText.textContent = 'Clique ou appuie sur Espace au bon moment pour empiler les couches du phare.';
+        renderStacker();
+    }
+
+    function runStackerFrame(timestamp) {
+        if (!stackerRunning || !stackerCurrentLayer) {
+            return;
+        }
+
+        if (!stackerLastFrame) {
+            stackerLastFrame = timestamp;
+        }
+
+        const deltaMs = timestamp - stackerLastFrame;
+        stackerLastFrame = timestamp;
+        const delta = (deltaMs / 1000) * stackerCurrentLayer.speed;
+        const minLeft = stackerCurrentLayer.width / 2;
+        const maxLeft = 100 - (stackerCurrentLayer.width / 2);
+
+        stackerFragments = stackerFragments
+            .map((fragment) => ({
+                ...fragment,
+                velocityX: fragment.velocityX * 0.995,
+                velocityY: fragment.velocityY + (deltaMs / 1000) * 180,
+                offsetX: (fragment.offsetX || 0) + ((fragment.velocityX * deltaMs) / 1000),
+                bottom: fragment.bottom - ((fragment.velocityY * deltaMs) / 1000),
+                rotation: (fragment.rotation || 0) + (((fragment.spin || 0) * deltaMs) / 1000)
+            }))
+            .filter((fragment) => fragment.bottom > -140 && Math.abs(fragment.offsetX || 0) < 360);
+
+        stackerCurrentLayer.left += delta * stackerCurrentLayer.direction;
+        if (stackerCurrentLayer.left <= minLeft) {
+            stackerCurrentLayer.left = minLeft;
+            stackerCurrentLayer.direction = 1;
+        } else if (stackerCurrentLayer.left >= maxLeft) {
+            stackerCurrentLayer.left = maxLeft;
+            stackerCurrentLayer.direction = -1;
+        }
+
+        renderStacker();
+        stackerAnimationFrame = window.requestAnimationFrame(runStackerFrame);
+    }
+
+    function startStacker() {
+        if (stackerRunning) {
+            return;
+        }
+
+        closeGameOverModal();
+        stackerRunning = true;
+        stackerHelpText.textContent = 'Empile les couches sans perdre l alignement.';
+        stackerStartButton.textContent = 'Empiler';
+        updateStackerHud();
+        stackerAnimationFrame = window.requestAnimationFrame(runStackerFrame);
+    }
+
+    function dropStackerLayer() {
+        if (!stackerCurrentLayer) {
+            return;
+        }
+
+        if (!stackerRunning) {
+            startStacker();
+            return;
+        }
+
+        const previousLayer = stackerLayers[stackerLayers.length - 1];
+        const previousLeft = previousLayer.left - (previousLayer.width / 2);
+        const previousRight = previousLayer.left + (previousLayer.width / 2);
+        const currentLeft = stackerCurrentLayer.left - (stackerCurrentLayer.width / 2);
+        const currentRight = stackerCurrentLayer.left + (stackerCurrentLayer.width / 2);
+        const overlap = Math.min(previousRight, currentRight) - Math.max(previousLeft, currentLeft);
+        const currentBottom = getStackerBottom(stackerCurrentLayer.level);
+
+        if (overlap <= 0) {
+            stackerFragments.push({
+                width: stackerCurrentLayer.width,
+                left: stackerCurrentLayer.left,
+                bottom: currentBottom,
+                offsetX: 0,
+                velocityX: stackerCurrentLayer.direction * 96,
+                velocityY: 36,
+                rotation: 0,
+                spin: stackerCurrentLayer.direction * 170,
+                colorLeft: stackerCurrentLayer.colorLeft,
+                colorRight: stackerCurrentLayer.colorRight
+            });
+            stackerCurrentLayer = null;
+            stopStacker();
+            stackerHelpText.textContent = 'La couche est tombee dans la baie.';
+            renderStacker();
+            openGameOverModal('Tour ecroulee', `Tu as empile ${stackerScore} etages.`);
+            return;
+        }
+
+        const center = Math.max(previousLeft, currentLeft) + (overlap / 2);
+        const nextLevel = stackerCurrentLayer.level;
+        const trimmedWidth = stackerCurrentLayer.width - overlap;
+
+        if (trimmedWidth > 0) {
+            const trimmedOnLeft = currentLeft < previousLeft;
+            const fragmentLeft = trimmedOnLeft
+                ? currentLeft + (trimmedWidth / 2)
+                : currentRight - (trimmedWidth / 2);
+
+            stackerFragments.push({
+                width: trimmedWidth,
+                left: fragmentLeft,
+                bottom: currentBottom,
+                offsetX: 0,
+                velocityX: trimmedOnLeft ? -118 : 118,
+                velocityY: 28,
+                rotation: 0,
+                spin: trimmedOnLeft ? -150 : 150,
+                colorLeft: stackerCurrentLayer.colorLeft,
+                colorRight: stackerCurrentLayer.colorRight
+            });
+        }
+
+        const lockedPalette = getStackerPalette(nextLevel);
+
+        stackerLayers.push({
+            level: nextLevel,
+            width: overlap,
+            left: center,
+            colorLeft: lockedPalette.left,
+            colorRight: lockedPalette.right
+        });
+        stackerScore = stackerLayers.length - 1;
+
+        if (stackerScore > stackerBestScore) {
+            stackerBestScore = stackerScore;
+            window.localStorage.setItem(STACKER_BEST_KEY, String(stackerBestScore));
+        }
+
+        stackerCurrentLayer = createNextStackerLayer(nextLevel + 1, overlap, nextLevel % 2 === 1);
+        stackerHelpText.textContent = overlap < previousLayer.width
+            ? 'Oups, une partie est tombee. Continue de monter.'
+            : 'Empilement parfait. La tour prend de la hauteur.';
+        renderStacker();
+    }
+
     function openSelectedGame(nextTab) {
         cleanupActiveGameForNavigation(nextTab);
 
@@ -5346,6 +7315,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (nextTab === 'flappy') {
             initializeFlappy();
+            return;
+        }
+
+        if (nextTab === 'flowFree') {
+            initializeFlowFree();
+            return;
+        }
+
+        if (nextTab === 'magicSort') {
+            initializeMagicSort();
+            return;
+        }
+
+        if (nextTab === 'mentalMath') {
+            initializeMentalMath();
+            return;
+        }
+
+        if (nextTab === 'candyCrush') {
+            initializeCandyCrush();
+            return;
+        }
+
+        if (nextTab === 'harborRun') {
+            initializeHarborRun();
+            return;
+        }
+
+        if (nextTab === 'stacker') {
+            initializeStacker();
             return;
         }
 
@@ -5495,6 +7494,12 @@ document.addEventListener('DOMContentLoaded', () => {
         startPong();
     });
 
+    pongModeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setPongMode(button.dataset.pongMode);
+        });
+    });
+
     sudokuBoard.addEventListener('click', (event) => {
         const cellButton = event.target.closest('.sudoku-cell');
 
@@ -5521,6 +7526,13 @@ document.addEventListener('DOMContentLoaded', () => {
     aimStartButton.addEventListener('click', () => {
         closeGameOverModal();
         initializeAim();
+    });
+
+    aimDurationButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            closeGameOverModal();
+            setAimRoundDuration(Number(button.dataset.aimDuration));
+        });
     });
 
     aimBoard.addEventListener('pointerdown', (event) => {
@@ -5561,6 +7573,12 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeTicTacToe();
     });
 
+    ticTacToeModeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setTicTacToeMode(button.dataset.tictactoeMode);
+        });
+    });
+
     ticTacToeBoard.addEventListener('click', (event) => {
         const cellButton = event.target.closest('.tictactoe-cell');
 
@@ -5568,7 +7586,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        handleTicTacToeMove(Number(cellButton.dataset.index));
+        handleTicTacToeMove(
+            Number(cellButton.dataset.index),
+            ticTacToeMode === 'duo' ? ticTacToeCurrentPlayer : 'anchor'
+        );
     });
 
     battleshipRestartButton.addEventListener('click', () => {
@@ -5592,12 +7613,53 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeConnect4();
     });
 
+    connect4ModeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setConnect4Mode(button.dataset.connect4Mode);
+        });
+    });
+
     rhythmStartButton.addEventListener('click', () => {
         startRhythm();
     });
 
     flappyStartButton.addEventListener('click', () => {
         startFlappy();
+    });
+
+    flowFreeRestartButton.addEventListener('click', () => {
+        closeGameOverModal();
+        initializeFlowFree();
+    });
+
+    magicSortRestartButton.addEventListener('click', () => {
+        closeGameOverModal();
+        initializeMagicSort();
+    });
+
+    mentalMathRestartButton.addEventListener('click', () => {
+        closeGameOverModal();
+        initializeMentalMath();
+    });
+
+    mentalMathForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitMentalMathAnswer();
+    });
+
+    candyCrushRestartButton.addEventListener('click', () => {
+        closeGameOverModal();
+        initializeCandyCrush();
+    });
+
+    harborRunStartButton.addEventListener('click', () => {
+        closeGameOverModal();
+        startHarborRun();
+    });
+
+    stackerStartButton.addEventListener('click', () => {
+        closeGameOverModal();
+        dropStackerLayer();
     });
 
     battleshipEnemyBoard.addEventListener('click', (event) => {
@@ -5717,6 +7779,120 @@ document.addEventListener('DOMContentLoaded', () => {
     flappyBoard.addEventListener('pointerdown', (event) => {
         event.preventDefault();
         flapFlappyBird();
+    });
+
+    flowFreeBoard.addEventListener('pointerdown', (event) => {
+        const cellButton = event.target.closest('.flowfree-cell');
+        if (!cellButton) {
+            return;
+        }
+
+        startFlowFreePath(
+            Number(cellButton.dataset.flowRow),
+            Number(cellButton.dataset.flowCol)
+        );
+    });
+
+    flowFreeBoard.addEventListener('pointerover', (event) => {
+        const cellButton = event.target.closest('.flowfree-cell');
+        if (!cellButton) {
+            return;
+        }
+
+        extendFlowFreePath(
+            Number(cellButton.dataset.flowRow),
+            Number(cellButton.dataset.flowCol)
+        );
+    });
+
+    flowFreeBoard.addEventListener('pointermove', (event) => {
+        if (!flowFreePointerDown) {
+            return;
+        }
+
+        const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+        const cellButton = hoveredElement?.closest('.flowfree-cell');
+        if (!cellButton) {
+            return;
+        }
+
+        extendFlowFreePath(
+            Number(cellButton.dataset.flowRow),
+            Number(cellButton.dataset.flowCol)
+        );
+    });
+
+    document.addEventListener('pointerup', () => {
+        if (flowFreePointerDown) {
+            stopFlowFreePath();
+        }
+    });
+
+    magicSortBoard.addEventListener('pointerdown', (event) => {
+        const tubeButton = event.target.closest('[data-magic-sort-tube]');
+        if (!tubeButton) {
+            return;
+        }
+
+        handleMagicSortTubeClick(Number(tubeButton.dataset.magicSortTube));
+    });
+
+    candyCrushBoard.addEventListener('pointerdown', (event) => {
+        const cellButton = event.target.closest('.candycrush-cell');
+        if (!cellButton) {
+            return;
+        }
+
+        candyCrushPointerStart = {
+            row: Number(cellButton.dataset.candyRow),
+            col: Number(cellButton.dataset.candyCol)
+        };
+        candyCrushSelectedCell = candyCrushPointerStart;
+        renderCandyCrush();
+    });
+
+    candyCrushBoard.addEventListener('pointerup', async (event) => {
+        const cellButton = event.target.closest('.candycrush-cell');
+        if (!cellButton || !candyCrushPointerStart) {
+            candyCrushPointerStart = null;
+            return;
+        }
+
+        const targetCell = {
+            row: Number(cellButton.dataset.candyRow),
+            col: Number(cellButton.dataset.candyCol)
+        };
+
+        const startCell = candyCrushPointerStart;
+        candyCrushPointerStart = null;
+        await tryCandyCrushSwap(startCell, targetCell);
+    });
+
+    candyCrushBoard.addEventListener('pointerleave', () => {
+        candyCrushPointerStart = null;
+        candyCrushSelectedCell = null;
+        if (!candyCrushAnimating) {
+            renderCandyCrush();
+        }
+    });
+
+    harborRunBoard.addEventListener('pointerdown', (event) => {
+        const bounds = harborRunBoard.getBoundingClientRect();
+        const relativeX = event.clientX - bounds.left;
+        const zone = relativeX / bounds.width;
+
+        if (zone < 0.33) {
+            moveHarborRun(-1);
+            return;
+        }
+
+        if (zone > 0.66) {
+            moveHarborRun(1);
+        }
+    });
+
+    stackerBoard.addEventListener('pointerdown', () => {
+        dropStackerLayer();
     });
 
     calculatorKeys.forEach((button) => {
@@ -6061,6 +8237,26 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (activeGameTab === 'harborRun') {
+            if (['ArrowLeft', 'q', 'Q', 'a', 'A'].includes(event.key)) {
+                event.preventDefault();
+                moveHarborRun(-1);
+                return;
+            }
+
+            if (['ArrowRight', 'd', 'D'].includes(event.key)) {
+                event.preventDefault();
+                moveHarborRun(1);
+                return;
+            }
+        }
+
+        if (activeGameTab === 'stacker' && event.code === 'Space') {
+            event.preventDefault();
+            dropStackerLayer();
+            return;
+        }
+
         if (activeGameTab === 'sudoku') {
             const digit = Number(event.key);
 
@@ -6166,6 +8362,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeGameTab === 'flappy') {
             renderFlappy();
         }
+
+        if (activeGameTab === 'harborRun') {
+            renderHarborRun();
+        }
+
+        if (activeGameTab === 'stacker') {
+            renderStacker();
+        }
     });
 
     renderAll();
@@ -6185,6 +8389,12 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeConnect4();
     initializeRhythm();
     initializeFlappy();
+    initializeFlowFree();
+    initializeMagicSort();
+    initializeMentalMath();
+    initializeCandyCrush();
+    initializeHarborRun();
+    initializeStacker();
     initializeConverter();
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');

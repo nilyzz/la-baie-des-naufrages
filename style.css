@@ -312,7 +312,7 @@ body {
 }
 
 .games-layout {
-    width: min(900px, 100%);
+    width: min(960px, 100%);
     margin: 0 auto;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -333,8 +333,8 @@ body {
 }
 
 .games-home-card {
-    padding: 28px;
-    overflow: auto;
+    padding: 24px;
+    overflow: hidden;
 }
 
 .games-home-copy {
@@ -344,32 +344,32 @@ body {
 
 .games-home-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-    width: min(100%, 700px);
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: 10px;
+    width: min(100%, 760px);
     margin: 0 auto;
 }
 
 .game-home-tile {
     text-align: center;
-    padding: 14px 12px;
+    padding: 12px 10px;
     border-radius: 24px;
     color: var(--text-color);
     background:
         linear-gradient(180deg, rgba(99, 102, 241, 0.12), rgba(15, 23, 42, 0.28)),
         rgba(15, 23, 42, 0.56);
     border: 1px solid rgba(99, 102, 241, 0.16);
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 0.94 / 1;
     display: grid;
     justify-items: center;
     align-content: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .game-home-art {
-    width: 74px;
-    height: 74px;
-    border-radius: 20px;
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
     display: block;
     position: relative;
     overflow: hidden;
@@ -443,20 +443,20 @@ body {
 }
 
 .game-home-art-pong::before {
-    top: 10px;
-    bottom: 10px;
-    left: 50%;
-    width: 3px;
-    transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.42);
+    left: 10px;
+    top: 11px;
+    width: 6px;
+    height: 32px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(125, 211, 252, 0.78));
+    box-shadow: 28px 0 0 0 rgba(45, 212, 191, 0.94);
 }
 
 .game-home-art-pong::after {
     inset: 0;
     background:
-        linear-gradient(180deg, transparent 18px, rgba(255, 255, 255, 0.9) 18px 70px, transparent 70px) left 14px top 0 / 10px 100% no-repeat,
-        linear-gradient(180deg, transparent 10px, rgba(167, 243, 208, 0.95) 10px 62px, transparent 62px) right 14px top 0 / 10px 100% no-repeat,
-        radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.98) 0 7%, transparent 8%);
+        linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.18) 49% 51%, transparent 51%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.98) 0 4px, transparent 5px);
 }
 
 .game-home-art-sudoku {
@@ -703,8 +703,8 @@ body {
 }
 
 .game-home-art-rhythm::before {
-    inset: 10px;
-    border-radius: 16px;
+    inset: 8px;
+    border-radius: 14px;
     background:
         linear-gradient(90deg, rgba(255, 255, 255, 0.1) 24%, transparent 24% 26%, rgba(255, 255, 255, 0.1) 26% 49%, transparent 49% 51%, rgba(255, 255, 255, 0.1) 51% 74%, transparent 74% 76%, rgba(255, 255, 255, 0.1) 76%),
         linear-gradient(180deg, rgba(56, 189, 248, 0.14), rgba(15, 23, 42, 0.12)),
@@ -714,11 +714,11 @@ body {
 .game-home-art-rhythm::after {
     inset: 0;
     background:
-        linear-gradient(180deg, transparent 14px, rgba(34, 197, 94, 0.96) 14px 28px, transparent 29px) 14px 0 / 10px 100% no-repeat,
-        linear-gradient(180deg, transparent 30px, rgba(56, 189, 248, 0.96) 30px 44px, transparent 45px) 30px 0 / 10px 100% no-repeat,
-        linear-gradient(180deg, transparent 20px, rgba(251, 191, 36, 0.98) 20px 34px, transparent 35px) 46px 0 / 10px 100% no-repeat,
-        linear-gradient(180deg, transparent 38px, rgba(248, 113, 113, 0.98) 38px 52px, transparent 53px) 62px 0 / 10px 100% no-repeat,
-        linear-gradient(0deg, transparent 16px, rgba(255, 255, 255, 0.9) 16px 20px, transparent 20px);
+        linear-gradient(180deg, transparent 11px, rgba(34, 197, 94, 0.96) 11px 20px, transparent 20px) 10px 0 / 8px 100% no-repeat,
+        linear-gradient(180deg, transparent 23px, rgba(56, 189, 248, 0.96) 23px 32px, transparent 32px) 21px 0 / 8px 100% no-repeat,
+        linear-gradient(180deg, transparent 15px, rgba(251, 191, 36, 0.98) 15px 24px, transparent 24px) 32px 0 / 8px 100% no-repeat,
+        linear-gradient(180deg, transparent 28px, rgba(248, 113, 113, 0.98) 28px 37px, transparent 37px) 43px 0 / 8px 100% no-repeat,
+        linear-gradient(0deg, transparent 12px, rgba(255, 255, 255, 0.9) 12px 15px, transparent 15px);
 }
 
 .game-home-art-flappy {
@@ -748,9 +748,397 @@ body {
         inset -8px 0 0 rgba(248, 113, 113, 0.78);
 }
 
+.game-home-art-flowfree {
+    background: linear-gradient(135deg, #0f766e, #1d4ed8);
+}
+
+.game-home-art-flowfree::before {
+    inset: 8px;
+    border-radius: 12px;
+    background:
+        radial-gradient(circle at 20% 22%, #fb7185 0 8%, transparent 9%),
+        radial-gradient(circle at 76% 22%, #fb7185 0 8%, transparent 9%),
+        radial-gradient(circle at 24% 76%, #38bdf8 0 8%, transparent 9%),
+        radial-gradient(circle at 76% 76%, #38bdf8 0 8%, transparent 9%),
+        linear-gradient(90deg, transparent 18%, rgba(255, 255, 255, 0.14) 18% 20%, transparent 20% 40%, rgba(255, 255, 255, 0.14) 40% 42%, transparent 42% 62%, rgba(255, 255, 255, 0.14) 62% 64%, transparent 64%),
+        linear-gradient(transparent 18%, rgba(255, 255, 255, 0.14) 18% 20%, transparent 20% 40%, rgba(255, 255, 255, 0.14) 40% 42%, transparent 42% 62%, rgba(255, 255, 255, 0.14) 62% 64%, transparent 64%);
+}
+
+.game-home-art-flowfree::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 16px, rgba(251, 113, 133, 0.92) 16px 22px, transparent 22px) center / 100% 100% no-repeat,
+        linear-gradient(180deg, transparent 29px, rgba(56, 189, 248, 0.92) 29px 35px, transparent 35px) center / 100% 100% no-repeat;
+}
+
+.game-home-art-magicsort {
+    background: linear-gradient(135deg, #312e81, #0f766e);
+}
+
+.game-home-art-magicsort::before {
+    inset: 10px 11px;
+    background:
+        linear-gradient(180deg, transparent 0 12px, rgba(251, 191, 36, 0.96) 12px 21px, rgba(56, 189, 248, 0.96) 21px 30px, rgba(244, 114, 182, 0.96) 30px 39px, transparent 39px) left top / 10px 100% no-repeat,
+        linear-gradient(180deg, transparent 0 15px, rgba(52, 211, 153, 0.96) 15px 24px, rgba(251, 191, 36, 0.96) 24px 33px, rgba(56, 189, 248, 0.96) 33px 42px, transparent 42px) center top / 10px 100% no-repeat,
+        linear-gradient(180deg, transparent 0 10px, rgba(244, 114, 182, 0.96) 10px 19px, rgba(52, 211, 153, 0.96) 19px 28px, rgba(251, 191, 36, 0.96) 28px 37px, transparent 37px) right top / 10px 100% no-repeat;
+}
+
+.game-home-art-magicsort::after {
+    inset: 9px 10px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) left top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) 10px top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) center top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) calc(100% - 12px) top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) right top / 2px 100% no-repeat;
+}
+
+.game-home-art-mentalmath {
+    background: linear-gradient(135deg, #1d4ed8, #14b8a6);
+}
+
+.game-home-art-mentalmath::before {
+    inset: 7px;
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent),
+        rgba(15, 23, 42, 0.24);
+}
+
+.game-home-art-mentalmath::after {
+    inset: 0;
+    content: '8 x 7';
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.game-home-art-candycrush {
+    background: linear-gradient(135deg, #ec4899, #2563eb);
+}
+
+.game-home-art-candycrush::before {
+    inset: 12px;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 20% 22%, #facc15 0 11%, transparent 12%),
+        radial-gradient(circle at 52% 28%, #38bdf8 0 11%, transparent 12%),
+        radial-gradient(circle at 76% 26%, #34d399 0 11%, transparent 12%),
+        radial-gradient(circle at 28% 68%, #fb7185 0 11%, transparent 12%),
+        radial-gradient(circle at 70% 70%, #f97316 0 11%, transparent 12%),
+        rgba(15, 23, 42, 0.14);
+}
+
+.game-home-art-candycrush::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 22px, rgba(255, 255, 255, 0.12) 22px 24px, transparent 24px 42px, rgba(255, 255, 255, 0.12) 42px 44px, transparent 44px) center / 100% 100% no-repeat,
+        linear-gradient(transparent 22px, rgba(255, 255, 255, 0.12) 22px 24px, transparent 24px 42px, rgba(255, 255, 255, 0.12) 42px 44px, transparent 44px) center / 100% 100% no-repeat;
+}
+
+.game-home-art-harborrun {
+    background: linear-gradient(180deg, #7dd3fc, #1d4ed8 55%, #0f172a);
+}
+
+.game-home-art-harborrun::before {
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 78%, rgba(255, 255, 255, 0.18) 0 7%, transparent 8%),
+        radial-gradient(circle at 52% 66%, rgba(255, 255, 255, 0.18) 0 6%, transparent 7%),
+        radial-gradient(circle at 78% 28%, rgba(251, 191, 36, 0.9) 0 8%, transparent 9%),
+        linear-gradient(180deg, transparent 70%, rgba(255, 255, 255, 0.16) 70% 73%, transparent 73% 76%, rgba(255, 255, 255, 0.12) 76% 79%, transparent 79%);
+}
+
+.game-home-art-harborrun::after {
+    left: 18px;
+    bottom: 10px;
+    width: 18px;
+    height: 22px;
+    border-radius: 10px 10px 4px 4px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.18), transparent 24%),
+        linear-gradient(180deg, #f97316, #7c2d12);
+    box-shadow:
+        16px -24px 0 -4px rgba(107, 114, 128, 0.98),
+        23px -18px 0 -9px rgba(148, 163, 184, 0.98);
+}
+
+.game-home-art-stacker {
+    background: linear-gradient(135deg, #0f172a, #0f766e);
+}
+
+.game-home-art-stacker::before {
+    left: 12px;
+    right: 12px;
+    bottom: 10px;
+    height: 10px;
+    border-radius: 0;
+    background: linear-gradient(90deg, rgba(212, 161, 93, 0.98), rgba(139, 90, 43, 0.96));
+    box-shadow:
+        0 -12px 0 0 rgba(202, 107, 74, 0.98),
+        4px -24px 0 0 rgba(126, 168, 90, 0.98);
+}
+
+.game-home-art-stacker::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 15px, rgba(83, 45, 18, 0.35) 15px 17px, transparent 17px) 0 calc(100% - 10px) / 100% 10px no-repeat,
+        linear-gradient(90deg, transparent 21px, rgba(83, 45, 18, 0.35) 21px 23px, transparent 23px) 0 calc(100% - 22px) / 100% 10px no-repeat,
+        linear-gradient(90deg, transparent 26px, rgba(83, 45, 18, 0.35) 26px 28px, transparent 28px) 0 calc(100% - 34px) / 100% 10px no-repeat;
+}
+
+.game-home-art-minesweeper::before {
+    inset: 0;
+    content: '🏴‍☠️';
+    display: grid;
+    place-items: center;
+    font-size: 2.4rem;
+    color: #f8fafc;
+    text-shadow: 0 6px 14px rgba(15, 23, 42, 0.35);
+}
+
+.game-home-art-minesweeper::after {
+    left: 18px;
+    right: 18px;
+    bottom: 11px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    opacity: 1;
+}
+
+.game-home-art-snake::before {
+    inset: 13px 12px 17px 12px;
+    border-radius: 999px 999px 14px 14px;
+    background:
+        radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.95) 0 8%, transparent 9%),
+        radial-gradient(circle at 66% 28%, rgba(255, 255, 255, 0.95) 0 8%, transparent 9%),
+        radial-gradient(circle at 34% 30%, rgba(15, 23, 42, 0.96) 0 3%, transparent 4%),
+        radial-gradient(circle at 66% 30%, rgba(15, 23, 42, 0.96) 0 3%, transparent 4%),
+        linear-gradient(180deg, rgba(94, 234, 212, 0.98), rgba(14, 165, 233, 0.92));
+}
+
+.game-home-art-snake::after {
+    width: 14px;
+    height: 14px;
+    right: 8px;
+    bottom: 8px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #f59e0b, #b45309);
+    box-shadow: -20px 2px 0 0 rgba(15, 23, 42, 0.22);
+}
+
+.game-home-art-2048::before {
+    inset: 10px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, rgba(15, 23, 42, 0.22) 0 48%, transparent 48% 52%, rgba(15, 23, 42, 0.22) 52% 100%),
+        linear-gradient(rgba(15, 23, 42, 0.22) 0 48%, transparent 48% 52%, rgba(15, 23, 42, 0.22) 52% 100%);
+}
+
+.game-home-art-2048::after {
+    inset: 0;
+    content: '2048';
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    display: grid;
+    place-items: center;
+    text-shadow: 0 2px 8px rgba(15, 23, 42, 0.28);
+}
+
+.game-home-art-aim::before {
+    inset: 14px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.94) 0 12%, transparent 13%),
+        radial-gradient(circle at 50% 50%, transparent 0 28%, rgba(255, 255, 255, 0.86) 28% 33%, transparent 34%),
+        radial-gradient(circle at 50% 50%, transparent 0 50%, rgba(255, 255, 255, 0.66) 50% 55%, transparent 56%),
+        radial-gradient(circle at 50% 50%, rgba(30, 64, 175, 0.92), rgba(15, 23, 42, 0.98));
+}
+
+.game-home-art-aim::after {
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 50%, transparent 0 16px, rgba(255, 255, 255, 0.92) 16px 17px, transparent 18px),
+        linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.92) 49% 51%, transparent 51%),
+        linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.92) 49% 51%, transparent 51%);
+}
+
+.game-home-art-tictactoe::before {
+    inset: 11px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, transparent 31%, rgba(255, 255, 255, 0.78) 31% 35%, transparent 35% 65%, rgba(255, 255, 255, 0.78) 65% 69%, transparent 69%),
+        linear-gradient(transparent 31%, rgba(255, 255, 255, 0.78) 31% 35%, transparent 35% 65%, rgba(255, 255, 255, 0.78) 65% 69%, transparent 69%);
+}
+
+.game-home-art-tictactoe::after {
+    inset: 0;
+    background:
+        linear-gradient(45deg, transparent 47%, #fbbf24 47% 53%, transparent 53%) left 16px top 15px / 12px 12px no-repeat,
+        linear-gradient(135deg, transparent 47%, #fbbf24 47% 53%, transparent 53%) left 16px top 15px / 12px 12px no-repeat,
+        radial-gradient(circle, transparent 5px, #67e8f9 5px 7px, transparent 8px) right 12px bottom 12px / 18px 18px no-repeat;
+}
+
+.game-home-art-battleship::before {
+    inset: 9px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, transparent 24%, rgba(255,255,255,0.14) 24% 26%, transparent 26% 49%, rgba(255,255,255,0.14) 49% 51%, transparent 51% 74%, rgba(255,255,255,0.14) 74% 76%, transparent 76%),
+        linear-gradient(transparent 24%, rgba(255,255,255,0.14) 24% 26%, transparent 26% 49%, rgba(255,255,255,0.14) 49% 51%, transparent 51% 74%, rgba(255,255,255,0.14) 74% 76%, transparent 76%),
+        linear-gradient(180deg, rgba(56, 189, 248, 0.22), rgba(15, 23, 42, 0.24)),
+        rgba(15, 23, 42, 0.3);
+}
+
+.game-home-art-battleship::after {
+    inset: 0;
+    background:
+        linear-gradient(180deg, transparent 22px, rgba(226, 232, 240, 0.96) 22px 34px, transparent 34px) center / 18px 100% no-repeat,
+        radial-gradient(circle at 38px 15px, rgba(248, 113, 113, 0.98) 0 4px, transparent 5px),
+        radial-gradient(circle at 18px 39px, rgba(255, 255, 255, 0.96) 0 3px, transparent 4px);
+}
+
+.game-home-art-tetris::before {
+    inset: 10px;
+    border-radius: 12px;
+    background:
+        linear-gradient(90deg, transparent 18%, rgba(255,255,255,0.08) 18% 20%, transparent 20% 40%, rgba(255,255,255,0.08) 40% 42%, transparent 42% 62%, rgba(255,255,255,0.08) 62% 64%, transparent 64%),
+        linear-gradient(transparent 18%, rgba(255,255,255,0.08) 18% 20%, transparent 20% 40%, rgba(255,255,255,0.08) 40% 42%, transparent 42% 62%, rgba(255,255,255,0.08) 62% 64%, transparent 64%);
+}
+
+.game-home-art-tetris::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(56, 189, 248, 0.95) 0 22%, transparent 22% 28%, rgba(251, 191, 36, 0.95) 28% 50%, transparent 50% 56%, rgba(52, 211, 153, 0.95) 56% 78%, transparent 78%) 12px 14px / 32px 12px no-repeat,
+        linear-gradient(180deg, rgba(248, 113, 113, 0.95) 0 12px, transparent 12px) 28px 28px / 12px 24px no-repeat,
+        linear-gradient(180deg, rgba(168, 85, 247, 0.95) 0 24px, transparent 24px) 16px 24px / 12px 24px no-repeat;
+}
+
+.game-home-art-pacman::before {
+    inset: 10px;
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at 18% 50%, #facc15 0 8px, transparent 9px),
+        radial-gradient(circle at 69% 44%, #f87171 0 9px, transparent 10px),
+        radial-gradient(circle at 64% 38%, rgba(255,255,255,0.95) 0 2px, transparent 3px),
+        radial-gradient(circle at 74% 38%, rgba(255,255,255,0.95) 0 2px, transparent 3px),
+        linear-gradient(90deg, rgba(255,255,255,0.24) 0 100%);
+}
+
+.game-home-art-pacman::after {
+    inset: 0;
+    background:
+        radial-gradient(circle at 18% 50%, transparent 0 6px, #0f172a 6px 10px, transparent 10px),
+        radial-gradient(circle at 37px 27px, rgba(255,255,255,0.92) 0 2px, transparent 3px),
+        radial-gradient(circle at 45px 27px, rgba(255,255,255,0.92) 0 2px, transparent 3px);
+}
+
+.game-home-art-flappy::before {
+    inset: 0;
+    background:
+        radial-gradient(circle at 26% 24%, rgba(255, 255, 255, 0.26), transparent 14%),
+        linear-gradient(180deg, rgba(125, 211, 252, 0.96), rgba(37, 99, 235, 0.88));
+}
+
+.game-home-art-flappy::after {
+    left: 18px;
+    top: 18px;
+    width: 18px;
+    height: 16px;
+    border-radius: 58% 42% 46% 54% / 44% 46% 54% 56%;
+    background:
+        radial-gradient(circle at 64% 34%, rgba(15, 23, 42, 0.98) 0 2px, transparent 3px),
+        linear-gradient(180deg, #ef4444, #b91c1c 62%, #f59e0b 62% 100%);
+    box-shadow:
+        inset -4px 0 0 rgba(14, 165, 233, 0.28),
+        9px 4px 0 -6px rgba(250, 204, 21, 0.98),
+        -3px -5px 0 -5px rgba(15, 23, 42, 0.98);
+}
+
+.game-home-art-flowfree::before {
+    inset: 8px;
+    border-radius: 12px;
+    background:
+        radial-gradient(circle at 22% 22%, #fb7185 0 7%, transparent 8%),
+        radial-gradient(circle at 78% 22%, #fb7185 0 7%, transparent 8%),
+        radial-gradient(circle at 22% 78%, #38bdf8 0 7%, transparent 8%),
+        radial-gradient(circle at 78% 78%, #38bdf8 0 7%, transparent 8%),
+        linear-gradient(90deg, transparent 16%, rgba(255,255,255,0.14) 16% 18%, transparent 18% 40%, rgba(255,255,255,0.14) 40% 42%, transparent 42% 64%, rgba(255,255,255,0.14) 64% 66%, transparent 66%),
+        linear-gradient(transparent 16%, rgba(255,255,255,0.14) 16% 18%, transparent 18% 40%, rgba(255,255,255,0.14) 40% 42%, transparent 42% 64%, rgba(255,255,255,0.14) 64% 66%, transparent 66%);
+}
+
+.game-home-art-flowfree::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 16px, rgba(251, 113, 133, 0.92) 16px 22px, transparent 22px) center / 100% 100% no-repeat,
+        linear-gradient(180deg, transparent 28px, rgba(56, 189, 248, 0.92) 28px 34px, transparent 34px) center / 100% 100% no-repeat;
+}
+
+.game-home-art-magicsort::before {
+    inset: 9px 10px;
+    background:
+        linear-gradient(180deg, transparent 0 11px, rgba(251,191,36,0.96) 11px 18px, rgba(56,189,248,0.96) 18px 25px, rgba(244,114,182,0.96) 25px 32px, transparent 32px) left top / 9px 100% no-repeat,
+        linear-gradient(180deg, transparent 0 14px, rgba(52,211,153,0.96) 14px 21px, rgba(251,191,36,0.96) 21px 28px, rgba(56,189,248,0.96) 28px 35px, transparent 35px) center top / 9px 100% no-repeat,
+        linear-gradient(180deg, transparent 0 9px, rgba(244,114,182,0.96) 9px 16px, rgba(52,211,153,0.96) 16px 23px, rgba(251,191,36,0.96) 23px 30px, transparent 30px) right top / 9px 100% no-repeat;
+}
+
+.game-home-art-magicsort::after {
+    inset: 8px 9px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.28)) left top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.28)) 9px top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.28)) center top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.28)) calc(100% - 11px) top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.28)) right top / 2px 100% no-repeat;
+}
+
+.game-home-art-candycrush::before {
+    inset: 10px;
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at 24% 24%, #facc15 0 9%, transparent 10%),
+        radial-gradient(circle at 52% 28%, #38bdf8 0 9%, transparent 10%),
+        radial-gradient(circle at 76% 24%, #34d399 0 9%, transparent 10%),
+        radial-gradient(circle at 28% 72%, #fb7185 0 9%, transparent 10%),
+        radial-gradient(circle at 70% 72%, #f97316 0 9%, transparent 10%),
+        rgba(15, 23, 42, 0.14);
+}
+
+.game-home-art-candycrush::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 18px, rgba(255,255,255,0.12) 18px 20px, transparent 20px 34px, rgba(255,255,255,0.12) 34px 36px, transparent 36px) center / 100% 100% no-repeat,
+        linear-gradient(transparent 18px, rgba(255,255,255,0.12) 18px 20px, transparent 20px 34px, rgba(255,255,255,0.12) 34px 36px, transparent 36px) center / 100% 100% no-repeat;
+}
+
+.game-home-art-harborrun::before {
+    inset: 0;
+    background:
+        radial-gradient(circle at 18% 80%, rgba(255,255,255,0.18) 0 6%, transparent 7%),
+        radial-gradient(circle at 76% 28%, rgba(107,114,128,0.96) 0 7%, transparent 8%),
+        linear-gradient(180deg, transparent 70%, rgba(255,255,255,0.16) 70% 73%, transparent 73% 76%, rgba(255,255,255,0.12) 76% 79%, transparent 79%);
+}
+
+.game-home-art-harborrun::after {
+    left: 18px;
+    bottom: 10px;
+    width: 18px;
+    height: 22px;
+    border-radius: 10px 10px 4px 4px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.18), transparent 24%),
+        linear-gradient(180deg, #f97316, #7c2d12);
+    box-shadow: 18px -18px 0 -6px rgba(148,163,184,0.98);
+}
+
 .game-home-title {
     display: block;
-    font-size: 0.98rem;
+    font-size: 0.92rem;
     font-weight: 800;
 }
 
@@ -768,7 +1156,13 @@ body {
 .solitaire-card,
 .connect4-card,
 .rhythm-card,
-.flappy-card {
+.flappy-card,
+.flowfree-card,
+.magicsort-card,
+.mentalmath-card,
+.candycrush-card,
+.harborrun-card,
+.stacker-card {
     width: min(100%, 760px);
     padding: 16px;
     height: 100%;
@@ -1210,7 +1604,7 @@ body {
         linear-gradient(180deg, rgba(99, 102, 241, 0.1), rgba(15, 23, 42, 0.18)),
         rgba(15, 23, 42, 0.62);
     border: 1px solid rgba(99, 102, 241, 0.16);
-    width: min(100%, min(64vh, 620px));
+    width: min(100%, min(56vh, 520px));
     margin: 0 auto;
     transform-origin: center;
 }
@@ -1434,7 +1828,7 @@ body {
 .snake-board {
     --snake-gap: 3px;
     --snake-padding: 6px;
-    width: min(100%, min(64vh, 620px));
+    width: min(100%, min(56vh, 520px));
     aspect-ratio: 1 / 1;
     margin: 0 auto;
     padding: var(--snake-padding);
@@ -1603,8 +1997,26 @@ body {
     font-size: 0.84rem;
 }
 
+.pong-mode-switch {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 12px;
+}
+
+.pong-mode-button {
+    min-width: 128px;
+}
+
+.pong-mode-button.is-active {
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.92), rgba(59, 130, 246, 0.82));
+    color: white;
+    border-color: rgba(125, 211, 252, 0.26);
+    box-shadow: 0 16px 28px -24px rgba(45, 212, 191, 0.58);
+}
+
 .pong-board {
-    width: min(100%, 728px);
+    width: min(100%, 760px);
     aspect-ratio: 1.78 / 1;
     margin: 0 auto;
     position: relative;
@@ -1752,7 +2164,7 @@ body {
 }
 
 .sudoku-board {
-    width: min(100%, min(64vh, 620px));
+    width: min(100%, min(56vh, 520px));
     aspect-ratio: 1 / 1;
     margin: 0 auto;
     padding: 8px;
@@ -1909,7 +2321,7 @@ body {
 .game-2048-board {
     --game-2048-gap: 10px;
     --game-2048-padding: 10px;
-    width: min(100%, min(64vh, 620px));
+    width: min(100%, min(58vh, 560px));
     aspect-ratio: 1 / 1;
     margin: 0 auto;
     padding: var(--game-2048-padding);
@@ -1998,16 +2410,20 @@ body {
     gap: 8px;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+}
+
+.aim-card {
+    overflow: hidden;
 }
 
 .aim-counter-block {
-    padding: 10px;
+    padding: 9px;
     border-radius: 14px;
     background: rgba(15, 23, 42, 0.72);
     border: 1px solid rgba(99, 102, 241, 0.18);
     text-align: center;
-    min-height: 60px;
+    min-height: 56px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -2029,7 +2445,7 @@ body {
 
 .aim-face {
     width: 100%;
-    min-height: 60px;
+    min-height: 56px;
     border-radius: 16px;
     background: linear-gradient(135deg, rgba(14, 165, 233, 0.96), rgba(37, 99, 235, 0.88));
     color: white;
@@ -2040,10 +2456,31 @@ body {
 }
 
 .aim-help {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
     text-align: center;
     color: var(--muted-text);
-    font-size: 0.84rem;
+    font-size: 0.8rem;
+}
+
+.aim-duration-switch {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 auto 10px;
+    flex-wrap: wrap;
+}
+
+.aim-duration-button {
+    min-width: 76px;
+    border-radius: 999px;
+    padding: 8px 14px;
+}
+
+.aim-duration-button.is-active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.94), rgba(37, 99, 235, 0.88));
+    color: white;
+    border-color: rgba(191, 219, 254, 0.24);
+    box-shadow: 0 16px 28px -24px rgba(37, 99, 235, 0.54);
 }
 
 .memory-topbar,
@@ -2115,6 +2552,24 @@ body {
     font-size: 0.84rem;
 }
 
+.tictactoe-mode-switch {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 12px;
+}
+
+.tictactoe-mode-button {
+    min-width: 128px;
+}
+
+.tictactoe-mode-button.is-active {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.92), rgba(99, 102, 241, 0.82));
+    color: white;
+    border-color: rgba(191, 219, 254, 0.22);
+    box-shadow: 0 16px 28px -24px rgba(249, 115, 22, 0.56);
+}
+
 .battleship-topbar {
     display: grid;
     grid-template-columns: repeat(3, minmax(150px, 180px));
@@ -2173,7 +2628,7 @@ body {
 }
 
 .battleship-board {
-    width: min(100%, 388px);
+    width: min(100%, 332px);
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -2396,13 +2851,33 @@ body {
     color: var(--muted-text);
 }
 
+.connect4-mode-switch {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 12px;
+}
+
+.connect4-mode-button {
+    min-width: 128px;
+}
+
+.connect4-mode-button.is-active {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.94), rgba(251, 191, 36, 0.88));
+    color: white;
+    border-color: rgba(191, 219, 254, 0.24);
+    box-shadow: 0 16px 28px -24px rgba(37, 99, 235, 0.54);
+}
+
 .connect4-board {
-    width: min(100%, 620px);
+    --connect4-padding: 12px;
+    width: min(100%, 540px);
     margin: 0 auto;
-    padding: 12px;
+    padding: var(--connect4-padding);
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 8px;
+    position: relative;
     border-radius: 22px;
     background:
         radial-gradient(circle at top, rgba(191, 219, 254, 0.16), transparent 38%),
@@ -2419,18 +2894,100 @@ body {
         radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.92) 0 36%, transparent 37%),
         linear-gradient(180deg, rgba(96, 165, 250, 0.28), rgba(29, 78, 216, 0.18));
     border: 1px solid rgba(148, 163, 184, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.connect4-cell:hover {
+    transform: none;
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
 }
 
 .connect4-cell.is-player {
-    background:
-        radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.98) 0 36%, transparent 37%),
-        linear-gradient(180deg, rgba(96, 165, 250, 0.28), rgba(29, 78, 216, 0.18));
+    --connect4-fill: linear-gradient(180deg, #fb7185, #be123c);
 }
 
 .connect4-cell.is-ai {
+    --connect4-fill: linear-gradient(180deg, #38bdf8, #1d4ed8);
+}
+
+.connect4-cell.is-player::before,
+.connect4-cell.is-ai::before {
+    content: '';
+    position: absolute;
+    inset: 16%;
+    border-radius: 50%;
     background:
-        radial-gradient(circle at 50% 50%, rgba(248, 113, 113, 0.98) 0 36%, transparent 37%),
-        linear-gradient(180deg, rgba(96, 165, 250, 0.28), rgba(29, 78, 216, 0.18));
+        radial-gradient(circle at 34% 30%, rgba(255, 248, 220, 0.98) 0 12%, transparent 13%),
+        radial-gradient(circle at 50% 50%, rgba(255, 220, 120, 0.22) 0 56%, transparent 57%),
+        var(--connect4-fill);
+    box-shadow:
+        inset 0 -8px 10px rgba(15, 23, 42, 0.18),
+        inset 0 0 0 2px rgba(255, 243, 176, 0.24),
+        0 8px 14px -10px rgba(15, 23, 42, 0.64);
+}
+
+.connect4-cell.is-player::after,
+.connect4-cell.is-ai::after {
+    content: '☠';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgba(255, 248, 220, 0.98);
+    font-size: 1rem;
+    line-height: 1;
+    text-shadow:
+        0 1px 0 rgba(15, 23, 42, 0.18),
+        0 0 8px rgba(15, 23, 42, 0.24);
+}
+
+.connect4-cell.is-drop-target::before,
+.connect4-cell.is-drop-target::after {
+    opacity: 0;
+}
+
+.connect4-drop-piece {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    animation: connect4ColumnDrop 360ms cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+.connect4-drop-piece::before {
+    content: '';
+    position: absolute;
+    inset: 16%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 34% 30%, rgba(255, 248, 220, 0.98) 0 12%, transparent 13%),
+        radial-gradient(circle at 50% 50%, rgba(255, 220, 120, 0.22) 0 56%, transparent 57%),
+        var(--connect4-fill);
+    box-shadow:
+        inset 0 -8px 10px rgba(15, 23, 42, 0.18),
+        inset 0 0 0 2px rgba(255, 243, 176, 0.24),
+        0 8px 14px -10px rgba(15, 23, 42, 0.64);
+}
+
+.connect4-drop-piece.is-player {
+    --connect4-fill: linear-gradient(180deg, #fb7185, #be123c);
+}
+
+.connect4-drop-piece.is-ai {
+    --connect4-fill: linear-gradient(180deg, #38bdf8, #1d4ed8);
+}
+
+.connect4-drop-piece-skull {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgba(255, 248, 220, 0.98);
+    font-size: 1rem;
+    line-height: 1;
+    text-shadow:
+        0 1px 0 rgba(15, 23, 42, 0.18),
+        0 0 8px rgba(15, 23, 42, 0.24);
 }
 
 .connect4-cell.is-winning {
@@ -2441,7 +2998,7 @@ body {
     --rhythm-hit-line: 84%;
     position: relative;
     width: min(100%, 620px);
-    height: 420px;
+    height: 400px;
     margin: 0 auto;
     overflow: hidden;
     border-radius: 24px;
@@ -2522,39 +3079,197 @@ body {
 
 .flappy-board {
     position: relative;
-    width: min(100%, 620px);
-    aspect-ratio: 16 / 9;
+    width: min(100%, 700px);
+    aspect-ratio: 16 / 10;
     margin: 0 auto;
     overflow: hidden;
     border-radius: 24px;
     background:
         radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.22), transparent 14%),
         radial-gradient(circle at 72% 24%, rgba(255, 255, 255, 0.18), transparent 12%),
-        linear-gradient(180deg, rgba(125, 211, 252, 0.98), rgba(59, 130, 246, 0.82) 68%, rgba(15, 23, 42, 0.94));
+        radial-gradient(circle at 32% 64%, rgba(255, 255, 255, 0.08), transparent 14%),
+        linear-gradient(180deg, rgba(125, 211, 252, 0.98), rgba(56, 189, 248, 0.86) 52%, rgba(15, 23, 42, 0.94));
     border: 1px solid rgba(125, 211, 252, 0.2);
+}
+
+.flappy-backdrop,
+.flappy-cove,
+.flappy-rock-arch,
+.flappy-beach,
+.flappy-palm {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.flappy-backdrop {
+    bottom: 14%;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.38));
+}
+
+.flappy-backdrop-far {
+    left: -4%;
+    width: 48%;
+    height: 28%;
+    clip-path: polygon(0 100%, 8% 72%, 18% 68%, 28% 44%, 40% 56%, 54% 28%, 72% 44%, 88% 18%, 100% 100%);
+    opacity: 0.52;
+}
+
+.flappy-backdrop-near {
+    right: -2%;
+    width: 58%;
+    height: 34%;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.46));
+    clip-path: polygon(0 100%, 10% 64%, 22% 58%, 36% 34%, 52% 46%, 68% 22%, 82% 28%, 94% 12%, 100% 100%);
+    opacity: 0.68;
+}
+
+.flappy-cove {
+    left: 18%;
+    bottom: 14%;
+    width: 30%;
+    height: 18%;
+    background:
+        radial-gradient(circle at 48% 78%, rgba(15, 23, 42, 0.76) 0 34%, transparent 35%),
+        linear-gradient(180deg, rgba(30, 41, 59, 0.46), rgba(15, 23, 42, 0.7));
+    clip-path: polygon(0 100%, 8% 44%, 20% 18%, 34% 10%, 52% 8%, 70% 16%, 84% 34%, 100% 100%);
+    opacity: 0.82;
+}
+
+.flappy-rock-arch {
+    right: 20%;
+    bottom: 14%;
+    width: 22%;
+    height: 20%;
+    background:
+        radial-gradient(circle at 50% 76%, rgba(15, 23, 42, 0.96) 0 18%, transparent 19%),
+        linear-gradient(180deg, rgba(100, 116, 139, 0.92), rgba(51, 65, 85, 0.96));
+    clip-path: polygon(0 100%, 8% 46%, 18% 16%, 34% 4%, 52% 2%, 68% 12%, 84% 30%, 100% 100%, 82% 100%, 76% 58%, 64% 46%, 50% 42%, 36% 48%, 24% 62%, 18% 100%);
+    opacity: 0.94;
+}
+
+.flappy-beach {
+    left: 0;
+    right: 0;
+    bottom: 14%;
+    height: 11%;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 24%),
+        linear-gradient(180deg, #fde68a, #f59e0b 68%, #b45309);
+    clip-path: polygon(0 52%, 8% 44%, 18% 40%, 30% 46%, 42% 58%, 54% 64%, 66% 60%, 78% 48%, 88% 42%, 94% 46%, 97% 58%, 99% 76%, 100% 100%, 0 100%);
+}
+
+.flappy-beach::before {
+    content: '';
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    top: -20%;
+    height: 56%;
+    background:
+        radial-gradient(circle at 14% 88%, rgba(253, 230, 138, 0.98) 0 34%, transparent 35%),
+        radial-gradient(circle at 34% 78%, rgba(253, 230, 138, 0.98) 0 28%, transparent 29%),
+        radial-gradient(circle at 52% 94%, rgba(253, 230, 138, 0.98) 0 32%, transparent 33%),
+        radial-gradient(circle at 72% 82%, rgba(253, 230, 138, 0.98) 0 30%, transparent 31%),
+        radial-gradient(circle at 90% 88%, rgba(253, 230, 138, 0.98) 0 34%, transparent 35%);
+    opacity: 0.92;
+}
+
+.flappy-palm {
+    bottom: 14%;
+    width: 54px;
+    height: 130px;
+}
+
+.flappy-palm::before,
+.flappy-palm::after {
+    content: '';
+    position: absolute;
+}
+
+.flappy-palm::before {
+    left: 22px;
+    bottom: 0;
+    width: 10px;
+    height: 86px;
+    background: linear-gradient(180deg, #92400e, #78350f);
+    border-radius: 999px;
+    transform: skew(-6deg);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.flappy-palm::after {
+    left: -2px;
+    top: 10px;
+    width: 58px;
+    height: 58px;
+    background:
+        linear-gradient(24deg, transparent 44%, #16a34a 44% 54%, transparent 54%) center / 100% 100% no-repeat,
+        linear-gradient(156deg, transparent 44%, #22c55e 44% 54%, transparent 54%) center / 100% 100% no-repeat,
+        linear-gradient(90deg, transparent 44%, #15803d 44% 54%, transparent 54%) center / 100% 100% no-repeat,
+        linear-gradient(0deg, transparent 44%, #4ade80 44% 54%, transparent 54%) center / 100% 100% no-repeat;
+    border-radius: 50%;
+}
+
+.flappy-palm-left {
+    left: 44px;
+    transform: scale(0.92);
+}
+
+.flappy-palm-right {
+    right: 58px;
+    transform: scale(1.04);
 }
 
 .flappy-bird {
     position: absolute;
-    width: 34px;
-    height: 26px;
-    border-radius: 50% 50% 44% 44%;
+    width: 46px;
+    height: 36px;
+    border-radius: 58% 42% 46% 54% / 44% 46% 54% 56%;
     background:
-        radial-gradient(circle at 68% 34%, rgba(15, 23, 42, 0.98) 0 11%, transparent 12%),
-        linear-gradient(180deg, #fde68a, #f59e0b);
+        radial-gradient(circle at 64% 34%, rgba(15, 23, 42, 0.98) 0 8%, transparent 9%),
+        radial-gradient(circle at 58% 74%, rgba(255, 255, 255, 0.18), transparent 20%),
+        linear-gradient(180deg, #ef4444, #b91c1c 64%, #f59e0b 64% 100%);
     box-shadow:
-        10px 5px 0 -4px rgba(255, 255, 255, 0.96),
-        inset -10px 0 0 rgba(248, 113, 113, 0.82);
+        inset -10px 0 0 rgba(14, 165, 233, 0.26),
+        0 10px 18px -12px rgba(15, 23, 42, 0.74);
     transform-origin: center;
+}
+
+.flappy-bird::before,
+.flappy-bird::after {
+    content: '';
+    position: absolute;
+}
+
+.flappy-bird::before {
+    right: -10px;
+    top: 14px;
+    width: 18px;
+    height: 10px;
+    background: linear-gradient(180deg, #facc15, #f97316);
+    clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+
+.flappy-bird::after {
+    left: 6px;
+    top: -6px;
+    width: 16px;
+    height: 14px;
+    background: linear-gradient(180deg, #1e293b, #020617);
+    border-radius: 8px 8px 2px 2px;
+    box-shadow:
+        6px 4px 0 -4px rgba(255, 255, 255, 0.18),
+        2px 12px 0 -5px rgba(245, 158, 11, 0.96);
 }
 
 .flappy-pipe {
     position: absolute;
-    width: 68px;
+    width: 86px;
     border-radius: 18px;
     background:
-        linear-gradient(90deg, rgba(20, 83, 45, 0.18), transparent 16%, transparent 84%, rgba(20, 83, 45, 0.18)),
-        linear-gradient(180deg, rgba(74, 222, 128, 0.98), rgba(22, 163, 74, 0.92));
+        linear-gradient(90deg, rgba(56, 189, 248, 0.16), transparent 16%, transparent 84%, rgba(56, 189, 248, 0.16)),
+        linear-gradient(180deg, rgba(226, 232, 240, 0.98), rgba(148, 163, 184, 0.92));
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
@@ -2571,14 +3286,73 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    height: 16%;
+    height: 14%;
     background:
-        linear-gradient(180deg, rgba(146, 64, 14, 0.16), transparent 18%),
-        linear-gradient(180deg, #22c55e, #166534 42%, #14532d);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 16%),
+        linear-gradient(180deg, rgba(59, 130, 246, 0.16), rgba(15, 23, 42, 0.12)),
+        linear-gradient(180deg, #14b8a6, #0f766e 42%, #134e4a);
+}
+
+.flappy-cloud {
+    position: absolute;
+    height: 26px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.62);
+    filter: blur(0.2px);
+    will-change: transform;
+}
+
+.flappy-cloud::before,
+.flappy-cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.62);
+    border-radius: 50%;
+}
+
+.flappy-cloud-a {
+    width: 78px;
+    top: 44px;
+    left: 54px;
+}
+
+.flappy-cloud-a::before {
+    width: 24px;
+    height: 24px;
+    left: 10px;
+    top: -12px;
+}
+
+.flappy-cloud-a::after {
+    width: 30px;
+    height: 30px;
+    right: 12px;
+    top: -16px;
+}
+
+.flappy-cloud-b {
+    width: 62px;
+    top: 86px;
+    right: 78px;
+    opacity: 0.82;
+}
+
+.flappy-cloud-b::before {
+    width: 22px;
+    height: 22px;
+    left: 8px;
+    top: -10px;
+}
+
+.flappy-cloud-b::after {
+    width: 26px;
+    height: 26px;
+    right: 8px;
+    top: -14px;
 }
 
 .tetris-board {
-    width: min(100%, 312px);
+    width: min(100%, 320px);
     aspect-ratio: 10 / 18;
     margin: 0 auto;
     padding: 8px;
@@ -2628,7 +3402,7 @@ body {
     --pacman-gap: 4px;
     --pacman-padding: 10px;
     position: relative;
-    width: min(100%, 560px);
+    width: min(100%, 500px);
     aspect-ratio: 1 / 1;
     margin: 0 auto;
     padding: 0;
@@ -2881,10 +3655,964 @@ body {
     color: rgba(251, 113, 133, 0.84);
 }
 
+.flowfree-topbar,
+.magicsort-topbar,
+.mentalmath-topbar,
+.candycrush-topbar,
+.harborrun-topbar,
+.stacker-topbar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(150px, 180px));
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.flowfree-counter-block,
+.magicsort-counter-block,
+.mentalmath-counter-block,
+.candycrush-counter-block,
+.harborrun-counter-block,
+.stacker-counter-block {
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    text-align: center;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.flowfree-counter-label,
+.magicsort-counter-label,
+.mentalmath-counter-label,
+.candycrush-counter-label,
+.harborrun-counter-label,
+.stacker-counter-label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted-text);
+    margin-bottom: 4px;
+}
+
+.flowfree-counter-value,
+.magicsort-counter-value,
+.mentalmath-counter-value,
+.candycrush-counter-value,
+.harborrun-counter-value,
+.stacker-counter-value {
+    font-size: clamp(1.05rem, 2.4vw, 1.55rem);
+    color: var(--primary-color);
+}
+
+.flowfree-face,
+.magicsort-face,
+.mentalmath-face,
+.candycrush-face,
+.harborrun-face,
+.stacker-face {
+    width: 100%;
+    min-height: 60px;
+    border-radius: 16px;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.flowfree-face {
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.94), rgba(37, 99, 235, 0.88));
+    box-shadow: 0 18px 34px -24px rgba(45, 212, 191, 0.56);
+}
+
+.magicsort-face {
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.94), rgba(14, 165, 233, 0.88));
+    box-shadow: 0 18px 34px -24px rgba(192, 132, 252, 0.56);
+}
+
+.mentalmath-face {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.94), rgba(20, 184, 166, 0.88));
+    box-shadow: 0 18px 34px -24px rgba(37, 99, 235, 0.56);
+}
+
+.candycrush-face {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.94), rgba(59, 130, 246, 0.88));
+    box-shadow: 0 18px 34px -24px rgba(236, 72, 153, 0.56);
+}
+
+.harborrun-face {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.94), rgba(249, 115, 22, 0.88));
+    box-shadow: 0 18px 34px -24px rgba(14, 165, 233, 0.56);
+}
+
+.stacker-face {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.94), rgba(20, 184, 166, 0.88));
+    box-shadow: 0 18px 34px -24px rgba(251, 191, 36, 0.56);
+}
+
+.flowfree-help,
+.magicsort-help,
+.mentalmath-help,
+.candycrush-help,
+.harborrun-help,
+.stacker-help {
+    margin: 0 0 14px;
+    text-align: center;
+    color: var(--muted-text);
+}
+
+.flowfree-board {
+    width: min(100%, 560px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px;
+    border-radius: 24px;
+    background:
+        linear-gradient(90deg, rgba(60, 24, 8, 0.32) 0 6%, transparent 6% 94%, rgba(60, 24, 8, 0.32) 94% 100%),
+        repeating-linear-gradient(90deg, rgba(88, 40, 16, 0.38) 0 44px, rgba(52, 24, 10, 0.58) 44px 48px, rgba(36, 18, 9, 0.38) 48px 92px),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.26)),
+        linear-gradient(180deg, #4a2b16, #2f1b0f 58%, #160c06);
+    border: 1px solid rgba(251, 191, 36, 0.18);
+    box-shadow:
+        inset 0 0 0 2px rgba(255, 255, 255, 0.04),
+        0 20px 36px -24px rgba(15, 23, 42, 0.82);
+    touch-action: none;
+}
+
+.flowfree-cell {
+    aspect-ratio: 1 / 1;
+    border: none;
+    border-radius: 16px;
+    position: relative;
+    background:
+        radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.06), transparent 18%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.28)),
+        rgba(59, 35, 20, 0.62);
+    box-shadow:
+        inset 0 0 0 1px rgba(251, 191, 36, 0.08),
+        inset 0 -10px 14px rgba(15, 23, 42, 0.12);
+    cursor: pointer;
+    transition: box-shadow 0.14s ease, background 0.18s ease;
+    will-change: box-shadow;
+}
+
+.flowfree-cell:hover {
+    transform: none;
+    filter: none;
+}
+
+.flowfree-cell::before,
+.flowfree-cell::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transition: transform 0.14s ease, opacity 0.14s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.flowfree-cell::before {
+    inset: 50%;
+    transform: translate(-50%, -50%);
+    width: 34%;
+    height: 34%;
+    border-radius: 999px;
+    background: var(--flow-color, transparent);
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.24),
+        0 0 0 7px rgba(15, 23, 42, 0.34),
+        0 0 18px color-mix(in srgb, var(--flow-color, transparent) 60%, transparent),
+        0 8px 16px -10px rgba(15, 23, 42, 0.72);
+    opacity: 0.92;
+}
+
+.flowfree-cell.is-anchor:hover::before {
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.26),
+        0 0 0 7px rgba(15, 23, 42, 0.34),
+        0 0 22px color-mix(in srgb, var(--flow-color, transparent) 72%, transparent),
+        0 10px 18px -10px rgba(15, 23, 42, 0.72);
+}
+
+.flowfree-cell.is-filled::after {
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.04)) center top / 20px calc((var(--flow-top) * 50%) + 10px) no-repeat,
+        linear-gradient(90deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.04)) right center / calc((var(--flow-right) * 50%) + 10px) 20px no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.04)) center bottom / 20px calc((var(--flow-bottom) * 50%) + 10px) no-repeat,
+        linear-gradient(90deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.04)) left center / calc((var(--flow-left) * 50%) + 10px) 20px no-repeat,
+        linear-gradient(90deg, color-mix(in srgb, var(--flow-color) 52%, #271308), color-mix(in srgb, var(--flow-color) 96%, white) 48%, color-mix(in srgb, var(--flow-color) 46%, #2b160b)) center top / 18px calc(var(--flow-top) * 50%) no-repeat,
+        linear-gradient(0deg, color-mix(in srgb, var(--flow-color) 52%, #271308), color-mix(in srgb, var(--flow-color) 96%, white) 48%, color-mix(in srgb, var(--flow-color) 46%, #2b160b)) right center / calc(var(--flow-right) * 50%) 18px no-repeat,
+        linear-gradient(90deg, color-mix(in srgb, var(--flow-color) 52%, #271308), color-mix(in srgb, var(--flow-color) 96%, white) 48%, color-mix(in srgb, var(--flow-color) 46%, #2b160b)) center bottom / 18px calc(var(--flow-bottom) * 50%) no-repeat,
+        linear-gradient(0deg, color-mix(in srgb, var(--flow-color) 52%, #271308), color-mix(in srgb, var(--flow-color) 96%, white) 48%, color-mix(in srgb, var(--flow-color) 46%, #2b160b)) left center / calc(var(--flow-left) * 50%) 18px no-repeat,
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0) 0 3px, rgba(255, 244, 214, 0.48) 3px 5px, rgba(70, 37, 20, 0.2) 5px 8px, rgba(255, 255, 255, 0) 8px 12px) center top / 18px calc(var(--flow-top) * 50%) no-repeat,
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 0 3px, rgba(255, 244, 214, 0.48) 3px 5px, rgba(70, 37, 20, 0.2) 5px 8px, rgba(255, 255, 255, 0) 8px 12px) right center / calc(var(--flow-right) * 50%) 18px no-repeat,
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0) 0 3px, rgba(255, 244, 214, 0.48) 3px 5px, rgba(70, 37, 20, 0.2) 5px 8px, rgba(255, 255, 255, 0) 8px 12px) center bottom / 18px calc(var(--flow-bottom) * 50%) no-repeat,
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 0 3px, rgba(255, 244, 214, 0.48) 3px 5px, rgba(70, 37, 20, 0.2) 5px 8px, rgba(255, 255, 255, 0) 8px 12px) left center / calc(var(--flow-left) * 50%) 18px no-repeat,
+        radial-gradient(circle at 50% 24%, rgba(255, 255, 255, 0.24) 0 5%, transparent 6%) center top / 22px calc(var(--flow-top) * 50%) no-repeat,
+        radial-gradient(circle at 76% 50%, rgba(255, 255, 255, 0.2) 0 5%, transparent 6%) right center / calc(var(--flow-right) * 50%) 22px no-repeat,
+        radial-gradient(circle at 50% 76%, rgba(255, 255, 255, 0.22) 0 5%, transparent 6%) center bottom / 22px calc(var(--flow-bottom) * 50%) no-repeat,
+        radial-gradient(circle at 24% 50%, rgba(255, 255, 255, 0.2) 0 5%, transparent 6%) left center / calc(var(--flow-left) * 50%) 22px no-repeat,
+        radial-gradient(circle at 32% 18%, rgba(44, 22, 11, 0.54) 0 2%, transparent 3%) center top / 24px calc(var(--flow-top) * 50%) no-repeat,
+        radial-gradient(circle at 68% 58%, rgba(44, 22, 11, 0.52) 0 2%, transparent 3%) right center / calc(var(--flow-right) * 50%) 24px no-repeat,
+        radial-gradient(circle at 58% 78%, rgba(44, 22, 11, 0.54) 0 2%, transparent 3%) center bottom / 24px calc(var(--flow-bottom) * 50%) no-repeat,
+        radial-gradient(circle at 18% 42%, rgba(44, 22, 11, 0.52) 0 2%, transparent 3%) left center / calc(var(--flow-left) * 50%) 24px no-repeat,
+        repeating-linear-gradient(90deg, transparent 0 10px, rgba(245, 222, 179, 0.72) 10px 11px, transparent 11px 19px, rgba(69, 37, 20, 0.64) 19px 20px) center top / 18px calc(var(--flow-top) * 50%) no-repeat,
+        repeating-linear-gradient(0deg, transparent 0 10px, rgba(245, 222, 179, 0.72) 10px 11px, transparent 11px 19px, rgba(69, 37, 20, 0.64) 19px 20px) right center / calc(var(--flow-right) * 50%) 18px no-repeat,
+        repeating-linear-gradient(90deg, transparent 0 10px, rgba(245, 222, 179, 0.72) 10px 11px, transparent 11px 19px, rgba(69, 37, 20, 0.64) 19px 20px) center bottom / 18px calc(var(--flow-bottom) * 50%) no-repeat,
+        repeating-linear-gradient(0deg, transparent 0 10px, rgba(245, 222, 179, 0.72) 10px 11px, transparent 11px 19px, rgba(69, 37, 20, 0.64) 19px 20px) left center / calc(var(--flow-left) * 50%) 18px no-repeat,
+        radial-gradient(circle at 18% 14%, rgba(250, 235, 215, 0.8) 0 1.4%, transparent 1.6%) center top / 26px calc(var(--flow-top) * 50%) no-repeat,
+        radial-gradient(circle at 84% 20%, rgba(250, 235, 215, 0.8) 0 1.4%, transparent 1.6%) right center / calc(var(--flow-right) * 50%) 26px no-repeat,
+        radial-gradient(circle at 72% 84%, rgba(250, 235, 215, 0.8) 0 1.4%, transparent 1.6%) center bottom / 26px calc(var(--flow-bottom) * 50%) no-repeat,
+        radial-gradient(circle at 16% 74%, rgba(250, 235, 215, 0.8) 0 1.4%, transparent 1.6%) left center / calc(var(--flow-left) * 50%) 26px no-repeat,
+        radial-gradient(circle at center, #f3e3bf 0 10%, #8b5a2b 11% 16%, transparent 17%);
+    opacity: 0.98;
+    filter: drop-shadow(0 3px 3px rgba(18, 10, 4, 0.24));
+}
+
+.flowfree-cell.is-anchor::before {
+    opacity: 1;
+}
+
+.flowfree-cell.is-filled:not(.is-anchor)::before {
+    width: 14%;
+    height: 14%;
+    background: #f3e3bf;
+    box-shadow:
+        0 0 0 2px #8b5a2b,
+        0 0 0 4px rgba(15, 23, 42, 0.22),
+        0 0 10px color-mix(in srgb, var(--flow-color, transparent) 45%, transparent);
+}
+
+.flowfree-cell.is-selected {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.28), 0 0 0 3px rgba(56, 189, 248, 0.18);
+}
+
+.flowfree-cell.is-spawning::after {
+    animation: flowfree-rope-spawn 180ms cubic-bezier(0.18, 0.8, 0.28, 1) forwards;
+}
+
+.flowfree-cell.is-spawning::before {
+    animation: flowfree-nail-spawn 180ms cubic-bezier(0.18, 0.8, 0.28, 1) forwards;
+}
+
+.flowfree-cell.is-despawning::after {
+    animation: flowfree-rope-despawn 220ms ease-out forwards;
+}
+
+.flowfree-cell.is-despawning::before {
+    animation: flowfree-nail-despawn 220ms ease-out forwards;
+}
+
+@keyframes flowfree-rope-spawn {
+    0% {
+        opacity: 0;
+        transform: scale(0.38);
+        filter: drop-shadow(0 0 0 rgba(18, 10, 4, 0));
+    }
+
+    60% {
+        opacity: 1;
+        transform: scale(1.08);
+        filter: drop-shadow(0 5px 4px rgba(18, 10, 4, 0.28));
+    }
+
+    100% {
+        opacity: 0.98;
+        transform: scale(1);
+        filter: drop-shadow(0 3px 3px rgba(18, 10, 4, 0.24));
+    }
+}
+
+@keyframes flowfree-nail-spawn {
+    0% {
+        opacity: 0.3;
+        transform: translate(-50%, -50%) scale(0.25);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.14);
+    }
+
+    100% {
+        opacity: 0.92;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes flowfree-rope-despawn {
+    0% {
+        opacity: 0.98;
+        transform: scale(1);
+        filter: drop-shadow(0 3px 3px rgba(18, 10, 4, 0.24));
+    }
+
+    65% {
+        opacity: 0.5;
+        transform: scale(0.88);
+        filter: drop-shadow(0 1px 1px rgba(18, 10, 4, 0.12));
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.42);
+        filter: none;
+    }
+}
+
+@keyframes flowfree-nail-despawn {
+    0% {
+        opacity: 0.92;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.35);
+    }
+}
+
+.magicsort-board {
+    width: min(100%, 620px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(92px, 1fr));
+    gap: 14px;
+    align-items: end;
+    align-content: center;
+}
+
+.magicsort-card {
+    overflow: hidden;
+}
+
+.magicsort-tube {
+    padding: 8px 8px 10px;
+    border-radius: 22px;
+    background: rgba(15, 23, 42, 0.54);
+    border: 1px solid rgba(192, 132, 252, 0.18);
+    min-height: 218px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.magicsort-tube-button {
+    width: 62px;
+    height: 172px;
+    padding: 5px;
+    border-radius: 18px 18px 24px 24px;
+    border: 2px solid rgba(226, 232, 240, 0.9);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(15, 23, 42, 0.3));
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.magicsort-tube.is-selected .magicsort-tube-button {
+    box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.18);
+    transform: translateY(-4px);
+}
+
+.magicsort-layer {
+    width: 100%;
+    min-height: 30px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    flex: 0 0 auto;
+}
+
+.mentalmath-stage {
+    width: min(100%, 520px);
+    margin: 0 auto;
+}
+
+.mentalmath-question-card .feedback {
+    margin: 14px 0 0;
+    text-align: center;
+}
+
+.mentalmath-question-card {
+    padding: 24px;
+    border-radius: 24px;
+    text-align: center;
+    background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.14), transparent 40%),
+        rgba(15, 23, 42, 0.58);
+    border: 1px solid rgba(37, 99, 235, 0.18);
+}
+
+.mentalmath-label {
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.76rem;
+    color: var(--muted-text);
+}
+
+.mentalmath-question {
+    margin: 0 0 18px;
+    font-size: clamp(2rem, 7vw, 3.4rem);
+}
+
+.mentalmath-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+}
+
+.mentalmath-form input {
+    min-height: 56px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.candycrush-board {
+    width: min(100%, 520px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 6px;
+    padding: 10px;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at top, rgba(244, 114, 182, 0.16), transparent 40%),
+        linear-gradient(180deg, rgba(59, 130, 246, 0.12), rgba(15, 23, 42, 0.2)),
+        rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(244, 114, 182, 0.18);
+}
+
+.candycrush-cell {
+    aspect-ratio: 1 / 1;
+    border: none;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.48);
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    cursor: grab;
+    transition: transform 180ms ease, opacity 180ms ease, box-shadow 180ms ease;
+}
+
+.candycrush-cell:hover {
+    transform: none;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 0 2px rgba(251, 191, 36, 0.08);
+}
+
+.candycrush-cell::before {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 34% 30%, rgba(255, 248, 220, 0.98) 0 12%, transparent 13%),
+        radial-gradient(circle at 50% 50%, rgba(255, 220, 120, 0.22) 0 56%, transparent 57%),
+        var(--candy-fill, rgba(255, 255, 255, 0.14));
+    box-shadow:
+        inset 0 -8px 10px rgba(15, 23, 42, 0.18),
+        inset 0 0 0 2px rgba(255, 243, 176, 0.24),
+        0 8px 14px -10px rgba(15, 23, 42, 0.64);
+    transition: transform 180ms ease, opacity 180ms ease, box-shadow 180ms ease;
+}
+
+.candycrush-cell::after {
+    content: '☠';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+    color: rgba(255, 248, 220, 0.98);
+    font-size: 1rem;
+    line-height: 1;
+    text-shadow:
+        0 1px 0 rgba(15, 23, 42, 0.18),
+        0 0 8px rgba(15, 23, 42, 0.24);
+    transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.candycrush-cell.is-selected {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2), 0 0 0 3px rgba(244, 114, 182, 0.18);
+}
+
+.candycrush-cell.is-bouncing {
+    animation: candyBounce 180ms ease;
+}
+
+.candycrush-cell.is-crushing {
+    opacity: 1;
+}
+
+.candycrush-cell.is-crushing::before,
+.candycrush-cell.is-crushing::after {
+    transform: scale(0.52) rotate(10deg);
+    opacity: 0;
+}
+
+.candycrush-cell.is-falling::before,
+.candycrush-cell.is-falling::after {
+    animation: candyFallIn 220ms cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+.candy-hit-particle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-top: -5px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, rgba(255, 248, 220, 0.95) 0 28%, rgba(251, 191, 36, 0.78) 29% 68%, transparent 69%);
+    opacity: 0;
+    pointer-events: none;
+    animation: candyHitParticle 0.32s ease-out forwards;
+}
+
+.candy-hit-particle-a { --candy-particle-x: -18px; --candy-particle-y: -20px; }
+.candy-hit-particle-b { --candy-particle-x: 16px; --candy-particle-y: -14px; }
+.candy-hit-particle-c { --candy-particle-x: -14px; --candy-particle-y: 18px; }
+.candy-hit-particle-d { --candy-particle-x: 20px; --candy-particle-y: 14px; }
+.candy-hit-particle-e { --candy-particle-x: 0px; --candy-particle-y: -24px; }
+
+.harborrun-board {
+    position: relative;
+    width: min(100%, 420px);
+    height: 540px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.16), transparent 12%),
+        radial-gradient(circle at 78% 12%, rgba(255, 255, 255, 0.12), transparent 10%),
+        linear-gradient(180deg, #7dd3fc, #2563eb 26%, #1d4ed8 52%, #0f172a);
+    border: 1px solid rgba(125, 211, 252, 0.2);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 20px 36px -24px rgba(15, 23, 42, 0.8);
+}
+
+.harborrun-board::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 18%, rgba(15, 23, 42, 0.06) 18% 82%, transparent 82%),
+        repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0 2px, transparent 2px 26px),
+        repeating-linear-gradient(90deg, transparent 0 68px, rgba(255, 255, 255, 0.04) 68px 90px, transparent 90px 150px),
+        radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.08), transparent 8%),
+        radial-gradient(circle at 74% 58%, rgba(255, 255, 255, 0.06), transparent 7%);
+    pointer-events: none;
+}
+
+.harborrun-board::after {
+    content: '';
+    position: absolute;
+    inset: -18% 0 0;
+    background:
+        radial-gradient(ellipse at 12% 22%, rgba(255, 255, 255, 0.2) 0 7%, transparent 8%),
+        radial-gradient(ellipse at 42% 48%, rgba(255, 255, 255, 0.18) 0 6%, transparent 7%),
+        radial-gradient(ellipse at 76% 18%, rgba(255, 255, 255, 0.18) 0 6%, transparent 7%),
+        radial-gradient(ellipse at 84% 64%, rgba(255, 255, 255, 0.14) 0 5%, transparent 6%),
+        repeating-linear-gradient(180deg, transparent 0 30px, rgba(15, 118, 110, 0.12) 30px 34px, transparent 34px 68px);
+    background-size: 100% 160%;
+    opacity: 0.72;
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+.harborrun-backdrop,
+.harborrun-waves,
+.harborrun-foam {
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    will-change: background-position;
+}
+
+.harborrun-backdrop {
+    top: 0;
+    bottom: 0;
+    background-repeat: repeat-y;
+    opacity: 0.8;
+}
+
+.harborrun-backdrop-far {
+    background:
+        radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.14) 0 4%, transparent 5%),
+        radial-gradient(circle at 74% 28%, rgba(255, 255, 255, 0.12) 0 3%, transparent 4%),
+        linear-gradient(180deg, rgba(14, 116, 144, 0.22), transparent 18%, rgba(8, 47, 73, 0.16) 48%, transparent 76%);
+    background-size: 100% 180px;
+}
+
+.harborrun-backdrop-mid {
+    background:
+        radial-gradient(ellipse at 18% 26%, rgba(255, 255, 255, 0.16) 0 6%, transparent 7%),
+        radial-gradient(ellipse at 64% 18%, rgba(255, 255, 255, 0.12) 0 5%, transparent 6%),
+        radial-gradient(ellipse at 78% 54%, rgba(255, 255, 255, 0.14) 0 6%, transparent 7%),
+        repeating-linear-gradient(180deg, transparent 0 28px, rgba(255, 255, 255, 0.09) 28px 31px, transparent 31px 66px);
+    background-size: 100% 210px;
+    opacity: 0.68;
+}
+
+.harborrun-waves-near {
+    top: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse at 14% 18%, rgba(255, 255, 255, 0.16) 0 5%, transparent 6%),
+        radial-gradient(ellipse at 38% 44%, rgba(255, 255, 255, 0.14) 0 6%, transparent 7%),
+        radial-gradient(ellipse at 72% 34%, rgba(255, 255, 255, 0.16) 0 5%, transparent 6%),
+        radial-gradient(ellipse at 86% 72%, rgba(255, 255, 255, 0.12) 0 5%, transparent 6%),
+        repeating-linear-gradient(180deg, transparent 0 22px, rgba(186, 230, 253, 0.12) 22px 24px, transparent 24px 48px);
+    background-size: 100% 160px;
+    opacity: 0.72;
+}
+
+.harborrun-foam {
+    top: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 12% 20%, rgba(255, 255, 255, 0.22) 0 2.2%, transparent 2.6%),
+        radial-gradient(circle at 44% 48%, rgba(255, 255, 255, 0.18) 0 2%, transparent 2.4%),
+        radial-gradient(circle at 74% 30%, rgba(255, 255, 255, 0.22) 0 2.1%, transparent 2.5%),
+        radial-gradient(circle at 88% 78%, rgba(255, 255, 255, 0.16) 0 1.8%, transparent 2.2%);
+    background-size: 100% 140px;
+    opacity: 0.6;
+    mix-blend-mode: screen;
+}
+
+.harborrun-player,
+.harborrun-obstacle {
+    position: absolute;
+    width: 22%;
+    left: 0;
+    transform: translateX(-50%);
+}
+
+.harborrun-player {
+    height: 82px;
+    background:
+        radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.94) 0 7%, transparent 8%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.26), transparent 18%),
+        linear-gradient(180deg, rgba(120, 53, 15, 0.36), transparent 40%),
+        linear-gradient(180deg, #f59e0b, #7c2d12 70%);
+    bottom: 18px;
+    border-radius: 48% 48% 30% 30% / 24% 24% 76% 76%;
+    box-shadow: 0 16px 26px -18px rgba(15, 23, 42, 0.88);
+    overflow: hidden;
+}
+
+.harborrun-player::before,
+.harborrun-player::after,
+.harborrun-obstacle::before,
+.harborrun-obstacle::after {
+    content: '';
+    position: absolute;
+}
+
+.harborrun-player::before {
+    left: 50%;
+    top: 18px;
+    width: 8px;
+    height: 28px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+    border-radius: 999px;
+}
+
+.harborrun-player::after {
+    left: 50%;
+    top: 20px;
+    width: 22px;
+    height: 18px;
+    transform: translateX(-20%);
+    background: linear-gradient(180deg, #f8fafc, #cbd5e1);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    opacity: 0.92;
+}
+
+.harborrun-obstacle {
+    height: 78px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 24%),
+        linear-gradient(180deg, var(--vehicle-top, #facc15), var(--vehicle-bottom, #92400e));
+    border-radius: 44% 44% 28% 28% / 24% 24% 76% 76%;
+    box-shadow: 0 16px 26px -18px rgba(15, 23, 42, 0.88);
+    overflow: hidden;
+}
+
+.harborrun-obstacle.type-ship {
+    --vehicle-top: #38bdf8;
+    --vehicle-bottom: #1d4ed8;
+}
+
+.harborrun-obstacle.type-wreck {
+    --vehicle-top: #94a3b8;
+    --vehicle-bottom: #475569;
+}
+
+.harborrun-obstacle.type-rock {
+    --vehicle-top: #94a3b8;
+    --vehicle-bottom: #334155;
+    border-radius: 42% 58% 48% 52% / 52% 44% 56% 48%;
+}
+
+.harborrun-obstacle.type-ship::before,
+.harborrun-obstacle.type-wreck::before {
+    left: 50%;
+    top: 14px;
+    width: 7px;
+    height: 24px;
+    transform: translateX(-50%);
+    background: rgba(226, 232, 240, 0.82);
+    border-radius: 999px;
+}
+
+.harborrun-obstacle.type-ship::after,
+.harborrun-obstacle.type-wreck::after {
+    left: 50%;
+    top: 16px;
+    width: 18px;
+    height: 15px;
+    transform: translateX(-16%);
+    background: rgba(241, 245, 249, 0.88);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.harborrun-obstacle.type-rock::before {
+    inset: 16px 12px 18px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.22), transparent 30%),
+        radial-gradient(circle at 66% 68%, rgba(15, 23, 42, 0.22), transparent 28%),
+        rgba(15, 23, 42, 0.22);
+}
+
+.harborrun-player,
+.harborrun-obstacle.type-ship,
+.harborrun-obstacle.type-wreck {
+    background-size: 100% 100%;
+}
+
+.harborrun-player {
+    background-image:
+        radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.94) 0 7%, transparent 8%),
+        linear-gradient(90deg, transparent 0 18%, rgba(120, 53, 15, 0.28) 18% 22%, transparent 22% 42%, rgba(120, 53, 15, 0.28) 42% 46%, transparent 46% 66%, rgba(120, 53, 15, 0.28) 66% 70%, transparent 70% 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.26), transparent 18%),
+        linear-gradient(180deg, rgba(120, 53, 15, 0.36), transparent 40%),
+        linear-gradient(180deg, #f59e0b, #7c2d12 70%);
+}
+
+.harborrun-obstacle.type-ship {
+    background-image:
+        linear-gradient(90deg, transparent 0 18%, rgba(186, 230, 253, 0.24) 18% 22%, transparent 22% 42%, rgba(186, 230, 253, 0.24) 42% 46%, transparent 46% 66%, rgba(186, 230, 253, 0.24) 66% 70%, transparent 70% 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 24%),
+        linear-gradient(180deg, var(--vehicle-top, #38bdf8), var(--vehicle-bottom, #1d4ed8));
+}
+
+.harborrun-obstacle.type-wreck {
+    background-image:
+        linear-gradient(90deg, transparent 0 16%, rgba(226, 232, 240, 0.16) 16% 22%, transparent 22% 42%, rgba(226, 232, 240, 0.16) 42% 48%, transparent 48% 68%, rgba(226, 232, 240, 0.16) 68% 74%, transparent 74% 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 24%),
+        linear-gradient(180deg, var(--vehicle-top, #94a3b8), var(--vehicle-bottom, #475569));
+}
+
+
+.stacker-board {
+    position: relative;
+    width: min(100%, 500px);
+    height: 560px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.16), transparent 12%),
+        radial-gradient(circle at 76% 16%, rgba(255, 255, 255, 0.14), transparent 10%),
+        linear-gradient(180deg, rgba(125, 211, 252, 0.94), rgba(56, 189, 248, 0.82) 48%, rgba(15, 23, 42, 0.92));
+    border: 1px solid rgba(251, 191, 36, 0.18);
+}
+
+.stacker-backdrop,
+.stacker-cloud {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.stacker-cloud {
+    width: 96px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    opacity: 0.72;
+    filter: drop-shadow(0 8px 10px rgba(148, 163, 184, 0.14));
+}
+
+.stacker-cloud::before,
+.stacker-cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 999px;
+}
+
+.stacker-cloud-a {
+    left: 10%;
+    top: 8%;
+    transform: scale(0.82);
+}
+
+.stacker-cloud-a::before {
+    width: 34px;
+    height: 34px;
+    left: 12px;
+    top: -12px;
+}
+
+.stacker-cloud-a::after {
+    width: 46px;
+    height: 46px;
+    right: 16px;
+    top: -18px;
+}
+
+.stacker-cloud-b {
+    right: 12%;
+    top: 14%;
+    transform: scale(0.68);
+    opacity: 0.64;
+}
+
+.stacker-cloud-b::before {
+    width: 32px;
+    height: 32px;
+    left: 14px;
+    top: -10px;
+}
+
+.stacker-cloud-b::after {
+    width: 42px;
+    height: 42px;
+    right: 14px;
+    top: -16px;
+}
+
+.stacker-backdrop {
+    bottom: 68px;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.4));
+}
+
+.stacker-backdrop-far {
+    left: -4%;
+    width: 48%;
+    height: 25%;
+    clip-path: polygon(0 100%, 8% 72%, 18% 68%, 28% 44%, 40% 56%, 54% 28%, 72% 44%, 88% 18%, 100% 100%);
+    opacity: 0.54;
+}
+
+.stacker-backdrop-near {
+    right: -2%;
+    width: 58%;
+    height: 31%;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.46));
+    clip-path: polygon(0 100%, 10% 64%, 22% 58%, 36% 34%, 52% 46%, 68% 22%, 82% 28%, 94% 12%, 100% 100%);
+    opacity: 0.7;
+}
+
+.stacker-layer,
+.stacker-current {
+    position: absolute;
+    height: 26px;
+    border-radius: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 14px 26px -20px rgba(15, 23, 42, 0.92);
+    overflow: hidden;
+    z-index: 3;
+}
+
+.stacker-layer,
+.stacker-current,
+.stacker-fragment {
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 18%, transparent 82%, rgba(15, 23, 42, 0.12)),
+        linear-gradient(90deg, transparent 0 10%, rgba(73, 42, 18, 0.34) 10% 12%, transparent 12% 31%, rgba(73, 42, 18, 0.34) 31% 33%, transparent 33% 54%, rgba(73, 42, 18, 0.34) 54% 56%, transparent 56% 77%, rgba(73, 42, 18, 0.34) 77% 79%, transparent 79% 100%),
+        linear-gradient(180deg, rgba(255, 248, 220, 0.22), transparent 24%),
+        linear-gradient(180deg, rgba(92, 51, 23, 0.34), transparent 68%),
+        linear-gradient(90deg, var(--stack-left, #d4a15d), var(--stack-right, #8b5a2b));
+    border: 1px solid rgba(83, 45, 18, 0.46);
+}
+
+.stacker-fragment {
+    position: absolute;
+    height: 26px;
+    border-radius: 0;
+    transform: translateX(-50%) translateX(var(--stack-fragment-x, 0px)) rotate(var(--stack-fragment-rotation, 0deg));
+    transform-origin: center center;
+    box-shadow: 0 16px 26px -20px rgba(15, 23, 42, 0.92);
+    z-index: 4;
+}
+
+.stacker-layer::before,
+.stacker-current::before,
+.stacker-fragment::before,
+.stacker-layer::after,
+.stacker-current::after,
+.stacker-fragment::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.stacker-layer::before,
+.stacker-current::before,
+.stacker-fragment::before {
+    background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 4px, rgba(73, 42, 18, 0.06) 4px 8px),
+        repeating-linear-gradient(180deg, transparent 0 9px, rgba(73, 42, 18, 0.16) 9px 11px, transparent 11px 26px);
+    opacity: 0.75;
+}
+
+.stacker-layer::after,
+.stacker-current::after,
+.stacker-fragment::after {
+    inset: 4px 8px;
+    border-radius: 0;
+    background:
+        radial-gradient(circle at 14% 50%, rgba(84, 45, 19, 0.72) 0 1.6px, transparent 1.8px),
+        radial-gradient(circle at 86% 50%, rgba(84, 45, 19, 0.72) 0 1.6px, transparent 1.8px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.06), transparent 18%, transparent 82%, rgba(15, 23, 42, 0.12));
+    opacity: 0.88;
+}
+
+.stacker-waterline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 92px;
+    background:
+        radial-gradient(circle at 14% 80%, rgba(245, 158, 11, 0.3), transparent 18%),
+        radial-gradient(circle at 34% 70%, rgba(253, 224, 71, 0.22), transparent 16%),
+        radial-gradient(circle at 58% 78%, rgba(234, 179, 8, 0.22), transparent 18%),
+        radial-gradient(circle at 82% 76%, rgba(245, 158, 11, 0.28), transparent 17%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 18%),
+        linear-gradient(180deg, #fde68a 0 36%, #f59e0b 60%, #b45309 100%);
+}
+
 @media (max-width: 980px) {
     .games-home-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        width: min(100%, 560px);
+        width: min(100%, 520px);
     }
 
     .solitaire-top-row {
@@ -2902,6 +4630,18 @@ body {
     }
 }
 
+@keyframes candyBounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.88);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 @media (max-width: 600px) {
     .solitaire-card {
         --solitaire-card-width: 78px;
@@ -2909,12 +4649,12 @@ body {
 
     .games-home-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        width: min(100%, 360px);
+        width: min(100%, 340px);
     }
 
     .game-home-art {
-        width: 68px;
-        height: 68px;
+        width: 54px;
+        height: 54px;
     }
 
     .tetris-topbar,
@@ -2922,7 +4662,13 @@ body {
     .solitaire-topbar,
     .connect4-topbar,
     .rhythm-topbar,
-    .flappy-topbar {
+    .flappy-topbar,
+    .flowfree-topbar,
+    .magicsort-topbar,
+    .mentalmath-topbar,
+    .candycrush-topbar,
+    .harborrun-topbar,
+    .stacker-topbar {
         grid-template-columns: 1fr;
     }
 
@@ -3136,13 +4882,13 @@ body {
 
 .aim-board {
     position: relative;
-    width: min(100%, min(64vh, 620px));
+    width: min(100%, min(54vh, 520px));
     aspect-ratio: 1 / 1;
     margin: 0 auto;
-    padding: 10px;
+    padding: 7px;
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 10px;
+    gap: 7px;
     border-radius: 22px;
     overflow: hidden;
     background:
@@ -3992,6 +5738,55 @@ button:hover {
     }
 }
 
+@keyframes candyFallIn {
+    0% {
+        transform: translateY(-18px) scale(0.92);
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes connect4DropIn {
+    0% {
+        transform: translateY(calc((var(--connect4-drop-rows, 1) * -100%) - (var(--connect4-drop-rows, 1) * 8px))) scale(0.96);
+        opacity: 0.34;
+    }
+    72% {
+        transform: translateY(4px) scale(1.02);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes connect4ColumnDrop {
+    0% {
+        transform: translateY(calc(var(--connect4-drop-distance, 0px) * -1));
+    }
+    78% {
+        transform: translateY(6px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes candyHitParticle {
+    0% {
+        opacity: 0.92;
+        transform: translate(0, 0) scale(0.8);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--candy-particle-x), var(--candy-particle-y)) scale(0.2);
+    }
+}
+
 @keyframes sudokuSolvedPulse {
     0% {
         transform: scale(0.94);
@@ -4054,8 +5849,7 @@ button:hover {
     .catalog-grid,
     .panel-grid,
     .form-grid,
-    .service-grid,
-    .games-home-grid {
+    .service-grid {
         grid-template-columns: 1fr;
     }
 
@@ -4129,6 +5923,12 @@ button:hover {
     .connect4-card,
     .rhythm-card,
     .flappy-card,
+    .flowfree-card,
+    .magicsort-card,
+    .mentalmath-card,
+    .candycrush-card,
+    .harborrun-card,
+    .stacker-card,
     .math-panel,
     .music-panel {
         min-height: auto;
@@ -4231,28 +6031,43 @@ button:hover {
     .minesweeper-board {
         gap: 4px;
         padding: 8px;
-        width: min(100%, min(58vh, 460px));
+        width: min(100%, min(52vh, 400px));
     }
 
     .snake-board {
         --snake-gap: 3px;
         --snake-padding: 6px;
-        width: min(100%, min(58vh, 460px));
+        width: min(100%, min(52vh, 400px));
     }
 
     .pong-board {
-        width: min(100%, min(58vh, 460px));
+        width: min(100%, 420px);
     }
 
     .sudoku-board {
         gap: 4px;
         padding: 8px;
-        width: min(100%, min(58vh, 460px));
+        width: min(100%, min(52vh, 400px));
     }
 
     .game-2048-board {
         --game-2048-gap: 8px;
         --game-2048-padding: 8px;
-        width: min(100%, min(58vh, 460px));
+        width: min(100%, min(52vh, 400px));
+    }
+
+    .flowfree-board,
+    .candycrush-board,
+    .harborrun-board,
+    .stacker-board {
+        width: min(100%, 100%);
+    }
+
+    .magicsort-board {
+        grid-template-columns: repeat(3, minmax(76px, 1fr));
+    }
+
+    .mentalmath-form {
+        grid-template-columns: 1fr;
     }
 }
