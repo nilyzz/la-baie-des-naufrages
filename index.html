@@ -1,0 +1,864 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Baie des naufragés</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-glow background-glow-left"></div>
+    <div class="background-glow background-glow-right"></div>
+    <div class="page-actions">
+        <button id="pageBackButton" type="button" class="secondary-button page-action-button hidden" data-back-to-services="true">Changer de navire</button>
+        <button id="logoutButton" type="button" class="secondary-button page-action-button hidden">
+            <span class="logout-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M10 4H6.75C5.784 4 5 4.784 5 5.75V18.25C5 19.216 5.784 20 6.75 20H10" />
+                    <path d="M13 8L18 12L13 16" />
+                    <path d="M18 12H9" />
+                </svg>
+            </span>
+            <span>Quitter la baie</span>
+        </button>
+    </div>
+
+    <header id="siteHeader" class="site-header hidden" aria-hidden="true">
+            <div class="site-header-inner">
+                <div class="brand-mark">
+                <div class="brand-logo" aria-hidden="true">
+                    <img src="assets/logo-baie-cartoon.svg" alt="" class="brand-logo-image">
+                </div>
+                <div class="brand-copy">
+                    <p class="eyebrow">Journal privé</p>
+                    <h2>La Baie des naufragés</h2>
+                </div>
+            </div>
+
+            <nav id="cinemaHeaderNav" class="nav-tabs" aria-label="Navigation principale">
+                <button type="button" class="nav-button is-active" data-target="dashboardSection">Accueil</button>
+                <button type="button" class="nav-button" data-target="catalogSection">Catalogue</button>
+                <button type="button" class="nav-button" data-target="manageSection">Gestion</button>
+            </nav>
+
+            <nav id="gamesHeaderNav" class="nav-tabs hidden" aria-label="Jeux disponibles">
+                <button type="button" class="nav-button games-header-button is-active" data-game-home="true">Accueil</button>
+            </nav>
+
+            <nav id="mathHeaderNav" class="nav-tabs hidden" aria-label="Outils maths">
+                <button type="button" class="nav-button math-header-button is-active" data-math-tab="mathCalculatorPanel">Calculatrice</button>
+                <button type="button" class="nav-button math-header-button" data-math-tab="mathConverterPanel">Convertisseur</button>
+                <button type="button" class="nav-button math-header-button" data-math-tab="mathToolsPanel">Outils</button>
+            </nav>
+
+            <nav id="musicHeaderNav" class="nav-tabs hidden" aria-label="Instruments de musique">
+                <button type="button" class="nav-button music-header-button is-active" data-music-tab="musicHomePanel">Accueil</button>
+                <button type="button" class="nav-button music-header-button" data-music-tab="pianoPanel">Piano</button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="app-shell">
+        <section id="loginView" class="view view-active">
+            <div class="card login-card">
+                <h1>La Baie des naufragés</h1>
+                <p class="eyebrow login-eyebrow">Accès réservé</p>
+
+                <form id="loginForm" class="login-form">
+                    <label class="field-label" for="passwordInput">Mot de passe</label>
+                    <input
+                        id="passwordInput"
+                        name="password"
+                        type="password"
+                        placeholder="Entre le mot de passe"
+                        autocomplete="current-password"
+                    >
+                    <button type="submit" class="primary-button">Entrer dans la baie</button>
+                    <p id="passwordMessage" class="feedback" aria-live="polite"></p>
+                </form>
+            </div>
+        </section>
+
+        <section id="servicesView" class="view" aria-hidden="true">
+            <div class="services-shell">
+                <div class="services-copy">
+                    <p class="eyebrow">Bienvenue sur le Quai de la Baie des naufragés</p>
+                    <h1>Quel navire veux-tu prendre ?</h1>
+                    <p class="intro">
+                        Choisis le navire qui t'emmène vers l'univers que tu veux explorer.
+                    </p>
+                </div>
+
+                <div class="service-grid" role="list" aria-label="Navires disponibles">
+                    <button type="button" class="service-card" data-service="cinema">
+                        <span class="service-card-art service-card-art-cinema" aria-hidden="true">
+                            <img src="assets/navire-cinema.svg" alt="">
+                        </span>
+                        <span class="service-card-title">Cinema</span>
+                    </button>
+
+                    <button type="button" class="service-card" data-service="math">
+                        <span class="service-card-art service-card-art-math" aria-hidden="true">
+                            <img src="assets/navire-math.svg" alt="">
+                        </span>
+                        <span class="service-card-title">Math</span>
+                    </button>
+
+                    <button type="button" class="service-card" data-service="games">
+                        <span class="service-card-art service-card-art-games" aria-hidden="true">
+                            <img src="assets/navire-jeux.svg" alt="">
+                        </span>
+                        <span class="service-card-title">Jeux</span>
+                    </button>
+
+                    <button type="button" class="service-card" data-service="music">
+                        <span class="service-card-art service-card-art-music" aria-hidden="true">
+                            <img src="assets/navire-musique.svg" alt="">
+                        </span>
+                        <span class="service-card-title">Musique</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="appView" class="view app-view" aria-hidden="true">
+            <section id="dashboardSection" class="panel panel-active">
+                <div class="hero card">
+                    <p class="section-tag">Accueil</p>
+                    <h3>Bienvenue à bord</h3>
+                    <p>
+                        La baie prend forme. Tu peux déjà parcourir ton catalogue et administrer tes films depuis la section Gestion.
+                    </p>
+                </div>
+
+                <div class="panel-grid">
+                    <article class="card info-card stat-card">
+                        <p class="section-tag">Collection</p>
+                        <h4 id="movieCount">0 film</h4>
+                        <p>Nombre total de films actuellement enregistrés dans la baie.</p>
+                    </article>
+
+                    <article class="card info-card stat-card">
+                        <p class="section-tag">Cap actuel</p>
+                        <h4 id="averageRating">0 / 20</h4>
+                        <p>Moyenne de tes notes personnelles sur 20.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section id="catalogSection" class="panel">
+                <div class="card section-header-card">
+                    <div>
+                        <p class="section-tag">Catalogue</p>
+                        <h3>Films vus</h3>
+                        <p>Retrouve tous tes films, bientôt avec tri et filtres plus poussés.</p>
+                    </div>
+
+                    <div class="catalog-tools">
+                        <label class="field-label" for="searchInput">Rechercher un film</label>
+                        <input
+                            id="searchInput"
+                            type="search"
+                            placeholder="Titre ou réalisateur"
+                        >
+                    </div>
+                </div>
+
+                <div id="catalogGrid" class="catalog-grid"></div>
+                <p id="emptyCatalogMessage" class="empty-state hidden">Aucun film ne correspond à cette recherche.</p>
+            </section>
+
+            <section id="manageSection" class="panel">
+                <div class="management-layout">
+                    <div class="card form-card">
+                        <p class="section-tag">Gestion</p>
+                        <h3>Ajouter ou modifier un film</h3>
+                        <p>Le champ affiche permet déjà de lier une image manuellement. Plus tard, on pourra automatiser la récupération depuis Internet.</p>
+
+                        <form id="movieForm" class="management-form">
+                            <input id="movieId" type="hidden">
+
+                            <div class="form-grid">
+                                <div class="field-group">
+                                    <label class="field-label" for="titleInput">Titre</label>
+                                    <input id="titleInput" name="title" type="text" placeholder="Ex: Pirates des Caraibes" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="directorInput">Realisateur</label>
+                                    <input id="directorInput" name="director" type="text" placeholder="Ex: Gore Verbinski" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="releaseDateInput">Date de sortie</label>
+                                    <input id="releaseDateInput" name="releaseDate" type="date" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="durationInput">Duree en minutes</label>
+                                    <input id="durationInput" name="duration" type="number" min="1" step="1" placeholder="Ex: 143" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="ratingInput">Note /20</label>
+                                    <input id="ratingInput" name="rating" type="number" min="0" max="20" step="0.5" placeholder="Ex: 16.5" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="posterInput">URL de l affiche</label>
+                                    <input id="posterInput" name="poster" type="url" placeholder="https://...">
+                                </div>
+                            </div>
+
+                            <div class="field-group">
+                                <label class="field-label" for="commentInput">Commentaire</label>
+                                <textarea id="commentInput" name="comment" rows="4" placeholder="Ton avis rapide sur le film"></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="primary-button">Enregistrer</button>
+                                <button id="resetFormButton" type="button" class="secondary-button">Vider le formulaire</button>
+                            </div>
+
+                            <p id="formMessage" class="feedback" aria-live="polite"></p>
+                        </form>
+                    </div>
+
+                    <div class="card manage-list-card">
+                        <p class="section-tag">Bibliotheque</p>
+                        <h3>Films enregistres</h3>
+                        <p>Utilise Modifier pour charger un film dans le formulaire, ou Supprimer pour le retirer apres confirmation.</p>
+                        <div id="manageList" class="manage-list"></div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section id="gamesView" class="view" aria-hidden="true">
+            <div class="games-layout">
+                <div id="gamesHomePanel" class="card games-home-card games-panel games-panel-active">
+                    <div class="games-home-copy">
+                        <p class="section-tag">Jeux</p>
+                        <h3>Choisis ton divertissement</h3>
+                        <p>Le pont de la baie rassemble tous les jeux disponibles. Clique sur celui que tu veux lancer.</p>
+                    </div>
+
+                    <div class="games-home-grid" aria-label="Liste des jeux">
+                        <button type="button" class="game-home-tile" data-open-game="minesweeper">
+                            <span class="game-home-art game-home-art-minesweeper" aria-hidden="true"></span>
+                            <span class="game-home-title">Démineur</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="snake">
+                            <span class="game-home-art game-home-art-snake" aria-hidden="true"></span>
+                            <span class="game-home-title">Snake</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="pong">
+                            <span class="game-home-art game-home-art-pong" aria-hidden="true"></span>
+                            <span class="game-home-title">Pong</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="sudoku">
+                            <span class="game-home-art game-home-art-sudoku" aria-hidden="true"></span>
+                            <span class="game-home-title">Sudoku</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="2048">
+                            <span class="game-home-art game-home-art-2048" aria-hidden="true"></span>
+                            <span class="game-home-title">2048</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="aim">
+                            <span class="game-home-art game-home-art-aim" aria-hidden="true"></span>
+                            <span class="game-home-title">OursAim</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="memory">
+                            <span class="game-home-art game-home-art-memory" aria-hidden="true"></span>
+                            <span class="game-home-title">Memory</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="ticTacToe">
+                            <span class="game-home-art game-home-art-tictactoe" aria-hidden="true"></span>
+                            <span class="game-home-title">Morpion</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="battleship">
+                            <span class="game-home-art game-home-art-battleship" aria-hidden="true"></span>
+                            <span class="game-home-title">Bataille navale</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="tetris">
+                            <span class="game-home-art game-home-art-tetris" aria-hidden="true"></span>
+                            <span class="game-home-title">Tetris</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="pacman">
+                            <span class="game-home-art game-home-art-pacman" aria-hidden="true"></span>
+                            <span class="game-home-title">Pac-Man</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="solitaire">
+                            <span class="game-home-art game-home-art-solitaire" aria-hidden="true"></span>
+                            <span class="game-home-title">Solitaire</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="connect4">
+                            <span class="game-home-art game-home-art-connect4" aria-hidden="true"></span>
+                            <span class="game-home-title">Puissance 4</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="rhythm">
+                            <span class="game-home-art game-home-art-rhythm" aria-hidden="true"></span>
+                            <span class="game-home-title">Rythme</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="flappy">
+                            <span class="game-home-art game-home-art-flappy" aria-hidden="true"></span>
+                            <span class="game-home-title">Flappy Bird</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="minesweeperGame" class="card minesweeper-card games-panel">
+                    <div class="minesweeper-topbar">
+                        <div class="minesweeper-counter-block">
+                            <span class="minesweeper-counter-label">Mines</span>
+                            <strong id="mineCountDisplay" class="minesweeper-counter-value">10</strong>
+                        </div>
+
+                        <div class="minesweeper-center-stack">
+                            <button id="restartGameButton" type="button" class="minesweeper-face" aria-label="Relancer une partie">
+                                Aller en mer
+                            </button>
+                        </div>
+
+                        <div class="minesweeper-counter-block">
+                            <span class="minesweeper-counter-label">Temps</span>
+                            <strong id="timerDisplay" class="minesweeper-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="minesweeper-help">Clic gauche pour r&eacute;v&eacute;ler. Clic droit pour poser un drapeau.</p>
+                    <div id="minesweeperBoard" class="minesweeper-board" aria-label="Grille du D&eacute;mineur"></div>
+                </div>
+
+                <div id="snakeGame" class="card snake-card games-panel">
+                    <div class="snake-topbar">
+                        <div class="snake-counter-block">
+                            <span class="snake-counter-label">Score</span>
+                            <strong id="snakeScoreDisplay" class="snake-counter-value">0</strong>
+                        </div>
+
+                        <button id="snakeStartButton" type="button" class="snake-face">Lancer la travers&eacute;e</button>
+
+                        <div class="snake-counter-block">
+                            <span class="snake-counter-label">Record</span>
+                            <strong id="snakeBestScoreDisplay" class="snake-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="snake-help">Fl&egrave;ches ou ZQSD pour tourner. Attrape les lanternes sans percuter la coque.</p>
+                    <div id="snakeBoard" class="snake-board" aria-label="Plateau du Snake"></div>
+                </div>
+
+                <div id="pongGame" class="card pong-card games-panel">
+                    <div class="pong-topbar">
+                        <div class="pong-counter-block">
+                            <span class="pong-counter-label">Ton score</span>
+                            <strong id="pongPlayerScoreDisplay" class="pong-counter-value">0</strong>
+                        </div>
+
+                        <button id="pongStartButton" type="button" class="pong-face">Lancer le duel</button>
+
+                        <div class="pong-counter-block">
+                            <span class="pong-counter-label">IA</span>
+                            <strong id="pongAiScoreDisplay" class="pong-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="pong-help">Fl&egrave;ches haut/bas ou Z/S pour bouger ta pagaie. Premier &agrave; 7.</p>
+                    <div id="pongBoard" class="pong-board" aria-label="Plateau du Pong">
+                        <div class="pong-center-line" aria-hidden="true"></div>
+                        <div id="pongCountdown" class="pong-countdown hidden" aria-hidden="true"></div>
+                        <div id="pongPlayerPaddle" class="pong-paddle pong-paddle-player" aria-hidden="true"></div>
+                        <div id="pongAiPaddle" class="pong-paddle pong-paddle-ai" aria-hidden="true"></div>
+                        <div id="pongBall" class="pong-ball" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+                <div id="sudokuGame" class="card sudoku-card games-panel">
+                    <div class="sudoku-topbar">
+                        <div class="sudoku-counter-block">
+                            <span class="sudoku-counter-label">Score</span>
+                            <strong id="sudokuFilledDisplay" class="sudoku-counter-value">0</strong>
+                        </div>
+
+                        <button id="sudokuRestartButton" type="button" class="sudoku-face">Nouvelle grille</button>
+
+                        <div class="sudoku-counter-block">
+                            <span class="sudoku-counter-label">Erreurs</span>
+                            <strong id="sudokuDifficultyDisplay" class="sudoku-counter-value">0 / 3</strong>
+                        </div>
+                    </div>
+
+                    <p id="sudokuHelpText" class="sudoku-help">Clique une case vide puis tape de 1 &agrave; 9. Suppr ou retour arri&egrave;re pour effacer.</p>
+                    <div id="sudokuBoard" class="sudoku-board" aria-label="Grille du Sudoku"></div>
+                </div>
+
+                <div id="game2048" class="card game-2048-card games-panel">
+                    <div class="game-2048-topbar">
+                        <div class="game-2048-counter-block">
+                            <span class="game-2048-counter-label">Score</span>
+                            <strong id="game2048ScoreDisplay" class="game-2048-counter-value">0</strong>
+                        </div>
+
+                        <button id="game2048RestartButton" type="button" class="game-2048-face">Nouvelle mar&eacute;e</button>
+
+                        <div class="game-2048-counter-block">
+                            <span class="game-2048-counter-label">Record</span>
+                            <strong id="game2048BestScoreDisplay" class="game-2048-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="game-2048-help">Fl&egrave;ches ou ZQSD pour faire glisser les tuiles. Fusionne jusqu'&agrave; 2048.</p>
+                    <div id="game2048Board" class="game-2048-board" aria-label="Plateau du 2048"></div>
+                </div>
+
+                <div id="aimGame" class="card aim-card games-panel">
+                    <div class="aim-topbar">
+                        <div class="aim-counter-block">
+                            <span class="aim-counter-label">Touches</span>
+                            <strong id="aimScoreDisplay" class="aim-counter-value">0</strong>
+                        </div>
+
+                        <button id="aimStartButton" type="button" class="aim-face">Nouvelle bord&eacute;e</button>
+
+                        <div class="aim-counter-block">
+                            <span class="aim-counter-label">Mar&eacute;e</span>
+                            <strong id="aimTimerDisplay" class="aim-counter-value">30</strong>
+                        </div>
+
+                        <div class="aim-counter-block">
+                            <span class="aim-counter-label">Record</span>
+                            <strong id="aimBestScoreDisplay" class="aim-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="aim-help">OursAim. Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l eau te co&ucirc;te des points.</p>
+                    <div id="aimBoard" class="aim-board" aria-label="Zone de tir de la baie"></div>
+                </div>
+
+                <div id="memoryGame" class="card memory-card games-panel">
+                    <div class="memory-topbar">
+                        <div class="memory-counter-block">
+                            <span class="memory-counter-label">Paires</span>
+                            <strong id="memoryPairsDisplay" class="memory-counter-value">0 / 8</strong>
+                        </div>
+
+                        <button id="memoryRestartButton" type="button" class="memory-face">Nouvelle mar&eacute;e</button>
+
+                        <div class="memory-counter-block">
+                            <span class="memory-counter-label">Coups</span>
+                            <strong id="memoryMovesDisplay" class="memory-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p class="memory-help">Retourne les cartes du pont et retrouve toutes les paires marines.</p>
+                    <div id="memoryBoard" class="memory-board" aria-label="Grille du Memory"></div>
+                </div>
+
+                <div id="ticTacToeGame" class="card tictactoe-card games-panel">
+                    <div class="tictactoe-topbar">
+                        <div class="tictactoe-counter-block">
+                            <span class="tictactoe-counter-label">Capitaine</span>
+                            <strong id="ticTacToeTurnDisplay" class="tictactoe-counter-value">Toi</strong>
+                        </div>
+
+                        <button id="ticTacToeRestartButton" type="button" class="tictactoe-face">Nouveau duel</button>
+
+                        <div class="tictactoe-counter-block">
+                            <span class="tictactoe-counter-label">Score</span>
+                            <strong id="ticTacToeScoreDisplay" class="tictactoe-counter-value">Toi 0 - 0 IA</strong>
+                        </div>
+                    </div>
+
+                    <p id="ticTacToeHelpText" class="tictactoe-help">Aligne trois symboles pour gagner le duel sur le pont.</p>
+                    <div id="ticTacToeBoard" class="tictactoe-board" aria-label="Plateau du Morpion"></div>
+                </div>
+
+                <div id="battleshipGame" class="card battleship-card games-panel">
+                    <div class="battleship-topbar">
+                        <div class="battleship-counter-block">
+                            <span class="battleship-counter-label">Ta flotte</span>
+                            <strong id="battleshipPlayerShipsDisplay" class="battleship-counter-value">0</strong>
+                        </div>
+
+                        <button id="battleshipRestartButton" type="button" class="battleship-face">Nouvelle bataille</button>
+
+                        <div class="battleship-counter-block">
+                            <span class="battleship-counter-label">Flotte adverse</span>
+                            <strong id="battleshipEnemyShipsDisplay" class="battleship-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p id="battleshipStatusText" class="battleship-help">Choisis une case dans la grille ennemie pour ouvrir le feu.</p>
+
+                    <div class="battleship-layout">
+                        <div class="battleship-board-shell">
+                            <p class="section-tag">Ta flotte</p>
+                            <div id="battleshipPlayerBoard" class="battleship-board" aria-label="Ta flotte"></div>
+                        </div>
+
+                        <div class="battleship-board-shell">
+                            <p class="section-tag">Flotte ennemie</p>
+                            <div id="battleshipEnemyBoard" class="battleship-board" aria-label="Flotte ennemie"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tetrisGame" class="card tetris-card games-panel">
+                    <div class="tetris-topbar">
+                        <div class="tetris-counter-block">
+                            <span class="tetris-counter-label">Score</span>
+                            <strong id="tetrisScoreDisplay" class="tetris-counter-value">0</strong>
+                        </div>
+
+                        <button id="tetrisStartButton" type="button" class="tetris-face">Lancer la cale</button>
+
+                        <div class="tetris-counter-block">
+                            <span class="tetris-counter-label">Lignes</span>
+                            <strong id="tetrisLinesDisplay" class="tetris-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p id="tetrisHelpText" class="tetris-help">Empile les caisses. Flèches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.</p>
+                    <div id="tetrisBoard" class="tetris-board" aria-label="Plateau du Tetris"></div>
+                </div>
+
+                <div id="pacmanGame" class="card pacman-card games-panel">
+                    <div class="pacman-topbar">
+                        <div class="pacman-counter-block">
+                            <span class="pacman-counter-label">Perles</span>
+                            <strong id="pacmanScoreDisplay" class="pacman-counter-value">0</strong>
+                        </div>
+
+                        <button id="pacmanStartButton" type="button" class="pacman-face">Lancer la chasse</button>
+
+                        <div class="pacman-counter-block">
+                            <span class="pacman-counter-label">Vies</span>
+                            <strong id="pacmanLivesDisplay" class="pacman-counter-value">3</strong>
+                        </div>
+                    </div>
+
+                    <p id="pacmanHelpText" class="pacman-help">Ramasse toutes les perles de la baie sans te faire attraper par les esprits du brouillard.</p>
+                    <div id="pacmanBoard" class="pacman-board" aria-label="Labyrinthe de Pac-Man">
+                        <div id="pacmanCountdown" class="pacman-countdown hidden" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+                <div id="solitaireGame" class="card solitaire-card games-panel">
+                    <div class="solitaire-topbar">
+                        <div class="solitaire-counter-block">
+                            <span class="solitaire-counter-label">Pioche</span>
+                            <strong id="solitaireStockDisplay" class="solitaire-counter-value">24</strong>
+                        </div>
+
+                        <button id="solitaireRestartButton" type="button" class="solitaire-face">Nouvelle donne</button>
+
+                        <div class="solitaire-counter-block">
+                            <span class="solitaire-counter-label">Fondations</span>
+                            <strong id="solitaireFoundationsDisplay" class="solitaire-counter-value">0 / 52</strong>
+                        </div>
+                    </div>
+
+                    <p id="solitaireHelpText" class="solitaire-help">Clique une carte pour la sélectionner puis clique sa destination. La pioche se recycle quand elle est vide.</p>
+
+                    <div class="solitaire-layout">
+                        <div class="solitaire-top-row">
+                            <div id="solitaireStock" class="solitaire-slot solitaire-stock" aria-label="Pioche"></div>
+                            <div id="solitaireWaste" class="solitaire-slot solitaire-waste" aria-label="Défausse"></div>
+                            <div id="solitaireFoundations" class="solitaire-foundations" aria-label="Fondations"></div>
+                        </div>
+
+                        <div id="solitaireTableau" class="solitaire-tableau" aria-label="Colonnes du solitaire"></div>
+                    </div>
+                </div>
+
+                <div id="connect4Game" class="card connect4-card games-panel">
+                    <div class="connect4-topbar">
+                        <div class="connect4-counter-block">
+                            <span class="connect4-counter-label">Tour</span>
+                            <strong id="connect4TurnDisplay" class="connect4-counter-value">Toi</strong>
+                        </div>
+
+                        <button id="connect4RestartButton" type="button" class="connect4-face">Nouvelle manche</button>
+
+                        <div class="connect4-counter-block">
+                            <span class="connect4-counter-label">Score</span>
+                            <strong id="connect4ScoreDisplay" class="connect4-counter-value">Toi 0 - 0 IA</strong>
+                        </div>
+                    </div>
+
+                    <p id="connect4HelpText" class="connect4-help">Clique une colonne pour y larguer un jeton. Aligne quatre jetons avant l IA.</p>
+                    <div id="connect4Board" class="connect4-board" aria-label="Plateau du Puissance 4"></div>
+                </div>
+
+                <div id="rhythmGame" class="card rhythm-card games-panel">
+                    <div class="rhythm-topbar">
+                        <div class="rhythm-counter-block">
+                            <span class="rhythm-counter-label">Score</span>
+                            <strong id="rhythmScoreDisplay" class="rhythm-counter-value">0</strong>
+                        </div>
+
+                        <button id="rhythmStartButton" type="button" class="rhythm-face">Lancer la cadence</button>
+
+                        <div class="rhythm-counter-block">
+                            <span class="rhythm-counter-label">Serie</span>
+                            <strong id="rhythmStreakDisplay" class="rhythm-counter-value">0</strong>
+                        </div>
+
+                        <div class="rhythm-counter-block">
+                            <span class="rhythm-counter-label">Temps</span>
+                            <strong id="rhythmTimerDisplay" class="rhythm-counter-value">20</strong>
+                        </div>
+                    </div>
+
+                    <p id="rhythmHelpText" class="rhythm-help">Tape Q, S, D et F au bon moment quand les notes atteignent la ligne de frappe.</p>
+                    <div id="rhythmBoard" class="rhythm-board" aria-label="Plateau du jeu de rythme"></div>
+                </div>
+
+                <div id="flappyGame" class="card flappy-card games-panel">
+                    <div class="flappy-topbar">
+                        <div class="flappy-counter-block">
+                            <span class="flappy-counter-label">Score</span>
+                            <strong id="flappyScoreDisplay" class="flappy-counter-value">0</strong>
+                        </div>
+
+                        <button id="flappyStartButton" type="button" class="flappy-face">Lancer le vol</button>
+
+                        <div class="flappy-counter-block">
+                            <span class="flappy-counter-label">Record</span>
+                            <strong id="flappyBestDisplay" class="flappy-counter-value">0</strong>
+                        </div>
+                    </div>
+
+                    <p id="flappyHelpText" class="flappy-help">Espace, clic ou tap pour battre des ailes et traverser les arches sans les toucher.</p>
+                    <div id="flappyBoard" class="flappy-board" aria-label="Plateau du Flappy Bird"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="mathView" class="view" aria-hidden="true">
+            <div class="math-layout">
+                <div id="mathCalculatorPanel" class="card math-panel math-panel-active">
+                    <div class="math-hero">
+                        <div>
+                            <p class="section-tag">Calculatrice</p>
+                            <h3>Calculs rapides a bord</h3>
+                            <p>Utilise les boutons ou tape directement une expression avec +, -, *, /, %, parenthèses, ^, sqrt() et pi.</p>
+                        </div>
+                    </div>
+
+                    <div class="math-calculator-shell">
+                        <label class="field-label" for="calculatorDisplay">Expression</label>
+                        <input id="calculatorDisplay" type="text" inputmode="decimal" placeholder="Ex: (12 + 8) / 4" autocomplete="off">
+                        <p id="calculatorStatus" class="feedback" aria-live="polite"></p>
+
+                        <div class="calculator-grid" aria-label="Touches de la calculatrice">
+                            <button type="button" class="secondary-button calculator-key" data-value="7">7</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="8">8</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="9">9</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="/">/</button>
+                            <button type="button" class="secondary-button calculator-key" data-action="clear">C</button>
+
+                            <button type="button" class="secondary-button calculator-key" data-value="4">4</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="5">5</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="6">6</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="*">*</button>
+                            <button type="button" class="secondary-button calculator-key" data-action="backspace">⌫</button>
+
+                            <button type="button" class="secondary-button calculator-key" data-value="1">1</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="2">2</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="3">3</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="-">-</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="sqrt(">sqrt</button>
+
+                            <button type="button" class="secondary-button calculator-key" data-value="0">0</button>
+                            <button type="button" class="secondary-button calculator-key" data-value=".">.</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="%">%</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="+">+</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="pi">pi</button>
+
+                            <button type="button" class="secondary-button calculator-key" data-value="(">(</button>
+                            <button type="button" class="secondary-button calculator-key" data-value=")">)</button>
+                            <button type="button" class="secondary-button calculator-key" data-value="^">^</button>
+                            <button type="button" class="primary-button calculator-key calculator-key-equals" data-action="evaluate">=</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mathConverterPanel" class="card math-panel">
+                    <div class="math-hero">
+                        <div>
+                            <p class="section-tag">Convertisseur</p>
+                            <h3>Changer d unite sans quitter le navire</h3>
+                            <p>Choisis une famille d unites, entre une valeur, puis convertis vers l unite souhaitée.</p>
+                        </div>
+                    </div>
+
+                    <div class="math-tool-grid">
+                        <article class="card math-tool-card">
+                            <div class="form-grid math-form-grid">
+                                <div class="field-group">
+                                    <label class="field-label" for="converterCategory">Categorie</label>
+                                    <select id="converterCategory"></select>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="converterValue">Valeur</label>
+                                    <input id="converterValue" type="number" step="any" placeholder="Ex: 12.5">
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="converterFrom">Depuis</label>
+                                    <select id="converterFrom"></select>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label" for="converterTo">Vers</label>
+                                    <select id="converterTo"></select>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button id="converterSwapButton" type="button" class="secondary-button">Inverser</button>
+                                <button id="converterConvertButton" type="button" class="primary-button">Convertir</button>
+                            </div>
+
+                            <p id="converterResult" class="math-result" aria-live="polite">Le resultat apparaitra ici.</p>
+                        </article>
+                    </div>
+                </div>
+
+                <div id="mathToolsPanel" class="card math-panel">
+                    <div class="math-hero">
+                        <div>
+                            <p class="section-tag">Outils</p>
+                            <h3>Petits outils de maths utiles</h3>
+                            <p>Quelques calculs pratiques pour les pourcentages, les proportions et le cercle.</p>
+                        </div>
+                    </div>
+
+                    <div class="math-tool-grid">
+                        <article class="card math-tool-card">
+                            <p class="section-tag">Pourcentage</p>
+                            <h4>x% d une valeur</h4>
+                            <div class="form-grid math-form-grid">
+                                <div class="field-group">
+                                    <label class="field-label" for="percentageRate">Pourcentage</label>
+                                    <input id="percentageRate" type="number" step="any" placeholder="Ex: 15">
+                                </div>
+                                <div class="field-group">
+                                    <label class="field-label" for="percentageBase">Valeur</label>
+                                    <input id="percentageBase" type="number" step="any" placeholder="Ex: 240">
+                                </div>
+                            </div>
+                            <button id="percentageButton" type="button" class="primary-button">Calculer</button>
+                            <p id="percentageResult" class="math-result" aria-live="polite">Le resultat apparaitra ici.</p>
+                        </article>
+
+                        <article class="card math-tool-card">
+                            <p class="section-tag">Proportion</p>
+                            <h4>Regle de trois</h4>
+                            <div class="form-grid math-form-grid">
+                                <div class="field-group">
+                                    <label class="field-label" for="ruleThreeA">a</label>
+                                    <input id="ruleThreeA" type="number" step="any" placeholder="Ex: 4">
+                                </div>
+                                <div class="field-group">
+                                    <label class="field-label" for="ruleThreeB">b</label>
+                                    <input id="ruleThreeB" type="number" step="any" placeholder="Ex: 12">
+                                </div>
+                                <div class="field-group">
+                                    <label class="field-label" for="ruleThreeC">c</label>
+                                    <input id="ruleThreeC" type="number" step="any" placeholder="Ex: 9">
+                                </div>
+                            </div>
+                            <button id="ruleThreeButton" type="button" class="primary-button">Trouver x</button>
+                            <p id="ruleThreeResult" class="math-result" aria-live="polite">Le resultat apparaitra ici.</p>
+                        </article>
+
+                        <article class="card math-tool-card">
+                            <p class="section-tag">Cercle</p>
+                            <h4>Rayon vers mesures</h4>
+                            <div class="field-group">
+                                <label class="field-label" for="circleRadius">Rayon</label>
+                                <input id="circleRadius" type="number" step="any" placeholder="Ex: 7">
+                            </div>
+                            <button id="circleButton" type="button" class="primary-button">Calculer</button>
+                            <p id="circleResult" class="math-result" aria-live="polite">Le resultat apparaitra ici.</p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="musicView" class="view" aria-hidden="true">
+            <div class="music-layout">
+                <div id="musicHomePanel" class="card music-panel music-panel-active music-home-card">
+                    <div class="music-home-copy">
+                        <p class="section-tag">Musique</p>
+                        <h3>Monte a bord du navire musical</h3>
+                        <p>Commence avec un piano jouable au clavier ou a la souris, puis nous pourrons ajouter d autres instruments.</p>
+                    </div>
+
+                    <div class="music-home-grid" aria-label="Liste des instruments">
+                        <button type="button" class="music-home-tile" data-open-instrument="piano">
+                            <span class="music-home-art music-home-art-piano" aria-hidden="true"></span>
+                            <span class="music-home-title">Piano</span>
+                            <span class="music-home-subtitle">Clavier + souris</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="pianoPanel" class="card music-panel piano-card">
+                    <div class="piano-topbar">
+                        <div class="piano-counter-block">
+                            <span class="piano-counter-label">Instrument</span>
+                            <strong class="piano-counter-value">Piano</strong>
+                        </div>
+
+                        <button id="pianoResetButton" type="button" class="piano-face">Relancer le piano</button>
+
+                        <div class="piano-counter-block">
+                            <span class="piano-counter-label">Touches</span>
+                            <strong class="piano-counter-value">A ... K + Maj</strong>
+                        </div>
+                    </div>
+
+                    <div class="piano-stage">
+                        <div class="piano-copy">
+                            <p id="pianoHelpText" class="piano-help">Utilise A a K, maintiens Maj pour l octave au-dessus, Espace pour la pedale, ou clique directement sur le clavier.</p>
+                        </div>
+
+                        <div id="pianoKeyboard" class="piano-keyboard" aria-label="Clavier de piano"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="confirmModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-modal="true"></div>
+        <div class="modal-card card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+            <p class="section-tag">Confirmation</p>
+            <h3 id="confirmTitle">Supprimer ce film ?</h3>
+            <p id="confirmText">Cette action retirera le film du catalogue.</p>
+            <div class="form-actions">
+                <button id="cancelDeleteButton" type="button" class="secondary-button">Annuler</button>
+                <button id="confirmDeleteButton" type="button" class="danger-button">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameOverModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-game-over="true"></div>
+        <div class="modal-card card game-over-card" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+            <p class="section-tag">Naufrage</p>
+            <h3 id="gameOverTitle">C'est perdu</h3>
+            <p id="gameOverText">Le joueur s'est noy&eacute;.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

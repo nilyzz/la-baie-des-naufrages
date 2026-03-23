@@ -1,0 +1,41 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mathBg" x1="88" y1="82" x2="424" y2="432" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6A7BFF"/>
+      <stop offset="1" stop-color="#2AA9EF"/>
+    </linearGradient>
+    <linearGradient id="mathPanel" x1="164" y1="126" x2="348" y2="286" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#DCF0FF"/>
+    </linearGradient>
+    <linearGradient id="waveMathA" x1="120" y1="336" x2="392" y2="398" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EEF6FF"/>
+      <stop offset="1" stop-color="#D0ECFF"/>
+    </linearGradient>
+    <linearGradient id="waveMathB" x1="132" y1="358" x2="384" y2="412" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D7EEFF"/>
+      <stop offset="1" stop-color="#F6FBFF"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="44" y="44" width="424" height="424" rx="116" fill="url(#mathBg)"/>
+  <circle cx="256" cy="188" r="114" fill="#1D5B98" fill-opacity="0.14"/>
+
+  <rect x="152" y="124" width="208" height="136" rx="34" fill="url(#mathPanel)"/>
+  <rect x="166" y="138" width="180" height="24" rx="12" fill="#EAF6FF"/>
+
+  <g stroke="#2A73D9" stroke-width="12" stroke-linecap="round">
+    <path d="M201 185H225"/>
+    <path d="M213 173V197"/>
+
+    <path d="M287 174L311 198"/>
+    <path d="M311 174L287 198"/>
+
+    <path d="M201 227H225"/>
+
+    <path d="M288 237L310 215"/>
+  </g>
+
+  <path d="M122 340C152 324 179 316 209 316C242 316 265 331 297 331C327 331 353 323 391 303" stroke="url(#waveMathA)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M134 370C163 354 188 347 214 347C243 347 267 361 297 361C327 361 351 354 380 342" stroke="url(#waveMathB)" stroke-width="12" stroke-linecap="round"/>
+</svg>
