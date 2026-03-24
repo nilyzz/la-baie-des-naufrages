@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const SESSION_KEY = 'baie-des-naufrages-session';
     const SESSION_TIMEOUT_MS = 2 * 60 * 60 * 1000;
+    const multiplayerServerMeta = document.querySelector('meta[name="multiplayer-server-url"]');
+    const MULTIPLAYER_SERVER_URL = String(window.BAIE_MULTIPLAYER_SERVER_URL || multiplayerServerMeta?.content || '')
+        .trim()
+        .replace(/\/+$/, '');
     const defaultPoster = 'https://placehold.co/600x900/0f172a/f8fafc?text=Affiche';
     const EXCEL_FILE_CANDIDATES = [
         'film.xlsx',
@@ -13,6 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'cinema.xls',
         'cinema.xlsm'
     ];
+    const MULTIPLAYER_SUPPORTED_GAMES = {
+        ticTacToe: 'Morpion',
+        connect4: 'Puissance 4',
+        chess: 'Echecs',
+        checkers: 'Dames'
+    };
 
     const loginView = document.getElementById('loginView');
     const servicesView = document.getElementById('servicesView');
@@ -53,11 +63,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerDisplay = document.getElementById('timerDisplay');
     const restartGameButton = document.getElementById('restartGameButton');
     const gameTabs = document.querySelectorAll('[data-game-tab]');
-    const gamesHomeButton = document.querySelector('[data-game-home="true"]');
+    const gamesSectionButtons = document.querySelectorAll('[data-games-section]');
     const gameHomeTiles = document.querySelectorAll('[data-open-game]');
     const gameOverModal = document.getElementById('gameOverModal');
     const gameOverTitle = document.getElementById('gameOverTitle');
     const gameOverText = document.getElementById('gameOverText');
+    const multiplayerLobbyStatus = document.getElementById('multiplayerLobbyStatus');
+    const multiplayerGameSelect = document.getElementById('multiplayerGameSelect');
+    const multiplayerPlayerNameInput = document.getElementById('multiplayerPlayerNameInput');
+    const multiplayerRoomCodeInput = document.getElementById('multiplayerRoomCodeInput');
+    const multiplayerCreateRoomButton = document.getElementById('multiplayerCreateRoomButton');
+    const multiplayerJoinRoomButton = document.getElementById('multiplayerJoinRoomButton');
+    const multiplayerCopyCodeButton = document.getElementById('multiplayerCopyCodeButton');
+    const multiplayerSelectedGameLabel = document.getElementById('multiplayerSelectedGameLabel');
+    const multiplayerCurrentRoomCode = document.getElementById('multiplayerCurrentRoomCode');
+    const multiplayerRoomPlayers = document.getElementById('multiplayerRoomPlayers');
     const snakeGame = document.getElementById('snakeGame');
     const pongGame = document.getElementById('pongGame');
     const sudokuGame = document.getElementById('sudokuGame');
@@ -73,6 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const rhythmGame = document.getElementById('rhythmGame');
     const flappyGame = document.getElementById('flappyGame');
     const gamesHomePanel = document.getElementById('gamesHomePanel');
+    const gamesSoloPanel = document.getElementById('gamesSoloPanel');
+    const gamesMultiplayerPanel = document.getElementById('gamesMultiplayerPanel');
     const snakeBoard = document.getElementById('snakeBoard');
     const snakeScoreDisplay = document.getElementById('snakeScoreDisplay');
     const snakeBestScoreDisplay = document.getElementById('snakeBestScoreDisplay');
@@ -491,6 +513,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let movies = [];
     let searchTerm = '';
     let currentView = loginView;
+    let activeGamesSection = 'home';
+    let multiplayerSocket = null;
+    let multiplayerActiveRoom = null;
+    let multiplayerBusy = false;
+    let multiplayerSelectedGameId = 'ticTacToe';
     let gameBoard = [];
     let flagsPlaced = 0;
     let timer = 0;
@@ -1750,10 +1777,244 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmModal.setAttribute('aria-hidden', 'true');
     }
 
+    function getSelectedMultiplayerGame() {
+        return MULTIPLAYER_SUPPORTED_GAMES[multiplayerSelectedGameId] ? multiplayerSelectedGameId : null;
+    }
+
+    function getSelectedMultiplayerGameLabel() {
+        const gameId = getSelectedMultiplayerGame();
+        return gameId ? MULTIPLAYER_SUPPORTED_GAMES[gameId] : 'Aucun';
+    }
+
+    function setMultiplayerStatus(message) {
+        multiplayerLobbyStatus.textContent = message;
+    }
+
+    function renderMultiplayerPlayers() {
+        if (!multiplayerActiveRoom?.players?.length) {
+            multiplayerRoomPlayers.textContent = 'Personne n a embarque pour l instant.';
+            return;
+        }
+
+        multiplayerRoomPlayers.innerHTML = multiplayerActiveRoom.players.map((player) => {
+            const classes = ['multiplayer-lobby-player-pill'];
+            if (player.isYou) {
+                classes.push('is-you');
+            }
+            if (player.isHost) {
+                classes.push('is-host');
+            }
+
+            const suffix = [player.isHost ? 'hote' : '', player.isYou ? 'toi' : ''].filter(Boolean).join(' - ');
+            return `<span class="${classes.join(' ')}">${player.name}${suffix ? ` (${suffix})` : ''}</span>`;
+        }).join('');
+    }
+
+    function updateMultiplayerLobby(preserveStatus = false) {
+        const selectedGame = getSelectedMultiplayerGame();
+        const selectedLabel = getSelectedMultiplayerGameLabel();
+        const canUseMultiplayer = Boolean(selectedGame);
+        const activeRoomGameLabel = multiplayerActiveRoom?.gameId && MULTIPLAYER_SUPPORTED_GAMES[multiplayerActiveRoom.gameId]
+            ? MULTIPLAYER_SUPPORTED_GAMES[multiplayerActiveRoom.gameId]
+            : selectedLabel;
+
+        multiplayerSelectedGameLabel.textContent = selectedLabel;
+        multiplayerCurrentRoomCode.textContent = multiplayerActiveRoom?.code || '-';
+        multiplayerCreateRoomButton.disabled = multiplayerBusy || !canUseMultiplayer;
+        multiplayerJoinRoomButton.disabled = multiplayerBusy;
+        multiplayerCopyCodeButton.disabled = !multiplayerActiveRoom?.code;
+        renderMultiplayerPlayers();
+
+        if (preserveStatus) {
+            return;
+        }
+
+        if (multiplayerActiveRoom?.code) {
+            setMultiplayerStatus(`Room ${multiplayerActiveRoom.code} prete sur ${activeRoomGameLabel}.`);
+            return;
+        }
+
+        if (!canUseMultiplayer) {
+            setMultiplayerStatus('Le multijoueur est prevu d abord pour Morpion, Puissance 4, Echecs et Dames.');
+            return;
+        }
+
+        setMultiplayerStatus(`Jeu choisi: ${selectedLabel}. Cree une room ou rejoins-en une avec son code.`);
+    }
+
+    function loadSocketIoClient() {
+        if (window.io) {
+            return Promise.resolve(window.io);
+        }
+
+        if (!/^https?:$/i.test(window.location.protocol)) {
+            return Promise.reject(new Error('Le client Socket.IO demande le site via http:// ou https://.'));
+        }
+
+        return new Promise((resolve, reject) => {
+            const existingScript = document.querySelector('script[data-socket-io-client="true"]');
+            if (existingScript) {
+                existingScript.addEventListener('load', () => resolve(window.io), { once: true });
+                existingScript.addEventListener('error', () => reject(new Error('Impossible de charger Socket.IO.')), { once: true });
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = `${getMultiplayerServerOrigin()}/socket.io/socket.io.js`;
+            script.async = true;
+            script.dataset.socketIoClient = 'true';
+            script.addEventListener('load', () => resolve(window.io), { once: true });
+            script.addEventListener('error', () => reject(new Error('Impossible de charger Socket.IO.')), { once: true });
+            document.head.appendChild(script);
+        });
+    }
+
+    function getMultiplayerServerOrigin() {
+        return MULTIPLAYER_SERVER_URL || window.location.origin;
+    }
+
+    function getMultiplayerApiUrl(path) {
+        return `${getMultiplayerServerOrigin()}${path}`;
+    }
+
+    async function ensureMultiplayerConnection() {
+        if (multiplayerSocket?.connected) {
+            return multiplayerSocket;
+        }
+
+        const ioFactory = await loadSocketIoClient();
+
+        if (!multiplayerSocket) {
+            multiplayerSocket = ioFactory(getMultiplayerServerOrigin(), {
+                transports: ['websocket', 'polling']
+            });
+
+            multiplayerSocket.on('connect', () => {
+                setMultiplayerStatus('Connexion multijoueur etablie.');
+            });
+
+            multiplayerSocket.on('room:joined', (room) => {
+                multiplayerActiveRoom = room;
+                multiplayerRoomCodeInput.value = room.code || '';
+                updateMultiplayerLobby();
+            });
+
+            multiplayerSocket.on('room:updated', (room) => {
+                multiplayerActiveRoom = room;
+                updateMultiplayerLobby();
+            });
+
+            multiplayerSocket.on('room:error', ({ message }) => {
+                setMultiplayerStatus(message || 'Une erreur room est survenue.');
+            });
+
+            multiplayerSocket.on('disconnect', () => {
+                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+            });
+        }
+
+        if (multiplayerSocket.connected) {
+            return multiplayerSocket;
+        }
+
+        await new Promise((resolve, reject) => {
+            multiplayerSocket.once('connect', resolve);
+            multiplayerSocket.once('connect_error', () => reject(new Error('Serveur multijoueur inaccessible.')));
+        });
+
+        return multiplayerSocket;
+    }
+
+    async function createMultiplayerRoom() {
+        const selectedGame = getSelectedMultiplayerGame();
+        if (!selectedGame || multiplayerBusy) {
+            updateMultiplayerLobby();
+            return;
+        }
+
+        multiplayerBusy = true;
+        updateMultiplayerLobby();
+        setMultiplayerStatus(`Creation d une room pour ${MULTIPLAYER_SUPPORTED_GAMES[selectedGame]}...`);
+
+        try {
+            const response = await fetch(getMultiplayerApiUrl('/api/rooms'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    gameId: selectedGame
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Impossible de creer la room.');
+            }
+
+            const room = await response.json();
+            multiplayerRoomCodeInput.value = room.code || '';
+            const socket = await ensureMultiplayerConnection();
+            socket.emit('room:create', {
+                code: room.code,
+                playerName: multiplayerPlayerNameInput.value
+            });
+        } catch (error) {
+            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+        } finally {
+            multiplayerBusy = false;
+            updateMultiplayerLobby(true);
+        }
+    }
+
+    async function joinMultiplayerRoom() {
+        const roomCode = multiplayerRoomCodeInput.value.trim().toUpperCase();
+
+        if (!roomCode || multiplayerBusy) {
+            setMultiplayerStatus('Entre un code de room valide pour rejoindre une partie.');
+            return;
+        }
+
+        multiplayerBusy = true;
+        updateMultiplayerLobby();
+        setMultiplayerStatus(`Connexion a la room ${roomCode}...`);
+
+        try {
+            const socket = await ensureMultiplayerConnection();
+            socket.emit('room:join', {
+                code: roomCode,
+                playerName: multiplayerPlayerNameInput.value
+            });
+        } catch (error) {
+            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+        } finally {
+            multiplayerBusy = false;
+            updateMultiplayerLobby(true);
+        }
+    }
+
+    async function copyMultiplayerRoomCode() {
+        if (!multiplayerActiveRoom?.code) {
+            setMultiplayerStatus('Aucune room active a copier pour le moment.');
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(multiplayerActiveRoom.code);
+            setMultiplayerStatus(`Code ${multiplayerActiveRoom.code} copie dans le presse-papiers.`);
+        } catch (_error) {
+            setMultiplayerStatus(`Code actif: ${multiplayerActiveRoom.code}`);
+        }
+    }
+
     function showGamePanel(tabId) {
         activeGameTab = tabId;
-        gamesHomeButton?.classList.toggle('is-active', tabId === 'home');
+        const visibleSection = ['home', 'solo', 'multiplayer'].includes(tabId) ? tabId : activeGamesSection;
+        gamesSectionButtons.forEach((button) => {
+            button.classList.toggle('is-active', visibleSection === button.dataset.gamesSection);
+        });
         gamesHomePanel.classList.toggle('games-panel-active', tabId === 'home');
+        gamesSoloPanel.classList.toggle('games-panel-active', tabId === 'solo');
+        gamesMultiplayerPanel.classList.toggle('games-panel-active', tabId === 'multiplayer');
         minesweeperGame.classList.toggle('games-panel-active', tabId === 'minesweeper');
         snakeGame.classList.toggle('games-panel-active', tabId === 'snake');
         pongGame.classList.toggle('games-panel-active', tabId === 'pong');
@@ -1786,11 +2047,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tabId !== 'snake') {
             closeGameOverModal();
         }
+
+        updateMultiplayerLobby();
+    }
+
+    function setSelectedMultiplayerGame(gameId) {
+        if (!MULTIPLAYER_SUPPORTED_GAMES[gameId]) {
+            return;
+        }
+
+        multiplayerSelectedGameId = gameId;
+        if (multiplayerGameSelect) {
+            multiplayerGameSelect.value = gameId;
+        }
+        updateMultiplayerLobby();
     }
 
     function showGamesHome() {
-        cleanupActiveGameForNavigation('home');
-        showGamePanel('home');
+        showGamesSection('home');
+    }
+
+    function showGamesSection(section) {
+        activeGamesSection = section;
+        cleanupActiveGameForNavigation(section);
+        showGamePanel(section);
     }
 
     function cleanupActiveGameForNavigation(nextTab) {
@@ -9063,6 +9343,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function openSelectedGame(nextTab) {
         cleanupActiveGameForNavigation(nextTab);
 
+        if (MULTIPLAYER_SUPPORTED_GAMES[nextTab]) {
+            setSelectedMultiplayerGame(nextTab);
+        }
+
         showGamePanel(nextTab);
 
         if (nextTab === 'snake') {
@@ -9211,8 +9495,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    gamesHomeButton?.addEventListener('click', () => {
-        showGamesHome();
+    gamesSectionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            showGamesSection(button.dataset.gamesSection || 'home');
+        });
     });
 
     instrumentTiles.forEach((tile) => {
@@ -10328,9 +10614,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    multiplayerCreateRoomButton?.addEventListener('click', () => {
+        createMultiplayerRoom();
+    });
+
+    multiplayerJoinRoomButton?.addEventListener('click', () => {
+        joinMultiplayerRoom();
+    });
+
+    multiplayerCopyCodeButton?.addEventListener('click', () => {
+        copyMultiplayerRoomCode();
+    });
+
+    multiplayerRoomCodeInput?.addEventListener('input', () => {
+        multiplayerRoomCodeInput.value = multiplayerRoomCodeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    });
+
+    multiplayerGameSelect?.addEventListener('change', () => {
+        setSelectedMultiplayerGame(multiplayerGameSelect.value);
+    });
+
     renderAll();
     importMoviesFromExcel();
     showGamePanel('home');
+    updateMultiplayerLobby();
     initializeGame();
     initializeSnake();
     initializePong();
@@ -10344,6 +10651,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializePacman();
     initializeSolitaire();
     initializeConnect4();
+    setSelectedMultiplayerGame(multiplayerGameSelect?.value || 'ticTacToe');
     initializeRhythm();
     initializeFlappy();
     initializeFlowFree();

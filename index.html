@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="multiplayer-server-url" content="">
     <title>La Baie des naufragés</title>
     <link rel="stylesheet" href="style.css?v=2026-03-23-1">
 </head>
@@ -42,7 +43,9 @@
             </nav>
 
             <nav id="gamesHeaderNav" class="nav-tabs hidden" aria-label="Jeux disponibles">
-                <button type="button" class="nav-button games-header-button is-active" data-game-home="true">Accueil</button>
+                <button type="button" class="nav-button games-header-button is-active" data-games-section="home">Accueil</button>
+                <button type="button" class="nav-button games-header-button" data-games-section="solo">Solo</button>
+                <button type="button" class="nav-button games-header-button" data-games-section="multiplayer">Multijoueur</button>
             </nav>
 
             <nav id="mathHeaderNav" class="nav-tabs hidden" aria-label="Outils maths">
@@ -306,6 +309,184 @@
                         <button type="button" class="game-home-tile" data-open-game="tetris">
                             <span class="game-home-art game-home-art-tetris" aria-hidden="true"></span>
                             <span class="game-home-title">Tetris</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="gamesSoloPanel" class="card games-home-card games-panel">
+                    <div class="games-home-copy">
+                        <p class="section-tag">Solo</p>
+                        <h3>Jeux en solo</h3>
+                        <p>Retrouve ici les jeux penses pour une aventure en solitaire.</p>
+                    </div>
+
+                    <div class="games-home-grid" aria-label="Liste des jeux solo">
+                        <button type="button" class="game-home-tile" data-open-game="2048">
+                            <span class="game-home-art game-home-art-2048" aria-hidden="true"></span>
+                            <span class="game-home-title">2048</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="flappy">
+                            <span class="game-home-art game-home-art-flappy" aria-hidden="true"></span>
+                            <span class="game-home-title">Baiely Bird</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="baieBerry">
+                            <span class="game-home-art game-home-art-baieberry" aria-hidden="true"></span>
+                            <span class="game-home-title">BaieBerry</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="battleship">
+                            <span class="game-home-art game-home-art-battleship" aria-hidden="true"></span>
+                            <span class="game-home-title">Bataille</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="breakout">
+                            <span class="game-home-art game-home-art-breakout" aria-hidden="true"></span>
+                            <span class="game-home-title">Breakout</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="mentalMath">
+                            <span class="game-home-art game-home-art-mentalmath" aria-hidden="true"></span>
+                            <span class="game-home-title">Calcul</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="coinClicker">
+                            <span class="game-home-art game-home-art-coinclicker" aria-hidden="true"></span>
+                            <span class="game-home-title">Coin Clicker</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="candyCrush">
+                            <span class="game-home-art game-home-art-candycrush" aria-hidden="true"></span>
+                            <span class="game-home-title">Coin Crush</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="minesweeper">
+                            <span class="game-home-art game-home-art-minesweeper" aria-hidden="true"></span>
+                            <span class="game-home-title">Démineur</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="aim">
+                            <span class="game-home-art game-home-art-aim" aria-hidden="true"></span>
+                            <span class="game-home-title">OursAim</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="memory">
+                            <span class="game-home-art game-home-art-memory" aria-hidden="true"></span>
+                            <span class="game-home-title">Memory</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="harborRun">
+                            <span class="game-home-art game-home-art-harborrun" aria-hidden="true"></span>
+                            <span class="game-home-title">Navire 2D</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="pacman">
+                            <span class="game-home-art game-home-art-pacman" aria-hidden="true"></span>
+                            <span class="game-home-title">Pac-Man</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="reaction">
+                            <span class="game-home-art game-home-art-reaction" aria-hidden="true"></span>
+                            <span class="game-home-title">Reaction</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="solitaire">
+                            <span class="game-home-art game-home-art-solitaire" aria-hidden="true"></span>
+                            <span class="game-home-title">Solitaire</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="rhythm">
+                            <span class="game-home-art game-home-art-rhythm" aria-hidden="true"></span>
+                            <span class="game-home-title">Rythme</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="flowFree">
+                            <span class="game-home-art game-home-art-flowfree" aria-hidden="true"></span>
+                            <span class="game-home-title">Rope Line</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="magicSort">
+                            <span class="game-home-art game-home-art-magicsort" aria-hidden="true"></span>
+                            <span class="game-home-title">Magic Sort</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="snake">
+                            <span class="game-home-art game-home-art-snake" aria-hidden="true"></span>
+                            <span class="game-home-title">Snake</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="stacker">
+                            <span class="game-home-art game-home-art-stacker" aria-hidden="true"></span>
+                            <span class="game-home-title">Stack 2D</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="sudoku">
+                            <span class="game-home-art game-home-art-sudoku" aria-hidden="true"></span>
+                            <span class="game-home-title">Sudoku</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="tetris">
+                            <span class="game-home-art game-home-art-tetris" aria-hidden="true"></span>
+                            <span class="game-home-title">Tetris</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="gamesMultiplayerPanel" class="card games-home-card games-panel">
+                    <div class="games-home-copy">
+                        <p class="section-tag">Multijoueur</p>
+                        <h3>Choisis ton duel en ligne</h3>
+                        <p>Selectionne un jeu compatible, cree une room ou rejoins-en une avec un code.</p>
+                    </div>
+
+                    <div class="multiplayer-lobby-card" aria-labelledby="multiplayerLobbyTitle">
+                        <div class="multiplayer-lobby-copy">
+                            <p class="section-tag">Rooms</p>
+                            <h4 id="multiplayerLobbyTitle">Creer ou rejoindre une room</h4>
+                            <p id="multiplayerLobbyStatus" class="multiplayer-lobby-status">Choisis un jeu compatible, puis cree une room ou rejoins-en une avec un code.</p>
+                        </div>
+
+                        <div class="multiplayer-lobby-controls">
+                            <label class="multiplayer-lobby-field">
+                                <span>Jeu</span>
+                                <select id="multiplayerGameSelect">
+                                    <option value="ticTacToe">Morpion</option>
+                                    <option value="connect4">Puissance 4</option>
+                                    <option value="chess">Echecs</option>
+                                    <option value="checkers">Dames</option>
+                                </select>
+                            </label>
+
+                            <label class="multiplayer-lobby-field">
+                                <span>Pseudo</span>
+                                <input id="multiplayerPlayerNameInput" type="text" maxlength="24" placeholder="Capitaine" autocomplete="nickname">
+                            </label>
+
+                            <label class="multiplayer-lobby-field">
+                                <span>Code room</span>
+                                <input id="multiplayerRoomCodeInput" type="text" maxlength="6" placeholder="ABCD12" autocomplete="off" spellcheck="false">
+                            </label>
+
+                            <div class="multiplayer-lobby-actions">
+                                <button id="multiplayerCreateRoomButton" type="button" class="primary-button">Creer une room</button>
+                                <button id="multiplayerJoinRoomButton" type="button" class="secondary-button">Rejoindre</button>
+                                <button id="multiplayerCopyCodeButton" type="button" class="secondary-button">Copier le code</button>
+                            </div>
+                        </div>
+
+                        <div class="multiplayer-lobby-meta">
+                            <div class="multiplayer-lobby-chip">
+                                <span class="multiplayer-lobby-chip-label">Jeu choisi</span>
+                                <strong id="multiplayerSelectedGameLabel" class="multiplayer-lobby-chip-value">Aucun</strong>
+                            </div>
+                            <div class="multiplayer-lobby-chip">
+                                <span class="multiplayer-lobby-chip-label">Room active</span>
+                                <strong id="multiplayerCurrentRoomCode" class="multiplayer-lobby-chip-value">-</strong>
+                            </div>
+                        </div>
+
+                        <div class="multiplayer-lobby-players">
+                            <p class="multiplayer-lobby-players-title">Equipage dans la room</p>
+                            <div id="multiplayerRoomPlayers" class="multiplayer-lobby-player-list">Personne n a embarque pour l instant.</div>
+                        </div>
+                    </div>
+
+                    <div class="games-home-grid" aria-label="Liste des jeux multijoueur">
+                        <button type="button" class="game-home-tile" data-open-game="ticTacToe">
+                            <span class="game-home-art game-home-art-tictactoe" aria-hidden="true"></span>
+                            <span class="game-home-title">Morpion</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="connect4">
+                            <span class="game-home-art game-home-art-connect4" aria-hidden="true"></span>
+                            <span class="game-home-title">Puissance 4</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="chess">
+                            <span class="game-home-art game-home-art-chess" aria-hidden="true"></span>
+                            <span class="game-home-title">Echecs</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="checkers">
+                            <span class="game-home-art game-home-art-checkers" aria-hidden="true"></span>
+                            <span class="game-home-title">Dames</span>
                         </button>
                     </div>
                 </div>
