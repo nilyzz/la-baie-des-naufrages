@@ -1788,6 +1788,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return gameId ? MULTIPLAYER_SUPPORTED_GAMES[gameId] : 'Aucun';
     }
 
+    function getMultiplayerGameLabel(gameId) {
+        return MULTIPLAYER_SUPPORTED_GAMES[gameId] || 'Jeu inconnu';
+    }
+
     function setMultiplayerStatus(message) {
         multiplayerLobbyStatus.textContent = message;
     }
