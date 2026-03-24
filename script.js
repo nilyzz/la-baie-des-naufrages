@@ -518,6 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerActiveRoom = null;
     let multiplayerBusy = false;
     let multiplayerSelectedGameId = 'ticTacToe';
+    let ticTacToeLastFinishedStateKey = '';
     let gameBoard = [];
     let flagsPlaced = 0;
     let timer = 0;
@@ -1896,11 +1897,13 @@ document.addEventListener('DOMContentLoaded', () => {
             multiplayerSocket.on('room:joined', (room) => {
                 multiplayerActiveRoom = room;
                 multiplayerRoomCodeInput.value = room.code || '';
+                syncMultiplayerTicTacToeState();
                 updateMultiplayerLobby();
             });
 
             multiplayerSocket.on('room:updated', (room) => {
                 multiplayerActiveRoom = room;
+                syncMultiplayerTicTacToeState();
                 updateMultiplayerLobby();
             });
 
@@ -2589,6 +2592,124 @@ document.addEventListener('DOMContentLoaded', () => {
         }) || null;
     }
 
+    function isMultiplayerTicTacToeActive() {
+        return multiplayerActiveRoom?.gameId === 'ticTacToe' && Boolean(multiplayerActiveRoom?.gameState);
+    }
+
+    function getMultiplayerTicTacToePlayer() {
+        return multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+    }
+
+    function getMultiplayerTicTacToeRole() {
+        return getMultiplayerTicTacToePlayer()?.symbol || null;
+    }
+
+    function getMultiplayerTicTacToeTurnLabel() {
+        if (ticTacToeFinished) {
+            return '-';
+        }
+
+        const currentRole = getMultiplayerTicTacToeRole();
+        if (!currentRole) {
+            return ticTacToeCurrentPlayer === 'anchor' ? 'Joueur 1' : 'Joueur 2';
+        }
+
+        return ticTacToeCurrentPlayer === currentRole ? 'Toi' : 'Adversaire';
+    }
+
+    function getMultiplayerTicTacToeScoreLabel() {
+        const currentRole = getMultiplayerTicTacToeRole();
+
+        if (currentRole === 'skull') {
+            return `Toi ${ticTacToeScores.skull} - ${ticTacToeScores.anchor} Adversaire`;
+        }
+
+        return `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} Adversaire`;
+    }
+
+    function getMultiplayerTicTacToeHelpText() {
+        const playerCount = multiplayerActiveRoom?.playerCount || 0;
+        const currentRole = getMultiplayerTicTacToeRole();
+
+        if (playerCount < 2) {
+            return 'En attente d un adversaire pour lancer la manche.';
+        }
+
+        if (ticTacToeFinished) {
+            if (multiplayerActiveRoom?.gameState?.winner === 'draw') {
+                return 'Match nul. Relance une manche pour vous departager.';
+            }
+
+            if (multiplayerActiveRoom?.gameState?.winner === currentRole) {
+                return 'Victoire. Ton equipage tient le pont.';
+            }
+
+            return 'Defaite. L adversaire prend le pont.';
+        }
+
+        if (!currentRole) {
+            return 'La manche est en cours entre les deux joueurs.';
+        }
+
+        return ticTacToeCurrentPlayer === currentRole
+            ? 'A toi de jouer.'
+            : 'Au tour de l adversaire.';
+    }
+
+    function syncMultiplayerTicTacToeState() {
+        if (!isMultiplayerTicTacToeActive()) {
+            ticTacToeLastFinishedStateKey = '';
+            return;
+        }
+
+        if (ticTacToeAiTimeout) {
+            window.clearTimeout(ticTacToeAiTimeout);
+            ticTacToeAiTimeout = null;
+        }
+
+        ticTacToeBoardState = Array.isArray(multiplayerActiveRoom.gameState.board)
+            ? [...multiplayerActiveRoom.gameState.board]
+            : Array(9).fill('');
+        ticTacToeCurrentPlayer = multiplayerActiveRoom.gameState.currentPlayer || 'anchor';
+        ticTacToeFinished = Boolean(multiplayerActiveRoom.gameState.finished);
+        ticTacToeScores = {
+            anchor: Number(multiplayerActiveRoom.gameState.scores?.anchor || 0),
+            skull: Number(multiplayerActiveRoom.gameState.scores?.skull || 0)
+        };
+
+        updateTicTacToeHud();
+        renderTicTacToeBoard();
+
+        if (!ticTacToeFinished) {
+            ticTacToeLastFinishedStateKey = '';
+            closeGameOverModal();
+            return;
+        }
+
+        const finishedStateKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner}`;
+        if (finishedStateKey === ticTacToeLastFinishedStateKey) {
+            return;
+        }
+
+        ticTacToeLastFinishedStateKey = finishedStateKey;
+
+        if (activeGameTab !== 'ticTacToe') {
+            return;
+        }
+
+        if (multiplayerActiveRoom.gameState.winner === 'draw') {
+            openGameOverModal('Match nul', 'La manche en ligne se termine sans vainqueur.');
+            return;
+        }
+
+        if (multiplayerActiveRoom.gameState.winner === getMultiplayerTicTacToeRole()) {
+            openGameOverModal('Victoire', 'Tu remportes cette manche de morpion en ligne.');
+            return;
+        }
+
+        openGameOverModal('C est perdu', 'L adversaire remporte cette manche de morpion.');
+    }
+
     function initializeTicTacToe() {
         if (ticTacToeAiTimeout) {
             window.clearTimeout(ticTacToeAiTimeout);
@@ -2669,6 +2790,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateTicTacToeHud() {
+        if (isMultiplayerTicTacToeActive()) {
+            ticTacToeTurnDisplay.textContent = getMultiplayerTicTacToeTurnLabel();
+            ticTacToeScoreDisplay.textContent = getMultiplayerTicTacToeScoreLabel();
+            ticTacToeHelpText.textContent = getMultiplayerTicTacToeHelpText();
+            ticTacToeModeButtons.forEach((button) => {
+                button.classList.remove('is-active');
+                button.disabled = true;
+            });
+            return;
+        }
+
         ticTacToeTurnDisplay.textContent = ticTacToeFinished
             ? '-'
             : (ticTacToeCurrentPlayer === 'anchor'
@@ -2682,10 +2814,17 @@ document.addEventListener('DOMContentLoaded', () => {
             : 'Mode 1 joueur: aligne trois symboles contre l IA pirate.';
         ticTacToeModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
+            button.disabled = false;
         });
     }
 
     function initializeTicTacToe() {
+        if (isMultiplayerTicTacToeActive()) {
+            closeGameOverModal();
+            syncMultiplayerTicTacToeState();
+            return;
+        }
+
         if (ticTacToeAiTimeout) {
             window.clearTimeout(ticTacToeAiTimeout);
             ticTacToeAiTimeout = null;
@@ -2720,6 +2859,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleTicTacToeMove(index, player = 'anchor') {
+        if (isMultiplayerTicTacToeActive()) {
+            if (!multiplayerSocket?.connected) {
+                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+                return;
+            }
+
+            multiplayerSocket.emit('tictactoe:move', { index });
+            return;
+        }
+
         if (ticTacToeFinished || ticTacToeBoardState[index] || ticTacToeCurrentPlayer !== player) {
             return;
         }
@@ -2762,6 +2911,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setTicTacToeMode(nextMode) {
+        if (isMultiplayerTicTacToeActive()) {
+            setMultiplayerStatus('Le mode est pilote par la room en ligne.');
+            return;
+        }
+
         if (!['solo', 'duo'].includes(nextMode)) {
             return;
         }
@@ -9710,6 +9864,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     ticTacToeRestartButton.addEventListener('click', () => {
+        if (isMultiplayerTicTacToeActive()) {
+            if (!multiplayerSocket?.connected) {
+                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+                return;
+            }
+
+            multiplayerSocket.emit('tictactoe:restart');
+            return;
+        }
+
         initializeTicTacToe();
     });
 
