@@ -344,9 +344,9 @@ body {
 
 .games-home-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 10px;
-    width: min(100%, 760px);
+    width: min(100%, 920px);
     margin: 0 auto;
 }
 
@@ -2858,15 +2858,27 @@ body {
     margin: 0 0 12px;
 }
 
-.connect4-mode-button {
+.connect4-mode-button,
+.chess-mode-button,
+.checkers-mode-button {
     min-width: 128px;
 }
 
-.connect4-mode-button.is-active {
+.connect4-mode-button.is-active,
+.chess-mode-button.is-active,
+.checkers-mode-button.is-active {
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.94), rgba(251, 191, 36, 0.88));
     color: white;
     border-color: rgba(191, 219, 254, 0.24);
     box-shadow: 0 16px 28px -24px rgba(37, 99, 235, 0.54);
+}
+
+.chess-mode-switch,
+.checkers-mode-switch {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 12px;
 }
 
 .connect4-board {
@@ -3291,6 +3303,36 @@ body {
         linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 16%),
         linear-gradient(180deg, rgba(59, 130, 246, 0.16), rgba(15, 23, 42, 0.12)),
         linear-gradient(180deg, #14b8a6, #0f766e 42%, #134e4a);
+}
+
+.flappy-splash {
+    position: absolute;
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.96) 0 24%, rgba(186, 230, 253, 0.88) 25% 62%, rgba(14, 165, 233, 0.12) 63% 100%);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.16),
+        0 8px 16px -10px rgba(8, 47, 73, 0.64);
+    pointer-events: none;
+    animation: flappy-splash-pop 620ms ease-out forwards;
+    animation-delay: var(--flappy-splash-delay, 0ms);
+}
+
+@keyframes flappy-splash-pop {
+    0% {
+        opacity: 0.65;
+        transform: translate(-50%, -46%) scale(0.55);
+    }
+
+    12% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--flappy-splash-dx, 0px)), calc(-50% + var(--flappy-splash-dy, -18px))) scale(0.72);
+    }
 }
 
 .flappy-cloud {
@@ -5442,6 +5484,12 @@ button:hover {
     margin-bottom: 0;
 }
 
+.import-source {
+    margin: 10px 0 0;
+    color: rgba(226, 232, 240, 0.8);
+    font-size: 0.95rem;
+}
+
 .management-layout {
     display: grid;
     grid-template-columns: minmax(0, 1.24fr) minmax(0, 0.86fr);
@@ -6068,6 +6116,963 @@ button:hover {
     }
 
     .mentalmath-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+.coinclicker-card,
+.chess-card,
+.checkers-card,
+.airhockey-card,
+.reaction-card,
+.baieberry-card,
+.breakout-card {
+    min-height: 100%;
+}
+
+.coinclicker-topbar,
+.chess-topbar,
+.checkers-topbar,
+.airhockey-topbar,
+.reaction-topbar,
+.baieberry-topbar,
+.breakout-topbar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(150px, 180px));
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.minesweeper-topbar,
+.snake-topbar,
+.pong-topbar,
+.sudoku-topbar,
+.game-2048-topbar,
+.aim-topbar,
+.memory-topbar,
+.tictactoe-topbar,
+.battleship-topbar,
+.tetris-topbar,
+.pacman-topbar,
+.solitaire-topbar,
+.connect4-topbar,
+.rhythm-topbar,
+.flappy-topbar,
+.flowfree-topbar,
+.magicsort-topbar,
+.mentalmath-topbar,
+.candycrush-topbar,
+.harborrun-topbar,
+.stacker-topbar,
+.coinclicker-topbar,
+.chess-topbar,
+.checkers-topbar,
+.airhockey-topbar,
+.reaction-topbar,
+.baieberry-topbar,
+.breakout-topbar {
+    margin-top: 8px;
+}
+
+.coinclicker-counter-block,
+.chess-counter-block,
+.checkers-counter-block,
+.airhockey-counter-block,
+.reaction-counter-block,
+.baieberry-counter-block,
+.breakout-counter-block {
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    text-align: center;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.coinclicker-counter-label,
+.chess-counter-label,
+.checkers-counter-label,
+.airhockey-counter-label,
+.reaction-counter-label,
+.baieberry-counter-label,
+.breakout-counter-label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted-text);
+    margin-bottom: 4px;
+}
+
+.coinclicker-counter-value,
+.chess-counter-value,
+.checkers-counter-value,
+.airhockey-counter-value,
+.reaction-counter-value,
+.baieberry-counter-value,
+.breakout-counter-value {
+    font-size: clamp(1.15rem, 2.6vw, 1.65rem);
+    color: var(--primary-color);
+}
+
+.coinclicker-face,
+.chess-face,
+.checkers-face,
+.airhockey-face,
+.reaction-face,
+.baieberry-face,
+.breakout-face {
+    width: 100%;
+    min-height: 60px;
+    border: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.9), rgba(251, 191, 36, 0.82));
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 18px 34px -24px rgba(245, 158, 11, 0.72);
+}
+
+.coinclicker-layout {
+    display: grid;
+    grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    width: min(100%, 720px);
+    margin: 0 auto;
+}
+
+.coinclicker-mint {
+    display: grid;
+    gap: 14px;
+    justify-items: center;
+}
+
+.coin-clicker-button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 4px;
+    aspect-ratio: 1;
+    width: min(100%, 236px);
+    border-radius: 50%;
+    border: 2px solid rgba(133, 77, 14, 0.55);
+    color: #082f49;
+    cursor: pointer;
+    background:
+        radial-gradient(circle at 30% 28%, rgba(255, 251, 235, 0.96) 0 9%, rgba(255, 255, 255, 0.24) 10% 18%, transparent 19%),
+        radial-gradient(circle at 50% 50%, #fcd34d 0 52%, #f59e0b 68%, #b45309 100%);
+    box-shadow:
+        inset 0 0 0 6px rgba(250, 204, 21, 0.46),
+        inset 0 10px 18px rgba(255,255,255,0.28),
+        0 18px 32px rgba(15,23,42,0.28);
+    overflow: hidden;
+}
+
+.coin-clicker-button:active {
+    transform: scale(0.98);
+}
+
+.coin-clicker-rim {
+    position: absolute;
+    inset: 14px;
+    border-radius: 50%;
+    border: 2px dashed rgba(120, 53, 15, 0.52);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+}
+
+.coin-clicker-skull {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(3rem, 8vw, 4.4rem);
+    line-height: 1;
+    color: rgba(120, 53, 15, 0.9);
+    text-shadow: 0 2px 0 rgba(255,255,255,0.28);
+}
+
+.coin-clicker-title,
+.coin-clicker-subtitle {
+    position: relative;
+    z-index: 1;
+    display: block;
+    text-align: center;
+}
+
+.coin-clicker-title {
+    font-size: 1.3rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+}
+
+.coin-clicker-subtitle {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(8, 47, 73, 0.84);
+}
+
+.coinclicker-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: min(100%, 236px);
+}
+
+.coinclicker-stat-card {
+    padding: 12px;
+    border-radius: 16px;
+    text-align: center;
+    background: rgba(15, 23, 42, 0.62);
+    border: 1px solid rgba(245, 158, 11, 0.18);
+}
+
+.coinclicker-stat-label,
+.coinclicker-upgrade-meta {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted-text);
+}
+
+.coinclicker-stat-value,
+.coinclicker-upgrade-bonus,
+.coinclicker-upgrade-title {
+    display: block;
+}
+
+.coinclicker-stat-value {
+    margin-top: 4px;
+    color: #fcd34d;
+    font-size: 1.15rem;
+    font-weight: 900;
+}
+
+.coinclicker-shop {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.coinclicker-upgrade {
+    display: grid;
+    gap: 6px;
+    min-height: 118px;
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.45);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.coinclicker-upgrade-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.coinclicker-upgrade-bonus {
+    color: #fcd34d;
+    font-size: 0.92rem;
+}
+
+.coinclicker-upgrade-meta {
+    margin-top: auto;
+}
+
+.coinclicker-upgrade.is-disabled {
+    opacity: 0.55;
+}
+
+.chess-board,
+.checkers-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0;
+    width: min(100%, 520px);
+    margin: 0 auto;
+    aspect-ratio: 1;
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.55);
+}
+
+.chess-board {
+    position: relative;
+    padding: 10px;
+    border: 1px solid rgba(245, 158, 11, 0.24);
+    background:
+        radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.2), transparent 18%),
+        radial-gradient(circle at 74% 22%, rgba(255, 255, 255, 0.12), transparent 16%),
+        linear-gradient(180deg, rgba(186, 230, 253, 0.24), transparent 22%),
+        linear-gradient(135deg, #0f766e, #0f4c5c 34%, #7c5a32 72%, #f59e0b);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 18px 36px -28px rgba(15, 23, 42, 0.8);
+}
+
+.checkers-board {
+    position: relative;
+    padding: 10px;
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    background:
+        radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.18), transparent 18%),
+        radial-gradient(circle at 78% 22%, rgba(255, 255, 255, 0.12), transparent 16%),
+        linear-gradient(180deg, rgba(186, 230, 253, 0.18), transparent 24%),
+        linear-gradient(135deg, #164e63, #0f766e 38%, #2c7a7b 68%, #caa46a);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 18px 36px -28px rgba(15, 23, 42, 0.78);
+}
+
+.chess-cell,
+.checkers-cell {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+}
+
+.chess-cell.is-light {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.24), transparent 54%),
+        linear-gradient(180deg, #fef3c7, #f5d08b 72%, #d6a75f);
+}
+
+.chess-cell.is-dark {
+    background:
+        radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.12), transparent 18%),
+        linear-gradient(180deg, #0ea5a4, #0f766e 68%, #0f4c5c);
+}
+
+.checkers-cell.is-light {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 54%),
+        linear-gradient(180deg, #f5e2b8, #e3c489 72%, #bf9254);
+}
+
+.checkers-cell.is-dark {
+    background:
+        radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.1), transparent 18%),
+        linear-gradient(180deg, #38bdf8, #0ea5a4 68%, #0f4c5c);
+}
+
+.chess-cell.is-selected,
+.checkers-cell.is-selected {
+    box-shadow: inset 0 0 0 4px rgba(250, 204, 21, 0.95);
+}
+
+.chess-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 42%),
+        linear-gradient(315deg, rgba(15, 23, 42, 0.08), transparent 48%);
+    pointer-events: none;
+}
+
+.chess-coordinate {
+    position: absolute;
+    position: absolute;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.chess-coordinate-rank {
+    top: 6px;
+    left: 7px;
+    color: rgba(15, 23, 42, 0.65);
+}
+
+.chess-cell.is-dark .chess-coordinate-rank {
+    color: rgba(254, 249, 195, 0.86);
+}
+
+.chess-coordinate-file {
+    right: 7px;
+    bottom: 6px;
+    color: rgba(15, 23, 42, 0.7);
+}
+
+.chess-cell.is-dark .chess-coordinate-file {
+    color: rgba(254, 249, 195, 0.88);
+}
+
+.chess-cell.is-move::after,
+.checkers-cell.is-move::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(34, 197, 94, 0.95);
+    position: absolute;
+}
+
+.chess-piece {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.2),
+        0 8px 12px rgba(15, 23, 42, 0.22);
+}
+
+.checkers-piece {
+    width: 62%;
+    height: 62%;
+    border-radius: 50%;
+    box-shadow:
+        inset 0 6px 10px rgba(255,255,255,0.2),
+        inset 0 -5px 10px rgba(15, 23, 42, 0.18),
+        0 4px 10px rgba(15,23,42,0.3);
+}
+
+.checkers-piece.is-red {
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.22), transparent 18%),
+        radial-gradient(circle at 35% 30%, #fb7185, #be123c 75%);
+}
+
+.checkers-piece.is-black {
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.14), transparent 18%),
+        radial-gradient(circle at 35% 30%, #334155, #020617 78%);
+}
+
+.checkers-piece.is-king::after {
+    content: '⚓';
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-weight: 900;
+    color: #f8fafc;
+    font-size: 0.9rem;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.4);
+}
+
+.airhockey-mode-switch {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.airhockey-board {
+    position: relative;
+    width: min(100%, 720px);
+    margin: 0 auto;
+    aspect-ratio: 2 / 1;
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+        linear-gradient(90deg, transparent 49.4%, rgba(255,255,255,0.55) 49.4% 50.6%, transparent 50.6%),
+        radial-gradient(circle at center, transparent 0 82px, rgba(255,255,255,0.34) 82px 86px, transparent 86px),
+        radial-gradient(circle at 20% 18%, rgba(255,255,255,0.26) 0 10%, transparent 11%),
+        radial-gradient(circle at 72% 28%, rgba(255,255,255,0.18) 0 12%, transparent 13%),
+        radial-gradient(circle at 38% 76%, rgba(255,255,255,0.14) 0 11%, transparent 12%),
+        linear-gradient(180deg, rgba(186, 230, 253, 0.96), rgba(125, 211, 252, 0.95) 34%, rgba(56, 189, 248, 0.9) 68%, rgba(14, 116, 144, 0.92));
+    border: 1px solid rgba(186, 230, 253, 0.5);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), 0 18px 36px -26px rgba(8, 47, 73, 0.6);
+}
+
+.airhockey-board::before,
+.airhockey-board::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.airhockey-board::before {
+    background:
+        radial-gradient(circle at 16% 22%, rgba(255,255,255,0.14) 0 3%, transparent 4%),
+        radial-gradient(circle at 34% 68%, rgba(255,255,255,0.1) 0 4%, transparent 5%),
+        radial-gradient(circle at 62% 26%, rgba(255,255,255,0.12) 0 3%, transparent 4%),
+        radial-gradient(circle at 78% 72%, rgba(255,255,255,0.1) 0 4%, transparent 5%),
+        radial-gradient(circle at 48% 52%, rgba(255,255,255,0.08) 0 6%, transparent 7%),
+        linear-gradient(180deg, rgba(255,255,255,0.08), transparent 24%, transparent 76%, rgba(8,47,73,0.08));
+    mix-blend-mode: screen;
+}
+
+.airhockey-board::after {
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.22), transparent 22%, transparent 78%, rgba(8,47,73,0.18)),
+        linear-gradient(90deg, rgba(255,255,255,0.14), transparent 14%, transparent 86%, rgba(255,255,255,0.12));
+}
+
+.airhockey-countdown {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 4;
+    font-size: clamp(3.8rem, 11vw, 6.8rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: rgba(240, 249, 255, 0.96);
+    text-shadow: 0 0 22px rgba(56, 189, 248, 0.34);
+    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.12), rgba(15, 23, 42, 0.02) 48%, transparent 72%);
+    pointer-events: none;
+}
+
+.airhockey-goal {
+    position: absolute;
+    top: 50%;
+    width: 18px;
+    height: 48%;
+    transform: translateY(-50%);
+    border-radius: 14px;
+    border: 2px solid rgba(240, 249, 255, 0.9);
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06)),
+        rgba(14, 116, 144, 0.18);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.16);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.airhockey-goal-left {
+    left: 0;
+    border-left: 0;
+    border-radius: 0 14px 14px 0;
+    border-color: rgba(254, 202, 202, 0.95);
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04)),
+        rgba(239, 68, 68, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 18px rgba(239, 68, 68, 0.2);
+}
+
+.airhockey-goal-right {
+    right: 0;
+    border-right: 0;
+    border-radius: 14px 0 0 14px;
+    border-color: rgba(191, 219, 254, 0.95);
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04)),
+        rgba(59, 130, 246, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 18px rgba(59, 130, 246, 0.22);
+}
+
+.airhockey-paddle,
+.airhockey-puck {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.airhockey-paddle {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.92), rgba(255,255,255,0.18) 24%, transparent 25%);
+    box-shadow: 0 10px 18px -10px rgba(15, 23, 42, 0.8);
+}
+
+.airhockey-paddle-left {
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.92), rgba(255,255,255,0.18) 24%, transparent 25%),
+        radial-gradient(circle at 50% 50%, #fb7185, #dc2626 70%, #7f1d1d 100%);
+}
+
+.airhockey-paddle-right {
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.92), rgba(255,255,255,0.18) 24%, transparent 25%),
+        radial-gradient(circle at 50% 50%, #60a5fa, #2563eb 70%, #1e3a8a 100%);
+}
+
+.airhockey-paddle::before,
+.airhockey-paddle::after {
+    content: '';
+    position: absolute;
+}
+
+.airhockey-paddle::before {
+    inset: 11px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.28);
+}
+
+.airhockey-paddle::after {
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+}
+
+.airhockey-puck {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f8fafc, #cbd5e1 42%, #0f172a 100%);
+    box-shadow: 0 12px 20px -14px rgba(15, 23, 42, 0.9);
+}
+
+.reaction-lantern {
+    width: min(100%, 260px);
+    aspect-ratio: 0.8;
+    margin: 20px auto 0;
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 30px;
+    border: 0;
+    cursor: pointer;
+    background:
+        radial-gradient(circle at 50% 8%, rgba(255,255,255,0.12), transparent 14%),
+        radial-gradient(circle at 50% 88%, rgba(15, 23, 42, 0.12), transparent 18%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.04), rgba(15, 23, 42, 0.01));
+    box-shadow: 0 18px 34px -28px rgba(15, 23, 42, 0.74);
+}
+
+.reaction-lantern::before {
+    content: '';
+    position: absolute;
+    inset: 38px 12px 8px;
+    border-radius: 26px;
+    background:
+        radial-gradient(circle at 50% 46%, rgba(2, 6, 23, 0.44), rgba(2, 6, 23, 0.24) 34%, rgba(2, 6, 23, 0.1) 56%, transparent 74%);
+    pointer-events: none;
+    transition: opacity 140ms ease, transform 140ms ease, background 140ms ease;
+}
+
+.reaction-lantern-handle {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 70px;
+    height: 36px;
+    border: 5px solid rgba(120, 53, 15, 0.92);
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
+    transform: translateX(-50%);
+    box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.12),
+        0 4px 10px -8px rgba(15, 23, 42, 0.7);
+}
+
+.reaction-lantern-cap,
+.reaction-lantern-base {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    background:
+        linear-gradient(180deg, #fcd34d, #b45309 42%, #4a2c12);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.18),
+        0 8px 16px -14px rgba(15, 23, 42, 0.72);
+}
+
+.reaction-lantern-cap {
+    top: 36px;
+    height: 28px;
+    border-radius: 18px 18px 10px 10px;
+}
+
+.reaction-lantern-base {
+    bottom: 18px;
+    height: 24px;
+    border-radius: 10px 10px 18px 18px;
+}
+
+.reaction-lantern-frame {
+    position: absolute;
+    top: 56px;
+    left: 50%;
+    width: 146px;
+    height: 168px;
+    transform: translateX(-50%);
+    border-radius: 28px 28px 22px 22px;
+    background:
+        linear-gradient(90deg, rgba(74, 44, 18, 0.98), rgba(180, 83, 9, 0.88) 14%, rgba(180, 83, 9, 0.88) 86%, rgba(74, 44, 18, 0.98)),
+        linear-gradient(180deg, rgba(92, 51, 23, 0.96), rgba(161, 98, 7, 0.86) 18%, rgba(146, 64, 14, 0.88) 82%, rgba(74, 44, 18, 0.96));
+    box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.08),
+        0 18px 28px -24px rgba(15, 23, 42, 0.72);
+}
+
+.reaction-lantern-frame::before {
+    content: '';
+    position: absolute;
+    inset: 14px 16px;
+    border-radius: 18px;
+    background:
+        linear-gradient(180deg, rgba(255, 248, 220, 0.12), rgba(56, 189, 248, 0.04)),
+        radial-gradient(circle at 50% 24%, rgba(255,255,255,0.12), transparent 28%);
+    border: 1px solid rgba(251, 191, 36, 0.16);
+}
+
+.reaction-lantern-frame::after {
+    content: '';
+    position: absolute;
+    inset: 18px 24px;
+    background:
+        linear-gradient(58deg, transparent 47%, rgba(74, 44, 18, 0.75) 47% 53%, transparent 53%),
+        linear-gradient(122deg, transparent 47%, rgba(74, 44, 18, 0.75) 47% 53%, transparent 53%);
+    opacity: 0.85;
+}
+
+.reaction-lantern-pane {
+    position: absolute;
+    top: 18px;
+    bottom: 18px;
+    width: 14px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(217, 119, 6, 0.96), rgba(74, 44, 18, 0.98));
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.reaction-lantern-pane-left {
+    left: 42px;
+}
+
+.reaction-lantern-pane-right {
+    right: 42px;
+}
+
+.reaction-lantern-core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background:
+        radial-gradient(circle at 50% 46%, rgba(250, 204, 21, 0.22), rgba(245, 158, 11, 0.08) 38%, rgba(15, 23, 42, 0.02) 68%, transparent 70%);
+    box-shadow: 0 0 24px rgba(245, 158, 11, 0.12);
+    transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.reaction-lantern-flame {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 42px;
+    height: 62px;
+    transform: translate(-50%, -52%);
+    border-radius: 58% 42% 48% 52% / 68% 64% 36% 32%;
+    background:
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,0.98), rgba(255,255,255,0.2) 18%, transparent 19%),
+        linear-gradient(180deg, rgba(254, 240, 138, 0.98), rgba(245, 158, 11, 0.96) 48%, rgba(220, 38, 38, 0.82) 88%);
+    clip-path: polygon(50% 0, 64% 10%, 74% 28%, 86% 42%, 80% 64%, 66% 86%, 50% 100%, 34% 84%, 20% 62%, 16% 40%, 28% 20%);
+    opacity: 0.24;
+    filter: blur(0.2px);
+    transition: opacity 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+}
+
+.reaction-lantern.is-armed .reaction-lantern-core {
+    background:
+        radial-gradient(circle at 50% 46%, rgba(96, 165, 250, 0.3), rgba(59, 130, 246, 0.12) 38%, rgba(15, 23, 42, 0.02) 68%, transparent 70%);
+    box-shadow: 0 0 32px rgba(56, 189, 248, 0.24);
+    transform: translate(-50%, -50%) scale(1.04);
+}
+
+.reaction-lantern.is-armed::before {
+    background:
+        radial-gradient(circle at 50% 46%, rgba(15, 23, 42, 0.32), rgba(15, 23, 42, 0.16) 34%, rgba(56, 189, 248, 0.08) 58%, transparent 76%);
+}
+
+.reaction-lantern.is-lit .reaction-lantern-core {
+    background:
+        radial-gradient(circle at 50% 44%, rgba(255,255,255,0.96), rgba(250, 204, 21, 0.78) 22%, rgba(245, 158, 11, 0.44) 46%, rgba(220, 38, 38, 0.12) 66%, transparent 74%);
+    box-shadow: 0 0 54px rgba(250, 204, 21, 0.58), 0 0 94px rgba(245, 158, 11, 0.24);
+    transform: translate(-50%, -50%) scale(1.08);
+}
+
+.reaction-lantern.is-lit .reaction-lantern-flame {
+    opacity: 1;
+    transform: translate(-50%, -54%) scale(1.08);
+    box-shadow: 0 0 26px rgba(250, 204, 21, 0.54), 0 0 40px rgba(239, 68, 68, 0.18);
+}
+
+.reaction-lantern.is-lit::before {
+    opacity: 0.12;
+    transform: scale(0.92);
+    background:
+        radial-gradient(circle at 50% 46%, rgba(250, 204, 21, 0.16), rgba(245, 158, 11, 0.08) 34%, transparent 70%);
+}
+
+.baieberry-stage {
+    position: relative;
+    width: min(100%, 360px);
+    margin: 0 auto;
+}
+
+.baieberry-canvas,
+.breakout-canvas {
+    display: block;
+    width: 100%;
+    border-radius: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.65);
+}
+
+.breakout-canvas {
+    width: min(100%, 560px);
+    margin: 0 auto;
+}
+
+.coinclicker-help,
+.chess-help,
+.checkers-help,
+.airhockey-help,
+.reaction-help,
+.baieberry-help,
+.breakout-help {
+    text-align: center;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.baieberry-drop-guide {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.18) 24%, transparent 25%),
+        radial-gradient(circle at 50% 50%, var(--baieberry-guide-color, #60a5fa), rgba(15,23,42,0.72) 100%);
+    box-shadow: 0 10px 18px -14px rgba(15, 23, 42, 0.72);
+    border: 2px solid rgba(255,255,255,0.26);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.game-home-art-airhockey::before,
+.game-home-art-airhockey::after,
+.game-home-art-baieberry::before,
+.game-home-art-baieberry::after,
+.game-home-art-breakout::before,
+.game-home-art-breakout::after,
+.game-home-art-chess::before,
+.game-home-art-chess::after,
+.game-home-art-coinclicker::before,
+.game-home-art-coinclicker::after,
+.game-home-art-checkers::before,
+.game-home-art-checkers::after,
+.game-home-art-reaction::before,
+.game-home-art-reaction::after {
+    content: '';
+    position: absolute;
+}
+
+.game-home-art-airhockey::before {
+    inset: 10px;
+    border-radius: 14px;
+    background: linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.72) 49% 51%, transparent 51%), linear-gradient(180deg, #38bdf8, #0f172a);
+}
+
+.game-home-art-airhockey::after {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #f8fafc;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.game-home-art-coinclicker::before {
+    inset: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fde68a, #f59e0b 75%, #b45309);
+}
+
+.game-home-art-chess::before {
+    inset: 10px;
+    border-radius: 14px;
+    background: conic-gradient(from 45deg, #1d4ed8 0 25%, #dbeafe 0 50%, #1d4ed8 0 75%, #dbeafe 0);
+}
+
+.game-home-art-checkers::before {
+    inset: 10px;
+    border-radius: 14px;
+    background: conic-gradient(from 45deg, #1e293b 0 25%, #f8fafc 0 50%, #1e293b 0 75%, #f8fafc 0);
+}
+
+.game-home-art-checkers::after {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fb7185;
+    right: 12px;
+    bottom: 12px;
+}
+
+.game-home-art-reaction::before {
+    inset: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fef08a, #f59e0b 75%, transparent 76%);
+}
+
+.game-home-art-baieberry::before {
+    inset: 9px;
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at 28% 66%, #60a5fa 0 12%, transparent 13%),
+        radial-gradient(circle at 50% 42%, #fb7185 0 14%, transparent 15%),
+        radial-gradient(circle at 70% 66%, #a78bfa 0 16%, transparent 17%),
+        linear-gradient(180deg, #1e3a8a, #0f172a);
+}
+
+.game-home-art-breakout::before {
+    inset: 10px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, #fb7185 0 31%, transparent 31% 34%, #fbbf24 34% 65%, transparent 65% 68%, #34d399 68% 100%) top / 100% 12px no-repeat,
+        linear-gradient(90deg, transparent 20%, #f8fafc 20% 80%, transparent 80%) bottom 12px center / 48px 6px no-repeat,
+        linear-gradient(180deg, #0ea5e9, #0f172a);
+}
+
+@media (max-width: 600px) {
+    .coinclicker-topbar,
+    .chess-topbar,
+    .checkers-topbar,
+    .airhockey-topbar,
+    .reaction-topbar,
+    .baieberry-topbar,
+    .breakout-topbar {
+        grid-template-columns: 1fr;
+    }
+
+    .coinclicker-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .coinclicker-shop {
         grid-template-columns: 1fr;
     }
 }

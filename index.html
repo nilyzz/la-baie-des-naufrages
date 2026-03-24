@@ -63,19 +63,10 @@
         <section id="loginView" class="view view-active">
             <div class="card login-card">
                 <h1>La Baie des naufragés</h1>
-                <p class="eyebrow login-eyebrow">Accès réservé</p>
+                <p class="eyebrow login-eyebrow">Embarquement</p>
 
                 <form id="loginForm" class="login-form">
-                    <label class="field-label" for="passwordInput">Mot de passe</label>
-                    <input
-                        id="passwordInput"
-                        name="password"
-                        type="password"
-                        placeholder="Entre le mot de passe"
-                        autocomplete="current-password"
-                    >
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
-                    <p id="passwordMessage" class="feedback" aria-live="polite"></p>
                 </form>
             </div>
         </section>
@@ -172,63 +163,22 @@
             <section id="manageSection" class="panel">
                 <div class="management-layout">
                     <div class="card form-card">
-                        <p class="section-tag">Gestion</p>
-                        <h3>Ajouter ou modifier un film</h3>
-                        <p>Le champ affiche permet déjà de lier une image manuellement. Plus tard, on pourra automatiser la récupération depuis Internet.</p>
-
-                        <form id="movieForm" class="management-form">
-                            <input id="movieId" type="hidden">
-
-                            <div class="form-grid">
-                                <div class="field-group">
-                                    <label class="field-label" for="titleInput">Titre</label>
-                                    <input id="titleInput" name="title" type="text" placeholder="Ex: Pirates des Caraibes" required>
-                                </div>
-
-                                <div class="field-group">
-                                    <label class="field-label" for="directorInput">Realisateur</label>
-                                    <input id="directorInput" name="director" type="text" placeholder="Ex: Gore Verbinski" required>
-                                </div>
-
-                                <div class="field-group">
-                                    <label class="field-label" for="releaseDateInput">Date de sortie</label>
-                                    <input id="releaseDateInput" name="releaseDate" type="date" required>
-                                </div>
-
-                                <div class="field-group">
-                                    <label class="field-label" for="durationInput">Duree en minutes</label>
-                                    <input id="durationInput" name="duration" type="number" min="1" step="1" placeholder="Ex: 143" required>
-                                </div>
-
-                                <div class="field-group">
-                                    <label class="field-label" for="ratingInput">Note /20</label>
-                                    <input id="ratingInput" name="rating" type="number" min="0" max="20" step="0.5" placeholder="Ex: 16.5" required>
-                                </div>
-
-                                <div class="field-group">
-                                    <label class="field-label" for="posterInput">URL de l affiche</label>
-                                    <input id="posterInput" name="poster" type="url" placeholder="https://...">
-                                </div>
-                            </div>
-
-                            <div class="field-group">
-                                <label class="field-label" for="commentInput">Commentaire</label>
-                                <textarea id="commentInput" name="comment" rows="4" placeholder="Ton avis rapide sur le film"></textarea>
-                            </div>
-
-                            <div class="form-actions">
-                                <button type="submit" class="primary-button">Enregistrer</button>
-                                <button id="resetFormButton" type="button" class="secondary-button">Vider le formulaire</button>
-                            </div>
-
-                            <p id="formMessage" class="feedback" aria-live="polite"></p>
-                        </form>
+                        <p class="section-tag">Source cinema</p>
+                        <h3>Import automatique depuis Excel</h3>
+                        <p>
+                            Le navire cinema ne propose plus de formulaire d edition. Il charge maintenant les films depuis un fichier Excel place a la racine du depot.
+                        </p>
+                        <p>
+                            Noms cherches automatiquement : <strong>film.xlsx</strong>, <strong>film.xls</strong>, <strong>film.xlsm</strong>, <strong>films.xlsx</strong> et variantes proches.
+                        </p>
+                        <p id="excelImportStatus" class="feedback" aria-live="polite">Recherche d un fichier Excel en cours...</p>
+                        <p id="excelSourceName" class="import-source"></p>
                     </div>
 
                     <div class="card manage-list-card">
                         <p class="section-tag">Bibliotheque</p>
-                        <h3>Films enregistres</h3>
-                        <p>Utilise Modifier pour charger un film dans le formulaire, ou Supprimer pour le retirer apres confirmation.</p>
+                        <h3>Films importes</h3>
+                        <p>Cette liste est maintenant en lecture seule et se met a jour a partir du document Excel trouve dans le depot.</p>
                         <div id="manageList" class="manage-list"></div>
                     </div>
                 </div>
@@ -245,25 +195,53 @@
                     </div>
 
                     <div class="games-home-grid" aria-label="Liste des jeux">
+                        <button type="button" class="game-home-tile" data-open-game="2048">
+                            <span class="game-home-art game-home-art-2048" aria-hidden="true"></span>
+                            <span class="game-home-title">2048</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="airHockey">
+                            <span class="game-home-art game-home-art-airhockey" aria-hidden="true"></span>
+                            <span class="game-home-title">Air Hockey</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="flappy">
+                            <span class="game-home-art game-home-art-flappy" aria-hidden="true"></span>
+                            <span class="game-home-title">Baiely Bird</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="baieBerry">
+                            <span class="game-home-art game-home-art-baieberry" aria-hidden="true"></span>
+                            <span class="game-home-title">BaieBerry</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="battleship">
+                            <span class="game-home-art game-home-art-battleship" aria-hidden="true"></span>
+                            <span class="game-home-title">Bataille</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="breakout">
+                            <span class="game-home-art game-home-art-breakout" aria-hidden="true"></span>
+                            <span class="game-home-title">Breakout</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="mentalMath">
+                            <span class="game-home-art game-home-art-mentalmath" aria-hidden="true"></span>
+                            <span class="game-home-title">Calcul</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="coinClicker">
+                            <span class="game-home-art game-home-art-coinclicker" aria-hidden="true"></span>
+                            <span class="game-home-title">Coin Clicker</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="candyCrush">
+                            <span class="game-home-art game-home-art-candycrush" aria-hidden="true"></span>
+                            <span class="game-home-title">Coin Crush</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="checkers">
+                            <span class="game-home-art game-home-art-checkers" aria-hidden="true"></span>
+                            <span class="game-home-title">Dames</span>
+                        </button>
                         <button type="button" class="game-home-tile" data-open-game="minesweeper">
                             <span class="game-home-art game-home-art-minesweeper" aria-hidden="true"></span>
                             <span class="game-home-title">Démineur</span>
                         </button>
-                        <button type="button" class="game-home-tile" data-open-game="snake">
-                            <span class="game-home-art game-home-art-snake" aria-hidden="true"></span>
-                            <span class="game-home-title">Snake</span>
-                        </button>
-                        <button type="button" class="game-home-tile" data-open-game="pong">
-                            <span class="game-home-art game-home-art-pong" aria-hidden="true"></span>
-                            <span class="game-home-title">Pong</span>
-                        </button>
-                        <button type="button" class="game-home-tile" data-open-game="sudoku">
-                            <span class="game-home-art game-home-art-sudoku" aria-hidden="true"></span>
-                            <span class="game-home-title">Sudoku</span>
-                        </button>
-                        <button type="button" class="game-home-tile" data-open-game="2048">
-                            <span class="game-home-art game-home-art-2048" aria-hidden="true"></span>
-                            <span class="game-home-title">2048</span>
+                        <button type="button" class="game-home-tile" data-open-game="chess">
+                            <span class="game-home-art game-home-art-chess" aria-hidden="true"></span>
+                            <span class="game-home-title">Echecs</span>
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="aim">
                             <span class="game-home-art game-home-art-aim" aria-hidden="true"></span>
@@ -273,21 +251,25 @@
                             <span class="game-home-art game-home-art-memory" aria-hidden="true"></span>
                             <span class="game-home-title">Memory</span>
                         </button>
+                        <button type="button" class="game-home-tile" data-open-game="harborRun">
+                            <span class="game-home-art game-home-art-harborrun" aria-hidden="true"></span>
+                            <span class="game-home-title">Navire 2D</span>
+                        </button>
                         <button type="button" class="game-home-tile" data-open-game="ticTacToe">
                             <span class="game-home-art game-home-art-tictactoe" aria-hidden="true"></span>
                             <span class="game-home-title">Morpion</span>
                         </button>
-                        <button type="button" class="game-home-tile" data-open-game="battleship">
-                            <span class="game-home-art game-home-art-battleship" aria-hidden="true"></span>
-                            <span class="game-home-title">Bataille</span>
-                        </button>
-                        <button type="button" class="game-home-tile" data-open-game="tetris">
-                            <span class="game-home-art game-home-art-tetris" aria-hidden="true"></span>
-                            <span class="game-home-title">Tetris</span>
-                        </button>
                         <button type="button" class="game-home-tile" data-open-game="pacman">
                             <span class="game-home-art game-home-art-pacman" aria-hidden="true"></span>
                             <span class="game-home-title">Pac-Man</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="pong">
+                            <span class="game-home-art game-home-art-pong" aria-hidden="true"></span>
+                            <span class="game-home-title">Pong</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="reaction">
+                            <span class="game-home-art game-home-art-reaction" aria-hidden="true"></span>
+                            <span class="game-home-title">Reaction</span>
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="solitaire">
                             <span class="game-home-art game-home-art-solitaire" aria-hidden="true"></span>
@@ -301,10 +283,6 @@
                             <span class="game-home-art game-home-art-rhythm" aria-hidden="true"></span>
                             <span class="game-home-title">Rythme</span>
                         </button>
-                        <button type="button" class="game-home-tile" data-open-game="flappy">
-                            <span class="game-home-art game-home-art-flappy" aria-hidden="true"></span>
-                            <span class="game-home-title">Baiely Bird</span>
-                        </button>
                         <button type="button" class="game-home-tile" data-open-game="flowFree">
                             <span class="game-home-art game-home-art-flowfree" aria-hidden="true"></span>
                             <span class="game-home-title">Rope Line</span>
@@ -313,21 +291,21 @@
                             <span class="game-home-art game-home-art-magicsort" aria-hidden="true"></span>
                             <span class="game-home-title">Magic Sort</span>
                         </button>
-                        <button type="button" class="game-home-tile" data-open-game="mentalMath">
-                            <span class="game-home-art game-home-art-mentalmath" aria-hidden="true"></span>
-                            <span class="game-home-title">Calcul</span>
-                        </button>
-                        <button type="button" class="game-home-tile" data-open-game="candyCrush">
-                            <span class="game-home-art game-home-art-candycrush" aria-hidden="true"></span>
-                            <span class="game-home-title">Coin Crush</span>
-                        </button>
-                        <button type="button" class="game-home-tile" data-open-game="harborRun">
-                            <span class="game-home-art game-home-art-harborrun" aria-hidden="true"></span>
-                            <span class="game-home-title">Navire 2D</span>
+                        <button type="button" class="game-home-tile" data-open-game="snake">
+                            <span class="game-home-art game-home-art-snake" aria-hidden="true"></span>
+                            <span class="game-home-title">Snake</span>
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="stacker">
                             <span class="game-home-art game-home-art-stacker" aria-hidden="true"></span>
                             <span class="game-home-title">Stack 2D</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="sudoku">
+                            <span class="game-home-art game-home-art-sudoku" aria-hidden="true"></span>
+                            <span class="game-home-title">Sudoku</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="tetris">
+                            <span class="game-home-art game-home-art-tetris" aria-hidden="true"></span>
+                            <span class="game-home-title">Tetris</span>
                         </button>
                     </div>
                 </div>
@@ -803,6 +781,170 @@
                     <p id="stackerHelpText" class="stacker-help">Empile les caisses de butin le plus proprement possible pour monter la tour.</p>
                     <div id="stackerBoard" class="stacker-board" aria-label="Plateau de Stack 2D"></div>
                 </div>
+
+                <div id="coinClickerGame" class="card coinclicker-card games-panel">
+                    <div class="coinclicker-topbar">
+                        <div class="coinclicker-counter-block">
+                            <span class="coinclicker-counter-label">Pieces</span>
+                            <strong id="coinClickerScoreDisplay" class="coinclicker-counter-value">0</strong>
+                        </div>
+                        <button id="coinClickerResetButton" type="button" class="coinclicker-face">Nouvelle fortune</button>
+                        <div class="coinclicker-counter-block">
+                            <span class="coinclicker-counter-label">Par clic</span>
+                            <strong id="coinClickerPowerDisplay" class="coinclicker-counter-value">1</strong>
+                        </div>
+                    </div>
+                    <p id="coinClickerHelpText" class="coinclicker-help">Clique sur la piece de la baie, puis achete des ameliorations pour gagner plus vite.</p>
+                    <div class="coinclicker-layout">
+                        <div class="coinclicker-mint">
+                            <button id="coinClickerButton" type="button" class="coin-clicker-button" aria-label="Cliquer pour gagner des pieces">
+                                <span class="coin-clicker-skull" aria-hidden="true">☠</span>
+                                <span class="coin-clicker-rim" aria-hidden="true"></span>
+                                <span class="coin-clicker-title">Baie Coin</span>
+                                <span class="coin-clicker-subtitle">Clique pour piller</span>
+                            </button>
+                            <div class="coinclicker-stats">
+                                <div class="coinclicker-stat-card">
+                                    <span class="coinclicker-stat-label">Multiplicateur</span>
+                                    <strong id="coinClickerMultiplierDisplay" class="coinclicker-stat-value">x1.00</strong>
+                                </div>
+                                <div class="coinclicker-stat-card">
+                                    <span class="coinclicker-stat-label">Auto / sec</span>
+                                    <strong id="coinClickerAutoDisplay" class="coinclicker-stat-value">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="coinClickerShop" class="coinclicker-shop"></div>
+                    </div>
+                </div>
+
+                <div id="chessGame" class="card chess-card games-panel">
+                    <div class="chess-topbar">
+                        <div class="chess-counter-block">
+                            <span class="chess-counter-label">Tour</span>
+                            <strong id="chessTurnDisplay" class="chess-counter-value">Blancs</strong>
+                        </div>
+                        <button id="chessResetButton" type="button" class="chess-face">Nouvelle partie</button>
+                        <div class="chess-counter-block">
+                            <span class="chess-counter-label">Etat</span>
+                            <strong id="chessStatusDisplay" class="chess-counter-value">En cours</strong>
+                        </div>
+                    </div>
+                    <div class="chess-mode-switch" role="group" aria-label="Mode echecs">
+                        <button type="button" class="secondary-button chess-mode-button is-active" data-chess-mode="solo">1 joueur</button>
+                        <button type="button" class="secondary-button chess-mode-button" data-chess-mode="duo">2 joueurs</button>
+                    </div>
+                    <p id="chessHelpText" class="chess-help">Echecs local a deux joueurs. Roque et prise en passant ne sont pas geres, la promotion devient une reine.</p>
+                    <div id="chessBoard" class="chess-board" aria-label="Echiquier"></div>
+                </div>
+
+                <div id="checkersGame" class="card checkers-card games-panel">
+                    <div class="checkers-topbar">
+                        <div class="checkers-counter-block">
+                            <span class="checkers-counter-label">Tour</span>
+                            <strong id="checkersTurnDisplay" class="checkers-counter-value">Rouges</strong>
+                        </div>
+                        <button id="checkersResetButton" type="button" class="checkers-face">Nouvelle partie</button>
+                        <div class="checkers-counter-block">
+                            <span class="checkers-counter-label">Pions noirs</span>
+                            <strong id="checkersCountDisplay" class="checkers-counter-value">12</strong>
+                        </div>
+                    </div>
+                    <div class="checkers-mode-switch" role="group" aria-label="Mode dames">
+                        <button type="button" class="secondary-button checkers-mode-button is-active" data-checkers-mode="solo">1 joueur</button>
+                        <button type="button" class="secondary-button checkers-mode-button" data-checkers-mode="duo">2 joueurs</button>
+                    </div>
+                    <p id="checkersHelpText" class="checkers-help">Dames local a deux joueurs. Les captures sont possibles, et un pion promu devient roi en arrivant au bout.</p>
+                    <div id="checkersBoard" class="checkers-board" aria-label="Plateau de dames"></div>
+                </div>
+
+                <div id="airHockeyGame" class="card airhockey-card games-panel">
+                    <div class="airhockey-topbar">
+                        <div class="airhockey-counter-block">
+                            <span class="airhockey-counter-label">Score gauche</span>
+                            <strong id="airHockeyLeftScoreDisplay" class="airhockey-counter-value">0</strong>
+                        </div>
+                        <button id="airHockeyStartButton" type="button" class="airhockey-face">Lancer</button>
+                        <div class="airhockey-counter-block">
+                            <span class="airhockey-counter-label">Score droite</span>
+                            <strong id="airHockeyRightScoreDisplay" class="airhockey-counter-value">0</strong>
+                        </div>
+                    </div>
+                    <div class="airhockey-mode-switch" role="group" aria-label="Mode air hockey">
+                        <button type="button" class="secondary-button airhockey-mode-button is-active" data-airhockey-mode="solo">1 joueur</button>
+                        <button type="button" class="secondary-button airhockey-mode-button" data-airhockey-mode="duo">2 joueurs</button>
+                    </div>
+                    <p id="airHockeyHelpText" class="airhockey-help">Joueur gauche: ZQSD. Joueur droit: fleches. En solo, la droite est pilotee par l IA.</p>
+                    <div id="airHockeyBoard" class="airhockey-board" aria-label="Plateau d Air Hockey">
+                        <div id="airHockeyCountdown" class="airhockey-countdown hidden" aria-hidden="true"></div>
+                        <div class="airhockey-goal airhockey-goal-left" aria-hidden="true"></div>
+                        <div class="airhockey-goal airhockey-goal-right" aria-hidden="true"></div>
+                        <div id="airHockeyPuck" class="airhockey-puck"></div>
+                        <div id="airHockeyLeftPaddle" class="airhockey-paddle airhockey-paddle-left"></div>
+                        <div id="airHockeyRightPaddle" class="airhockey-paddle airhockey-paddle-right"></div>
+                    </div>
+                </div>
+
+                <div id="reactionGame" class="card reaction-card games-panel">
+                    <div class="reaction-topbar">
+                        <div class="reaction-counter-block">
+                            <span class="reaction-counter-label">Dernier</span>
+                            <strong id="reactionLastDisplay" class="reaction-counter-value">-</strong>
+                        </div>
+                        <button id="reactionStartButton" type="button" class="reaction-face">Nouvelle veille</button>
+                        <div class="reaction-counter-block">
+                            <span class="reaction-counter-label">Record</span>
+                            <strong id="reactionBestDisplay" class="reaction-counter-value">-</strong>
+                        </div>
+                    </div>
+                    <p id="reactionHelpText" class="reaction-help">Attends que la lanterne s allume, puis clique le plus vite possible.</p>
+                    <button id="reactionLantern" type="button" class="reaction-lantern" aria-label="Lanterne de reaction">
+                        <span class="reaction-lantern-handle" aria-hidden="true"></span>
+                        <span class="reaction-lantern-cap" aria-hidden="true"></span>
+                        <span class="reaction-lantern-frame" aria-hidden="true">
+                            <span class="reaction-lantern-pane reaction-lantern-pane-left"></span>
+                            <span class="reaction-lantern-pane reaction-lantern-pane-right"></span>
+                            <span class="reaction-lantern-core"></span>
+                            <span class="reaction-lantern-flame" aria-hidden="true"></span>
+                        </span>
+                        <span class="reaction-lantern-base" aria-hidden="true"></span>
+                    </button>
+                </div>
+
+                <div id="baieBerryGame" class="card baieberry-card games-panel">
+                    <div class="baieberry-topbar">
+                        <div class="baieberry-counter-block">
+                            <span class="baieberry-counter-label">Score</span>
+                            <strong id="baieBerryScoreDisplay" class="baieberry-counter-value">0</strong>
+                        </div>
+                        <button id="baieBerryStartButton" type="button" class="baieberry-face">Nouvelle recolte</button>
+                        <div class="baieberry-counter-block">
+                            <span class="baieberry-counter-label">Suivant</span>
+                            <strong id="baieBerryNextDisplay" class="baieberry-counter-value">Myrtille</strong>
+                        </div>
+                    </div>
+                    <p id="baieBerryHelpText" class="baieberry-help">Clique dans la colonne pour laisser tomber un fruit. Deux fruits identiques fusionnent en plus gros.</p>
+                    <div class="baieberry-stage">
+                        <div id="baieBerryDropGuide" class="baieberry-drop-guide" aria-hidden="true"></div>
+                        <canvas id="baieBerryCanvas" class="baieberry-canvas" width="360" height="460"></canvas>
+                    </div>
+                </div>
+
+                <div id="breakoutGame" class="card breakout-card games-panel">
+                    <div class="breakout-topbar">
+                        <div class="breakout-counter-block">
+                            <span class="breakout-counter-label">Score</span>
+                            <strong id="breakoutScoreDisplay" class="breakout-counter-value">0</strong>
+                        </div>
+                        <button id="breakoutStartButton" type="button" class="breakout-face">Lancer</button>
+                        <div class="breakout-counter-block">
+                            <span class="breakout-counter-label">Vies</span>
+                            <strong id="breakoutLivesDisplay" class="breakout-counter-value">3</strong>
+                        </div>
+                    </div>
+                    <p id="breakoutHelpText" class="breakout-help">Deplace la raquette avec Q/D ou les fleches et casse toutes les briques.</p>
+                    <canvas id="breakoutCanvas" class="breakout-canvas" width="560" height="420"></canvas>
+                </div>
             </div>
         </section>
 
@@ -1028,6 +1170,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=2026-03-23-1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="script.js?v=2026-03-24-2"></script>
 </body>
 </html>
