@@ -354,6 +354,30 @@ io.on('connection', (socket) => {
     emitRoomUpdate(room);
   });
 
+  socket.on('room:launch-game', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room) {
+      socket.emit('room:error', { message: 'Aucune room active a lancer.' });
+      return;
+    }
+
+    if (room.hostId !== socket.id) {
+      socket.emit('room:error', { message: 'Seul l hote peut lancer la partie.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Il faut au moins deux joueurs pour lancer cette partie.' });
+      return;
+    }
+
+    io.to(room.code).emit('room:game:start', {
+      code: room.code,
+      gameId: room.gameId
+    });
+  });
+
   socket.on('disconnect', () => {
     const roomCode = socket.data.roomCode;
     if (!roomCode) {

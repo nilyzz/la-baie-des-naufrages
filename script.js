@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerRoomCodeInput = document.getElementById('multiplayerRoomCodeInput');
     const multiplayerCreateRoomButton = document.getElementById('multiplayerCreateRoomButton');
     const multiplayerJoinRoomButton = document.getElementById('multiplayerJoinRoomButton');
+    const multiplayerLaunchGameButton = document.getElementById('multiplayerLaunchGameButton');
     const multiplayerCopyCodeButton = document.getElementById('multiplayerCopyCodeButton');
     const multiplayerSelectedGameLabel = document.getElementById('multiplayerSelectedGameLabel');
     const multiplayerCurrentRoomCode = document.getElementById('multiplayerCurrentRoomCode');
@@ -1818,11 +1819,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeRoomGameLabel = multiplayerActiveRoom?.gameId && MULTIPLAYER_SUPPORTED_GAMES[multiplayerActiveRoom.gameId]
             ? MULTIPLAYER_SUPPORTED_GAMES[multiplayerActiveRoom.gameId]
             : selectedLabel;
+        const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+        const canLaunchGame = Boolean(
+            multiplayerActiveRoom?.code
+            && currentPlayer?.isHost
+            && multiplayerActiveRoom.playerCount >= 2
+        );
 
         multiplayerSelectedGameLabel.textContent = selectedLabel;
         multiplayerCurrentRoomCode.textContent = multiplayerActiveRoom?.code || '-';
         multiplayerCreateRoomButton.disabled = multiplayerBusy || !canUseMultiplayer;
         multiplayerJoinRoomButton.disabled = multiplayerBusy;
+        multiplayerLaunchGameButton.disabled = multiplayerBusy || !canLaunchGame;
+        multiplayerLaunchGameButton.textContent = multiplayerActiveRoom?.gameId
+            ? `Lancer ${activeRoomGameLabel}`
+            : 'Lancer la partie';
         multiplayerCopyCodeButton.disabled = !multiplayerActiveRoom?.code;
         renderMultiplayerPlayers();
 
@@ -1831,6 +1842,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (multiplayerActiveRoom?.code) {
+            if (multiplayerActiveRoom.playerCount < 2) {
+                setMultiplayerStatus(
+                    currentPlayer?.isHost
+                        ? `Room ${multiplayerActiveRoom.code} creee. Attends un autre joueur avant de lancer ${activeRoomGameLabel}.`
+                        : `Room ${multiplayerActiveRoom.code} prete. En attente du lancement par l hote.`
+                );
+                return;
+            }
+
             setMultiplayerStatus(`Room ${multiplayerActiveRoom.code} prete sur ${activeRoomGameLabel}.`);
             return;
         }
@@ -1909,6 +1929,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             multiplayerSocket.on('room:error', ({ message }) => {
                 setMultiplayerStatus(message || 'Une erreur room est survenue.');
+            });
+
+            multiplayerSocket.on('room:game:start', ({ gameId }) => {
+                setMultiplayerStatus(`${getMultiplayerGameLabel(gameId)} se lance pour toute la room.`);
+                openSelectedGame(gameId);
             });
 
             multiplayerSocket.on('disconnect', () => {
@@ -2006,6 +2031,32 @@ document.addEventListener('DOMContentLoaded', () => {
             setMultiplayerStatus(`Code ${multiplayerActiveRoom.code} copie dans le presse-papiers.`);
         } catch (_error) {
             setMultiplayerStatus(`Code actif: ${multiplayerActiveRoom.code}`);
+        }
+    }
+
+    async function launchMultiplayerGame() {
+        if (!multiplayerActiveRoom?.code) {
+            setMultiplayerStatus('Aucune room active a lancer.');
+            return;
+        }
+
+        const currentPlayer = multiplayerActiveRoom.players?.find((player) => player.isYou);
+        if (!currentPlayer?.isHost) {
+            setMultiplayerStatus('Seul l hote peut lancer la partie.');
+            return;
+        }
+
+        if (multiplayerActiveRoom.playerCount < 2) {
+            setMultiplayerStatus('Attends au moins un autre joueur avant de lancer la partie.');
+            return;
+        }
+
+        try {
+            const socket = await ensureMultiplayerConnection();
+            socket.emit('room:launch-game');
+            setMultiplayerStatus(`Lancement de ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}...`);
+        } catch (error) {
+            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
         }
     }
 
@@ -10784,6 +10835,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     multiplayerJoinRoomButton?.addEventListener('click', () => {
         joinMultiplayerRoom();
+    });
+
+    multiplayerLaunchGameButton?.addEventListener('click', () => {
+        launchMultiplayerGame();
     });
 
     multiplayerCopyCodeButton?.addEventListener('click', () => {
