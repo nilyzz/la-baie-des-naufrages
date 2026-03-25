@@ -9717,6 +9717,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         airHockeyMultiplayerInput = nextInput;
         multiplayerSocket.emit('airhockey:input', nextInput);
+        ensureMultiplayerAirHockeyRenderLoop();
     }
 
     function ensureMultiplayerAirHockeyRenderLoop() {
@@ -9864,6 +9865,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         airHockeyCountdownEndsAt = Number(nextState.countdownEndsAt || 0);
+        if (airHockeyCountdownEndsAt > Date.now()) {
+            const remainingMs = Math.max(0, airHockeyCountdownEndsAt - Date.now());
+            showAirHockeyCountdown(remainingMs > 1860 ? '3' : remainingMs > 1240 ? '2' : remainingMs > 620 ? '1' : 'GO');
+        } else {
+            hideAirHockeyCountdown();
+        }
         airHockeyLeftScoreDisplay.textContent = String(airHockeyState.leftScore);
         airHockeyRightScoreDisplay.textContent = String(airHockeyState.rightScore);
         airHockeyModeButtons.forEach((button) => {
