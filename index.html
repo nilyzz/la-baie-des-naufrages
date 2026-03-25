@@ -413,79 +413,88 @@
                 </div>
 
                 <div id="gamesMultiplayerPanel" class="card games-home-card games-panel">
-                    <div class="games-home-copy">
-                        <p class="section-tag">Multijoueur</p>
-                        <h3>Choisis ton duel en ligne</h3>
-                        <p>Selectionne un jeu compatible, cree une room ou rejoins-en une avec un code.</p>
-                    </div>
-
                     <div class="multiplayer-lobby-card" aria-labelledby="multiplayerLobbyTitle">
                         <div class="multiplayer-lobby-copy">
                             <p class="section-tag">Rooms</p>
-                            <h4 id="multiplayerLobbyTitle">Creer ou rejoindre une room</h4>
-                            <p id="multiplayerLobbyStatus" class="multiplayer-lobby-status">Choisis un jeu compatible, puis cree une room ou rejoins-en une avec un code.</p>
+                            <h4 id="multiplayerLobbyTitle">Creer ou rejoindre une partie</h4>
+                            <p id="multiplayerLobbyStatus" class="multiplayer-lobby-status">Choisis un parcours, cree une partie privee ou rejoins un salon deja ouvert.</p>
                         </div>
 
-                        <div class="multiplayer-lobby-controls">
-                            <label class="multiplayer-lobby-field">
-                                <span>Jeu</span>
-                                <select id="multiplayerGameSelect">
-                                    <option value="ticTacToe">Morpion</option>
-                                    <option value="connect4">Puissance 4</option>
-                                    <option value="chess">Echecs</option>
-                                    <option value="checkers">Dames</option>
-                                </select>
-                            </label>
-
-                            <label class="multiplayer-lobby-field">
-                                <span>Pseudo</span>
-                                <input id="multiplayerPlayerNameInput" type="text" maxlength="24" placeholder="Capitaine" autocomplete="nickname">
-                            </label>
-
-                            <label class="multiplayer-lobby-field">
-                                <span>Code room</span>
-                                <input id="multiplayerRoomCodeInput" type="text" maxlength="6" placeholder="ABCD12" autocomplete="off" spellcheck="false">
-                            </label>
-
-                            <div class="multiplayer-lobby-actions">
-                                <button id="multiplayerCreateRoomButton" type="button" class="primary-button">Creer une room</button>
-                                <button id="multiplayerJoinRoomButton" type="button" class="secondary-button">Rejoindre</button>
-                                <button id="multiplayerLaunchGameButton" type="button" class="primary-button">Lancer la partie</button>
-                                <button id="multiplayerCopyCodeButton" type="button" class="secondary-button">Copier le code</button>
-                            </div>
+                        <div class="multiplayer-entry-switch" role="group" aria-label="Choix du parcours multijoueur">
+                            <button id="multiplayerCreateModeButton" type="button" class="multiplayer-entry-button is-active" data-multiplayer-mode="create">Creer une partie</button>
+                            <button id="multiplayerJoinModeButton" type="button" class="multiplayer-entry-button" data-multiplayer-mode="join">Rejoindre une partie</button>
                         </div>
 
-                        <div class="multiplayer-lobby-meta">
-                            <div class="multiplayer-lobby-chip">
-                                <span class="multiplayer-lobby-chip-label">Jeu choisi</span>
-                                <strong id="multiplayerSelectedGameLabel" class="multiplayer-lobby-chip-value">Aucun</strong>
-                            </div>
-                            <div class="multiplayer-lobby-chip">
-                                <span class="multiplayer-lobby-chip-label">Room active</span>
-                                <strong id="multiplayerCurrentRoomCode" class="multiplayer-lobby-chip-value">-</strong>
-                            </div>
+                        <div class="multiplayer-entry-panels">
+                            <section id="multiplayerCreatePanel" class="multiplayer-entry-panel is-active" aria-labelledby="multiplayerCreateTitle">
+                                <div class="multiplayer-entry-panel-copy">
+                                    <p class="section-tag">Capitaine</p>
+                                    <h5 id="multiplayerCreateTitle">Ouvre un nouveau salon</h5>
+                                    <p>Choisis ton pseudo puis clique sur un jeu en bas avant de creer le salon.</p>
+                                </div>
+
+                                <div class="multiplayer-entry-fields">
+                                    <label class="multiplayer-lobby-field">
+                                        <span>Pseudo du capitaine</span>
+                                        <input id="multiplayerCreatePlayerNameInput" type="text" maxlength="24" placeholder="Capitaine" autocomplete="nickname">
+                                    </label>
+                                </div>
+
+                                <div class="multiplayer-entry-actions">
+                                    <button id="multiplayerCreateRoomButton" type="button" class="primary-button">Creer la partie</button>
+                                    <button id="multiplayerCopyCodeButton" type="button" class="secondary-button">Copier le code</button>
+                                    <div class="multiplayer-room-inline">
+                                        <span class="multiplayer-room-inline-label">Room active</span>
+                                        <strong id="multiplayerCurrentRoomCode" class="multiplayer-room-inline-value">-</strong>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="multiplayerJoinPanel" class="multiplayer-entry-panel" aria-labelledby="multiplayerJoinTitle">
+                                <div class="multiplayer-entry-panel-copy">
+                                    <p class="section-tag">Equipage</p>
+                                    <h5 id="multiplayerJoinTitle">Monte a bord d une partie</h5>
+                                    <p>Entre ton pseudo et rejoins une partie avec son code.</p>
+                                </div>
+
+                                <div class="multiplayer-entry-fields multiplayer-entry-fields-join">
+                                    <label class="multiplayer-lobby-field">
+                                        <span>Pseudo du joueur</span>
+                                        <input id="multiplayerJoinPlayerNameInput" type="text" maxlength="24" placeholder="Pirate 2" autocomplete="nickname">
+                                    </label>
+
+                                    <label class="multiplayer-lobby-field">
+                                        <span>Code de partie</span>
+                                        <input id="multiplayerJoinRoomCodeInput" type="text" maxlength="6" placeholder="ABCD12" autocomplete="off" spellcheck="false">
+                                    </label>
+                                </div>
+
+                                <div class="multiplayer-entry-actions">
+                                    <button id="multiplayerJoinRoomButton" type="button" class="secondary-button">Rejoindre avec le code</button>
+                                </div>
+                            </section>
                         </div>
 
-                        <div class="multiplayer-lobby-players">
+                        <div id="multiplayerLobbyPlayersBlock" class="multiplayer-lobby-players hidden">
                             <p class="multiplayer-lobby-players-title">Equipage dans la room</p>
                             <div id="multiplayerRoomPlayers" class="multiplayer-lobby-player-list">Personne n a embarque pour l instant.</div>
                         </div>
                     </div>
 
                     <div class="games-home-grid" aria-label="Liste des jeux multijoueur">
-                        <button type="button" class="game-home-tile" data-open-game="ticTacToe">
+                        <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="ticTacToe" data-multiplayer-game-select="ticTacToe">
                             <span class="game-home-art game-home-art-tictactoe" aria-hidden="true"></span>
                             <span class="game-home-title">Morpion</span>
                         </button>
-                        <button type="button" class="game-home-tile" data-open-game="connect4">
+                        <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="connect4" data-multiplayer-game-select="connect4">
                             <span class="game-home-art game-home-art-connect4" aria-hidden="true"></span>
                             <span class="game-home-title">Puissance 4</span>
                         </button>
-                        <button type="button" class="game-home-tile" data-open-game="chess">
+                        <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="chess" data-multiplayer-game-select="chess">
                             <span class="game-home-art game-home-art-chess" aria-hidden="true"></span>
                             <span class="game-home-title">Echecs</span>
                         </button>
-                        <button type="button" class="game-home-tile" data-open-game="checkers">
+                        <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="checkers" data-multiplayer-game-select="checkers">
                             <span class="game-home-art game-home-art-checkers" aria-hidden="true"></span>
                             <span class="game-home-title">Dames</span>
                         </button>

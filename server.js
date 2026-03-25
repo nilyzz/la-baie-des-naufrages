@@ -9,6 +9,8 @@ const PORT = Number(process.env.PORT) || 3000;
 const ROOM_CODE_LENGTH = 6;
 const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const CORS_ORIGIN = parseCorsOrigin(process.env.CORS_ORIGIN);
+const CONNECT4_ROWS = 6;
+const CONNECT4_COLS = 7;
 const MAX_PLAYERS_BY_GAME = {
   ticTacToe: 2,
   connect4: 2,
@@ -90,6 +92,21 @@ function createTicTacToeState() {
   };
 }
 
+function createConnect4State() {
+  return {
+    board: Array.from({ length: CONNECT4_ROWS }, () => Array(CONNECT4_COLS).fill(null)),
+    currentPlayer: 'player',
+    finished: false,
+    winner: null,
+    winningLine: null,
+    scores: {
+      player: 0,
+      ai: 0
+    },
+    round: 1
+  };
+}
+
 function resetTicTacToeRound(room, keepScores = true) {
   const previousScores = keepScores && room.gameState?.scores
     ? room.gameState.scores
@@ -100,6 +117,22 @@ function resetTicTacToeRound(room, keepScores = true) {
     currentPlayer: 'anchor',
     finished: false,
     winner: null,
+    scores: previousScores,
+    round: Number(room.gameState?.round || 0) + 1
+  };
+}
+
+function resetConnect4Round(room, keepScores = true) {
+  const previousScores = keepScores && room.gameState?.scores
+    ? room.gameState.scores
+    : { player: 0, ai: 0 };
+
+  room.gameState = {
+    board: Array.from({ length: CONNECT4_ROWS }, () => Array(CONNECT4_COLS).fill(null)),
+    currentPlayer: 'player',
+    finished: false,
+    winner: null,
+    winningLine: null,
     scores: previousScores,
     round: Number(room.gameState?.round || 0) + 1
   };
@@ -123,6 +156,69 @@ function getTicTacToePlayerSymbol(room, socketId) {
   return null;
 }
 
+function getConnect4PlayerSymbol(room, socketId) {
+  const playerIndex = room.players.findIndex((player) => player.id === socketId);
+
+  if (playerIndex === 0) {
+    return 'player';
+  }
+
+  if (playerIndex === 1) {
+    return 'ai';
+  }
+
+  return null;
+}
+
+function getConnect4DropRow(board, col) {
+  for (let row = CONNECT4_ROWS - 1; row >= 0; row -= 1) {
+    if (!board[row][col]) {
+      return row;
+    }
+  }
+
+  return -1;
+}
+
+function getConnect4Winner(board, token) {
+  const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+
+  for (let row = 0; row < CONNECT4_ROWS; row += 1) {
+    for (let col = 0; col < CONNECT4_COLS; col += 1) {
+      if (board[row][col] !== token) {
+        continue;
+      }
+
+      for (const [rowOffset, colOffset] of directions) {
+        const line = [[row, col]];
+
+        for (let step = 1; step < 4; step += 1) {
+          const nextRow = row + (rowOffset * step);
+          const nextCol = col + (colOffset * step);
+
+          if (
+            nextRow < 0
+            || nextRow >= CONNECT4_ROWS
+            || nextCol < 0
+            || nextCol >= CONNECT4_COLS
+            || board[nextRow][nextCol] !== token
+          ) {
+            break;
+          }
+
+          line.push([nextRow, nextCol]);
+        }
+
+        if (line.length === 4) {
+          return line;
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
 function buildRoomPayload(room, socketId = null) {
   return {
     code: room.code,
@@ -135,9 +231,11 @@ function buildRoomPayload(room, socketId = null) {
       name: player.name,
       isHost: player.id === room.hostId,
       isYou: player.id === socketId,
-      symbol: room.gameId === 'ticTacToe' ? getTicTacToePlayerSymbol(room, player.id) : null
+      symbol: room.gameId === 'ticTacToe'
+        ? getTicTacToePlayerSymbol(room, player.id)
+        : (room.gameId === 'connect4' ? getConnect4PlayerSymbol(room, player.id) : null)
     })),
-    gameState: room.gameId === 'ticTacToe' ? room.gameState : null
+    gameState: ['ticTacToe', 'connect4'].includes(room.gameId) ? room.gameState : null
   };
 }
 
@@ -165,6 +263,8 @@ function removePlayerFromRoom(room, socketId) {
 
   if (room.gameId === 'ticTacToe') {
     resetTicTacToeRound(room, false);
+  } else if (room.gameId === 'connect4') {
+    resetConnect4Round(room, false);
   }
 
   emitRoomUpdate(room);
@@ -182,7 +282,9 @@ app.post('/api/rooms', (request, response) => {
       gameId: String(request.body?.gameId || 'lobby').trim() || 'lobby',
       hostId: null,
       players: [],
-      gameState: String(request.body?.gameId || 'lobby').trim() === 'ticTacToe' ? createTicTacToeState() : null
+      gameState: String(request.body?.gameId || 'lobby').trim() === 'ticTacToe'
+        ? createTicTacToeState()
+        : (String(request.body?.gameId || 'lobby').trim() === 'connect4' ? createConnect4State() : null)
     };
 
     rooms.set(roomCode, room);
@@ -234,6 +336,8 @@ io.on('connection', (socket) => {
 
     if (room.gameId === 'ticTacToe') {
       resetTicTacToeRound(room, false);
+    } else if (room.gameId === 'connect4') {
+      resetConnect4Round(room, false);
     }
 
     socket.join(room.code);
@@ -268,6 +372,8 @@ io.on('connection', (socket) => {
     room.players.push(player);
     if (room.gameId === 'ticTacToe') {
       resetTicTacToeRound(room, false);
+    } else if (room.gameId === 'connect4') {
+      resetConnect4Round(room, false);
     }
     socket.join(room.code);
     socket.data.roomCode = room.code;
@@ -351,6 +457,84 @@ io.on('connection', (socket) => {
     }
 
     resetTicTacToeRound(room, true);
+    emitRoomUpdate(room);
+  });
+
+  socket.on('connect4:move', ({ col }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'connect4') {
+      socket.emit('room:error', { message: 'Aucune partie de Puissance 4 active.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      return;
+    }
+
+    const playerSymbol = getConnect4PlayerSymbol(room, socket.id);
+    const columnIndex = Number(col);
+
+    if (!playerSymbol) {
+      socket.emit('room:error', { message: 'Tu ne fais pas partie de cette manche.' });
+      return;
+    }
+
+    if (!Number.isInteger(columnIndex) || columnIndex < 0 || columnIndex >= CONNECT4_COLS) {
+      socket.emit('room:error', { message: 'Colonne invalide.' });
+      return;
+    }
+
+    if (room.gameState.finished || room.gameState.currentPlayer !== playerSymbol) {
+      return;
+    }
+
+    const rowIndex = getConnect4DropRow(room.gameState.board, columnIndex);
+
+    if (rowIndex === -1) {
+      return;
+    }
+
+    room.gameState.board[rowIndex][columnIndex] = playerSymbol;
+    room.gameState.lastMove = { row: rowIndex, col: columnIndex, token: playerSymbol };
+
+    const winningLine = getConnect4Winner(room.gameState.board, playerSymbol);
+
+    if (winningLine) {
+      room.gameState.finished = true;
+      room.gameState.winner = playerSymbol;
+      room.gameState.winningLine = winningLine;
+      room.gameState.scores[playerSymbol] += 1;
+      emitRoomUpdate(room);
+      return;
+    }
+
+    if (room.gameState.board.every((line) => line.every(Boolean))) {
+      room.gameState.finished = true;
+      room.gameState.winner = 'draw';
+      room.gameState.winningLine = null;
+      emitRoomUpdate(room);
+      return;
+    }
+
+    room.gameState.currentPlayer = playerSymbol === 'player' ? 'ai' : 'player';
+    room.gameState.winningLine = null;
+    emitRoomUpdate(room);
+  });
+
+  socket.on('connect4:restart', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'connect4') {
+      return;
+    }
+
+    if (!room.players.some((player) => player.id === socket.id)) {
+      return;
+    }
+
+    resetConnect4Round(room, true);
     emitRoomUpdate(room);
   });
 

@@ -366,12 +366,71 @@ body {
     color: rgba(226, 232, 240, 0.86);
 }
 
-.multiplayer-lobby-controls {
+.multiplayer-entry-switch {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr) auto;
-    gap: 12px;
-    align-items: end;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.multiplayer-entry-button {
+    min-height: 52px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.58);
+    color: rgba(226, 232, 240, 0.9);
+    font-weight: 700;
+}
+
+.multiplayer-entry-button.is-active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.3), rgba(59, 130, 246, 0.22));
+    border-color: rgba(125, 211, 252, 0.55);
+    box-shadow: 0 12px 30px rgba(14, 165, 233, 0.12);
+}
+
+.multiplayer-entry-panels {
     margin-top: 16px;
+}
+
+.multiplayer-entry-panel {
+    display: none;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 22px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.48);
+    align-content: start;
+}
+
+.multiplayer-entry-panel.is-active {
+    display: grid;
+}
+
+.multiplayer-entry-panel-copy h5 {
+    margin: 0;
+    font-size: 1.12rem;
+}
+
+.multiplayer-entry-panel-copy p:last-child {
+    margin-bottom: 0;
+    font-size: 0.96rem;
+}
+
+.multiplayer-entry-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.multiplayer-entry-fields-join {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.multiplayer-entry-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
 }
 
 .multiplayer-lobby-field {
@@ -416,43 +475,31 @@ body {
     outline-offset: 2px;
 }
 
-.multiplayer-lobby-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-end;
-}
-
-.multiplayer-lobby-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 16px;
-}
-
-.multiplayer-lobby-chip {
-    min-width: 170px;
-    padding: 12px 14px;
-    border-radius: 18px;
+.multiplayer-room-inline {
+    display: inline-grid;
+    gap: 2px;
+    min-width: 120px;
+    padding: 8px 12px;
+    border-radius: 16px;
     background: rgba(15, 23, 42, 0.58);
     border: 1px solid rgba(148, 163, 184, 0.18);
 }
 
-.multiplayer-lobby-chip-label {
-    display: block;
-    font-size: 0.78rem;
+.multiplayer-room-inline-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: rgba(191, 219, 254, 0.76);
 }
 
-.multiplayer-lobby-chip-value {
-    display: block;
-    margin-top: 4px;
-    font-size: 1.05rem;
+.multiplayer-room-inline-value {
+    font-size: 1rem;
+    color: rgba(248, 250, 252, 0.96);
 }
 
 .multiplayer-lobby-players {
-    margin-top: 16px;
-    padding-top: 16px;
+    margin-top: 14px;
+    padding-top: 14px;
     border-top: 1px solid rgba(148, 163, 184, 0.16);
 }
 
@@ -508,6 +555,16 @@ body {
     justify-items: center;
     align-content: center;
     gap: 8px;
+}
+
+.multiplayer-game-tile.is-selected {
+    border-color: rgba(125, 211, 252, 0.7);
+    background:
+        linear-gradient(180deg, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.32)),
+        rgba(15, 23, 42, 0.62);
+    box-shadow:
+        0 0 0 1px rgba(125, 211, 252, 0.18),
+        0 18px 36px -26px rgba(56, 189, 248, 0.5);
 }
 
 .game-home-art {
@@ -4796,12 +4853,9 @@ body {
 }
 
 @media (max-width: 980px) {
-    .multiplayer-lobby-controls {
+    .multiplayer-entry-fields,
+    .multiplayer-entry-fields-join {
         grid-template-columns: 1fr;
-    }
-
-    .multiplayer-lobby-actions {
-        justify-content: flex-start;
     }
 
     .games-home-grid {
