@@ -559,12 +559,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongRunning = false;
     let pongAnimationFrame = null;
     let pongLastFrame = 0;
+    let pongRenderAnimationFrame = null;
+    let pongRenderLastFrame = 0;
     let pongPlayerScore = 0;
     let pongAiScore = 0;
     let pongKeys = new Set();
     let pongState = null;
+    let pongDisplayState = null;
     let pongPaused = false;
     let pongMultiplayerInputDirection = 0;
+    let pongCountdownEndsAt = 0;
     let pongCountdownTimer = null;
     let pongCountdownCompleteTimer = null;
     let pongMode = 'solo';
@@ -2064,6 +2068,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 multiplayerEntryMode = 'create';
                 pongLastFinishedStateKey = '';
                 pongMultiplayerInputDirection = 0;
+                pongDisplayState = null;
+                pongCountdownEndsAt = 0;
                 connect4LastFinishedStateKey = '';
                 ticTacToeLastFinishedStateKey = '';
                 chessLastFinishedStateKey = '';
@@ -5363,10 +5369,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isMultiplayerPongActive()) {
             pongLastFinishedStateKey = '';
             pongMultiplayerInputDirection = 0;
+            pongCountdownEndsAt = 0;
+            pongDisplayState = null;
+            pongRenderLastFrame = 0;
             return;
         }
 
-        stopPong();
+        if (pongAnimationFrame) {
+            window.cancelAnimationFrame(pongAnimationFrame);
+            pongAnimationFrame = null;
+        }
+        pongRunning = false;
+        pongPaused = false;
+        pongLastFrame = 0;
+        clearPongCountdownTimers();
         closeGameOverModal();
 
         const nextState = multiplayerActiveRoom.gameState;
@@ -5386,29 +5402,42 @@ document.addEventListener('DOMContentLoaded', () => {
             ballY: Number(nextState.ballY || 0),
             ballVelocityX: Number(nextState.ballVelocityX || 0),
             ballVelocityY: Number(nextState.ballVelocityY || 0),
-            countdownActive: Boolean(nextState.countdownEndsAt && nextState.countdownEndsAt > Date.now())
+            countdownActive: Boolean(nextState.countdownEndsAt && nextState.countdownEndsAt > Date.now()),
+            round: Number(nextState.round || 0)
         };
+        const shouldSnapDisplay = !pongDisplayState
+            || pongDisplayState.round !== pongState.round
+            || Math.abs(pongDisplayState.ballX - pongState.ballX) > 140
+            || Math.abs(pongDisplayState.ballY - pongState.ballY) > 120;
+
+        if (shouldSnapDisplay) {
+            pongDisplayState = { ...pongState };
+        } else {
+            pongDisplayState = {
+                ...pongDisplayState,
+                boardWidth: pongState.boardWidth,
+                boardHeight: pongState.boardHeight,
+                paddleHeight: pongState.paddleHeight,
+                paddleWidth: pongState.paddleWidth,
+                paddleOffset: pongState.paddleOffset,
+                ballSize: pongState.ballSize,
+                round: pongState.round
+            };
+        }
+
         pongPlayerScore = Number(nextState.leftScore || 0);
         pongAiScore = Number(nextState.rightScore || 0);
         pongRunning = Boolean(nextState.running);
         pongPaused = false;
+        pongCountdownEndsAt = Number(nextState.countdownEndsAt || 0);
 
-        if (pongState.countdownActive) {
-            const remainingMs = Math.max(0, Number(nextState.countdownEndsAt) - Date.now());
-            const countdownStep = remainingMs > 1860
-                ? '3'
-                : remainingMs > 1240
-                    ? '2'
-                    : remainingMs > 620
-                        ? '1'
-                        : 'Partez';
-            showPongCountdownValue(countdownStep);
-        } else {
+        if (!pongState.countdownActive) {
             hidePongCountdown();
         }
 
         updatePongHud();
         renderPong();
+        ensureMultiplayerPongRenderLoop();
         pushMultiplayerPongInput();
 
         if (!nextState.finished) {
@@ -5533,6 +5562,68 @@ document.addEventListener('DOMContentLoaded', () => {
         pongCountdown.setAttribute('aria-hidden', 'false');
     }
 
+    function getMultiplayerPongCountdownLabel() {
+        const remainingMs = Math.max(0, pongCountdownEndsAt - Date.now());
+
+        if (!remainingMs) {
+            return null;
+        }
+
+        if (remainingMs > 1860) {
+            return '3';
+        }
+
+        if (remainingMs > 1240) {
+            return '2';
+        }
+
+        if (remainingMs > 620) {
+            return '1';
+        }
+
+        return 'Partez';
+    }
+
+    function ensureMultiplayerPongRenderLoop() {
+        if (pongRenderAnimationFrame || !isMultiplayerPongActive()) {
+            return;
+        }
+
+        const tick = (timestamp) => {
+            pongRenderAnimationFrame = null;
+
+            if (!isMultiplayerPongActive() || !pongState || !pongDisplayState) {
+                pongRenderLastFrame = 0;
+                return;
+            }
+
+            if (!pongRenderLastFrame) {
+                pongRenderLastFrame = timestamp;
+            }
+
+            const delta = Math.min((timestamp - pongRenderLastFrame) / 1000, 0.05);
+            pongRenderLastFrame = timestamp;
+            const smoothing = Math.min(1, delta * 12);
+
+            pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * smoothing;
+            pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * smoothing;
+            pongDisplayState.ballX += (pongState.ballX - pongDisplayState.ballX) * smoothing;
+            pongDisplayState.ballY += (pongState.ballY - pongDisplayState.ballY) * smoothing;
+
+            const countdownLabel = getMultiplayerPongCountdownLabel();
+            if (countdownLabel) {
+                showPongCountdownValue(countdownLabel);
+            } else {
+                hidePongCountdown();
+            }
+
+            renderPong();
+            pongRenderAnimationFrame = window.requestAnimationFrame(tick);
+        };
+
+        pongRenderAnimationFrame = window.requestAnimationFrame(tick);
+    }
+
     function startPongCountdown(onComplete) {
         clearPongCountdownTimers();
 
@@ -5567,13 +5658,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPong() {
-        if (!pongState) {
+        const activePongState = isMultiplayerPongActive() && pongDisplayState ? pongDisplayState : pongState;
+
+        if (!activePongState) {
             return;
         }
 
-        pongPlayerPaddle.style.transform = `translate(${pongState.paddleOffset}px, ${pongState.playerY}px)`;
-        pongAiPaddle.style.transform = `translate(${pongState.boardWidth - pongState.paddleOffset - pongState.paddleWidth}px, ${pongState.aiY}px)`;
-        pongBall.style.transform = `translate(${pongState.ballX}px, ${pongState.ballY}px)`;
+        pongPlayerPaddle.style.transform = `translate(${activePongState.paddleOffset}px, ${activePongState.playerY}px)`;
+        pongAiPaddle.style.transform = `translate(${activePongState.boardWidth - activePongState.paddleOffset - activePongState.paddleWidth}px, ${activePongState.aiY}px)`;
+        pongBall.style.transform = `translate(${activePongState.ballX}px, ${activePongState.ballY}px)`;
     }
 
     function getPongBounceVelocityY(impact) {
@@ -5605,10 +5698,17 @@ document.addEventListener('DOMContentLoaded', () => {
             pongAnimationFrame = null;
         }
 
+        if (pongRenderAnimationFrame) {
+            window.cancelAnimationFrame(pongRenderAnimationFrame);
+            pongRenderAnimationFrame = null;
+        }
+
         hidePongCountdown();
         pongRunning = false;
         pongPaused = false;
         pongLastFrame = 0;
+        pongRenderLastFrame = 0;
+        pongCountdownEndsAt = 0;
         updatePongHud();
     }
 
