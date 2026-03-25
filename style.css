@@ -6454,7 +6454,13 @@ button:hover {
     }
 
     #servicesView {
-        padding-top: 8px;
+        min-height: calc(100dvh - 36px - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
+        padding-top: 0;
+    }
+
+    #servicesView.view-active {
+        display: grid;
+        align-items: center;
     }
 
     .view-active {
@@ -6477,6 +6483,13 @@ button:hover {
     .services-copy {
         margin-bottom: 14px;
         transform: none;
+    }
+
+    .services-shell {
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        min-height: 100%;
     }
 
     .services-copy h1 {
