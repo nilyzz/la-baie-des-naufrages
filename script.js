@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'cinema.xlsm'
     ];
     const MULTIPLAYER_SUPPORTED_GAMES = {
+        airHockey: 'Air Hockey',
         pong: 'Pong',
         ticTacToe: 'Morpion',
         connect4: 'Puissance 4',
@@ -751,10 +752,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let checkersAiTimeout = null;
     let airHockeyMode = 'solo';
     let airHockeyState = null;
+    let airHockeyDisplayState = null;
     let airHockeyKeys = new Set();
     let airHockeyAnimationFrame = null;
+    let airHockeyRenderAnimationFrame = null;
     let airHockeyLastFrame = 0;
+    let airHockeyRenderLastFrame = 0;
     let airHockeyCountdownActive = false;
+    let airHockeyCountdownEndsAt = 0;
+    let airHockeyLastFinishedStateKey = '';
+    let airHockeyMultiplayerInput = { x: 0, y: 0 };
+    let airHockeyLocalPredicted = null;
     let airHockeyCountdownTimer = null;
     let airHockeyCountdownCompleteTimer = null;
     let reactionState = 'idle';
@@ -1970,7 +1978,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!canUseMultiplayer) {
-            setMultiplayerStatus('Le multijoueur est prevu pour Pong, Morpion, Puissance 4, Echecs et Dames.');
+            setMultiplayerStatus('Le multijoueur est prevu pour Air Hockey, Pong, Morpion, Puissance 4, Echecs et Dames.');
             return;
         }
 
@@ -2037,6 +2045,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (multiplayerJoinRoomCodeInput) {
                     multiplayerJoinRoomCodeInput.value = room.code || '';
                 }
+                syncMultiplayerAirHockeyState();
                 syncMultiplayerPongState();
                 syncMultiplayerTicTacToeState();
                 syncMultiplayerConnect4State();
@@ -2052,6 +2061,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     multiplayerSelectedGameId = room.gameId;
                 }
                 multiplayerEntryMode = getCurrentMultiplayerPlayer()?.isHost ? 'create' : 'join';
+                syncMultiplayerAirHockeyState();
                 syncMultiplayerPongState();
                 syncMultiplayerTicTacToeState();
                 syncMultiplayerConnect4State();
@@ -2068,6 +2078,11 @@ document.addEventListener('DOMContentLoaded', () => {
             multiplayerSocket.on('room:left', () => {
                 multiplayerActiveRoom = null;
                 multiplayerEntryMode = 'create';
+                airHockeyLastFinishedStateKey = '';
+                airHockeyMultiplayerInput = { x: 0, y: 0 };
+                airHockeyDisplayState = null;
+                airHockeyLocalPredicted = null;
+                airHockeyCountdownEndsAt = 0;
                 pongLastFinishedStateKey = '';
                 pongMultiplayerInputDirection = 0;
                 pongDisplayState = null;
@@ -2080,6 +2095,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 multiplayerCurrentRoomCode.textContent = '-';
                 multiplayerLobbyPlayersBlock?.classList.add('hidden');
                 closeGameOverModal();
+                if (activeGameTab === 'airHockey') {
+                    initializeAirHockey();
+                }
                 if (activeGameTab === 'pong') {
                     initializePong();
                 }
@@ -9662,16 +9680,236 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderAirHockey() {
-        if (!airHockeyState) {
+    function isMultiplayerAirHockeyActive() {
+        return multiplayerActiveRoom?.gameId === 'airHockey' && Boolean(multiplayerActiveRoom?.gameState);
+    }
+
+    function getMultiplayerAirHockeyRole() {
+        return multiplayerActiveRoom?.players?.find((player) => player.isYou)?.symbol || null;
+    }
+
+    function getMultiplayerAirHockeyInput() {
+        const vertical = (airHockeyKeys.has('s') || airHockeyKeys.has('arrowdown') ? 1 : 0) - (airHockeyKeys.has('z') || airHockeyKeys.has('arrowup') ? 1 : 0);
+        const horizontal = (airHockeyKeys.has('d') || airHockeyKeys.has('arrowright') ? 1 : 0) - (airHockeyKeys.has('q') || airHockeyKeys.has('arrowleft') ? 1 : 0);
+        const magnitude = Math.hypot(horizontal, vertical);
+
+        if (magnitude > 1) {
+            return {
+                x: horizontal / magnitude,
+                y: vertical / magnitude
+            };
+        }
+
+        return { x: horizontal, y: vertical };
+    }
+
+    function pushMultiplayerAirHockeyInput() {
+        if (!isMultiplayerAirHockeyActive() || !multiplayerSocket?.connected) {
             return;
         }
 
+        const nextInput = getMultiplayerAirHockeyInput();
+        const sameInput = Math.abs(nextInput.x - airHockeyMultiplayerInput.x) < 0.001 && Math.abs(nextInput.y - airHockeyMultiplayerInput.y) < 0.001;
+
+        if (sameInput) {
+            return;
+        }
+
+        airHockeyMultiplayerInput = nextInput;
+        multiplayerSocket.emit('airhockey:input', nextInput);
+    }
+
+    function ensureMultiplayerAirHockeyRenderLoop() {
+        if (airHockeyRenderAnimationFrame || !isMultiplayerAirHockeyActive()) {
+            return;
+        }
+
+        const tick = (timestamp) => {
+            airHockeyRenderAnimationFrame = null;
+
+            if (!isMultiplayerAirHockeyActive() || !airHockeyState || !airHockeyDisplayState) {
+                airHockeyRenderLastFrame = 0;
+                return;
+            }
+
+            if (!airHockeyRenderLastFrame) {
+                airHockeyRenderLastFrame = timestamp;
+            }
+
+            const delta = Math.min((timestamp - airHockeyRenderLastFrame) / 1000, 0.05);
+            airHockeyRenderLastFrame = timestamp;
+            const role = getMultiplayerAirHockeyRole();
+            const input = getMultiplayerAirHockeyInput();
+            const paddleCorrection = Math.min(1, delta * 10);
+            const puckCorrection = Math.min(1, delta * 9);
+            const shouldSimulatePuck = airHockeyState.running && !airHockeyState.countdownActive && !multiplayerActiveRoom?.gameState?.finished;
+
+            if (role === 'left') {
+                if (!airHockeyLocalPredicted) {
+                    airHockeyLocalPredicted = { x: airHockeyState.left.x, y: airHockeyState.left.y };
+                }
+                airHockeyLocalPredicted.x += input.x * AIR_HOCKEY_SPEED * delta;
+                airHockeyLocalPredicted.y += input.y * AIR_HOCKEY_SPEED * delta;
+                airHockeyLocalPredicted.x = Math.max(airHockeyState.left.radius, Math.min((airHockeyState.width * 0.5) - 30 - airHockeyState.left.radius, airHockeyLocalPredicted.x));
+                airHockeyLocalPredicted.y = Math.max(airHockeyState.left.radius, Math.min(airHockeyState.height - airHockeyState.left.radius, airHockeyLocalPredicted.y));
+                if (input.x === 0 && input.y === 0) {
+                    const gapX = airHockeyState.left.x - airHockeyLocalPredicted.x;
+                    const gapY = airHockeyState.left.y - airHockeyLocalPredicted.y;
+                    if (Math.abs(gapX) <= 18) {
+                        airHockeyLocalPredicted.x += gapX * paddleCorrection;
+                    }
+                    if (Math.abs(gapY) <= 18) {
+                        airHockeyLocalPredicted.y += gapY * paddleCorrection;
+                    }
+                }
+                airHockeyDisplayState.left.x = airHockeyLocalPredicted.x;
+                airHockeyDisplayState.left.y = airHockeyLocalPredicted.y;
+                airHockeyDisplayState.right.x += (airHockeyState.right.x - airHockeyDisplayState.right.x) * paddleCorrection;
+                airHockeyDisplayState.right.y += (airHockeyState.right.y - airHockeyDisplayState.right.y) * paddleCorrection;
+            } else if (role === 'right') {
+                if (!airHockeyLocalPredicted) {
+                    airHockeyLocalPredicted = { x: airHockeyState.right.x, y: airHockeyState.right.y };
+                }
+                airHockeyLocalPredicted.x += input.x * AIR_HOCKEY_SPEED * delta;
+                airHockeyLocalPredicted.y += input.y * AIR_HOCKEY_SPEED * delta;
+                airHockeyLocalPredicted.x = Math.max((airHockeyState.width * 0.5) + 30 + airHockeyState.right.radius, Math.min(airHockeyState.width - airHockeyState.right.radius, airHockeyLocalPredicted.x));
+                airHockeyLocalPredicted.y = Math.max(airHockeyState.right.radius, Math.min(airHockeyState.height - airHockeyState.right.radius, airHockeyLocalPredicted.y));
+                if (input.x === 0 && input.y === 0) {
+                    const gapX = airHockeyState.right.x - airHockeyLocalPredicted.x;
+                    const gapY = airHockeyState.right.y - airHockeyLocalPredicted.y;
+                    if (Math.abs(gapX) <= 18) {
+                        airHockeyLocalPredicted.x += gapX * paddleCorrection;
+                    }
+                    if (Math.abs(gapY) <= 18) {
+                        airHockeyLocalPredicted.y += gapY * paddleCorrection;
+                    }
+                }
+                airHockeyDisplayState.right.x = airHockeyLocalPredicted.x;
+                airHockeyDisplayState.right.y = airHockeyLocalPredicted.y;
+                airHockeyDisplayState.left.x += (airHockeyState.left.x - airHockeyDisplayState.left.x) * paddleCorrection;
+                airHockeyDisplayState.left.y += (airHockeyState.left.y - airHockeyDisplayState.left.y) * paddleCorrection;
+            } else {
+                airHockeyDisplayState.left.x += (airHockeyState.left.x - airHockeyDisplayState.left.x) * paddleCorrection;
+                airHockeyDisplayState.left.y += (airHockeyState.left.y - airHockeyDisplayState.left.y) * paddleCorrection;
+                airHockeyDisplayState.right.x += (airHockeyState.right.x - airHockeyDisplayState.right.x) * paddleCorrection;
+                airHockeyDisplayState.right.y += (airHockeyState.right.y - airHockeyDisplayState.right.y) * paddleCorrection;
+            }
+
+            if (shouldSimulatePuck) {
+                airHockeyDisplayState.puck.x += airHockeyState.puck.vx * delta;
+                airHockeyDisplayState.puck.y += airHockeyState.puck.vy * delta;
+            }
+            airHockeyDisplayState.puck.x += (airHockeyState.puck.x - airHockeyDisplayState.puck.x) * puckCorrection;
+            airHockeyDisplayState.puck.y += (airHockeyState.puck.y - airHockeyDisplayState.puck.y) * puckCorrection;
+
+            const remainingMs = Math.max(0, airHockeyCountdownEndsAt - Date.now());
+            if (remainingMs) {
+                showAirHockeyCountdown(remainingMs > 1860 ? '3' : remainingMs > 1240 ? '2' : remainingMs > 620 ? '1' : 'GO');
+            } else {
+                hideAirHockeyCountdown();
+            }
+
+            renderAirHockey();
+            airHockeyRenderAnimationFrame = window.requestAnimationFrame(tick);
+        };
+
+        airHockeyRenderAnimationFrame = window.requestAnimationFrame(tick);
+    }
+
+    function syncMultiplayerAirHockeyState() {
+        if (!isMultiplayerAirHockeyActive()) {
+            airHockeyDisplayState = null;
+            airHockeyLocalPredicted = null;
+            airHockeyCountdownEndsAt = 0;
+            airHockeyLastFinishedStateKey = '';
+            return;
+        }
+
+        if (airHockeyAnimationFrame) {
+            window.cancelAnimationFrame(airHockeyAnimationFrame);
+            airHockeyAnimationFrame = null;
+        }
+        airHockeyLastFrame = 0;
+        hideAirHockeyCountdown();
+
+        const nextState = multiplayerActiveRoom.gameState;
+        airHockeyState = {
+            leftScore: Number(nextState.leftScore || 0),
+            rightScore: Number(nextState.rightScore || 0),
+            running: Boolean(nextState.running),
+            servingSide: nextState.servingSide || 'left',
+            width: Number(nextState.width || 720),
+            height: Number(nextState.height || 360),
+            left: { ...nextState.left },
+            right: { ...nextState.right },
+            puck: { ...nextState.puck },
+            countdownActive: Boolean(nextState.countdownEndsAt && nextState.countdownEndsAt > Date.now()),
+            finished: Boolean(nextState.finished),
+            winner: nextState.winner || null,
+            round: Number(nextState.round || 0)
+        };
+
+        const shouldSnap = !airHockeyDisplayState
+            || airHockeyDisplayState.round !== airHockeyState.round
+            || Math.abs(airHockeyDisplayState.puck.x - airHockeyState.puck.x) > 120
+            || Math.abs(airHockeyDisplayState.puck.y - airHockeyState.puck.y) > 80;
+
+        if (shouldSnap) {
+            airHockeyDisplayState = JSON.parse(JSON.stringify(airHockeyState));
+            airHockeyLocalPredicted = getMultiplayerAirHockeyRole() === 'right'
+                ? { x: airHockeyState.right.x, y: airHockeyState.right.y }
+                : { x: airHockeyState.left.x, y: airHockeyState.left.y };
+        } else {
+            airHockeyDisplayState.round = airHockeyState.round;
+        }
+
+        airHockeyCountdownEndsAt = Number(nextState.countdownEndsAt || 0);
         airHockeyLeftScoreDisplay.textContent = String(airHockeyState.leftScore);
         airHockeyRightScoreDisplay.textContent = String(airHockeyState.rightScore);
-        airHockeyLeftPaddle.style.transform = `translate(${airHockeyState.left.x - airHockeyState.left.radius}px, ${airHockeyState.left.y - airHockeyState.left.radius}px)`;
-        airHockeyRightPaddle.style.transform = `translate(${airHockeyState.right.x - airHockeyState.right.radius}px, ${airHockeyState.right.y - airHockeyState.right.radius}px)`;
-        airHockeyPuck.style.transform = `translate(${airHockeyState.puck.x - airHockeyState.puck.radius}px, ${airHockeyState.puck.y - airHockeyState.puck.radius}px)`;
+        airHockeyModeButtons.forEach((button) => {
+            button.classList.remove('is-active');
+            button.disabled = true;
+        });
+        airHockeyStartButton.textContent = getCurrentMultiplayerPlayer()?.isHost ? 'Lancer' : 'En attente';
+        airHockeyStartButton.disabled = !getCurrentMultiplayerPlayer()?.isHost || (multiplayerActiveRoom?.playerCount || 0) < 2;
+        airHockeyHelpText.textContent = airHockeyState.finished
+            ? (airHockeyState.winner === getMultiplayerAirHockeyRole() ? 'Victoire. Le palet finit dans les filets adverses.' : 'Defaite. L adversaire remporte le duel.')
+            : (airHockeyState.running ? 'Deplace ton palet avec fluidite. Premier a 5.' : 'Attends que l hote lance le duel.');
+
+        renderAirHockey();
+        ensureMultiplayerAirHockeyRenderLoop();
+        pushMultiplayerAirHockeyInput();
+
+        if (!airHockeyState.finished) {
+            airHockeyLastFinishedStateKey = '';
+            return;
+        }
+
+        const finishedKey = `${airHockeyState.round}:${airHockeyState.winner || 'none'}`;
+        if (finishedKey === airHockeyLastFinishedStateKey || activeGameTab !== 'airHockey') {
+            return;
+        }
+
+        airHockeyLastFinishedStateKey = finishedKey;
+        if (airHockeyState.winner === getMultiplayerAirHockeyRole()) {
+            openGameOverModal('Victoire', 'Tu remportes ce duel d Air Hockey en ligne.');
+        } else {
+            openGameOverModal('C est perdu', 'L adversaire remporte ce duel d Air Hockey.');
+        }
+    }
+
+    function renderAirHockey() {
+        const currentAirHockeyState = isMultiplayerAirHockeyActive() && airHockeyDisplayState ? airHockeyDisplayState : airHockeyState;
+
+        if (!currentAirHockeyState) {
+            return;
+        }
+
+        airHockeyLeftScoreDisplay.textContent = String(currentAirHockeyState.leftScore);
+        airHockeyRightScoreDisplay.textContent = String(currentAirHockeyState.rightScore);
+        airHockeyLeftPaddle.style.transform = `translate(${currentAirHockeyState.left.x - currentAirHockeyState.left.radius}px, ${currentAirHockeyState.left.y - currentAirHockeyState.left.radius}px)`;
+        airHockeyRightPaddle.style.transform = `translate(${currentAirHockeyState.right.x - currentAirHockeyState.right.radius}px, ${currentAirHockeyState.right.y - currentAirHockeyState.right.radius}px)`;
+        airHockeyPuck.style.transform = `translate(${currentAirHockeyState.puck.x - currentAirHockeyState.puck.radius}px, ${currentAirHockeyState.puck.y - currentAirHockeyState.puck.radius}px)`;
     }
 
     function getAirHockeyDimensions() {
@@ -9782,6 +10020,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeAirHockey(resetScores = true) {
+        if (airHockeyRenderAnimationFrame) {
+            window.cancelAnimationFrame(airHockeyRenderAnimationFrame);
+            airHockeyRenderAnimationFrame = null;
+        }
+        airHockeyRenderLastFrame = 0;
+        airHockeyDisplayState = null;
+        airHockeyLocalPredicted = null;
+
+        if (isMultiplayerAirHockeyActive()) {
+            syncMultiplayerAirHockeyState();
+            return;
+        }
+
         const { width, height } = getAirHockeyDimensions();
         airHockeyState = {
             leftScore: resetScores ? 0 : airHockeyState?.leftScore || 0,
@@ -9803,6 +10054,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function launchAirHockeyPuck() {
+        if (isMultiplayerAirHockeyActive()) {
+            if (!multiplayerSocket?.connected) {
+                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+                return;
+            }
+
+            if (!getCurrentMultiplayerPlayer()?.isHost) {
+                setMultiplayerStatus('Seul l hote peut lancer le duel.');
+                return;
+            }
+
+            multiplayerSocket.emit('airhockey:start');
+            setMultiplayerStatus('Le duel d Air Hockey se prepare pour tout le salon.');
+            return;
+        }
+
         if (airHockeyCountdownActive) {
             return;
         }
@@ -11039,6 +11306,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     airHockeyModeButtons.forEach((button) => {
         button.addEventListener('click', () => {
+            if (isMultiplayerAirHockeyActive()) {
+                setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+                return;
+            }
+
             airHockeyMode = button.dataset.airhockeyMode;
             airHockeyModeButtons.forEach((item) => item.classList.toggle('is-active', item === button));
             airHockeyHelpText.textContent = airHockeyMode === 'solo'
@@ -11049,7 +11321,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     airHockeyStartButton?.addEventListener('click', () => {
-        initializeAirHockey(false);
+        if (!isMultiplayerAirHockeyActive()) {
+            initializeAirHockey(false);
+        }
         launchAirHockeyPuck();
     });
 
@@ -11616,6 +11890,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (['z', 'q', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(normalizedKey)) {
                 event.preventDefault();
                 airHockeyKeys.add(normalizedKey);
+                if (isMultiplayerAirHockeyActive()) {
+                    pushMultiplayerAirHockeyInput();
+                }
                 return;
             }
         }
@@ -11725,6 +12002,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pushMultiplayerPongInput();
         }
         airHockeyKeys.delete(event.key.toLowerCase());
+        if (activeGameTab === 'airHockey' && isMultiplayerAirHockeyActive()) {
+            pushMultiplayerAirHockeyInput();
+        }
         breakoutKeys.delete(event.key.toLowerCase());
     });
 
@@ -11739,6 +12019,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 resetPongRound();
             }
+        }
+
+        if (activeGameTab === 'airHockey') {
+            initializeAirHockey(false);
         }
 
         if (activeGameTab === '2048') {

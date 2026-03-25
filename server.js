@@ -24,12 +24,21 @@ const PONG_PLAYER_SPEED = 380;
 const PONG_BALL_SPEED_X = 388;
 const PONG_COUNTDOWN_MS = 2320;
 const PONG_TICK_MS = 1000 / 60;
+const AIR_HOCKEY_GOAL_SCORE = 5;
+const AIR_HOCKEY_WIDTH = 720;
+const AIR_HOCKEY_HEIGHT = 360;
+const AIR_HOCKEY_PADDLE_RADIUS = 27;
+const AIR_HOCKEY_PUCK_RADIUS = 22;
+const AIR_HOCKEY_SPEED = 280;
+const AIR_HOCKEY_COUNTDOWN_MS = 2120;
+const AIR_HOCKEY_TICK_MS = 1000 / 60;
 const CHECKERS_DIRECTIONS = {
   red: [[-1, -1], [-1, 1]],
   black: [[1, -1], [1, 1]]
 };
 const MAX_PLAYERS_BY_GAME = {
   pong: 2,
+  airHockey: 2,
   ticTacToe: 2,
   connect4: 2,
   chess: 2,
@@ -216,9 +225,45 @@ function createPongState() {
   return createPongRoundSnapshot(null);
 }
 
+function createAirHockeyRoundSnapshot(previousState = null) {
+  const nextRound = Number(previousState?.round || 0) + 1;
+
+  return {
+    width: AIR_HOCKEY_WIDTH,
+    height: AIR_HOCKEY_HEIGHT,
+    leftScore: previousState?.leftScore || 0,
+    rightScore: previousState?.rightScore || 0,
+    running: false,
+    countdownEndsAt: 0,
+    finished: false,
+    winner: null,
+    round: nextRound,
+    servingSide: Math.random() > 0.5 ? 'left' : 'right',
+    leftInput: { x: 0, y: 0 },
+    rightInput: { x: 0, y: 0 },
+    left: { x: AIR_HOCKEY_WIDTH * 0.16, y: AIR_HOCKEY_HEIGHT * 0.5, radius: AIR_HOCKEY_PADDLE_RADIUS, vx: 0, vy: 0 },
+    right: { x: AIR_HOCKEY_WIDTH * 0.84, y: AIR_HOCKEY_HEIGHT * 0.5, radius: AIR_HOCKEY_PADDLE_RADIUS, vx: 0, vy: 0 },
+    puck: {
+      x: (Math.random() > 0.5 ? AIR_HOCKEY_WIDTH * 0.25 : AIR_HOCKEY_WIDTH * 0.75),
+      y: AIR_HOCKEY_HEIGHT * 0.5,
+      vx: 0,
+      vy: 0,
+      radius: AIR_HOCKEY_PUCK_RADIUS
+    }
+  };
+}
+
+function createAirHockeyState() {
+  return createAirHockeyRoundSnapshot(null);
+}
+
 function createGameState(gameId) {
   if (gameId === 'pong') {
     return createPongState();
+  }
+
+  if (gameId === 'airHockey') {
+    return createAirHockeyState();
   }
 
   if (gameId === 'ticTacToe') {
@@ -260,6 +305,11 @@ function resetPongRound(room, keepScores = true) {
   room.gameState = createPongRoundSnapshot(previousState);
 }
 
+function resetAirHockeyRound(room, keepScores = true) {
+  const previousState = keepScores ? room.gameState : null;
+  room.gameState = createAirHockeyRoundSnapshot(previousState);
+}
+
 function resetConnect4Round(room, keepScores = true) {
   const previousScores = keepScores && room.gameState?.scores
     ? room.gameState.scores
@@ -298,6 +348,11 @@ function resetCheckersRound(room) {
 function resetRoomGame(room, keepScores = false) {
   if (room.gameId === 'pong') {
     resetPongRound(room, keepScores);
+    return;
+  }
+
+  if (room.gameId === 'airHockey') {
+    resetAirHockeyRound(room, keepScores);
     return;
   }
 
@@ -343,6 +398,20 @@ function getTicTacToePlayerSymbol(room, socketId) {
 }
 
 function getPongPlayerRole(room, socketId) {
+  const playerIndex = room.players.findIndex((player) => player.id === socketId);
+
+  if (playerIndex === 0) {
+    return 'left';
+  }
+
+  if (playerIndex === 1) {
+    return 'right';
+  }
+
+  return null;
+}
+
+function getAirHockeyPlayerRole(room, socketId) {
   const playerIndex = room.players.findIndex((player) => player.id === socketId);
 
   if (playerIndex === 0) {
@@ -498,6 +567,231 @@ function handlePongScore(room, scoringRole) {
 
   resetPongRound(room, true);
   startPongRound(room);
+}
+
+function getAirHockeyGoalBounds() {
+  const goalHeight = AIR_HOCKEY_HEIGHT * 0.48;
+  const top = (AIR_HOCKEY_HEIGHT - goalHeight) / 2;
+
+  return {
+    top,
+    bottom: top + goalHeight
+  };
+}
+
+function clampAirHockeyPuckSpeed(state) {
+  const puck = state?.puck;
+
+  if (!puck) {
+    return;
+  }
+
+  const speed = Math.hypot(puck.vx, puck.vy);
+  const maxSpeed = 520;
+
+  if (!speed || speed <= maxSpeed) {
+    return;
+  }
+
+  const scale = maxSpeed / speed;
+  puck.vx *= scale;
+  puck.vy *= scale;
+}
+
+function clampAirHockeyPaddle(paddle, side) {
+  paddle.y = Math.max(paddle.radius, Math.min(AIR_HOCKEY_HEIGHT - paddle.radius, paddle.y));
+
+  if (side === 'left') {
+    paddle.x = Math.max(paddle.radius, Math.min((AIR_HOCKEY_WIDTH * 0.5) - 30 - paddle.radius, paddle.x));
+  } else {
+    paddle.x = Math.max((AIR_HOCKEY_WIDTH * 0.5) + 30 + paddle.radius, Math.min(AIR_HOCKEY_WIDTH - paddle.radius, paddle.x));
+  }
+}
+
+function startAirHockeyRound(room) {
+  if (!room?.gameState || room.players.length < 2) {
+    return;
+  }
+
+  room.gameState.running = true;
+  room.gameState.finished = false;
+  room.gameState.winner = null;
+  room.gameState.countdownEndsAt = Date.now() + AIR_HOCKEY_COUNTDOWN_MS;
+  room.gameState.puck.vx = 0;
+  room.gameState.puck.vy = 0;
+}
+
+function handleAirHockeyScore(room, scoringSide) {
+  if (!room?.gameState) {
+    return;
+  }
+
+  if (scoringSide === 'left') {
+    room.gameState.leftScore += 1;
+  } else {
+    room.gameState.rightScore += 1;
+  }
+
+  if (room.gameState.leftScore >= AIR_HOCKEY_GOAL_SCORE || room.gameState.rightScore >= AIR_HOCKEY_GOAL_SCORE) {
+    room.gameState.running = false;
+    room.gameState.countdownEndsAt = 0;
+    room.gameState.finished = true;
+    room.gameState.winner = room.gameState.leftScore >= AIR_HOCKEY_GOAL_SCORE ? 'left' : 'right';
+    return;
+  }
+
+  const nextServingSide = scoringSide === 'left' ? 'right' : 'left';
+  resetAirHockeyRound(room, true);
+  room.gameState.servingSide = nextServingSide;
+  room.gameState.puck.x = nextServingSide === 'left' ? AIR_HOCKEY_WIDTH * 0.25 : AIR_HOCKEY_WIDTH * 0.75;
+  room.gameState.puck.y = AIR_HOCKEY_HEIGHT * 0.5;
+  room.gameState.puck.vx = 0;
+  room.gameState.puck.vy = 0;
+  startAirHockeyRound(room);
+}
+
+function updateAirHockeyRoom(room, deltaSeconds) {
+  if (!room || room.gameId !== 'airHockey' || !room.gameState) {
+    return false;
+  }
+
+  if (room.players.length < 2) {
+    if (room.gameState.running || room.gameState.leftInput.x || room.gameState.leftInput.y || room.gameState.rightInput.x || room.gameState.rightInput.y) {
+      room.gameState.running = false;
+      room.gameState.countdownEndsAt = 0;
+      room.gameState.leftInput = { x: 0, y: 0 };
+      room.gameState.rightInput = { x: 0, y: 0 };
+      room.gameState.left.vx = 0;
+      room.gameState.left.vy = 0;
+      room.gameState.right.vx = 0;
+      room.gameState.right.vy = 0;
+      return true;
+    }
+
+    return false;
+  }
+
+  if (!room.gameState.running || room.gameState.finished) {
+    return false;
+  }
+
+  let changed = false;
+  const countdownActive = room.gameState.countdownEndsAt && Date.now() < room.gameState.countdownEndsAt;
+  const movePaddle = (paddle, input, side) => {
+    if (countdownActive) {
+      paddle.vx = 0;
+      paddle.vy = 0;
+      return false;
+    }
+
+    const magnitude = Math.hypot(input.x, input.y);
+    const moveX = magnitude > 1 ? input.x / magnitude : input.x;
+    const moveY = magnitude > 1 ? input.y / magnitude : input.y;
+    const previousX = paddle.x;
+    const previousY = paddle.y;
+
+    paddle.x += moveX * AIR_HOCKEY_SPEED * deltaSeconds;
+    paddle.y += moveY * AIR_HOCKEY_SPEED * deltaSeconds;
+    clampAirHockeyPaddle(paddle, side);
+    paddle.vx = deltaSeconds ? (paddle.x - previousX) / deltaSeconds : 0;
+    paddle.vy = deltaSeconds ? (paddle.y - previousY) / deltaSeconds : 0;
+
+    return paddle.x !== previousX || paddle.y !== previousY;
+  };
+
+  changed = movePaddle(room.gameState.left, room.gameState.leftInput, 'left') || changed;
+  changed = movePaddle(room.gameState.right, room.gameState.rightInput, 'right') || changed;
+
+  if (countdownActive) {
+    return changed;
+  }
+
+  if (room.gameState.countdownEndsAt) {
+    room.gameState.countdownEndsAt = 0;
+    changed = true;
+  }
+
+  const puck = room.gameState.puck;
+  puck.x += puck.vx * deltaSeconds;
+  puck.y += puck.vy * deltaSeconds;
+  puck.vx *= 0.996;
+  puck.vy *= 0.996;
+
+  if (puck.y <= puck.radius || puck.y >= AIR_HOCKEY_HEIGHT - puck.radius) {
+    puck.vy *= -1;
+    puck.y = Math.max(puck.radius, Math.min(AIR_HOCKEY_HEIGHT - puck.radius, puck.y));
+  }
+
+  const goalBounds = getAirHockeyGoalBounds();
+  const puckInGoalOpening = puck.y >= goalBounds.top + puck.radius && puck.y <= goalBounds.bottom - puck.radius;
+
+  if (puck.x <= puck.radius) {
+    if (puckInGoalOpening) {
+      handleAirHockeyScore(room, 'right');
+      return true;
+    }
+
+    puck.x = puck.radius;
+    puck.vx = Math.abs(puck.vx);
+  }
+
+  if (puck.x >= AIR_HOCKEY_WIDTH - puck.radius) {
+    if (puckInGoalOpening) {
+      handleAirHockeyScore(room, 'left');
+      return true;
+    }
+
+    puck.x = AIR_HOCKEY_WIDTH - puck.radius;
+    puck.vx = -Math.abs(puck.vx);
+  }
+
+  [room.gameState.left, room.gameState.right].forEach((paddle, index) => {
+    const dx = puck.x - paddle.x;
+    const dy = puck.y - paddle.y;
+    const rawDistance = Math.hypot(dx, dy);
+    const distance = rawDistance || 0.001;
+    const minDistance = puck.radius + paddle.radius;
+
+    if (distance >= minDistance) {
+      return;
+    }
+
+    let nx = dx / distance;
+    let ny = dy / distance;
+    const paddleMotion = Math.hypot(paddle.vx, paddle.vy);
+
+    if (rawDistance < 0.5) {
+      if (paddleMotion > 1) {
+        nx = paddle.vx / paddleMotion;
+        ny = paddle.vy / paddleMotion;
+      } else {
+        nx = index === 0 ? 1 : -1;
+        ny = 0;
+      }
+    }
+
+    const overlap = minDistance - distance;
+    puck.x += nx * (overlap + 0.5);
+    puck.y += ny * (overlap + 0.5);
+
+    const relativeVx = puck.vx - paddle.vx;
+    const relativeVy = puck.vy - paddle.vy;
+    const approachSpeed = (relativeVx * nx) + (relativeVy * ny);
+    const carry = Math.min(220, paddleMotion * 0.55);
+
+    if (approachSpeed < 0) {
+      const bounce = -(1.35 * approachSpeed);
+      puck.vx += (bounce + carry) * nx + (paddle.vx * 0.32);
+      puck.vy += (bounce + carry) * ny + (paddle.vy * 0.32);
+    } else {
+      puck.vx += nx * (28 + paddleMotion * 0.08);
+      puck.vy += ny * (28 + paddleMotion * 0.08);
+    }
+
+    clampAirHockeyPuckSpeed(room.gameState);
+  });
+
+  return changed || true;
 }
 
 function updatePongRoom(room, deltaSeconds) {
@@ -794,15 +1088,17 @@ function buildRoomPayload(room, socketId = null) {
       isYou: player.id === socketId,
       symbol: room.gameId === 'pong'
         ? getPongPlayerRole(room, player.id)
+        : (room.gameId === 'airHockey'
+          ? getAirHockeyPlayerRole(room, player.id)
         : (room.gameId === 'ticTacToe'
         ? getTicTacToePlayerSymbol(room, player.id)
         : (room.gameId === 'connect4'
           ? getConnect4PlayerSymbol(room, player.id)
           : (room.gameId === 'chess'
             ? getChessPlayerColor(room, player.id)
-            : (room.gameId === 'checkers' ? getCheckersPlayerColor(room, player.id) : null))))
+            : (room.gameId === 'checkers' ? getCheckersPlayerColor(room, player.id) : null)))))
     })),
-    gameState: ['pong', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null
+    gameState: ['pong', 'airHockey', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null
   };
 }
 
@@ -1007,6 +1303,53 @@ io.on('connection', (socket) => {
       room.gameState.leftInput = nextDirection;
     } else {
       room.gameState.rightInput = nextDirection;
+    }
+  });
+
+  socket.on('airhockey:start', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'airHockey') {
+      socket.emit('room:error', { message: 'Aucune partie d Air Hockey active.' });
+      return;
+    }
+
+    if (room.hostId !== socket.id) {
+      socket.emit('room:error', { message: 'Seul l hote peut lancer le duel.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne le salon.' });
+      return;
+    }
+
+    resetAirHockeyRound(room, true);
+    startAirHockeyRound(room);
+    emitRoomUpdate(room);
+  });
+
+  socket.on('airhockey:input', ({ x, y }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'airHockey' || !room.gameState) {
+      return;
+    }
+
+    const role = getAirHockeyPlayerRole(room, socket.id);
+    if (!role) {
+      return;
+    }
+
+    const nextInput = {
+      x: Math.max(-1, Math.min(1, Number(x) || 0)),
+      y: Math.max(-1, Math.min(1, Number(y) || 0))
+    };
+
+    if (role === 'left') {
+      room.gameState.leftInput = nextInput;
+    } else {
+      room.gameState.rightInput = nextInput;
     }
   });
 
@@ -1371,6 +1714,18 @@ setInterval(() => {
     }
   });
 }, PONG_TICK_MS);
+
+setInterval(() => {
+  rooms.forEach((room) => {
+    if (room.gameId !== 'airHockey') {
+      return;
+    }
+
+    if (updateAirHockeyRoom(room, AIR_HOCKEY_TICK_MS / 1000)) {
+      emitRoomUpdate(room);
+    }
+  });
+}, AIR_HOCKEY_TICK_MS);
 
 server.listen(PORT, () => {
   console.log(`La Baie des Naufrages multiplayer server listening on port ${PORT}`);
