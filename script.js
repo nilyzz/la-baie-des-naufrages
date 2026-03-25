@@ -5636,14 +5636,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (role === 'left') {
                 pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
                 if (inputDirection === 0) {
-                    pongLocalPredictedPaddleY += (pongState.playerY - pongLocalPredictedPaddleY) * Math.min(1, delta * 7);
+                    const catchupGap = pongState.playerY - pongLocalPredictedPaddleY;
+                    if (Math.abs(catchupGap) <= 18) {
+                        pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 10);
+                    }
                 }
                 pongDisplayState.playerY = pongLocalPredictedPaddleY;
                 pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * paddleSmoothing;
             } else if (role === 'right') {
                 pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
                 if (inputDirection === 0) {
-                    pongLocalPredictedPaddleY += (pongState.aiY - pongLocalPredictedPaddleY) * Math.min(1, delta * 7);
+                    const catchupGap = pongState.aiY - pongLocalPredictedPaddleY;
+                    if (Math.abs(catchupGap) <= 18) {
+                        pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 10);
+                    }
                 }
                 pongDisplayState.aiY = pongLocalPredictedPaddleY;
                 pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * paddleSmoothing;

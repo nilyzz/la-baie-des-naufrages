@@ -23,7 +23,7 @@ const PONG_PADDLE_OFFSET = 22;
 const PONG_PLAYER_SPEED = 380;
 const PONG_BALL_SPEED_X = 388;
 const PONG_COUNTDOWN_MS = 2320;
-const PONG_TICK_MS = 1000 / 30;
+const PONG_TICK_MS = 1000 / 60;
 const CHECKERS_DIRECTIONS = {
   red: [[-1, -1], [-1, 1]],
   black: [[1, -1], [1, 1]]
