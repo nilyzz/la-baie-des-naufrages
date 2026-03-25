@@ -99,6 +99,7 @@ function createConnect4State() {
     finished: false,
     winner: null,
     winningLine: null,
+    lastMove: null,
     scores: {
       player: 0,
       ai: 0
@@ -133,6 +134,7 @@ function resetConnect4Round(room, keepScores = true) {
     finished: false,
     winner: null,
     winningLine: null,
+    lastMove: null,
     scores: previousScores,
     round: Number(room.gameState?.round || 0) + 1
   };
@@ -560,6 +562,25 @@ io.on('connection', (socket) => {
       code: room.code,
       gameId: room.gameId
     });
+  });
+
+  socket.on('room:leave', () => {
+    const roomCode = socket.data.roomCode;
+
+    if (!roomCode) {
+      socket.emit('room:left');
+      return;
+    }
+
+    const room = getRoom(roomCode);
+    socket.leave(roomCode);
+    socket.data.roomCode = null;
+
+    if (room) {
+      removePlayerFromRoom(room, socket.id);
+    }
+
+    socket.emit('room:left');
   });
 
   socket.on('disconnect', () => {

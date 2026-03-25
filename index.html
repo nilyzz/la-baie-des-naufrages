@@ -421,30 +421,30 @@
                         </div>
 
                         <div class="multiplayer-entry-switch" role="group" aria-label="Choix du parcours multijoueur">
-                            <button id="multiplayerCreateModeButton" type="button" class="multiplayer-entry-button is-active" data-multiplayer-mode="create">Creer une partie</button>
-                            <button id="multiplayerJoinModeButton" type="button" class="multiplayer-entry-button" data-multiplayer-mode="join">Rejoindre une partie</button>
+                            <button id="multiplayerCreateModeButton" type="button" class="multiplayer-entry-button is-active" data-multiplayer-mode="create">Creer un salon</button>
+                            <button id="multiplayerJoinModeButton" type="button" class="multiplayer-entry-button" data-multiplayer-mode="join">Rejoindre un salon</button>
                         </div>
 
                         <div class="multiplayer-entry-panels">
                             <section id="multiplayerCreatePanel" class="multiplayer-entry-panel is-active" aria-labelledby="multiplayerCreateTitle">
                                 <div class="multiplayer-entry-panel-copy">
                                     <p class="section-tag">Capitaine</p>
-                                    <h5 id="multiplayerCreateTitle">Ouvre un nouveau salon</h5>
+                                    <h5 id="multiplayerCreateTitle">Creer un salon</h5>
                                     <p>Choisis ton pseudo puis clique sur un jeu en bas avant de creer le salon.</p>
                                 </div>
 
                                 <div class="multiplayer-entry-fields">
-                                    <label class="multiplayer-lobby-field">
+                                    <label id="multiplayerCreatePlayerField" class="multiplayer-lobby-field">
                                         <span>Pseudo du capitaine</span>
                                         <input id="multiplayerCreatePlayerNameInput" type="text" maxlength="24" placeholder="Capitaine" autocomplete="nickname">
                                     </label>
                                 </div>
 
                                 <div class="multiplayer-entry-actions">
-                                    <button id="multiplayerCreateRoomButton" type="button" class="primary-button">Creer la partie</button>
+                                    <button id="multiplayerCreateRoomButton" type="button" class="primary-button">Creer le salon</button>
                                     <button id="multiplayerCopyCodeButton" type="button" class="secondary-button">Copier le code</button>
                                     <div class="multiplayer-room-inline">
-                                        <span class="multiplayer-room-inline-label">Room active</span>
+                                        <span class="multiplayer-room-inline-label">Salon actif</span>
                                         <strong id="multiplayerCurrentRoomCode" class="multiplayer-room-inline-value">-</strong>
                                     </div>
                                 </div>
@@ -453,18 +453,18 @@
                             <section id="multiplayerJoinPanel" class="multiplayer-entry-panel" aria-labelledby="multiplayerJoinTitle">
                                 <div class="multiplayer-entry-panel-copy">
                                     <p class="section-tag">Equipage</p>
-                                    <h5 id="multiplayerJoinTitle">Monte a bord d une partie</h5>
-                                    <p>Entre ton pseudo et rejoins une partie avec son code.</p>
+                                    <h5 id="multiplayerJoinTitle">Rejoindre un salon</h5>
+                                    <p>Entre ton pseudo et rejoins un salon avec son code.</p>
                                 </div>
 
                                 <div class="multiplayer-entry-fields multiplayer-entry-fields-join">
-                                    <label class="multiplayer-lobby-field">
+                                    <label id="multiplayerJoinPlayerField" class="multiplayer-lobby-field">
                                         <span>Pseudo du joueur</span>
                                         <input id="multiplayerJoinPlayerNameInput" type="text" maxlength="24" placeholder="Pirate 2" autocomplete="nickname">
                                     </label>
 
-                                    <label class="multiplayer-lobby-field">
-                                        <span>Code de partie</span>
+                                    <label id="multiplayerJoinCodeField" class="multiplayer-lobby-field">
+                                        <span>Code du salon</span>
                                         <input id="multiplayerJoinRoomCodeInput" type="text" maxlength="6" placeholder="ABCD12" autocomplete="off" spellcheck="false">
                                     </label>
                                 </div>

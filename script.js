@@ -73,8 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerJoinModeButton = document.getElementById('multiplayerJoinModeButton');
     const multiplayerCreatePanel = document.getElementById('multiplayerCreatePanel');
     const multiplayerJoinPanel = document.getElementById('multiplayerJoinPanel');
+    const multiplayerCreatePlayerField = document.getElementById('multiplayerCreatePlayerField');
     const multiplayerCreatePlayerNameInput = document.getElementById('multiplayerCreatePlayerNameInput');
+    const multiplayerJoinPlayerField = document.getElementById('multiplayerJoinPlayerField');
     const multiplayerJoinPlayerNameInput = document.getElementById('multiplayerJoinPlayerNameInput');
+    const multiplayerJoinCodeField = document.getElementById('multiplayerJoinCodeField');
     const multiplayerJoinRoomCodeInput = document.getElementById('multiplayerJoinRoomCodeInput');
     const multiplayerCreateRoomButton = document.getElementById('multiplayerCreateRoomButton');
     const multiplayerJoinRoomButton = document.getElementById('multiplayerJoinRoomButton');
@@ -526,6 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerEntryMode = 'create';
     let ticTacToeLastFinishedStateKey = '';
     let connect4LastFinishedStateKey = '';
+    let connect4LastMoveAnimationKey = '';
     let gameBoard = [];
     let flagsPlaced = 0;
     let timer = 0;
@@ -1866,11 +1870,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         multiplayerCurrentRoomCode.textContent = multiplayerActiveRoom?.code || '-';
         multiplayerLobbyPlayersBlock?.classList.toggle('hidden', !hasActiveRoom);
+        multiplayerCreatePlayerField?.classList.toggle('hidden', hasActiveRoom);
+        multiplayerJoinPlayerField?.classList.toggle('hidden', hasActiveRoom);
+        multiplayerJoinCodeField?.classList.toggle('hidden', hasActiveRoom);
         multiplayerCreateRoomButton.disabled = multiplayerBusy || !canUseMultiplayer || (hasActiveRoom && !isHost);
         multiplayerJoinRoomButton.disabled = multiplayerBusy;
         multiplayerCreateRoomButton.textContent = hasActiveRoom && isHost
             ? `Lancer ${activeRoomGameLabel}`
-            : 'Creer la partie';
+            : 'Creer le salon';
+        multiplayerJoinRoomButton.textContent = hasActiveRoom
+            ? 'Quitter le salon'
+            : 'Rejoindre avec le code';
         multiplayerCopyCodeButton.disabled = !hasActiveRoom;
         updateMultiplayerGameTileSelection();
         renderMultiplayerPlayers();
@@ -1885,16 +1895,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (hasActiveRoom) {
             if (isHost && multiplayerActiveRoom.playerCount < 2) {
-                setMultiplayerStatus(`Room ${multiplayerActiveRoom.code} creee. Attends un autre joueur avant de lancer ${activeRoomGameLabel}.`);
+            setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} cree. Attends un autre joueur avant de lancer ${activeRoomGameLabel}.`);
                 return;
             }
 
             if (!isHost && multiplayerActiveRoom.playerCount < 2) {
-                setMultiplayerStatus(`Room ${multiplayerActiveRoom.code} prete. En attente du lancement par l hote.`);
+                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} pret. En attente du lancement par l hote.`);
                 return;
             }
 
-            setMultiplayerStatus(`Room ${multiplayerActiveRoom.code} prete sur ${activeRoomGameLabel}.`);
+            setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} pret sur ${activeRoomGameLabel}.`);
             return;
         }
 
@@ -1903,7 +1913,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        setMultiplayerStatus('Cree une partie privee ou rejoins-en une avec un code.');
+        setMultiplayerStatus('Cree un salon prive ou rejoins-en un avec un code.');
     }
 
     function loadSocketIoClient() {
@@ -1978,6 +1988,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 setMultiplayerStatus(message || 'Une erreur room est survenue.');
             });
 
+            multiplayerSocket.on('room:left', () => {
+                multiplayerActiveRoom = null;
+                connect4LastFinishedStateKey = '';
+                ticTacToeLastFinishedStateKey = '';
+                multiplayerCurrentRoomCode.textContent = '-';
+                multiplayerLobbyPlayersBlock?.classList.add('hidden');
+                closeGameOverModal();
+                updateMultiplayerLobby();
+            });
+
             multiplayerSocket.on('room:game:start', ({ gameId }) => {
                 setMultiplayerStatus(`${getMultiplayerGameLabel(gameId)} se lance pour toute la room.`);
                 openSelectedGame(gameId);
@@ -2038,7 +2058,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 multiplayerJoinRoomCodeInput.value = room.code || '';
             }
             syncMultiplayerPlayerNames('create');
-            setMultiplayerEntryMode('join');
             const socket = await ensureMultiplayerConnection();
             socket.emit('room:create', {
                 code: room.code,
@@ -2053,6 +2072,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function joinMultiplayerRoom() {
+        if (multiplayerActiveRoom?.code) {
+            await leaveMultiplayerRoom();
+            return;
+        }
+
         const roomCode = multiplayerJoinRoomCodeInput.value.trim().toUpperCase();
 
         if (!roomCode || multiplayerBusy) {
@@ -2076,6 +2100,19 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             multiplayerBusy = false;
             updateMultiplayerLobby(true);
+        }
+    }
+
+    async function leaveMultiplayerRoom() {
+        if (!multiplayerActiveRoom?.code) {
+            return;
+        }
+
+        try {
+            const socket = await ensureMultiplayerConnection();
+            socket.emit('room:leave');
+        } catch (error) {
+            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
         }
     }
 
@@ -3099,6 +3136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncMultiplayerConnect4State() {
         if (!isMultiplayerConnect4Active()) {
             connect4LastFinishedStateKey = '';
+            connect4LastMoveAnimationKey = '';
             return;
         }
 
@@ -3126,6 +3164,16 @@ document.addEventListener('DOMContentLoaded', () => {
         connect4DropAnimationState = null;
 
         renderConnect4();
+
+        const lastMove = multiplayerActiveRoom.gameState.lastMove;
+        const nextAnimationKey = lastMove ? `${multiplayerActiveRoom.gameState.round}:${lastMove.row}:${lastMove.col}:${lastMove.token}` : '';
+
+        if (lastMove && nextAnimationKey !== connect4LastMoveAnimationKey) {
+            window.requestAnimationFrame(() => {
+                playConnect4DropAnimation(lastMove.row, lastMove.col, lastMove.token);
+            });
+        }
+        connect4LastMoveAnimationKey = nextAnimationKey;
 
         if (Array.isArray(multiplayerActiveRoom.gameState.winningLine)) {
             highlightConnect4Line(multiplayerActiveRoom.gameState.winningLine);
@@ -4396,6 +4444,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function playConnect4DropAnimation(row, col, token) {
+        connect4DropAnimationKey = `${row}-${col}`;
+        renderConnect4();
+        const targetCell = connect4Board.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+
+        if (targetCell) {
+            const boardPaddingTop = Number.parseFloat(window.getComputedStyle(connect4Board).paddingTop) || 0;
+            connect4DropAnimationState = {
+                token,
+                left: targetCell.offsetLeft,
+                top: targetCell.offsetTop,
+                size: targetCell.offsetWidth,
+                distance: Math.max(0, targetCell.offsetTop - boardPaddingTop + 6)
+            };
+            renderConnect4();
+        }
+
+        if (connect4DropAnimationTimeout) {
+            window.clearTimeout(connect4DropAnimationTimeout);
+        }
+
+        connect4DropAnimationTimeout = window.setTimeout(() => {
+            if (connect4DropAnimationKey === `${row}-${col}`) {
+                connect4DropAnimationKey = null;
+                connect4DropAnimationState = null;
+                renderConnect4();
+
+                if (isMultiplayerConnect4Active() && Array.isArray(multiplayerActiveRoom.gameState.winningLine)) {
+                    highlightConnect4Line(multiplayerActiveRoom.gameState.winningLine);
+                }
+            }
+            connect4DropAnimationTimeout = null;
+        }, 380);
+    }
+
     function chooseConnect4AiColumn() {
         const availableCols = Array.from({ length: CONNECT4_COLS }, (_, index) => index).filter((col) => getConnect4DropRow(col) !== -1);
 
@@ -4452,33 +4535,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         connect4BoardState[row][col] = token;
-        connect4DropAnimationKey = `${row}-${col}`;
-        renderConnect4();
-        const targetCell = connect4Board.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-
-        if (targetCell) {
-            const boardPaddingTop = Number.parseFloat(window.getComputedStyle(connect4Board).paddingTop) || 0;
-            connect4DropAnimationState = {
-                token,
-                left: targetCell.offsetLeft,
-                top: targetCell.offsetTop,
-                size: targetCell.offsetWidth,
-                distance: Math.max(0, targetCell.offsetTop - boardPaddingTop + 6)
-            };
-            renderConnect4();
-        }
-
-        if (connect4DropAnimationTimeout) {
-            window.clearTimeout(connect4DropAnimationTimeout);
-        }
-        connect4DropAnimationTimeout = window.setTimeout(() => {
-            if (connect4DropAnimationKey === `${row}-${col}`) {
-                connect4DropAnimationKey = null;
-                connect4DropAnimationState = null;
-                renderConnect4();
-            }
-            connect4DropAnimationTimeout = null;
-        }, 380);
+        playConnect4DropAnimation(row, col, token);
 
         const winningLine = getConnect4Winner(connect4BoardState, token);
 
