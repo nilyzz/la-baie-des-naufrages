@@ -562,6 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongRenderAnimationFrame = null;
     let pongRenderLastFrame = 0;
     let pongLastNetworkSyncAt = 0;
+    let pongLocalPredictedPaddleY = null;
     let pongPlayerScore = 0;
     let pongAiScore = 0;
     let pongKeys = new Set();
@@ -2070,6 +2071,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pongLastFinishedStateKey = '';
                 pongMultiplayerInputDirection = 0;
                 pongDisplayState = null;
+                pongLocalPredictedPaddleY = null;
                 pongCountdownEndsAt = 0;
                 connect4LastFinishedStateKey = '';
                 ticTacToeLastFinishedStateKey = '';
@@ -5372,6 +5374,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pongMultiplayerInputDirection = 0;
             pongCountdownEndsAt = 0;
             pongDisplayState = null;
+            pongLocalPredictedPaddleY = null;
             pongRenderLastFrame = 0;
             return;
         }
@@ -5411,9 +5414,11 @@ document.addEventListener('DOMContentLoaded', () => {
             || pongDisplayState.round !== pongState.round
             || Math.abs(pongDisplayState.ballX - pongState.ballX) > 140
             || Math.abs(pongDisplayState.ballY - pongState.ballY) > 120;
+        const role = getMultiplayerPongRole();
 
         if (shouldSnapDisplay) {
             pongDisplayState = { ...pongState };
+            pongLocalPredictedPaddleY = role === 'right' ? pongState.aiY : pongState.playerY;
         } else {
             pongDisplayState = {
                 ...pongDisplayState,
@@ -5425,6 +5430,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ballSize: pongState.ballSize,
                 round: pongState.round
             };
+
+            if (pongLocalPredictedPaddleY === null) {
+                pongLocalPredictedPaddleY = role === 'right' ? pongState.aiY : pongState.playerY;
+            }
         }
 
         pongPlayerScore = Number(nextState.leftScore || 0);
@@ -5618,14 +5627,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const paddleSmoothing = Math.min(1, delta * 14);
             const ballCorrection = Math.min(1, delta * 10);
             const shouldSimulateBall = pongRunning && !pongState.countdownActive && !multiplayerActiveRoom?.gameState?.finished;
+            const ownServerY = role === 'right' ? pongState.aiY : pongState.playerY;
+
+            if (pongLocalPredictedPaddleY === null) {
+                pongLocalPredictedPaddleY = ownServerY;
+            }
 
             if (role === 'left') {
-                pongDisplayState.playerY = clampPongY(pongDisplayState.playerY + (inputDirection * pongState.playerSpeed * delta));
-                pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * Math.min(1, delta * 18);
+                pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
+                if (inputDirection === 0) {
+                    pongLocalPredictedPaddleY += (pongState.playerY - pongLocalPredictedPaddleY) * Math.min(1, delta * 7);
+                }
+                pongDisplayState.playerY = pongLocalPredictedPaddleY;
                 pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * paddleSmoothing;
             } else if (role === 'right') {
-                pongDisplayState.aiY = clampPongY(pongDisplayState.aiY + (inputDirection * pongState.playerSpeed * delta));
-                pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * Math.min(1, delta * 18);
+                pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
+                if (inputDirection === 0) {
+                    pongLocalPredictedPaddleY += (pongState.aiY - pongLocalPredictedPaddleY) * Math.min(1, delta * 7);
+                }
+                pongDisplayState.aiY = pongLocalPredictedPaddleY;
                 pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * paddleSmoothing;
             } else {
                 pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * paddleSmoothing;
@@ -5738,6 +5758,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pongLastFrame = 0;
         pongRenderLastFrame = 0;
         pongDisplayState = null;
+        pongLocalPredictedPaddleY = null;
         pongLastNetworkSyncAt = 0;
         pongCountdownEndsAt = 0;
         updatePongHud();
