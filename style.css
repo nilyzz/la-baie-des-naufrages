@@ -6326,6 +6326,454 @@ button:hover {
     }
 }
 
+@media screen and (max-width: 430px) and (pointer: coarse) {
+    body {
+        min-height: 100dvh;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .background-glow {
+        width: 220px;
+        height: 220px;
+        filter: blur(72px);
+    }
+
+    .site-header {
+        padding-top: env(safe-area-inset-top, 0);
+    }
+
+    .site-header-inner {
+        width: min(100% - 20px, 420px);
+        min-height: auto;
+        padding: 10px 0 12px;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .brand-mark {
+        position: static;
+        transform: none;
+        max-width: none;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .brand-logo {
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+    }
+
+    .brand-copy {
+        text-align: left;
+    }
+
+    .brand-copy .eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+    }
+
+    .brand-copy h2 {
+        font-size: 1.28rem;
+        line-height: 1.05;
+        margin: 0;
+    }
+
+    .nav-tabs {
+        width: 100%;
+        justify-content: stretch;
+        gap: 8px;
+    }
+
+    .nav-button {
+        min-height: 46px;
+        padding: 10px 12px;
+        font-size: 0.98rem;
+        border-radius: 16px;
+        flex: 1 1 calc(50% - 8px);
+    }
+
+    .page-actions {
+        top: auto;
+        right: 10px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0));
+        left: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        z-index: 80;
+    }
+
+    .page-action-button {
+        justify-content: center;
+        min-height: 46px;
+        padding-inline: 12px;
+        border-radius: 16px;
+        font-size: 0.94rem;
+    }
+
+    .app-shell {
+        width: min(100% - 16px, 430px);
+        min-height: 100dvh;
+        height: auto;
+        padding: calc(14px + env(safe-area-inset-top, 0)) 0 calc(92px + env(safe-area-inset-bottom, 0));
+        display: block;
+    }
+
+    .app-view,
+    #gamesView,
+    #mathView,
+    #musicView {
+        height: auto;
+        min-height: calc(100dvh - 20px);
+        padding-top: 154px;
+        overflow: visible;
+    }
+
+    .view-active {
+        overflow: visible;
+    }
+
+    .login-card,
+    .services-shell,
+    .service-home-card,
+    .hero,
+    .info-card,
+    .section-header-card,
+    .form-card,
+    .manage-list-card,
+    .modal-card {
+        padding: 18px;
+        border-radius: 22px;
+    }
+
+    .services-copy {
+        margin-bottom: 20px;
+        transform: none;
+    }
+
+    .services-copy h1 {
+        font-size: clamp(2rem, 11vw, 2.8rem);
+        line-height: 0.96;
+    }
+
+    .services-copy .intro {
+        font-size: 0.98rem;
+    }
+
+    .service-grid {
+        gap: 14px;
+    }
+
+    .service-card {
+        padding: 12px 10px 14px;
+        gap: 10px;
+    }
+
+    .service-card-art {
+        width: min(100%, 180px);
+        border-radius: 22px;
+        padding: 14px;
+    }
+
+    .service-card-title {
+        font-size: 1.38rem;
+    }
+
+    .service-card-subtitle {
+        font-size: 0.92rem;
+    }
+
+    .section-header-card,
+    .service-home-card,
+    .games-home-card,
+    .math-panel,
+    .music-panel {
+        width: 100%;
+    }
+
+    .section-header-card h3 {
+        font-size: 1.3rem;
+    }
+
+    .section-header-card p {
+        font-size: 0.95rem;
+    }
+
+    .games-layout,
+    .math-layout,
+    .music-layout {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        display: block;
+    }
+
+    .games-panel.games-panel-active {
+        height: auto;
+    }
+
+    .games-home-card {
+        padding: 16px 14px 18px;
+        overflow: visible;
+    }
+
+    .games-home-copy {
+        margin-bottom: 16px;
+    }
+
+    .games-home-copy h3 {
+        font-size: 1.32rem;
+    }
+
+    .games-home-grid {
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .game-home-tile {
+        min-height: 132px;
+        aspect-ratio: auto;
+        border-radius: 20px;
+        padding: 12px 8px;
+        gap: 6px;
+    }
+
+    .game-home-art {
+        width: 50px;
+        height: 50px;
+        border-radius: 16px;
+    }
+
+    .game-home-title {
+        font-size: 0.92rem;
+        line-height: 1.15;
+    }
+
+    .multiplayer-lobby-card {
+        width: 100%;
+        margin-bottom: 16px;
+        padding: 14px 12px;
+        border-radius: 24px;
+    }
+
+    .multiplayer-lobby-copy h4 {
+        font-size: 1.22rem;
+    }
+
+    .multiplayer-lobby-copy p,
+    .multiplayer-lobby-status,
+    .multiplayer-entry-panel-copy p:last-child {
+        font-size: 0.93rem;
+    }
+
+    .multiplayer-entry-switch {
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .multiplayer-entry-button {
+        min-height: 46px;
+        border-radius: 16px;
+        font-size: 0.95rem;
+    }
+
+    .multiplayer-entry-panel {
+        padding: 10px;
+        border-radius: 18px;
+    }
+
+    .multiplayer-entry-fields,
+    .multiplayer-entry-fields-join,
+    .multiplayer-entry-actions {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+
+    .multiplayer-entry-actions {
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    .multiplayer-room-inline {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .multiplayer-lobby-field input,
+    .multiplayer-lobby-field select,
+    .primary-button,
+    .secondary-button {
+        min-height: 46px;
+    }
+
+    .multiplayer-lobby-player-list {
+        gap: 6px;
+    }
+
+    .multiplayer-lobby-player-pill {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .card {
+        border-radius: 22px;
+    }
+
+    .minesweeper-card,
+    .snake-card,
+    .pong-card,
+    .sudoku-card,
+    .game-2048-card,
+    .aim-card,
+    .memory-card,
+    .tictactoe-card,
+    .battleship-card,
+    .tetris-card,
+    .pacman-card,
+    .solitaire-card,
+    .connect4-card,
+    .rhythm-card,
+    .flappy-card,
+    .flowfree-card,
+    .magicsort-card,
+    .mentalmath-card,
+    .candycrush-card,
+    .harborrun-card,
+    .stacker-card,
+    .coinclicker-card,
+    .chess-card,
+    .checkers-card,
+    .airhockey-card,
+    .reaction-card,
+    .baieberry-card,
+    .breakout-card {
+        padding: 14px 12px 16px;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .minesweeper-topbar,
+    .snake-topbar,
+    .pong-topbar,
+    .sudoku-topbar,
+    .game-2048-topbar,
+    .aim-topbar,
+    .memory-topbar,
+    .tictactoe-topbar,
+    .battleship-topbar,
+    .tetris-topbar,
+    .pacman-topbar,
+    .solitaire-topbar,
+    .connect4-topbar,
+    .rhythm-topbar,
+    .flappy-topbar,
+    .flowfree-topbar,
+    .magicsort-topbar,
+    .mentalmath-topbar,
+    .candycrush-topbar,
+    .harborrun-topbar,
+    .stacker-topbar,
+    .coinclicker-topbar,
+    .chess-topbar,
+    .checkers-topbar,
+    .airhockey-topbar,
+    .reaction-topbar,
+    .baieberry-topbar,
+    .breakout-topbar {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .pong-mode-switch,
+    .chess-mode-switch,
+    .checkers-mode-switch,
+    .airhockey-mode-switch {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .minesweeper-board,
+    .snake-board,
+    .sudoku-board,
+    .game-2048-board,
+    .aim-board,
+    .memory-board,
+    .tictactoe-board,
+    .connect4-board,
+    .chess-board,
+    .checkers-board,
+    .pong-board,
+    .airhockey-board,
+    .breakout-canvas,
+    .baieberry-stage {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .pong-board {
+        width: 100%;
+        min-height: 210px;
+    }
+
+    .airhockey-board {
+        width: 100%;
+        min-height: 220px;
+    }
+
+    .chess-board,
+    .checkers-board {
+        gap: 2px;
+    }
+
+    .chess-cell,
+    .checkers-cell {
+        border-radius: 10px;
+    }
+
+    .chess-piece {
+        font-size: clamp(1.25rem, 7vw, 1.7rem);
+    }
+
+    .checkers-piece {
+        width: 68%;
+        height: 68%;
+    }
+
+    .connect4-board {
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .tictactoe-board {
+        gap: 8px;
+        padding: 6px;
+    }
+
+    .memory-board {
+        gap: 7px;
+    }
+
+    .battleship-layout,
+    .coinclicker-layout,
+    .math-tool-grid,
+    .converter-row,
+    .panel-grid,
+    .catalog-grid,
+    .management-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-card {
+        width: min(100%, 360px);
+    }
+}
+
 .coinclicker-card,
 .chess-card,
 .checkers-card,
