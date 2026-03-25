@@ -11,6 +11,12 @@ const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const CORS_ORIGIN = parseCorsOrigin(process.env.CORS_ORIGIN);
 const CONNECT4_ROWS = 6;
 const CONNECT4_COLS = 7;
+const CHESS_SIZE = 8;
+const CHECKERS_SIZE = 8;
+const CHECKERS_DIRECTIONS = {
+  red: [[-1, -1], [-1, 1]],
+  black: [[1, -1], [1, 1]]
+};
 const MAX_PLAYERS_BY_GAME = {
   ticTacToe: 2,
   connect4: 2,
@@ -108,6 +114,61 @@ function createConnect4State() {
   };
 }
 
+function createChessPiece(type, color) {
+  return { type, color };
+}
+
+function createInitialChessBoard() {
+  const board = Array.from({ length: CHESS_SIZE }, () => Array.from({ length: CHESS_SIZE }, () => null));
+  const backRank = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
+
+  backRank.forEach((type, col) => {
+    board[0][col] = createChessPiece(type, 'black');
+    board[1][col] = createChessPiece('pawn', 'black');
+    board[6][col] = createChessPiece('pawn', 'white');
+    board[7][col] = createChessPiece(type, 'white');
+  });
+
+  return board;
+}
+
+function createChessState() {
+  return {
+    board: createInitialChessBoard(),
+    turn: 'white',
+    winner: null,
+    round: 1
+  };
+}
+
+function createInitialCheckersBoard() {
+  const board = Array.from({ length: CHECKERS_SIZE }, () => Array.from({ length: CHECKERS_SIZE }, () => null));
+
+  for (let row = 0; row < CHECKERS_SIZE; row += 1) {
+    for (let col = 0; col < CHECKERS_SIZE; col += 1) {
+      if ((row + col) % 2 === 0) {
+        continue;
+      }
+      if (row < 3) {
+        board[row][col] = { color: 'black', king: false };
+      } else if (row > 4) {
+        board[row][col] = { color: 'red', king: false };
+      }
+    }
+  }
+
+  return board;
+}
+
+function createCheckersState() {
+  return {
+    board: createInitialCheckersBoard(),
+    turn: 'red',
+    winner: null,
+    round: 1
+  };
+}
+
 function resetTicTacToeRound(room, keepScores = true) {
   const previousScores = keepScores && room.gameState?.scores
     ? room.gameState.scores
@@ -136,6 +197,24 @@ function resetConnect4Round(room, keepScores = true) {
     winningLine: null,
     lastMove: null,
     scores: previousScores,
+    round: Number(room.gameState?.round || 0) + 1
+  };
+}
+
+function resetChessRound(room) {
+  room.gameState = {
+    board: createInitialChessBoard(),
+    turn: 'white',
+    winner: null,
+    round: Number(room.gameState?.round || 0) + 1
+  };
+}
+
+function resetCheckersRound(room) {
+  room.gameState = {
+    board: createInitialCheckersBoard(),
+    turn: 'red',
+    winner: null,
     round: Number(room.gameState?.round || 0) + 1
   };
 }
@@ -170,6 +249,38 @@ function getConnect4PlayerSymbol(room, socketId) {
   }
 
   return null;
+}
+
+function getChessPlayerColor(room, socketId) {
+  const playerIndex = room.players.findIndex((player) => player.id === socketId);
+
+  if (playerIndex === 0) {
+    return 'white';
+  }
+
+  if (playerIndex === 1) {
+    return 'black';
+  }
+
+  return null;
+}
+
+function getCheckersPlayerColor(room, socketId) {
+  const playerIndex = room.players.findIndex((player) => player.id === socketId);
+
+  if (playerIndex === 0) {
+    return 'red';
+  }
+
+  if (playerIndex === 1) {
+    return 'black';
+  }
+
+  return null;
+}
+
+function isInsideGameGrid(row, col, size = 8) {
+  return row >= 0 && row < size && col >= 0 && col < size;
 }
 
 function getConnect4DropRow(board, col) {
@@ -221,6 +332,182 @@ function getConnect4Winner(board, token) {
   return null;
 }
 
+function getChessMoves(state, row, col) {
+  const piece = state?.board[row][col];
+
+  if (!piece || piece.color !== state.turn || state.winner) {
+    return [];
+  }
+
+  const moves = [];
+  const addMove = (nextRow, nextCol) => {
+    if (!isInsideGameGrid(nextRow, nextCol, CHESS_SIZE)) {
+      return;
+    }
+
+    const target = state.board[nextRow][nextCol];
+    if (!target || target.color !== piece.color) {
+      moves.push({ row: nextRow, col: nextCol });
+    }
+  };
+  const addSlideMoves = (directions) => {
+    directions.forEach(([rowStep, colStep]) => {
+      let nextRow = row + rowStep;
+      let nextCol = col + colStep;
+
+      while (isInsideGameGrid(nextRow, nextCol, CHESS_SIZE)) {
+        const target = state.board[nextRow][nextCol];
+
+        if (!target) {
+          moves.push({ row: nextRow, col: nextCol });
+        } else {
+          if (target.color !== piece.color) {
+            moves.push({ row: nextRow, col: nextCol });
+          }
+          break;
+        }
+
+        nextRow += rowStep;
+        nextCol += colStep;
+      }
+    });
+  };
+
+  if (piece.type === 'pawn') {
+    const direction = piece.color === 'white' ? -1 : 1;
+    if (isInsideGameGrid(row + direction, col, CHESS_SIZE) && !state.board[row + direction][col]) {
+      moves.push({ row: row + direction, col });
+      const doubleRow = row + direction * 2;
+      const startRow = piece.color === 'white' ? 6 : 1;
+      if (row === startRow && !state.board[doubleRow][col]) {
+        moves.push({ row: doubleRow, col });
+      }
+    }
+
+    [-1, 1].forEach((deltaCol) => {
+      const attackRow = row + direction;
+      const attackCol = col + deltaCol;
+      if (!isInsideGameGrid(attackRow, attackCol, CHESS_SIZE)) {
+        return;
+      }
+      const target = state.board[attackRow][attackCol];
+      if (target && target.color !== piece.color) {
+        moves.push({ row: attackRow, col: attackCol });
+      }
+    });
+  }
+
+  if (piece.type === 'rook') {
+    addSlideMoves([[1, 0], [-1, 0], [0, 1], [0, -1]]);
+  }
+
+  if (piece.type === 'bishop') {
+    addSlideMoves([[1, 1], [1, -1], [-1, 1], [-1, -1]]);
+  }
+
+  if (piece.type === 'queen') {
+    addSlideMoves([[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]);
+  }
+
+  if (piece.type === 'knight') {
+    [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]].forEach(([rowStep, colStep]) => addMove(row + rowStep, col + colStep));
+  }
+
+  if (piece.type === 'king') {
+    [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]].forEach(([rowStep, colStep]) => addMove(row + rowStep, col + colStep));
+  }
+
+  return moves;
+}
+
+function getChessAllMoves(state, color) {
+  const moves = [];
+
+  for (let row = 0; row < CHESS_SIZE; row += 1) {
+    for (let col = 0; col < CHESS_SIZE; col += 1) {
+      const piece = state.board[row][col];
+      if (!piece || piece.color !== color) {
+        continue;
+      }
+
+      const legalMoves = getChessMoves(state, row, col);
+      legalMoves.forEach((move) => {
+        moves.push({
+          fromRow: row,
+          fromCol: col,
+          toRow: move.row,
+          toCol: move.col,
+          piece,
+          target: state.board[move.row][move.col]
+        });
+      });
+    }
+  }
+
+  return moves;
+}
+
+function getCheckersMoves(state, row, col) {
+  const piece = state?.board[row][col];
+
+  if (!piece || piece.color !== state.turn || state.winner) {
+    return [];
+  }
+
+  const directions = piece.king ? [...CHECKERS_DIRECTIONS.red, ...CHECKERS_DIRECTIONS.black] : CHECKERS_DIRECTIONS[piece.color];
+  const moves = [];
+
+  directions.forEach(([rowStep, colStep]) => {
+    const nextRow = row + rowStep;
+    const nextCol = col + colStep;
+    if (!isInsideGameGrid(nextRow, nextCol, CHECKERS_SIZE)) {
+      return;
+    }
+
+    const target = state.board[nextRow][nextCol];
+    if (!target) {
+      moves.push({ row: nextRow, col: nextCol, capture: null });
+      return;
+    }
+
+    if (target.color === piece.color) {
+      return;
+    }
+
+    const jumpRow = nextRow + rowStep;
+    const jumpCol = nextCol + colStep;
+    if (isInsideGameGrid(jumpRow, jumpCol, CHECKERS_SIZE) && !state.board[jumpRow][jumpCol]) {
+      moves.push({ row: jumpRow, col: jumpCol, capture: { row: nextRow, col: nextCol } });
+    }
+  });
+
+  return moves;
+}
+
+function getCheckersAllMoves(state, color) {
+  const moves = [];
+
+  for (let row = 0; row < CHECKERS_SIZE; row += 1) {
+    for (let col = 0; col < CHECKERS_SIZE; col += 1) {
+      const piece = state.board[row][col];
+      if (!piece || piece.color !== color) {
+        continue;
+      }
+
+      getCheckersMoves(state, row, col).forEach((move) => {
+        moves.push({
+          fromRow: row,
+          fromCol: col,
+          ...move,
+          piece
+        });
+      });
+    }
+  }
+
+  return moves;
+}
+
 function buildRoomPayload(room, socketId = null) {
   return {
     code: room.code,
@@ -235,9 +522,13 @@ function buildRoomPayload(room, socketId = null) {
       isYou: player.id === socketId,
       symbol: room.gameId === 'ticTacToe'
         ? getTicTacToePlayerSymbol(room, player.id)
-        : (room.gameId === 'connect4' ? getConnect4PlayerSymbol(room, player.id) : null)
+        : (room.gameId === 'connect4'
+          ? getConnect4PlayerSymbol(room, player.id)
+          : (room.gameId === 'chess'
+            ? getChessPlayerColor(room, player.id)
+            : (room.gameId === 'checkers' ? getCheckersPlayerColor(room, player.id) : null)))
     })),
-    gameState: ['ticTacToe', 'connect4'].includes(room.gameId) ? room.gameState : null
+    gameState: ['ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null
   };
 }
 
@@ -267,6 +558,10 @@ function removePlayerFromRoom(room, socketId) {
     resetTicTacToeRound(room, false);
   } else if (room.gameId === 'connect4') {
     resetConnect4Round(room, false);
+  } else if (room.gameId === 'chess') {
+    resetChessRound(room);
+  } else if (room.gameId === 'checkers') {
+    resetCheckersRound(room);
   }
 
   emitRoomUpdate(room);
@@ -286,7 +581,11 @@ app.post('/api/rooms', (request, response) => {
       players: [],
       gameState: String(request.body?.gameId || 'lobby').trim() === 'ticTacToe'
         ? createTicTacToeState()
-        : (String(request.body?.gameId || 'lobby').trim() === 'connect4' ? createConnect4State() : null)
+        : (String(request.body?.gameId || 'lobby').trim() === 'connect4'
+          ? createConnect4State()
+          : (String(request.body?.gameId || 'lobby').trim() === 'chess'
+            ? createChessState()
+            : (String(request.body?.gameId || 'lobby').trim() === 'checkers' ? createCheckersState() : null)))
     };
 
     rooms.set(roomCode, room);
@@ -340,6 +639,10 @@ io.on('connection', (socket) => {
       resetTicTacToeRound(room, false);
     } else if (room.gameId === 'connect4') {
       resetConnect4Round(room, false);
+    } else if (room.gameId === 'chess') {
+      resetChessRound(room);
+    } else if (room.gameId === 'checkers') {
+      resetCheckersRound(room);
     }
 
     socket.join(room.code);
@@ -376,6 +679,10 @@ io.on('connection', (socket) => {
       resetTicTacToeRound(room, false);
     } else if (room.gameId === 'connect4') {
       resetConnect4Round(room, false);
+    } else if (room.gameId === 'chess') {
+      resetChessRound(room);
+    } else if (room.gameId === 'checkers') {
+      resetCheckersRound(room);
     }
     socket.join(room.code);
     socket.data.roomCode = room.code;
@@ -537,6 +844,142 @@ io.on('connection', (socket) => {
     }
 
     resetConnect4Round(room, true);
+    emitRoomUpdate(room);
+  });
+
+  socket.on('chess:move', ({ fromRow, fromCol, toRow, toCol }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'chess') {
+      socket.emit('room:error', { message: 'Aucune partie d echecs active.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      return;
+    }
+
+    const playerColor = getChessPlayerColor(room, socket.id);
+
+    if (!playerColor || playerColor !== room.gameState.turn || room.gameState.winner) {
+      return;
+    }
+
+    const movingPiece = room.gameState.board[fromRow]?.[fromCol];
+    if (!movingPiece || movingPiece.color !== room.gameState.turn) {
+      return;
+    }
+
+    const legalMove = getChessMoves(room.gameState, fromRow, fromCol).find((candidate) => candidate.row === toRow && candidate.col === toCol);
+    if (!legalMove) {
+      return;
+    }
+
+    const nextPiece = { ...movingPiece };
+    const capturedPiece = room.gameState.board[toRow][toCol];
+    room.gameState.board[toRow][toCol] = nextPiece;
+    room.gameState.board[fromRow][fromCol] = null;
+
+    if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
+      room.gameState.board[toRow][toCol] = createChessPiece('queen', nextPiece.color);
+    }
+
+    if (capturedPiece?.type === 'king') {
+      room.gameState.winner = nextPiece.color;
+    } else {
+      room.gameState.turn = room.gameState.turn === 'white' ? 'black' : 'white';
+      if (!getChessAllMoves(room.gameState, room.gameState.turn).length) {
+        room.gameState.winner = nextPiece.color;
+      }
+    }
+
+    emitRoomUpdate(room);
+  });
+
+  socket.on('chess:restart', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'chess') {
+      return;
+    }
+
+    if (!room.players.some((player) => player.id === socket.id)) {
+      return;
+    }
+
+    resetChessRound(room);
+    emitRoomUpdate(room);
+  });
+
+  socket.on('checkers:move', ({ fromRow, fromCol, toRow, toCol }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'checkers') {
+      socket.emit('room:error', { message: 'Aucune partie de dames active.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      return;
+    }
+
+    const playerColor = getCheckersPlayerColor(room, socket.id);
+
+    if (!playerColor || playerColor !== room.gameState.turn || room.gameState.winner) {
+      return;
+    }
+
+    const movingPiece = room.gameState.board[fromRow]?.[fromCol];
+    if (!movingPiece || movingPiece.color !== room.gameState.turn) {
+      return;
+    }
+
+    const move = getCheckersMoves(room.gameState, fromRow, fromCol).find((candidate) => candidate.row === toRow && candidate.col === toCol);
+    if (!move) {
+      return;
+    }
+
+    const nextPiece = { ...movingPiece };
+    room.gameState.board[fromRow][fromCol] = null;
+    room.gameState.board[toRow][toCol] = nextPiece;
+
+    if (move.capture) {
+      room.gameState.board[move.capture.row][move.capture.col] = null;
+    }
+
+    if ((nextPiece.color === 'red' && toRow === 0) || (nextPiece.color === 'black' && toRow === CHECKERS_SIZE - 1)) {
+      nextPiece.king = true;
+    }
+
+    const redCount = room.gameState.board.flat().filter((item) => item?.color === 'red').length;
+    const blackCount = room.gameState.board.flat().filter((item) => item?.color === 'black').length;
+
+    if (!redCount || !blackCount) {
+      room.gameState.winner = redCount ? 'red' : 'black';
+    } else {
+      room.gameState.turn = room.gameState.turn === 'red' ? 'black' : 'red';
+      if (!getCheckersAllMoves(room.gameState, room.gameState.turn).length) {
+        room.gameState.winner = nextPiece.color;
+      }
+    }
+
+    emitRoomUpdate(room);
+  });
+
+  socket.on('checkers:restart', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'checkers') {
+      return;
+    }
+
+    if (!room.players.some((player) => player.id === socket.id)) {
+      return;
+    }
+
+    resetCheckersRound(room);
     emitRoomUpdate(room);
   });
 

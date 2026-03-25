@@ -530,6 +530,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let ticTacToeLastFinishedStateKey = '';
     let connect4LastFinishedStateKey = '';
     let connect4LastMoveAnimationKey = '';
+    let chessLastFinishedStateKey = '';
+    let checkersLastFinishedStateKey = '';
     let gameBoard = [];
     let flagsPlaced = 0;
     let timer = 0;
@@ -1974,6 +1976,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 syncMultiplayerTicTacToeState();
                 syncMultiplayerConnect4State();
+                syncMultiplayerChessState();
+                syncMultiplayerCheckersState();
                 updateMultiplayerLobby();
             });
 
@@ -1981,6 +1985,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 multiplayerActiveRoom = room;
                 syncMultiplayerTicTacToeState();
                 syncMultiplayerConnect4State();
+                syncMultiplayerChessState();
+                syncMultiplayerCheckersState();
                 updateMultiplayerLobby();
             });
 
@@ -1992,6 +1998,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 multiplayerActiveRoom = null;
                 connect4LastFinishedStateKey = '';
                 ticTacToeLastFinishedStateKey = '';
+                chessLastFinishedStateKey = '';
+                checkersLastFinishedStateKey = '';
                 multiplayerCurrentRoomCode.textContent = '-';
                 multiplayerLobbyPlayersBlock?.classList.add('hidden');
                 closeGameOverModal();
@@ -8485,6 +8493,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeChess() {
+        if (isMultiplayerChessActive()) {
+            syncMultiplayerChessState();
+            return;
+        }
+
         if (chessAiTimeout) {
             window.clearTimeout(chessAiTimeout);
             chessAiTimeout = null;
@@ -8596,17 +8609,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderChess() {
         const legalMoves = chessSelectedSquare ? getChessMoves(chessSelectedSquare.row, chessSelectedSquare.col) : [];
-        chessTurnDisplay.textContent = chessState.turn === 'white'
-            ? (chessMode === 'solo' ? 'Toi' : 'Blancs')
-            : (chessMode === 'solo' ? 'IA' : 'Noirs');
-        chessStatusDisplay.textContent = chessState.winner
-            ? `${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Toi' : 'Blancs') : (chessMode === 'solo' ? 'IA' : 'Noirs')} gagnent`
-            : (chessMode === 'solo' && chessState.turn === 'black' ? 'IA joue' : 'En cours');
-        chessHelpText.textContent = chessMode === 'solo'
-            ? 'Mode 1 joueur: blancs contre IA. Promotion en reine, sans roque.'
-            : 'Mode 2 joueurs: blancs et noirs en tour par tour. Promotion en reine, sans roque.';
+        if (isMultiplayerChessActive()) {
+            const currentRole = getMultiplayerChessRole();
+            chessTurnDisplay.textContent = chessState.turn === currentRole ? 'Toi' : 'Adversaire';
+            chessStatusDisplay.textContent = chessState.winner
+                ? (chessState.winner === currentRole ? 'Victoire' : 'Defaite')
+                : 'En cours';
+            chessHelpText.textContent = chessState.winner
+                ? (chessState.winner === currentRole ? 'Tu controles l echiquier.' : 'L adversaire controle l echiquier.')
+                : (chessState.turn === currentRole ? 'A toi de jouer.' : 'Au tour de l adversaire.');
+        } else {
+            chessTurnDisplay.textContent = chessState.turn === 'white'
+                ? (chessMode === 'solo' ? 'Toi' : 'Blancs')
+                : (chessMode === 'solo' ? 'IA' : 'Noirs');
+            chessStatusDisplay.textContent = chessState.winner
+                ? `${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Toi' : 'Blancs') : (chessMode === 'solo' ? 'IA' : 'Noirs')} gagnent`
+                : (chessMode === 'solo' && chessState.turn === 'black' ? 'IA joue' : 'En cours');
+            chessHelpText.textContent = chessMode === 'solo'
+                ? 'Mode 1 joueur: blancs contre IA. Promotion en reine, sans roque.'
+                : 'Mode 2 joueurs: blancs et noirs en tour par tour. Promotion en reine, sans roque.';
+        }
         chessModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.chessMode === chessMode);
+            button.disabled = isMultiplayerChessActive();
         });
         chessBoard.innerHTML = chessState.board.map((rowItems, row) => rowItems.map((piece, col) => {
             const dark = (row + col) % 2 === 1;
@@ -8629,6 +8654,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleChessCellClick(row, col) {
+        if (isMultiplayerChessActive()) {
+            if (chessState.winner || chessState.turn !== getMultiplayerChessRole()) {
+                return;
+            }
+
+            const piece = chessState.board[row][col];
+            if (piece && piece.color === chessState.turn) {
+                chessSelectedSquare = { row, col };
+                renderChess();
+                return;
+            }
+
+            if (!chessSelectedSquare) {
+                return;
+            }
+
+            const move = getChessMoves(chessSelectedSquare.row, chessSelectedSquare.col).find((candidate) => candidate.row === row && candidate.col === col);
+            if (!move) {
+                chessSelectedSquare = null;
+                renderChess();
+                return;
+            }
+
+            multiplayerSocket?.emit('chess:move', {
+                fromRow: chessSelectedSquare.row,
+                fromCol: chessSelectedSquare.col,
+                toRow: row,
+                toCol: col
+            });
+            return;
+        }
+
         if (chessState.winner || isChessAiTurn()) {
             return;
         }
@@ -8782,6 +8839,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setChessMode(nextMode) {
+        if (isMultiplayerChessActive()) {
+            setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+            return;
+        }
+
         if (!nextMode || nextMode === chessMode) {
             return;
         }
@@ -8810,6 +8872,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeCheckers() {
+        if (isMultiplayerCheckersActive()) {
+            syncMultiplayerCheckersState();
+            return;
+        }
+
         if (checkersAiTimeout) {
             window.clearTimeout(checkersAiTimeout);
             checkersAiTimeout = null;
@@ -8868,15 +8935,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const legalMoves = checkersSelectedSquare ? getCheckersMoves(checkersSelectedSquare.row, checkersSelectedSquare.col) : [];
         const blackCount = checkersState.board.flat().filter((piece) => piece?.color === 'black').length;
         const redCount = checkersState.board.flat().filter((piece) => piece?.color === 'red').length;
-        checkersTurnDisplay.textContent = checkersState.winner
-            ? `${checkersState.winner === 'red' ? (checkersMode === 'solo' ? 'Toi' : 'Rouges') : (checkersMode === 'solo' ? 'IA' : 'Noirs')} gagnent`
-            : (checkersState.turn === 'red' ? (checkersMode === 'solo' ? 'Toi' : 'Rouges') : (checkersMode === 'solo' ? 'IA' : 'Noirs'));
+        checkersTurnDisplay.textContent = isMultiplayerCheckersActive()
+            ? (checkersState.winner ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Victoire' : 'Defaite') : (checkersState.turn === getMultiplayerCheckersRole() ? 'Toi' : 'Adversaire'))
+            : (checkersState.winner
+                ? `${checkersState.winner === 'red' ? (checkersMode === 'solo' ? 'Toi' : 'Rouges') : (checkersMode === 'solo' ? 'IA' : 'Noirs')} gagnent`
+                : (checkersState.turn === 'red' ? (checkersMode === 'solo' ? 'Toi' : 'Rouges') : (checkersMode === 'solo' ? 'IA' : 'Noirs')));
         checkersCountDisplay.textContent = `${blackCount}/${redCount}`;
-        checkersHelpText.textContent = checkersMode === 'solo'
-            ? 'Mode 1 joueur: rouges contre IA. Roi a la promotion.'
-            : 'Mode 2 joueurs: rouges et noirs en tour par tour. Roi a la promotion.';
+        checkersHelpText.textContent = isMultiplayerCheckersActive()
+            ? (checkersState.winner
+                ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Tu remportes la partie.' : 'L adversaire remporte la partie.')
+                : (checkersState.turn === getMultiplayerCheckersRole() ? 'A toi de jouer.' : 'Au tour de l adversaire.'))
+            : (checkersMode === 'solo'
+                ? 'Mode 1 joueur: rouges contre IA. Roi a la promotion.'
+                : 'Mode 2 joueurs: rouges et noirs en tour par tour. Roi a la promotion.');
         checkersModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.checkersMode === checkersMode);
+            button.disabled = isMultiplayerCheckersActive();
         });
         checkersBoard.innerHTML = checkersState.board.map((rowItems, row) => rowItems.map((piece, col) => {
             const dark = (row + col) % 2 === 1;
@@ -8891,6 +8965,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleCheckersCellClick(row, col) {
+        if (isMultiplayerCheckersActive()) {
+            if (checkersState.winner || checkersState.turn !== getMultiplayerCheckersRole()) {
+                return;
+            }
+
+            const piece = checkersState.board[row][col];
+            if (piece && piece.color === checkersState.turn) {
+                checkersSelectedSquare = { row, col };
+                renderCheckers();
+                return;
+            }
+
+            if (!checkersSelectedSquare) {
+                return;
+            }
+
+            const move = getCheckersMoves(checkersSelectedSquare.row, checkersSelectedSquare.col).find((candidate) => candidate.row === row && candidate.col === col);
+            if (!move) {
+                checkersSelectedSquare = null;
+                renderCheckers();
+                return;
+            }
+
+            multiplayerSocket?.emit('checkers:move', {
+                fromRow: checkersSelectedSquare.row,
+                fromCol: checkersSelectedSquare.col,
+                toRow: row,
+                toCol: col
+            });
+            return;
+        }
+
         if (checkersState.winner || isCheckersAiTurn()) {
             return;
         }
@@ -9034,12 +9140,109 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setCheckersMode(nextMode) {
+        if (isMultiplayerCheckersActive()) {
+            setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+            return;
+        }
+
         if (!nextMode || nextMode === checkersMode) {
             return;
         }
 
         checkersMode = nextMode;
         initializeCheckers();
+    }
+
+    function isMultiplayerChessActive() {
+        return multiplayerActiveRoom?.gameId === 'chess' && Boolean(multiplayerActiveRoom?.gameState);
+    }
+
+    function getMultiplayerChessRole() {
+        return multiplayerActiveRoom?.players?.find((player) => player.isYou)?.symbol || null;
+    }
+
+    function syncMultiplayerChessState() {
+        if (!isMultiplayerChessActive()) {
+            chessLastFinishedStateKey = '';
+            return;
+        }
+
+        if (chessAiTimeout) {
+            window.clearTimeout(chessAiTimeout);
+            chessAiTimeout = null;
+        }
+
+        chessState = {
+            board: multiplayerActiveRoom.gameState.board.map((row) => row.map((piece) => (piece ? { ...piece } : null))),
+            turn: multiplayerActiveRoom.gameState.turn,
+            winner: multiplayerActiveRoom.gameState.winner
+        };
+        chessSelectedSquare = null;
+        renderChess();
+
+        const nextFinishedKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner || 'none'}`;
+        if (!multiplayerActiveRoom.gameState.winner) {
+            chessLastFinishedStateKey = '';
+            closeGameOverModal();
+            return;
+        }
+
+        if (nextFinishedKey === chessLastFinishedStateKey || activeGameTab !== 'chess') {
+            return;
+        }
+
+        chessLastFinishedStateKey = nextFinishedKey;
+        if (multiplayerActiveRoom.gameState.winner === getMultiplayerChessRole()) {
+            openGameOverModal('Victoire', 'Tu remportes cette partie d echecs en ligne.');
+        } else {
+            openGameOverModal('C est perdu', 'L adversaire remporte cette partie d echecs.');
+        }
+    }
+
+    function isMultiplayerCheckersActive() {
+        return multiplayerActiveRoom?.gameId === 'checkers' && Boolean(multiplayerActiveRoom?.gameState);
+    }
+
+    function getMultiplayerCheckersRole() {
+        return multiplayerActiveRoom?.players?.find((player) => player.isYou)?.symbol || null;
+    }
+
+    function syncMultiplayerCheckersState() {
+        if (!isMultiplayerCheckersActive()) {
+            checkersLastFinishedStateKey = '';
+            return;
+        }
+
+        if (checkersAiTimeout) {
+            window.clearTimeout(checkersAiTimeout);
+            checkersAiTimeout = null;
+        }
+
+        checkersState = {
+            board: multiplayerActiveRoom.gameState.board.map((row) => row.map((piece) => (piece ? { ...piece } : null))),
+            turn: multiplayerActiveRoom.gameState.turn,
+            winner: multiplayerActiveRoom.gameState.winner
+        };
+        checkersSelectedSquare = null;
+        renderCheckers();
+
+        const nextFinishedKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner || 'none'}`;
+        if (!multiplayerActiveRoom.gameState.winner) {
+            checkersLastFinishedStateKey = '';
+            closeGameOverModal();
+            return;
+        }
+
+        if (nextFinishedKey === checkersLastFinishedStateKey || activeGameTab !== 'checkers') {
+            return;
+        }
+
+        checkersLastFinishedStateKey = nextFinishedKey;
+        if (multiplayerActiveRoom.gameState.winner === getMultiplayerCheckersRole()) {
+            openGameOverModal('Victoire', 'Tu remportes cette partie de dames en ligne.');
+        } else {
+            openGameOverModal('C est perdu', 'L adversaire remporte cette partie de dames.');
+        }
     }
 
     function renderAirHockey() {
@@ -10356,6 +10559,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     chessResetButton?.addEventListener('click', () => {
+        if (isMultiplayerChessActive()) {
+            if (!multiplayerSocket?.connected) {
+                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+                return;
+            }
+
+            multiplayerSocket.emit('chess:restart');
+            return;
+        }
+
         initializeChess();
     });
 
@@ -10377,6 +10590,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     checkersResetButton?.addEventListener('click', () => {
+        if (isMultiplayerCheckersActive()) {
+            if (!multiplayerSocket?.connected) {
+                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+                return;
+            }
+
+            multiplayerSocket.emit('checkers:restart');
+            return;
+        }
+
         initializeCheckers();
     });
 
