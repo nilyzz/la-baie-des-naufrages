@@ -6376,9 +6376,10 @@ button:hover {
     }
 
     .brand-copy h2 {
-        font-size: 1.28rem;
-        line-height: 1.05;
+        font-size: 1.08rem;
+        line-height: 1.02;
         margin: 0;
+        max-width: 170px;
     }
 
     .nav-tabs {
@@ -6389,29 +6390,43 @@ button:hover {
 
     .nav-button {
         min-height: 46px;
-        padding: 10px 12px;
-        font-size: 0.98rem;
+        padding: 10px 10px;
+        font-size: 0.9rem;
         border-radius: 16px;
         flex: 1 1 calc(50% - 8px);
     }
 
     .page-actions {
-        top: auto;
+        top: calc(10px + env(safe-area-inset-top, 0));
         right: 10px;
-        bottom: calc(12px + env(safe-area-inset-bottom, 0));
-        left: 10px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        bottom: auto;
+        left: auto;
+        display: flex;
         gap: 8px;
         z-index: 80;
     }
 
     .page-action-button {
         justify-content: center;
-        min-height: 46px;
+        min-height: 42px;
         padding-inline: 12px;
         border-radius: 16px;
         font-size: 0.94rem;
+    }
+
+    #pageBackButton {
+        max-width: 156px;
+    }
+
+    #logoutButton {
+        min-width: 42px;
+        width: 42px;
+        padding-inline: 0;
+        flex: 0 0 42px;
+    }
+
+    #logoutButton span:last-child {
+        display: none;
     }
 
     .app-shell {
@@ -6430,6 +6445,12 @@ button:hover {
         min-height: calc(100dvh - 20px);
         padding-top: 154px;
         overflow: visible;
+    }
+
+    #loginView {
+        min-height: calc(100dvh - 20px);
+        display: grid;
+        align-items: center;
     }
 
     .view-active {
@@ -6464,26 +6485,27 @@ button:hover {
     }
 
     .service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 14px;
     }
 
     .service-card {
-        padding: 12px 10px 14px;
+        padding: 10px 8px 12px;
         gap: 10px;
     }
 
     .service-card-art {
-        width: min(100%, 180px);
+        width: min(100%, 146px);
         border-radius: 22px;
-        padding: 14px;
+        padding: 12px;
     }
 
     .service-card-title {
-        font-size: 1.38rem;
+        font-size: 1.14rem;
     }
 
     .service-card-subtitle {
-        font-size: 0.92rem;
+        font-size: 0.82rem;
     }
 
     .section-header-card,
@@ -6771,6 +6793,24 @@ button:hover {
 
     .modal-card {
         width: min(100%, 360px);
+    }
+}
+
+@media screen and (max-width: 430px) and (pointer: coarse) and (orientation: portrait) {
+    .app-shell {
+        padding-top: calc(18px + env(safe-area-inset-top, 0));
+    }
+
+    .site-header-inner {
+        width: min(100% - 18px, 420px);
+    }
+
+    .service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .games-home-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
