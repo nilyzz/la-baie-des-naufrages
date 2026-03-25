@@ -13,11 +13,23 @@ const CONNECT4_ROWS = 6;
 const CONNECT4_COLS = 7;
 const CHESS_SIZE = 8;
 const CHECKERS_SIZE = 8;
+const PONG_TARGET_SCORE = 7;
+const PONG_BOARD_WIDTH = 700;
+const PONG_BOARD_HEIGHT = Math.round(PONG_BOARD_WIDTH * 9 / 16);
+const PONG_PADDLE_HEIGHT = 92;
+const PONG_PADDLE_WIDTH = 14;
+const PONG_BALL_SIZE = 16;
+const PONG_PADDLE_OFFSET = 22;
+const PONG_PLAYER_SPEED = 380;
+const PONG_BALL_SPEED_X = 388;
+const PONG_COUNTDOWN_MS = 2320;
+const PONG_TICK_MS = 1000 / 30;
 const CHECKERS_DIRECTIONS = {
   red: [[-1, -1], [-1, 1]],
   black: [[1, -1], [1, 1]]
 };
 const MAX_PLAYERS_BY_GAME = {
+  pong: 2,
   ticTacToe: 2,
   connect4: 2,
   chess: 2,
@@ -169,7 +181,46 @@ function createCheckersState() {
   };
 }
 
+function createPongRoundSnapshot(previousState = null) {
+  const serveDirection = Math.random() > 0.5 ? 1 : -1;
+  const verticalDirection = (Math.random() * 2) - 1;
+  const centerY = (PONG_BOARD_HEIGHT - PONG_PADDLE_HEIGHT) / 2;
+  const nextRound = Number(previousState?.round || 0) + 1;
+
+  return {
+    boardWidth: PONG_BOARD_WIDTH,
+    boardHeight: PONG_BOARD_HEIGHT,
+    paddleHeight: PONG_PADDLE_HEIGHT,
+    paddleWidth: PONG_PADDLE_WIDTH,
+    paddleOffset: PONG_PADDLE_OFFSET,
+    ballSize: PONG_BALL_SIZE,
+    leftY: centerY,
+    rightY: centerY,
+    leftInput: 0,
+    rightInput: 0,
+    ballX: (PONG_BOARD_WIDTH - PONG_BALL_SIZE) / 2,
+    ballY: (PONG_BOARD_HEIGHT - PONG_BALL_SIZE) / 2,
+    ballVelocityX: PONG_BALL_SPEED_X * serveDirection,
+    ballVelocityY: 228 * verticalDirection,
+    leftScore: previousState?.leftScore || 0,
+    rightScore: previousState?.rightScore || 0,
+    running: false,
+    countdownEndsAt: 0,
+    finished: false,
+    winner: null,
+    round: nextRound
+  };
+}
+
+function createPongState() {
+  return createPongRoundSnapshot(null);
+}
+
 function createGameState(gameId) {
+  if (gameId === 'pong') {
+    return createPongState();
+  }
+
   if (gameId === 'ticTacToe') {
     return createTicTacToeState();
   }
@@ -202,6 +253,11 @@ function resetTicTacToeRound(room, keepScores = true) {
     scores: previousScores,
     round: Number(room.gameState?.round || 0) + 1
   };
+}
+
+function resetPongRound(room, keepScores = true) {
+  const previousState = keepScores ? room.gameState : null;
+  room.gameState = createPongRoundSnapshot(previousState);
 }
 
 function resetConnect4Round(room, keepScores = true) {
@@ -240,6 +296,11 @@ function resetCheckersRound(room) {
 }
 
 function resetRoomGame(room, keepScores = false) {
+  if (room.gameId === 'pong') {
+    resetPongRound(room, keepScores);
+    return;
+  }
+
   if (room.gameId === 'ticTacToe') {
     resetTicTacToeRound(room, keepScores);
     return;
@@ -276,6 +337,20 @@ function getTicTacToePlayerSymbol(room, socketId) {
 
   if (playerIndex === 1) {
     return 'skull';
+  }
+
+  return null;
+}
+
+function getPongPlayerRole(room, socketId) {
+  const playerIndex = room.players.findIndex((player) => player.id === socketId);
+
+  if (playerIndex === 0) {
+    return 'left';
+  }
+
+  if (playerIndex === 1) {
+    return 'right';
   }
 
   return null;
@@ -374,6 +449,159 @@ function getConnect4Winner(board, token) {
   }
 
   return null;
+}
+
+function getPongBounceVelocityY(impact) {
+  const clampedImpact = Math.max(-1, Math.min(1, impact));
+  const nextVelocityY = clampedImpact * 305;
+
+  if (Math.abs(nextVelocityY) < 115) {
+    return (clampedImpact >= 0 ? 1 : -1) * 115;
+  }
+
+  return nextVelocityY;
+}
+
+function clampPongPaddleY(y) {
+  return Math.max(0, Math.min(y, PONG_BOARD_HEIGHT - PONG_PADDLE_HEIGHT));
+}
+
+function startPongRound(room) {
+  if (!room?.gameState || room.players.length < 2) {
+    return;
+  }
+
+  room.gameState.running = true;
+  room.gameState.finished = false;
+  room.gameState.winner = null;
+  room.gameState.countdownEndsAt = Date.now() + PONG_COUNTDOWN_MS;
+}
+
+function handlePongScore(room, scoringRole) {
+  if (!room?.gameState) {
+    return;
+  }
+
+  if (scoringRole === 'left') {
+    room.gameState.leftScore += 1;
+  } else {
+    room.gameState.rightScore += 1;
+  }
+
+  if (room.gameState.leftScore >= PONG_TARGET_SCORE || room.gameState.rightScore >= PONG_TARGET_SCORE) {
+    room.gameState.running = false;
+    room.gameState.countdownEndsAt = 0;
+    room.gameState.finished = true;
+    room.gameState.winner = room.gameState.leftScore >= PONG_TARGET_SCORE ? 'left' : 'right';
+    return;
+  }
+
+  resetPongRound(room, true);
+  startPongRound(room);
+}
+
+function updatePongRoom(room, deltaSeconds) {
+  if (!room || room.gameId !== 'pong' || !room.gameState) {
+    return false;
+  }
+
+  if (room.players.length < 2) {
+    if (room.gameState.running || room.gameState.leftInput || room.gameState.rightInput) {
+      room.gameState.running = false;
+      room.gameState.countdownEndsAt = 0;
+      room.gameState.leftInput = 0;
+      room.gameState.rightInput = 0;
+      return true;
+    }
+    return false;
+  }
+
+  if (!room.gameState.running || room.gameState.finished) {
+    return false;
+  }
+
+  let changed = false;
+  const previousLeftY = room.gameState.leftY;
+  const previousRightY = room.gameState.rightY;
+  const previousBallX = room.gameState.ballX;
+  const previousBallY = room.gameState.ballY;
+  const previousVelocityX = room.gameState.ballVelocityX;
+  const previousVelocityY = room.gameState.ballVelocityY;
+
+  room.gameState.leftY = clampPongPaddleY(room.gameState.leftY + (room.gameState.leftInput * PONG_PLAYER_SPEED * deltaSeconds));
+  room.gameState.rightY = clampPongPaddleY(room.gameState.rightY + (room.gameState.rightInput * PONG_PLAYER_SPEED * deltaSeconds));
+
+  if (room.gameState.leftY !== previousLeftY || room.gameState.rightY !== previousRightY) {
+    changed = true;
+  }
+
+  if (room.gameState.countdownEndsAt && Date.now() < room.gameState.countdownEndsAt) {
+    return changed;
+  }
+
+  if (room.gameState.countdownEndsAt) {
+    room.gameState.countdownEndsAt = 0;
+    changed = true;
+  }
+
+  room.gameState.ballX += room.gameState.ballVelocityX * deltaSeconds;
+  room.gameState.ballY += room.gameState.ballVelocityY * deltaSeconds;
+
+  if (room.gameState.ballY < 0) {
+    room.gameState.ballY = Math.abs(room.gameState.ballY);
+    room.gameState.ballVelocityY = Math.abs(room.gameState.ballVelocityY);
+  }
+
+  const maxBallY = PONG_BOARD_HEIGHT - PONG_BALL_SIZE;
+  if (room.gameState.ballY > maxBallY) {
+    room.gameState.ballY = maxBallY - (room.gameState.ballY - maxBallY);
+    room.gameState.ballVelocityY = -Math.abs(room.gameState.ballVelocityY);
+  }
+
+  const leftPaddleX = PONG_PADDLE_OFFSET;
+  const rightPaddleX = PONG_BOARD_WIDTH - PONG_PADDLE_OFFSET - PONG_PADDLE_WIDTH;
+
+  const hitsLeft = room.gameState.ballX <= leftPaddleX + PONG_PADDLE_WIDTH
+    && room.gameState.ballX + PONG_BALL_SIZE >= leftPaddleX
+    && room.gameState.ballY + PONG_BALL_SIZE >= room.gameState.leftY
+    && room.gameState.ballY <= room.gameState.leftY + PONG_PADDLE_HEIGHT
+    && room.gameState.ballVelocityX < 0;
+
+  if (hitsLeft) {
+    const impact = ((room.gameState.ballY + (PONG_BALL_SIZE / 2)) - (room.gameState.leftY + (PONG_PADDLE_HEIGHT / 2))) / (PONG_PADDLE_HEIGHT / 2);
+    room.gameState.ballX = leftPaddleX + PONG_PADDLE_WIDTH;
+    room.gameState.ballVelocityX = Math.abs(room.gameState.ballVelocityX) + 20;
+    room.gameState.ballVelocityY = getPongBounceVelocityY(impact);
+  }
+
+  const hitsRight = room.gameState.ballX + PONG_BALL_SIZE >= rightPaddleX
+    && room.gameState.ballX <= rightPaddleX + PONG_PADDLE_WIDTH
+    && room.gameState.ballY + PONG_BALL_SIZE >= room.gameState.rightY
+    && room.gameState.ballY <= room.gameState.rightY + PONG_PADDLE_HEIGHT
+    && room.gameState.ballVelocityX > 0;
+
+  if (hitsRight) {
+    const impact = ((room.gameState.ballY + (PONG_BALL_SIZE / 2)) - (room.gameState.rightY + (PONG_PADDLE_HEIGHT / 2))) / (PONG_PADDLE_HEIGHT / 2);
+    room.gameState.ballX = rightPaddleX - PONG_BALL_SIZE;
+    room.gameState.ballVelocityX = -(Math.abs(room.gameState.ballVelocityX) + 20);
+    room.gameState.ballVelocityY = getPongBounceVelocityY(impact);
+  }
+
+  if (room.gameState.ballX + PONG_BALL_SIZE < 0) {
+    handlePongScore(room, 'right');
+    return true;
+  }
+
+  if (room.gameState.ballX > PONG_BOARD_WIDTH) {
+    handlePongScore(room, 'left');
+    return true;
+  }
+
+  return changed
+    || room.gameState.ballX !== previousBallX
+    || room.gameState.ballY !== previousBallY
+    || room.gameState.ballVelocityX !== previousVelocityX
+    || room.gameState.ballVelocityY !== previousVelocityY;
 }
 
 function getChessMoves(state, row, col) {
@@ -564,15 +792,17 @@ function buildRoomPayload(room, socketId = null) {
       name: player.name,
       isHost: player.id === room.hostId,
       isYou: player.id === socketId,
-      symbol: room.gameId === 'ticTacToe'
+      symbol: room.gameId === 'pong'
+        ? getPongPlayerRole(room, player.id)
+        : (room.gameId === 'ticTacToe'
         ? getTicTacToePlayerSymbol(room, player.id)
         : (room.gameId === 'connect4'
           ? getConnect4PlayerSymbol(room, player.id)
           : (room.gameId === 'chess'
             ? getChessPlayerColor(room, player.id)
-            : (room.gameId === 'checkers' ? getCheckersPlayerColor(room, player.id) : null)))
+            : (room.gameId === 'checkers' ? getCheckersPlayerColor(room, player.id) : null))))
     })),
-    gameState: ['ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null
+    gameState: ['pong', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null
   };
 }
 
@@ -733,6 +963,51 @@ io.on('connection', (socket) => {
     room.gameState = createGameState(nextGameId);
     resetRoomGame(room, false);
     emitRoomUpdate(room);
+  });
+
+  socket.on('pong:start', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'pong') {
+      socket.emit('room:error', { message: 'Aucune partie de Pong active.' });
+      return;
+    }
+
+    if (room.hostId !== socket.id) {
+      socket.emit('room:error', { message: 'Seul l hote peut lancer le duel.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne le salon.' });
+      return;
+    }
+
+    resetPongRound(room, true);
+    startPongRound(room);
+    emitRoomUpdate(room);
+  });
+
+  socket.on('pong:input', ({ direction }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'pong' || !room.gameState) {
+      return;
+    }
+
+    const role = getPongPlayerRole(room, socket.id);
+    if (!role) {
+      return;
+    }
+
+    const normalizedDirection = Number(direction);
+    const nextDirection = normalizedDirection > 0 ? 1 : (normalizedDirection < 0 ? -1 : 0);
+
+    if (role === 'left') {
+      room.gameState.leftInput = nextDirection;
+    } else {
+      room.gameState.rightInput = nextDirection;
+    }
   });
 
   socket.on('tictactoe:move', ({ index }) => {
@@ -1084,6 +1359,18 @@ io.on('connection', (socket) => {
     removePlayerFromRoom(room, socket.id);
   });
 });
+
+setInterval(() => {
+  rooms.forEach((room) => {
+    if (room.gameId !== 'pong') {
+      return;
+    }
+
+    if (updatePongRoom(room, PONG_TICK_MS / 1000)) {
+      emitRoomUpdate(room);
+    }
+  });
+}, PONG_TICK_MS);
 
 server.listen(PORT, () => {
   console.log(`La Baie des Naufrages multiplayer server listening on port ${PORT}`);

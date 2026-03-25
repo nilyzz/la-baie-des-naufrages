@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'cinema.xlsm'
     ];
     const MULTIPLAYER_SUPPORTED_GAMES = {
+        pong: 'Pong',
         ticTacToe: 'Morpion',
         connect4: 'Puissance 4',
         chess: 'Echecs',
@@ -529,6 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerSelectedGameId = 'ticTacToe';
     let multiplayerEntryMode = 'create';
     let ticTacToeLastFinishedStateKey = '';
+    let pongLastFinishedStateKey = '';
     let connect4LastFinishedStateKey = '';
     let connect4LastMoveAnimationKey = '';
     let chessLastFinishedStateKey = '';
@@ -562,6 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongKeys = new Set();
     let pongState = null;
     let pongPaused = false;
+    let pongMultiplayerInputDirection = 0;
     let pongCountdownTimer = null;
     let pongCountdownCompleteTimer = null;
     let pongMode = 'solo';
@@ -1961,7 +1964,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!canUseMultiplayer) {
-            setMultiplayerStatus('Le multijoueur est prevu d abord pour Morpion, Puissance 4, Echecs et Dames.');
+            setMultiplayerStatus('Le multijoueur est prevu pour Pong, Morpion, Puissance 4, Echecs et Dames.');
             return;
         }
 
@@ -2028,6 +2031,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (multiplayerJoinRoomCodeInput) {
                     multiplayerJoinRoomCodeInput.value = room.code || '';
                 }
+                syncMultiplayerPongState();
                 syncMultiplayerTicTacToeState();
                 syncMultiplayerConnect4State();
                 syncMultiplayerChessState();
@@ -2042,6 +2046,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     multiplayerSelectedGameId = room.gameId;
                 }
                 multiplayerEntryMode = getCurrentMultiplayerPlayer()?.isHost ? 'create' : 'join';
+                syncMultiplayerPongState();
                 syncMultiplayerTicTacToeState();
                 syncMultiplayerConnect4State();
                 syncMultiplayerChessState();
@@ -2057,6 +2062,8 @@ document.addEventListener('DOMContentLoaded', () => {
             multiplayerSocket.on('room:left', () => {
                 multiplayerActiveRoom = null;
                 multiplayerEntryMode = 'create';
+                pongLastFinishedStateKey = '';
+                pongMultiplayerInputDirection = 0;
                 connect4LastFinishedStateKey = '';
                 ticTacToeLastFinishedStateKey = '';
                 chessLastFinishedStateKey = '';
@@ -2064,6 +2071,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 multiplayerCurrentRoomCode.textContent = '-';
                 multiplayerLobbyPlayersBlock?.classList.add('hidden');
                 closeGameOverModal();
+                if (activeGameTab === 'pong') {
+                    initializePong();
+                }
                 syncMultiplayerEntryModeAccess();
                 updateMultiplayerLobby();
             });
@@ -5312,9 +5322,141 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeAim();
     }
 
+    function isMultiplayerPongActive() {
+        return multiplayerActiveRoom?.gameId === 'pong' && Boolean(multiplayerActiveRoom?.gameState);
+    }
+
+    function getMultiplayerPongRole() {
+        return multiplayerActiveRoom?.players?.find((player) => player.isYou)?.symbol || null;
+    }
+
+    function getMultiplayerPongInputDirection() {
+        const upPressed = pongKeys.has('z') || pongKeys.has('Z') || pongKeys.has('ArrowUp');
+        const downPressed = pongKeys.has('s') || pongKeys.has('S') || pongKeys.has('ArrowDown');
+
+        if (upPressed && !downPressed) {
+            return -1;
+        }
+
+        if (downPressed && !upPressed) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    function pushMultiplayerPongInput() {
+        if (!isMultiplayerPongActive() || !multiplayerSocket?.connected) {
+            return;
+        }
+
+        const nextDirection = getMultiplayerPongInputDirection();
+        if (nextDirection === pongMultiplayerInputDirection) {
+            return;
+        }
+
+        pongMultiplayerInputDirection = nextDirection;
+        multiplayerSocket.emit('pong:input', { direction: nextDirection });
+    }
+
+    function syncMultiplayerPongState() {
+        if (!isMultiplayerPongActive()) {
+            pongLastFinishedStateKey = '';
+            pongMultiplayerInputDirection = 0;
+            return;
+        }
+
+        stopPong();
+        closeGameOverModal();
+
+        const nextState = multiplayerActiveRoom.gameState;
+        pongState = {
+            boardWidth: Number(nextState.boardWidth || (pongBoard?.clientWidth || 700)),
+            boardHeight: Number(nextState.boardHeight || (pongBoard?.clientHeight || 394)),
+            paddleHeight: Number(nextState.paddleHeight || 92),
+            paddleWidth: Number(nextState.paddleWidth || 14),
+            paddleOffset: Number(nextState.paddleOffset || 22),
+            ballSize: Number(nextState.ballSize || 16),
+            playerY: Number(nextState.leftY || 0),
+            aiY: Number(nextState.rightY || 0),
+            aiTargetY: Number(nextState.rightY || 0),
+            playerSpeed: 380,
+            aiSpeed: 380,
+            ballX: Number(nextState.ballX || 0),
+            ballY: Number(nextState.ballY || 0),
+            ballVelocityX: Number(nextState.ballVelocityX || 0),
+            ballVelocityY: Number(nextState.ballVelocityY || 0),
+            countdownActive: Boolean(nextState.countdownEndsAt && nextState.countdownEndsAt > Date.now())
+        };
+        pongPlayerScore = Number(nextState.leftScore || 0);
+        pongAiScore = Number(nextState.rightScore || 0);
+        pongRunning = Boolean(nextState.running);
+        pongPaused = false;
+
+        if (pongState.countdownActive) {
+            const remainingMs = Math.max(0, Number(nextState.countdownEndsAt) - Date.now());
+            const countdownStep = remainingMs > 1860
+                ? '3'
+                : remainingMs > 1240
+                    ? '2'
+                    : remainingMs > 620
+                        ? '1'
+                        : 'Partez';
+            showPongCountdownValue(countdownStep);
+        } else {
+            hidePongCountdown();
+        }
+
+        updatePongHud();
+        renderPong();
+        pushMultiplayerPongInput();
+
+        if (!nextState.finished) {
+            pongLastFinishedStateKey = '';
+            return;
+        }
+
+        const finishedStateKey = `${nextState.round}:${nextState.winner || 'none'}`;
+        if (finishedStateKey === pongLastFinishedStateKey || activeGameTab !== 'pong') {
+            return;
+        }
+
+        pongLastFinishedStateKey = finishedStateKey;
+        const currentRole = getMultiplayerPongRole();
+        if (nextState.winner === currentRole) {
+            openGameOverModal('Victoire', 'Tu remportes ce duel de Pong en ligne.');
+        } else {
+            openGameOverModal('C est perdu', 'L adversaire remporte ce duel de Pong.');
+        }
+    }
+
     function updatePongHud() {
         pongPlayerScoreDisplay.textContent = String(pongPlayerScore);
         pongAiScoreDisplay.textContent = String(pongAiScore);
+        if (isMultiplayerPongActive()) {
+            const currentRole = getMultiplayerPongRole();
+            pongLeftLabel.textContent = currentRole === 'left' ? 'Toi' : 'Adversaire';
+            pongRightLabel.textContent = currentRole === 'right' ? 'Toi' : 'Adversaire';
+            if (multiplayerActiveRoom?.playerCount < 2) {
+                pongHelpText.innerHTML = 'Salon en attente. Il faut deux joueurs pour lancer le duel.';
+            } else if (multiplayerActiveRoom?.gameState?.finished) {
+                pongHelpText.innerHTML = multiplayerActiveRoom.gameState.winner === currentRole
+                    ? 'Victoire. Clique sur le bouton central si tu es l hote pour relancer.'
+                    : 'Defaite. Attends que l hote relance un nouveau duel.';
+            } else if (multiplayerActiveRoom?.gameState?.running) {
+                pongHelpText.innerHTML = 'Utilise Z/S ou les fleches pour deplacer ta raquette. Premier a 7.';
+            } else {
+                pongHelpText.innerHTML = 'Attends que l hote lance le duel de Pong.';
+            }
+            pongModeButtons.forEach((button) => {
+                button.classList.remove('is-active');
+                button.disabled = true;
+            });
+            pongStartButton.textContent = getCurrentMultiplayerPlayer()?.isHost ? 'Lancer le duel' : 'En attente';
+            pongStartButton.disabled = multiplayerBusy || !getCurrentMultiplayerPlayer()?.isHost || (multiplayerActiveRoom?.playerCount || 0) < 2;
+            return;
+        }
+
         pongLeftLabel.textContent = pongMode === 'duo' ? 'Joueur 1' : 'Toi';
         pongRightLabel.textContent = pongMode === 'duo' ? 'Joueur 2' : 'IA';
         pongHelpText.innerHTML = pongMode === 'duo'
@@ -5322,13 +5464,16 @@ document.addEventListener('DOMContentLoaded', () => {
             : 'Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l IA. Premier &agrave; 7.';
         pongModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.pongMode === pongMode);
+            button.disabled = false;
         });
         if (pongPaused) {
             pongStartButton.textContent = 'Reprendre le duel';
+            pongStartButton.disabled = false;
             return;
         }
 
         pongStartButton.textContent = pongRunning ? 'Duel en cours' : 'Lancer le duel';
+        pongStartButton.disabled = false;
     }
 
     function createPongRoundState() {
@@ -5638,11 +5783,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializePong() {
+        if (isMultiplayerPongActive()) {
+            syncMultiplayerPongState();
+            return;
+        }
+
         stopPong();
         resetPongMatch();
     }
 
     function setPongMode(nextMode) {
+        if (isMultiplayerPongActive()) {
+            setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+            return;
+        }
+
         if (!['solo', 'duo'].includes(nextMode)) {
             return;
         }
@@ -5652,6 +5807,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startPong() {
+        if (isMultiplayerPongActive()) {
+            if (!multiplayerSocket?.connected) {
+                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+                return;
+            }
+
+            if (!getCurrentMultiplayerPlayer()?.isHost) {
+                setMultiplayerStatus('Seul l hote peut lancer le duel.');
+                return;
+            }
+
+            multiplayerSocket.emit('pong:start');
+            setMultiplayerStatus('Le duel de Pong se prepare pour tout le salon.');
+            return;
+        }
+
         closeGameOverModal();
         pongKeys.clear();
         resetPongMatch();
@@ -11158,11 +11329,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeGameTab === 'pong' && ['ArrowUp', 'ArrowDown', 'z', 'Z', 's', 'S'].includes(event.key)) {
             event.preventDefault();
             pongKeys.add(event.key);
+            if (isMultiplayerPongActive()) {
+                pushMultiplayerPongInput();
+            }
             return;
         }
 
         if (activeGameTab === 'pong' && event.code === 'Space') {
             event.preventDefault();
+
+            if (isMultiplayerPongActive()) {
+                return;
+            }
 
             if (pongPaused) {
                 resumePong();
@@ -11384,6 +11562,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         pongKeys.delete(event.key);
+        if (activeGameTab === 'pong' && isMultiplayerPongActive()) {
+            pushMultiplayerPongInput();
+        }
         airHockeyKeys.delete(event.key.toLowerCase());
         breakoutKeys.delete(event.key.toLowerCase());
     });
@@ -11394,7 +11575,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'pong') {
-            resetPongRound();
+            if (isMultiplayerPongActive()) {
+                syncMultiplayerPongState();
+            } else {
+                resetPongRound();
+            }
         }
 
         if (activeGameTab === '2048') {
