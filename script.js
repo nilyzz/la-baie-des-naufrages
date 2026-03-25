@@ -561,6 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongLastFrame = 0;
     let pongRenderAnimationFrame = null;
     let pongRenderLastFrame = 0;
+    let pongLastNetworkSyncAt = 0;
     let pongPlayerScore = 0;
     let pongAiScore = 0;
     let pongKeys = new Set();
@@ -5386,6 +5387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeGameOverModal();
 
         const nextState = multiplayerActiveRoom.gameState;
+        pongLastNetworkSyncAt = Date.now();
         pongState = {
             boardWidth: Number(nextState.boardWidth || (pongBoard?.clientWidth || 700)),
             boardHeight: Number(nextState.boardHeight || (pongBoard?.clientHeight || 394)),
@@ -5584,6 +5586,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'Partez';
     }
 
+    function clampPongY(y, activeState = pongState) {
+        if (!activeState) {
+            return y;
+        }
+
+        return Math.max(0, Math.min(y, activeState.boardHeight - activeState.paddleHeight));
+    }
+
     function ensureMultiplayerPongRenderLoop() {
         if (pongRenderAnimationFrame || !isMultiplayerPongActive()) {
             return;
@@ -5603,12 +5613,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const delta = Math.min((timestamp - pongRenderLastFrame) / 1000, 0.05);
             pongRenderLastFrame = timestamp;
-            const smoothing = Math.min(1, delta * 12);
+            const role = getMultiplayerPongRole();
+            const inputDirection = getMultiplayerPongInputDirection();
+            const paddleSmoothing = Math.min(1, delta * 14);
+            const ballCorrection = Math.min(1, delta * 10);
+            const shouldSimulateBall = pongRunning && !pongState.countdownActive && !multiplayerActiveRoom?.gameState?.finished;
 
-            pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * smoothing;
-            pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * smoothing;
-            pongDisplayState.ballX += (pongState.ballX - pongDisplayState.ballX) * smoothing;
-            pongDisplayState.ballY += (pongState.ballY - pongDisplayState.ballY) * smoothing;
+            if (role === 'left') {
+                pongDisplayState.playerY = clampPongY(pongDisplayState.playerY + (inputDirection * pongState.playerSpeed * delta));
+                pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * Math.min(1, delta * 18);
+                pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * paddleSmoothing;
+            } else if (role === 'right') {
+                pongDisplayState.aiY = clampPongY(pongDisplayState.aiY + (inputDirection * pongState.playerSpeed * delta));
+                pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * Math.min(1, delta * 18);
+                pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * paddleSmoothing;
+            } else {
+                pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * paddleSmoothing;
+                pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * paddleSmoothing;
+            }
+
+            if (shouldSimulateBall) {
+                pongDisplayState.ballX += pongState.ballVelocityX * delta;
+                pongDisplayState.ballY += pongState.ballVelocityY * delta;
+            }
+            pongDisplayState.ballX += (pongState.ballX - pongDisplayState.ballX) * ballCorrection;
+            pongDisplayState.ballY += (pongState.ballY - pongDisplayState.ballY) * ballCorrection;
 
             const countdownLabel = getMultiplayerPongCountdownLabel();
             if (countdownLabel) {
@@ -5708,6 +5737,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pongPaused = false;
         pongLastFrame = 0;
         pongRenderLastFrame = 0;
+        pongDisplayState = null;
+        pongLastNetworkSyncAt = 0;
         pongCountdownEndsAt = 0;
         updatePongHud();
     }
@@ -5925,6 +5956,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         closeGameOverModal();
         pongKeys.clear();
+        pongLastNetworkSyncAt = 0;
         resetPongMatch();
         pongRunning = true;
         pongPaused = false;
