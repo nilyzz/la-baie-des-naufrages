@@ -169,6 +169,26 @@ function createCheckersState() {
   };
 }
 
+function createGameState(gameId) {
+  if (gameId === 'ticTacToe') {
+    return createTicTacToeState();
+  }
+
+  if (gameId === 'connect4') {
+    return createConnect4State();
+  }
+
+  if (gameId === 'chess') {
+    return createChessState();
+  }
+
+  if (gameId === 'checkers') {
+    return createCheckersState();
+  }
+
+  return null;
+}
+
 function resetTicTacToeRound(room, keepScores = true) {
   const previousScores = keepScores && room.gameState?.scores
     ? room.gameState.scores
@@ -217,6 +237,30 @@ function resetCheckersRound(room) {
     winner: null,
     round: Number(room.gameState?.round || 0) + 1
   };
+}
+
+function resetRoomGame(room, keepScores = false) {
+  if (room.gameId === 'ticTacToe') {
+    resetTicTacToeRound(room, keepScores);
+    return;
+  }
+
+  if (room.gameId === 'connect4') {
+    resetConnect4Round(room, keepScores);
+    return;
+  }
+
+  if (room.gameId === 'chess') {
+    resetChessRound(room);
+    return;
+  }
+
+  if (room.gameId === 'checkers') {
+    resetCheckersRound(room);
+    return;
+  }
+
+  room.gameState = null;
 }
 
 function getRoomMaxPlayers(room) {
@@ -554,15 +598,7 @@ function removePlayerFromRoom(room, socketId) {
     room.hostId = room.players[0].id;
   }
 
-  if (room.gameId === 'ticTacToe') {
-    resetTicTacToeRound(room, false);
-  } else if (room.gameId === 'connect4') {
-    resetConnect4Round(room, false);
-  } else if (room.gameId === 'chess') {
-    resetChessRound(room);
-  } else if (room.gameId === 'checkers') {
-    resetCheckersRound(room);
-  }
+  resetRoomGame(room, false);
 
   emitRoomUpdate(room);
 }
@@ -579,13 +615,7 @@ app.post('/api/rooms', (request, response) => {
       gameId: String(request.body?.gameId || 'lobby').trim() || 'lobby',
       hostId: null,
       players: [],
-      gameState: String(request.body?.gameId || 'lobby').trim() === 'ticTacToe'
-        ? createTicTacToeState()
-        : (String(request.body?.gameId || 'lobby').trim() === 'connect4'
-          ? createConnect4State()
-          : (String(request.body?.gameId || 'lobby').trim() === 'chess'
-            ? createChessState()
-            : (String(request.body?.gameId || 'lobby').trim() === 'checkers' ? createCheckersState() : null)))
+      gameState: createGameState(String(request.body?.gameId || 'lobby').trim() || 'lobby')
     };
 
     rooms.set(roomCode, room);
@@ -635,15 +665,7 @@ io.on('connection', (socket) => {
       room.hostId = player.id;
     }
 
-    if (room.gameId === 'ticTacToe') {
-      resetTicTacToeRound(room, false);
-    } else if (room.gameId === 'connect4') {
-      resetConnect4Round(room, false);
-    } else if (room.gameId === 'chess') {
-      resetChessRound(room);
-    } else if (room.gameId === 'checkers') {
-      resetCheckersRound(room);
-    }
+    resetRoomGame(room, false);
 
     socket.join(room.code);
     socket.data.roomCode = room.code;
@@ -675,20 +697,42 @@ io.on('connection', (socket) => {
     };
 
     room.players.push(player);
-    if (room.gameId === 'ticTacToe') {
-      resetTicTacToeRound(room, false);
-    } else if (room.gameId === 'connect4') {
-      resetConnect4Round(room, false);
-    } else if (room.gameId === 'chess') {
-      resetChessRound(room);
-    } else if (room.gameId === 'checkers') {
-      resetCheckersRound(room);
-    }
+    resetRoomGame(room, false);
     socket.join(room.code);
     socket.data.roomCode = room.code;
 
     emitRoomUpdate(room);
     socket.emit('room:joined', buildRoomPayload(room, socket.id));
+  });
+
+  socket.on('room:update-game', ({ gameId }) => {
+    const room = getRoom(socket.data.roomCode);
+    const nextGameId = String(gameId || '').trim();
+
+    if (!room) {
+      socket.emit('room:error', { message: 'Aucun salon actif.' });
+      return;
+    }
+
+    if (room.hostId !== socket.id) {
+      socket.emit('room:error', { message: 'Seul l hote peut changer le jeu du salon.' });
+      return;
+    }
+
+    if (!MAX_PLAYERS_BY_GAME[nextGameId]) {
+      socket.emit('room:error', { message: 'Ce jeu n est pas disponible en multijoueur.' });
+      return;
+    }
+
+    if (room.gameId === nextGameId) {
+      emitRoomUpdate(room);
+      return;
+    }
+
+    room.gameId = nextGameId;
+    room.gameState = createGameState(nextGameId);
+    resetRoomGame(room, false);
+    emitRoomUpdate(room);
   });
 
   socket.on('tictactoe:move', ({ index }) => {
