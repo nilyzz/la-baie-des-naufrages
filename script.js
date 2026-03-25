@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerSocket = null;
     let multiplayerActiveRoom = null;
     let multiplayerBusy = false;
-    let multiplayerSelectedGameId = 'ticTacToe';
+    let multiplayerSelectedGameId = null;
     let multiplayerEntryMode = 'create';
     let ticTacToeLastFinishedStateKey = '';
     let pongLastFinishedStateKey = '';
@@ -536,6 +536,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let connect4LastMoveAnimationKey = '';
     let chessLastFinishedStateKey = '';
     let checkersLastFinishedStateKey = '';
+    let chessLastCaptureFxKey = '';
+    let checkersLastCaptureFxKey = '';
     let gameBoard = [];
     let flagsPlaced = 0;
     let timer = 0;
@@ -746,10 +748,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let chessSelectedSquare = null;
     let chessMode = 'solo';
     let chessAiTimeout = null;
+    let chessLastMoveResetTimer = null;
     let checkersState = null;
     let checkersSelectedSquare = null;
     let checkersMode = 'solo';
     let checkersAiTimeout = null;
+    let checkersLastMoveResetTimer = null;
     let airHockeyMode = 'solo';
     let airHockeyState = null;
     let airHockeyDisplayState = null;
@@ -1810,7 +1814,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getSelectedMultiplayerGame() {
-        return MULTIPLAYER_SUPPORTED_GAMES[multiplayerSelectedGameId] ? multiplayerSelectedGameId : null;
+        const fallbackGameId = multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || null;
+        const activeGameId = MULTIPLAYER_SUPPORTED_GAMES[multiplayerSelectedGameId]
+            ? multiplayerSelectedGameId
+            : fallbackGameId;
+        return MULTIPLAYER_SUPPORTED_GAMES[activeGameId] ? activeGameId : null;
     }
 
     function getSelectedMultiplayerGameLabel() {
@@ -1935,8 +1943,307 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateMultiplayerGameTileSelection() {
         multiplayerGameTiles.forEach((tile) => {
-            tile.classList.toggle('is-selected', tile.dataset.multiplayerGameSelect === multiplayerSelectedGameId);
+            tile.classList.toggle('is-selected', tile.dataset.multiplayerGameSelect === getSelectedMultiplayerGame());
         });
+    }
+
+    function getBoardMoveAnimationMetadata(lastMove, row, col) {
+        if (!lastMove || lastMove.toRow !== row || lastMove.toCol !== col) {
+            return { className: '', style: '' };
+        }
+
+        const moveX = Number(lastMove.fromCol) - Number(lastMove.toCol);
+        const moveY = Number(lastMove.fromRow) - Number(lastMove.toRow);
+        const isKnightMove = lastMove.pieceType === 'knight' && Math.abs(moveX) + Math.abs(moveY) === 3 && Math.abs(moveX) > 0 && Math.abs(moveY) > 0;
+        const className = [
+            'is-moving',
+            lastMove.capture ? 'is-capture-move' : '',
+            isKnightMove ? 'is-knight-move' : ''
+        ].filter(Boolean).join(' ');
+        const midX = Math.abs(moveX) === 2 ? 0 : moveX;
+        const midY = Math.abs(moveY) === 2 ? 0 : moveY;
+        const style = `style="--move-x:${moveX}; --move-y:${moveY}; --move-mid-x:${midX}; --move-mid-y:${midY};"`;
+        return { className, style };
+    }
+
+    function isBoardCaptureCell(lastMove, row, col) {
+        if (!lastMove?.capture) {
+            return false;
+        }
+
+        return lastMove.capture.row === row && lastMove.capture.col === col;
+    }
+
+    function scheduleChessMoveAnimationClear() {
+        if (chessLastMoveResetTimer) {
+            window.clearTimeout(chessLastMoveResetTimer);
+        }
+
+        if (!chessState?.lastMove) {
+            return;
+        }
+
+        chessLastMoveResetTimer = window.setTimeout(() => {
+            chessLastMoveResetTimer = null;
+            if (!chessState?.lastMove) {
+                return;
+            }
+            chessState.lastMove = null;
+            renderChess();
+        }, 360);
+    }
+
+    function scheduleCheckersMoveAnimationClear() {
+        if (checkersLastMoveResetTimer) {
+            window.clearTimeout(checkersLastMoveResetTimer);
+        }
+
+        if (!checkersState?.lastMove) {
+            return;
+        }
+
+        checkersLastMoveResetTimer = window.setTimeout(() => {
+            checkersLastMoveResetTimer = null;
+            if (!checkersState?.lastMove) {
+                return;
+            }
+            checkersState.lastMove = null;
+            renderCheckers();
+        }, 360);
+    }
+
+    function spawnBoardCaptureParticles(boardElement, row, col, tone = 'light') {
+        if (!boardElement) {
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        const particleCount = 9;
+        const originX = `${((Number(col) + 0.5) / CHESS_SIZE) * 100}%`;
+        const originY = `${((Number(row) + 0.5) / CHESS_SIZE) * 100}%`;
+        for (let index = 0; index < particleCount; index += 1) {
+            const particle = document.createElement('span');
+            particle.className = `board-capture-particle is-${tone}`;
+            const angle = (Math.PI * 2 * index) / particleCount;
+            const distance = 12 + Math.random() * 20;
+            particle.style.setProperty('--particle-origin-x', originX);
+            particle.style.setProperty('--particle-origin-y', originY);
+            particle.style.setProperty('--particle-x', `${Math.cos(angle) * distance}px`);
+            particle.style.setProperty('--particle-y', `${Math.sin(angle) * distance}px`);
+            particle.style.setProperty('--particle-delay', `${Math.random() * 70}ms`);
+            particle.style.setProperty('--particle-size', `${4 + Math.random() * 5}px`);
+            fragment.appendChild(particle);
+        }
+
+        boardElement.appendChild(fragment);
+        window.setTimeout(() => {
+            boardElement.querySelectorAll('.board-capture-particle').forEach((particle) => particle.remove());
+        }, 520);
+    }
+
+    function maybePlayChessCaptureFx() {
+        const move = chessState?.lastMove;
+        if (!move?.capture) {
+            chessLastCaptureFxKey = '';
+            return;
+        }
+
+        const fxKey = `${move.fromRow}:${move.fromCol}:${move.toRow}:${move.toCol}:${move.capture.row}:${move.capture.col}:${move.captureColor || 'none'}`;
+        if (fxKey === chessLastCaptureFxKey) {
+            return;
+        }
+
+        chessLastCaptureFxKey = fxKey;
+        window.requestAnimationFrame(() => {
+            spawnBoardCaptureParticles(chessBoard, move.capture.row, move.capture.col, move.captureColor === 'black' ? 'dark' : 'light');
+        });
+    }
+
+    function maybePlayCheckersCaptureFx() {
+        const move = checkersState?.lastMove;
+        if (!move?.capture) {
+            checkersLastCaptureFxKey = '';
+            return;
+        }
+
+        const fxKey = `${move.fromRow}:${move.fromCol}:${move.toRow}:${move.toCol}:${move.capture.row}:${move.capture.col}:${move.captureColor || 'none'}`;
+        if (fxKey === checkersLastCaptureFxKey) {
+            return;
+        }
+
+        checkersLastCaptureFxKey = fxKey;
+        window.requestAnimationFrame(() => {
+            spawnBoardCaptureParticles(checkersBoard, move.capture.row, move.capture.col, move.captureColor === 'black' ? 'dark' : 'red');
+        });
+    }
+
+    function getChessAttackMoves(state, row, col) {
+        const piece = state?.board?.[row]?.[col];
+        if (!piece) {
+            return [];
+        }
+
+        const moves = [];
+        const addMove = (nextRow, nextCol) => {
+            if (!isInsideGameGrid(nextRow, nextCol, CHESS_SIZE)) {
+                return;
+            }
+            const target = state.board[nextRow][nextCol];
+            if (!target || target.color !== piece.color) {
+                moves.push({ row: nextRow, col: nextCol });
+            }
+        };
+        const addSlideMoves = (directions) => {
+            directions.forEach(([rowStep, colStep]) => {
+                let nextRow = row + rowStep;
+                let nextCol = col + colStep;
+
+                while (isInsideGameGrid(nextRow, nextCol, CHESS_SIZE)) {
+                    const target = state.board[nextRow][nextCol];
+                    if (!target) {
+                        moves.push({ row: nextRow, col: nextCol });
+                    } else {
+                        if (target.color !== piece.color) {
+                            moves.push({ row: nextRow, col: nextCol });
+                        }
+                        break;
+                    }
+                    nextRow += rowStep;
+                    nextCol += colStep;
+                }
+            });
+        };
+
+        if (piece.type === 'pawn') {
+            const direction = piece.color === 'white' ? -1 : 1;
+            [-1, 1].forEach((deltaCol) => {
+                const attackRow = row + direction;
+                const attackCol = col + deltaCol;
+                if (isInsideGameGrid(attackRow, attackCol, CHESS_SIZE)) {
+                    moves.push({ row: attackRow, col: attackCol });
+                }
+            });
+            return moves;
+        }
+
+        if (piece.type === 'rook') {
+            addSlideMoves([[1, 0], [-1, 0], [0, 1], [0, -1]]);
+            return moves;
+        }
+
+        if (piece.type === 'bishop') {
+            addSlideMoves([[1, 1], [1, -1], [-1, 1], [-1, -1]]);
+            return moves;
+        }
+
+        if (piece.type === 'queen') {
+            addSlideMoves([[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]);
+            return moves;
+        }
+
+        if (piece.type === 'knight') {
+            [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]].forEach(([rowStep, colStep]) => addMove(row + rowStep, col + colStep));
+            return moves;
+        }
+
+        if (piece.type === 'king') {
+            [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]].forEach(([rowStep, colStep]) => addMove(row + rowStep, col + colStep));
+        }
+
+        return moves;
+    }
+
+    function getChessKingPosition(color) {
+        for (let row = 0; row < CHESS_SIZE; row += 1) {
+            for (let col = 0; col < CHESS_SIZE; col += 1) {
+                const piece = chessState?.board?.[row]?.[col];
+                if (piece?.type === 'king' && piece.color === color) {
+                    return { row, col };
+                }
+            }
+        }
+        return null;
+    }
+
+    function isChessKingInCheck(color) {
+        const kingPosition = getChessKingPosition(color);
+        if (!kingPosition) {
+            return false;
+        }
+
+        const attackerColor = color === 'white' ? 'black' : 'white';
+        for (let row = 0; row < CHESS_SIZE; row += 1) {
+            for (let col = 0; col < CHESS_SIZE; col += 1) {
+                const piece = chessState?.board?.[row]?.[col];
+                if (!piece || piece.color !== attackerColor) {
+                    continue;
+                }
+
+                if (getChessAttackMoves(chessState, row, col).some((move) => move.row === kingPosition.row && move.col === kingPosition.col)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    function maybeOpenChessOutcomeModal() {
+        if (!chessState?.winner) {
+            chessLastFinishedStateKey = '';
+            return;
+        }
+
+        const move = chessState.lastMove;
+        const finishedKey = `solo:${chessState.winner}:${move?.fromRow ?? '-'}:${move?.fromCol ?? '-'}:${move?.toRow ?? '-'}:${move?.toCol ?? '-'}`;
+        if (finishedKey === chessLastFinishedStateKey) {
+            return;
+        }
+
+        chessLastFinishedStateKey = finishedKey;
+        if (chessMode === 'solo') {
+            openGameOverModal(
+                chessState.winner === 'white' ? 'Victoire' : 'Échec et mat',
+                chessState.winner === 'white'
+                    ? 'Le roi adverse tombe. Tu remportes la partie d échecs.'
+                    : 'Ton roi est mat. L IA remporte la partie.'
+            );
+            return;
+        }
+
+        openGameOverModal(
+            chessState.winner === 'white' ? 'Blancs gagnent' : 'Noirs gagnent',
+            `Échec et mat. ${chessState.winner === 'white' ? 'Les Blancs' : 'Les Noirs'} remportent la partie.`
+        );
+    }
+
+    function maybeOpenCheckersOutcomeModal() {
+        if (!checkersState?.winner) {
+            checkersLastFinishedStateKey = '';
+            return;
+        }
+
+        const move = checkersState.lastMove;
+        const finishedKey = `solo:${checkersState.winner}:${move?.fromRow ?? '-'}:${move?.fromCol ?? '-'}:${move?.toRow ?? '-'}:${move?.toCol ?? '-'}`;
+        if (finishedKey === checkersLastFinishedStateKey) {
+            return;
+        }
+
+        checkersLastFinishedStateKey = finishedKey;
+        if (checkersMode === 'solo') {
+            openGameOverModal(
+                checkersState.winner === 'red' ? 'Victoire' : 'C est perdu',
+                checkersState.winner === 'red'
+                    ? 'Tu remportes la partie de dames.'
+                    : 'L IA remporte la partie de dames.'
+            );
+            return;
+        }
+
+        openGameOverModal(
+            checkersState.winner === 'red' ? 'Rouges gagnent' : 'Noirs gagnent',
+            `${checkersState.winner === 'red' ? 'Les Rouges' : 'Les Noirs'} remportent la partie de dames.`
+        );
     }
 
     function updateMultiplayerLobby(preserveStatus = false) {
@@ -5579,7 +5886,7 @@ document.addEventListener('DOMContentLoaded', () => {
             aiY: centerY,
             aiTargetY: centerY,
             playerSpeed: 380,
-            aiSpeed: pongMode === 'duo' ? 380 : 248,
+            aiSpeed: pongMode === 'duo' ? 380 : 312,
             ballX: (boardWidth - ballSize) / 2,
             ballY: (boardHeight - ballSize) / 2,
             ballVelocityX: 388 * serveDirection,
@@ -5887,6 +6194,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const delta = Math.min((timestamp - pongLastFrame) / 1000, 0.032);
         pongLastFrame = timestamp;
 
+        if (pongState.countdownActive) {
+            renderPong();
+            if (pongRunning) {
+                pongAnimationFrame = window.requestAnimationFrame(updatePongFrame);
+            }
+            return;
+        }
+
         const leftDirection = (pongKeys.has('z') || pongKeys.has('Z') || (pongMode === 'solo' && pongKeys.has('ArrowUp')) ? -1 : 0)
             + (pongKeys.has('s') || pongKeys.has('S') || (pongMode === 'solo' && pongKeys.has('ArrowDown')) ? 1 : 0);
 
@@ -5898,7 +6213,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pongState.aiY += rightDirection * pongState.playerSpeed * delta;
         } else {
             const ballCenter = pongState.ballY + (pongState.ballSize / 2);
-            const anticipatedCenter = ballCenter + (pongState.ballVelocityY * 0.045);
+            const approachingAi = pongState.ballVelocityX > 0;
+            const anticipationTime = approachingAi ? 0.085 : 0.03;
+            const anticipatedCenter = ballCenter + (pongState.ballVelocityY * anticipationTime);
             const desiredAiY = Math.max(
                 0,
                 Math.min(
@@ -5908,21 +6225,15 @@ document.addEventListener('DOMContentLoaded', () => {
             );
             pongState.aiDriftTimer = Math.max(0, (pongState.aiDriftTimer || 0) - delta);
             if (pongState.aiDriftTimer <= 0) {
-                pongState.aiTargetY = desiredAiY + ((Math.random() - 0.5) * 36);
-                pongState.aiDriftTimer = 0.16 + (Math.random() * 0.12);
+                const driftAmount = approachingAi ? 18 : 28;
+                pongState.aiTargetY = desiredAiY + ((Math.random() - 0.5) * driftAmount);
+                pongState.aiDriftTimer = approachingAi ? (0.1 + (Math.random() * 0.06)) : (0.16 + (Math.random() * 0.08));
             }
-            const trackingStrength = Math.min(1, delta * 2.8);
-            pongState.aiY += (pongState.aiTargetY - pongState.aiY) * trackingStrength;
+            const targetDelta = pongState.aiTargetY - pongState.aiY;
+            const maxStep = pongState.aiSpeed * delta * (approachingAi ? 1 : 0.72);
+            pongState.aiY += Math.max(-maxStep, Math.min(maxStep, targetDelta));
         }
         pongState.aiY = Math.max(0, Math.min(pongState.aiY, pongState.boardHeight - pongState.paddleHeight));
-
-        if (pongState.countdownActive) {
-            renderPong();
-            if (pongRunning) {
-                pongAnimationFrame = window.requestAnimationFrame(updatePongFrame);
-            }
-            return;
-        }
 
         pongState.ballX += pongState.ballVelocityX * delta;
         pongState.ballY += pongState.ballVelocityY * delta;
@@ -8956,6 +9267,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        chessLastCaptureFxKey = '';
+        if (chessLastMoveResetTimer) {
+            window.clearTimeout(chessLastMoveResetTimer);
+            chessLastMoveResetTimer = null;
+        }
         if (chessAiTimeout) {
             window.clearTimeout(chessAiTimeout);
             chessAiTimeout = null;
@@ -8963,7 +9279,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chessState = {
             board: createInitialChessBoard(),
             turn: 'white',
-            winner: null
+            winner: null,
+            lastMove: null
         };
         chessSelectedSquare = null;
         renderChess();
@@ -9067,25 +9384,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderChess() {
         const legalMoves = chessSelectedSquare ? getChessMoves(chessSelectedSquare.row, chessSelectedSquare.col) : [];
+        const whiteInCheck = isChessKingInCheck('white');
+        const blackInCheck = isChessKingInCheck('black');
+        const checkedColor = whiteInCheck ? 'white' : (blackInCheck ? 'black' : null);
+        const checkedKingPosition = checkedColor ? getChessKingPosition(checkedColor) : null;
+        chessBoard.classList.toggle('is-check', Boolean(checkedColor) && !chessState.winner);
+        chessBoard.classList.toggle('is-checkmate', Boolean(chessState.winner));
         if (isMultiplayerChessActive()) {
             const currentRole = getMultiplayerChessRole();
             chessTurnDisplay.textContent = chessState.turn === currentRole ? 'Toi' : 'Adversaire';
             chessStatusDisplay.textContent = chessState.winner
                 ? (chessState.winner === currentRole ? 'Victoire' : 'Defaite')
-                : 'En cours';
+                : (checkedColor === currentRole ? 'Echec' : (checkedColor ? 'Tu mets echec' : 'En cours'));
             chessHelpText.textContent = chessState.winner
-                ? (chessState.winner === currentRole ? 'Tu controles l echiquier.' : 'L adversaire controle l echiquier.')
-                : (chessState.turn === currentRole ? 'A toi de jouer.' : 'Au tour de l adversaire.');
+                ? (chessState.winner === currentRole ? 'Échec et mat. Tu controles l echiquier.' : 'Échec et mat. L adversaire controle l echiquier.')
+                : (chessState.turn === currentRole
+                    ? (checkedColor === currentRole ? 'Ton roi est en echec.' : 'A toi de jouer.')
+                    : (checkedColor ? 'Le roi est en echec.' : 'Au tour de l adversaire.'));
         } else {
             chessTurnDisplay.textContent = chessState.turn === 'white'
                 ? (chessMode === 'solo' ? 'Toi' : 'Blancs')
                 : (chessMode === 'solo' ? 'IA' : 'Noirs');
             chessStatusDisplay.textContent = chessState.winner
                 ? `${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Toi' : 'Blancs') : (chessMode === 'solo' ? 'IA' : 'Noirs')} gagnent`
-                : (chessMode === 'solo' && chessState.turn === 'black' ? 'IA joue' : 'En cours');
-            chessHelpText.textContent = chessMode === 'solo'
-                ? 'Mode 1 joueur: blancs contre IA. Promotion en reine, sans roque.'
-                : 'Mode 2 joueurs: blancs et noirs en tour par tour. Promotion en reine, sans roque.';
+                : (checkedColor
+                    ? `Échec sur ${checkedColor === 'white' ? (chessMode === 'solo' ? 'toi' : 'les Blancs') : (chessMode === 'solo' ? 'l IA' : 'les Noirs')}`
+                    : (chessMode === 'solo' && chessState.turn === 'black' ? 'IA joue' : 'En cours'));
+            chessHelpText.textContent = chessState.winner
+                ? `Échec et mat. ${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Tu remportes' : 'Les Blancs remportent') : (chessMode === 'solo' ? 'L IA remporte' : 'Les Noirs remportent')} la partie.`
+                : (chessMode === 'solo'
+                    ? (checkedColor === 'white' ? 'Ton roi est en echec.' : (checkedColor === 'black' ? 'Le roi adverse est en echec.' : 'Mode 1 joueur: blancs contre IA. Promotion en reine, sans roque.'))
+                    : (checkedColor ? `Le roi ${checkedColor === 'white' ? 'blanc' : 'noir'} est en echec.` : 'Mode 2 joueurs: blancs et noirs en tour par tour. Promotion en reine, sans roque.'));
         }
         chessModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.chessMode === chessMode);
@@ -9095,20 +9424,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const dark = (row + col) % 2 === 1;
             const selected = chessSelectedSquare?.row === row && chessSelectedSquare?.col === col;
             const playable = legalMoves.some((move) => move.row === row && move.col === col);
+            const captureHit = isBoardCaptureCell(chessState.lastMove, row, col);
+            const pieceAnimation = getBoardMoveAnimationMetadata(chessState.lastMove, row, col);
+            const checkedKing = checkedKingPosition?.row === row && checkedKingPosition?.col === col;
             const rankLabel = col === 0 ? String(CHESS_SIZE - row) : '';
             const fileLabel = row === CHESS_SIZE - 1 ? String.fromCharCode(97 + col) : '';
             return `
                 <button
                     type="button"
-                    class="chess-cell ${dark ? 'is-dark' : 'is-light'} ${selected ? 'is-selected' : ''} ${playable ? 'is-move' : ''}"
+                    class="chess-cell ${dark ? 'is-dark' : 'is-light'} ${selected ? 'is-selected' : ''} ${playable ? 'is-move' : ''} ${captureHit ? 'is-capture-hit' : ''} ${checkedKing ? 'is-check-king' : ''}"
                     data-chess-cell="${row}-${col}"
                 >
                     ${rankLabel ? `<span class="chess-coordinate chess-coordinate-rank">${rankLabel}</span>` : ''}
                     ${fileLabel ? `<span class="chess-coordinate chess-coordinate-file">${fileLabel}</span>` : ''}
-                    ${piece ? `<span class="chess-piece">${CHESS_PIECES[piece.type][piece.color]}</span>` : ''}
+                    ${piece ? `<span class="chess-piece ${pieceAnimation.className}" ${pieceAnimation.style}>${CHESS_PIECES[piece.type][piece.color]}</span>` : ''}
                 </button>
             `;
         }).join('')).join('');
+
+        if (chessState.lastMove) {
+            scheduleChessMoveAnimationClear();
+        }
+        maybePlayChessCaptureFx();
+        maybeOpenChessOutcomeModal();
     }
 
     function handleChessCellClick(row, col) {
@@ -9190,6 +9528,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         chessSelectedSquare = null;
+        chessState.lastMove = {
+            fromRow,
+            fromCol,
+            toRow,
+            toCol,
+            pieceType: movingPiece.type,
+            capture: capturedPiece ? { row: toRow, col: toCol } : null,
+            captureColor: capturedPiece?.color || null
+        };
 
         if (capturedPiece?.type === 'king') {
             chessState.winner = nextPiece.color;
@@ -9335,6 +9682,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        checkersLastCaptureFxKey = '';
+        if (checkersLastMoveResetTimer) {
+            window.clearTimeout(checkersLastMoveResetTimer);
+            checkersLastMoveResetTimer = null;
+        }
         if (checkersAiTimeout) {
             window.clearTimeout(checkersAiTimeout);
             checkersAiTimeout = null;
@@ -9342,7 +9694,8 @@ document.addEventListener('DOMContentLoaded', () => {
         checkersState = {
             board: createInitialCheckersBoard(),
             turn: 'red',
-            winner: null
+            winner: null,
+            lastMove: null
         };
         checkersSelectedSquare = null;
         renderCheckers();
@@ -9414,12 +9767,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const dark = (row + col) % 2 === 1;
             const selected = checkersSelectedSquare?.row === row && checkersSelectedSquare?.col === col;
             const playable = legalMoves.some((move) => move.row === row && move.col === col);
+            const captureHit = isBoardCaptureCell(checkersState.lastMove, row, col);
+            const pieceAnimation = getBoardMoveAnimationMetadata(checkersState.lastMove, row, col);
             return `
-                <button type="button" class="checkers-cell ${dark ? 'is-dark' : 'is-light'} ${selected ? 'is-selected' : ''} ${playable ? 'is-move' : ''}" data-checkers-cell="${row}-${col}">
-                    ${piece ? `<span class="checkers-piece ${piece.color === 'red' ? 'is-red' : 'is-black'} ${piece.king ? 'is-king' : ''}"></span>` : ''}
+                <button type="button" class="checkers-cell ${dark ? 'is-dark' : 'is-light'} ${selected ? 'is-selected' : ''} ${playable ? 'is-move' : ''} ${captureHit ? 'is-capture-hit' : ''}" data-checkers-cell="${row}-${col}">
+                    ${piece ? `<span class="checkers-piece ${piece.color === 'red' ? 'is-red' : 'is-black'} ${piece.king ? 'is-king' : ''} ${pieceAnimation.className}" ${pieceAnimation.style}></span>` : ''}
                 </button>
             `;
         }).join('')).join('');
+
+        if (checkersState.lastMove) {
+            scheduleCheckersMoveAnimationClear();
+        }
+        maybePlayCheckersCaptureFx();
+        maybeOpenCheckersOutcomeModal();
     }
 
     function handleCheckersCellClick(row, col) {
@@ -9492,6 +9853,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const nextPiece = { ...movingPiece };
+        const capturedPiece = move.capture ? checkersState.board[move.capture.row][move.capture.col] : null;
         checkersState.board[fromRow][fromCol] = null;
         checkersState.board[toRow][toCol] = nextPiece;
 
@@ -9502,6 +9864,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((nextPiece.color === 'red' && toRow === 0) || (nextPiece.color === 'black' && toRow === CHECKERS_SIZE - 1)) {
             nextPiece.king = true;
         }
+
+        checkersState.lastMove = {
+            fromRow,
+            fromCol,
+            toRow,
+            toCol,
+            pieceType: movingPiece.king ? 'king' : 'checker',
+            capture: move.capture ? { ...move.capture } : null,
+            captureColor: capturedPiece?.color || null
+        };
 
         const redCount = checkersState.board.flat().filter((item) => item?.color === 'red').length;
         const blackCount = checkersState.board.flat().filter((item) => item?.color === 'black').length;
@@ -9622,9 +9994,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncMultiplayerChessState() {
         if (!isMultiplayerChessActive()) {
             chessLastFinishedStateKey = '';
+            chessLastCaptureFxKey = '';
             return;
         }
 
+        if (chessLastMoveResetTimer) {
+            window.clearTimeout(chessLastMoveResetTimer);
+            chessLastMoveResetTimer = null;
+        }
         if (chessAiTimeout) {
             window.clearTimeout(chessAiTimeout);
             chessAiTimeout = null;
@@ -9633,7 +10010,15 @@ document.addEventListener('DOMContentLoaded', () => {
         chessState = {
             board: multiplayerActiveRoom.gameState.board.map((row) => row.map((piece) => (piece ? { ...piece } : null))),
             turn: multiplayerActiveRoom.gameState.turn,
-            winner: multiplayerActiveRoom.gameState.winner
+            winner: multiplayerActiveRoom.gameState.winner,
+            lastMove: multiplayerActiveRoom.gameState.lastMove
+                ? {
+                    ...multiplayerActiveRoom.gameState.lastMove,
+                    capture: multiplayerActiveRoom.gameState.lastMove.capture
+                        ? { ...multiplayerActiveRoom.gameState.lastMove.capture }
+                        : null
+                }
+                : null
         };
         chessSelectedSquare = null;
         renderChess();
@@ -9668,9 +10053,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncMultiplayerCheckersState() {
         if (!isMultiplayerCheckersActive()) {
             checkersLastFinishedStateKey = '';
+            checkersLastCaptureFxKey = '';
             return;
         }
 
+        if (checkersLastMoveResetTimer) {
+            window.clearTimeout(checkersLastMoveResetTimer);
+            checkersLastMoveResetTimer = null;
+        }
         if (checkersAiTimeout) {
             window.clearTimeout(checkersAiTimeout);
             checkersAiTimeout = null;
@@ -9679,7 +10069,15 @@ document.addEventListener('DOMContentLoaded', () => {
         checkersState = {
             board: multiplayerActiveRoom.gameState.board.map((row) => row.map((piece) => (piece ? { ...piece } : null))),
             turn: multiplayerActiveRoom.gameState.turn,
-            winner: multiplayerActiveRoom.gameState.winner
+            winner: multiplayerActiveRoom.gameState.winner,
+            lastMove: multiplayerActiveRoom.gameState.lastMove
+                ? {
+                    ...multiplayerActiveRoom.gameState.lastMove,
+                    capture: multiplayerActiveRoom.gameState.lastMove.capture
+                        ? { ...multiplayerActiveRoom.gameState.lastMove.capture }
+                        : null
+                }
+                : null
         };
         checkersSelectedSquare = null;
         renderCheckers();
@@ -12138,7 +12536,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSolitaire();
     initializeConnect4();
     setMultiplayerEntryMode('create');
-    setSelectedMultiplayerGame('ticTacToe');
+    setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     initializeRhythm();
     initializeFlappy();
     initializeFlowFree();

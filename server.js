@@ -158,6 +158,7 @@ function createChessState() {
     board: createInitialChessBoard(),
     turn: 'white',
     winner: null,
+    lastMove: null,
     round: 1
   };
 }
@@ -186,6 +187,7 @@ function createCheckersState() {
     board: createInitialCheckersBoard(),
     turn: 'red',
     winner: null,
+    lastMove: null,
     round: 1
   };
 }
@@ -332,6 +334,7 @@ function resetChessRound(room) {
     board: createInitialChessBoard(),
     turn: 'white',
     winner: null,
+    lastMove: null,
     round: Number(room.gameState?.round || 0) + 1
   };
 }
@@ -341,6 +344,7 @@ function resetCheckersRound(room) {
     board: createInitialCheckersBoard(),
     turn: 'red',
     winner: null,
+    lastMove: null,
     round: Number(room.gameState?.round || 0) + 1
   };
 }
@@ -815,6 +819,15 @@ function updatePongRoom(room, deltaSeconds) {
   }
 
   let changed = false;
+  if (room.gameState.countdownEndsAt && Date.now() < room.gameState.countdownEndsAt) {
+    return false;
+  }
+
+  if (room.gameState.countdownEndsAt) {
+    room.gameState.countdownEndsAt = 0;
+    changed = true;
+  }
+
   const previousLeftY = room.gameState.leftY;
   const previousRightY = room.gameState.rightY;
   const previousBallX = room.gameState.ballX;
@@ -826,15 +839,6 @@ function updatePongRoom(room, deltaSeconds) {
   room.gameState.rightY = clampPongPaddleY(room.gameState.rightY + (room.gameState.rightInput * PONG_PLAYER_SPEED * deltaSeconds));
 
   if (room.gameState.leftY !== previousLeftY || room.gameState.rightY !== previousRightY) {
-    changed = true;
-  }
-
-  if (room.gameState.countdownEndsAt && Date.now() < room.gameState.countdownEndsAt) {
-    return changed;
-  }
-
-  if (room.gameState.countdownEndsAt) {
-    room.gameState.countdownEndsAt = 0;
     changed = true;
   }
 
@@ -1547,6 +1551,16 @@ io.on('connection', (socket) => {
       room.gameState.board[toRow][toCol] = createChessPiece('queen', nextPiece.color);
     }
 
+    room.gameState.lastMove = {
+      fromRow,
+      fromCol,
+      toRow,
+      toCol,
+      pieceType: movingPiece.type,
+      capture: capturedPiece ? { row: toRow, col: toCol } : null,
+      captureColor: capturedPiece?.color || null
+    };
+
     if (capturedPiece?.type === 'king') {
       room.gameState.winner = nextPiece.color;
     } else {
@@ -1604,12 +1618,23 @@ io.on('connection', (socket) => {
     }
 
     const nextPiece = { ...movingPiece };
+    const capturedPiece = move.capture ? room.gameState.board[move.capture.row][move.capture.col] : null;
     room.gameState.board[fromRow][fromCol] = null;
     room.gameState.board[toRow][toCol] = nextPiece;
 
     if (move.capture) {
       room.gameState.board[move.capture.row][move.capture.col] = null;
     }
+
+    room.gameState.lastMove = {
+      fromRow,
+      fromCol,
+      toRow,
+      toCol,
+      pieceType: movingPiece.king ? 'king' : 'checker',
+      capture: move.capture ? { ...move.capture } : null,
+      captureColor: capturedPiece?.color || null
+    };
 
     if ((nextPiece.color === 'red' && toRow === 0) || (nextPiece.color === 'black' && toRow === CHECKERS_SIZE - 1)) {
       nextPiece.king = true;
