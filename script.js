@@ -1872,6 +1872,25 @@ document.addEventListener('DOMContentLoaded', () => {
             || '';
     }
 
+    function getMultiplayerRoomUiSignature(room) {
+        if (!room) {
+            return 'no-room';
+        }
+
+        const playersSignature = Array.isArray(room.players)
+            ? room.players.map((player) => `${player.id}:${player.name}:${player.isHost ? 'h' : '-'}:${player.isYou ? 'y' : '-'}`).join('|')
+            : '';
+
+        return [
+            room.code || '',
+            room.gameId || '',
+            room.hostId || '',
+            Number(room.playerCount || 0),
+            Number(room.maxPlayers || 0),
+            playersSignature
+        ].join('::');
+    }
+
     function syncMultiplayerPlayerNames(source = 'create') {
         if (source === 'create' && multiplayerJoinPlayerNameInput && !multiplayerJoinPlayerNameInput.value.trim()) {
             multiplayerJoinPlayerNameInput.value = multiplayerCreatePlayerNameInput?.value.trim() || '';
@@ -2056,6 +2075,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             multiplayerSocket.on('room:updated', (room) => {
+                const previousUiSignature = getMultiplayerRoomUiSignature(multiplayerActiveRoom);
                 multiplayerActiveRoom = room;
                 if (MULTIPLAYER_SUPPORTED_GAMES[room.gameId]) {
                     multiplayerSelectedGameId = room.gameId;
@@ -2067,8 +2087,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 syncMultiplayerConnect4State();
                 syncMultiplayerChessState();
                 syncMultiplayerCheckersState();
-                syncMultiplayerEntryModeAccess();
-                updateMultiplayerLobby();
+                const nextUiSignature = getMultiplayerRoomUiSignature(room);
+                if (previousUiSignature !== nextUiSignature) {
+                    syncMultiplayerEntryModeAccess();
+                    updateMultiplayerLobby();
+                }
             });
 
             multiplayerSocket.on('room:error', ({ message }) => {
