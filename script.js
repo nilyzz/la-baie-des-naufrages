@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cinemaNavButtons = document.querySelectorAll('#cinemaHeaderNav .nav-button');
     const mathNavButtons = document.querySelectorAll('#mathHeaderNav .nav-button');
     const musicNavButtons = document.querySelectorAll('#musicHeaderNav .nav-button');
+    const allViews = document.querySelectorAll('.view');
     const panels = document.querySelectorAll('.panel');
     const searchInput = document.getElementById('searchInput');
     const catalogGrid = document.getElementById('catalogGrid');
@@ -271,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reactionLantern = document.getElementById('reactionLantern');
     const baieBerryGame = document.getElementById('baieBerryGame');
     const baieBerryCanvas = document.getElementById('baieBerryCanvas');
+    const baieBerryContext = baieBerryCanvas?.getContext('2d');
     const baieBerryDropGuide = document.getElementById('baieBerryDropGuide');
     const baieBerryScoreDisplay = document.getElementById('baieBerryScoreDisplay');
     const baieBerryNextDisplay = document.getElementById('baieBerryNextDisplay');
@@ -278,6 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const baieBerryStartButton = document.getElementById('baieBerryStartButton');
     const breakoutGame = document.getElementById('breakoutGame');
     const breakoutCanvas = document.getElementById('breakoutCanvas');
+    const breakoutContext = breakoutCanvas?.getContext('2d');
     const breakoutScoreDisplay = document.getElementById('breakoutScoreDisplay');
     const breakoutLivesDisplay = document.getElementById('breakoutLivesDisplay');
     const breakoutHelpText = document.getElementById('breakoutHelpText');
@@ -346,6 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const REACTION_BEST_KEY = 'baie-des-naufrages-reaction-best';
     const BAIE_BERRY_BEST_KEY = 'baie-des-naufrages-baieberry-best';
     const BREAKOUT_BEST_KEY = 'baie-des-naufrages-breakout-best';
+    const BREAKOUT_BALL_SPEED = 320;
+    const BREAKOUT_MAX_STEP_DISTANCE = 4;
     const FLOW_FREE_SIZE = 7;
     const FLOW_FREE_COLORS = ['#fb7185', '#38bdf8', '#facc15', '#34d399', '#c084fc', '#f97316', '#22d3ee', '#60a5fa', '#e879f9', '#84cc16'];
     const MAGIC_SORT_COLORS = {
@@ -701,6 +706,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let flowFreePointerDown = false;
     let flowFreeRenderFrame = null;
     let flowFreeLastHoverKey = null;
+    let flowFreePendingTarget = null;
+    let flowFreeCatchupFrame = null;
+    let flowFreeCompletionAnimationToken = 0;
     let flowFreeSpawning = new Set();
     let flowFreeSpawnTimers = new Map();
     let flowFreeDespawning = new Map();
@@ -718,6 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let candyCrushAnimating = false;
     let candyCrushPointerStart = null;
     let harborRunLane = 1;
+    let harborRunVisualLane = 1;
     let harborRunObstacles = [];
     let harborRunScore = 0;
     let harborRunBestScore = Number(window.localStorage.getItem(HARBOR_RUN_BEST_KEY)) || 0;
@@ -783,6 +792,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let breakoutLastFrame = 0;
     let breakoutKeys = new Set();
     let breakoutBestScore = Number(window.localStorage.getItem(BREAKOUT_BEST_KEY)) || 0;
+    let breakoutRemainingBricks = 0;
+    let resizeFrame = null;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
     let pianoAudioContext = null;
@@ -936,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
             onComplete
         } = options;
 
-        document.querySelectorAll('.view').forEach((view) => {
+        allViews.forEach((view) => {
             view.classList.remove('view-active', 'view-leaving');
             view.setAttribute('aria-hidden', 'true');
         });
@@ -8050,6 +8061,11 @@ document.addEventListener('DOMContentLoaded', () => {
         flowFreeActiveColor = null;
         flowFreePointerDown = false;
         flowFreeLastHoverKey = null;
+        flowFreePendingTarget = null;
+        if (flowFreeCatchupFrame !== null) {
+            window.cancelAnimationFrame(flowFreeCatchupFrame);
+            flowFreeCatchupFrame = null;
+        }
         flowFreeSpawning = new Set();
         flowFreeSpawnTimers.forEach((timer) => window.clearTimeout(timer));
         flowFreeSpawnTimers = new Map();
@@ -8099,31 +8115,32 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleFlowFreeRender();
     }
 
-    function extendFlowFreePath(row, col) {
+    function extendFlowFreePathStep(row, col, options = {}) {
+        const { deferRender = false } = options;
         if (!flowFreePointerDown || !flowFreeActiveColor) {
-            return;
+            return 'inactive';
         }
 
         const path = flowFreePaths.get(flowFreeActiveColor) || [];
         const lastCell = path[path.length - 1];
 
         if (!lastCell) {
-            return;
+            return 'blocked';
         }
 
         const distance = Math.abs(lastCell.row - row) + Math.abs(lastCell.col - col);
         if (distance !== 1) {
-            return;
+            return 'blocked';
         }
 
         const targetCell = flowFreeCells[row][col];
         if (!targetCell) {
-            return;
+            return 'blocked';
         }
 
         const hoverKey = `${row}-${col}`;
         if (flowFreeLastHoverKey === hoverKey) {
-            return;
+            return 'duplicate';
         }
         flowFreeLastHoverKey = hoverKey;
 
@@ -8131,24 +8148,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (existingIndex >= 0) {
             setFlowFreePath(flowFreeActiveColor, path.slice(0, existingIndex + 1));
             flowFreeCompleted.delete(flowFreeActiveColor);
-            scheduleFlowFreeRender();
-            return;
+            if (!deferRender) {
+                scheduleFlowFreeRender();
+            }
+            return 'advanced';
         }
 
         if (targetCell.color && targetCell.color !== flowFreeActiveColor) {
-            return;
+            return 'blocked';
         }
 
         const pair = getFlowFreePairByColor(flowFreeActiveColor);
         if (!pair) {
-            return;
+            return 'blocked';
         }
 
         const isOtherAnchor = targetCell.isAnchor
             && ((row === pair.start.row && col === pair.start.col) || (row === pair.end.row && col === pair.end.col));
 
         if (targetCell.isAnchor && !isOtherAnchor) {
-            return;
+            return 'blocked';
         }
 
         const nextPath = [...path, { row, col }];
@@ -8160,7 +8179,13 @@ document.addEventListener('DOMContentLoaded', () => {
             || (startCell.row === pair.end.row && startCell.col === pair.end.col
             && row === pair.start.row && col === pair.start.col);
 
+        if (!targetCell.isAnchor) {
+            animateFlowFreeCellAppearance(row, col, flowFreeActiveColor);
+        }
+
         if (reachedEnd) {
+            renderFlowFree();
+            animateFlowFreeCompletedPath(nextPath, flowFreeActiveColor);
             flowFreeCompleted.add(flowFreeActiveColor);
             flowFreeHelpText.textContent = 'Un courant est ferme. Plus que quelques liaisons.';
 
@@ -8171,16 +8196,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracés.`);
                 flowFreePointerDown = false;
                 flowFreeActiveColor = null;
-                return;
+                flowFreeLastHoverKey = null;
+                return 'completed';
             }
             flowFreeHelpText.textContent = allCellsFilled
                 ? 'Toutes les cases sont remplies. Termine les dernieres liaisons.'
                 : 'Un courant est ferme. Les cases libres doivent aussi etre couvertes.';
+            flowFreePointerDown = false;
+            flowFreeActiveColor = null;
+            flowFreeLastHoverKey = null;
+            if (!deferRender) {
+                scheduleFlowFreeRender();
+            }
+            return 'completed';
         } else {
             flowFreeCompleted.delete(flowFreeActiveColor);
         }
 
-        scheduleFlowFreeRender();
+        if (!deferRender) {
+            scheduleFlowFreeRender();
+        }
+        return 'advanced';
+    }
+
+    function extendFlowFreePath(row, col) {
+        if (!flowFreePointerDown || !flowFreeActiveColor) {
+            return;
+        }
+        flowFreePendingTarget = { row, col };
+
+        if (flowFreeCatchupFrame === null) {
+            processFlowFreePendingPath();
+        }
     }
 
     function stopFlowFreePath() {
@@ -8188,12 +8235,254 @@ document.addEventListener('DOMContentLoaded', () => {
         flowFreePointerDown = false;
         flowFreeActiveColor = null;
         flowFreeLastHoverKey = null;
+        flowFreePendingTarget = null;
+        if (flowFreeCatchupFrame !== null) {
+            window.cancelAnimationFrame(flowFreeCatchupFrame);
+            flowFreeCatchupFrame = null;
+        }
         if (activeColor && !flowFreeCompleted.has(activeColor)) {
             despawnFlowFreePath(activeColor);
             return;
         }
 
         scheduleFlowFreeRender();
+    }
+
+    function animateFlowFreeCellAppearance(row, col, color) {
+        window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+                const cellElement = flowFreeBoard?.querySelector(`[data-flow-row="${row}"][data-flow-col="${col}"]`);
+                if (!cellElement || typeof cellElement.animate !== 'function') {
+                    return;
+                }
+
+                cellElement.animate([
+                    {
+                        transform: 'scale(0.72)',
+                        opacity: 0.55,
+                        boxShadow: `0 0 0 0 ${color}00`
+                    },
+                    {
+                        transform: 'scale(1.08)',
+                        opacity: 1,
+                        boxShadow: `0 0 0 10px ${color}33`
+                    },
+                    {
+                        transform: 'scale(1)',
+                        opacity: 1,
+                        boxShadow: `0 0 0 0 ${color}00`
+                    }
+                ], {
+                    duration: 220,
+                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+                });
+            });
+        });
+    }
+
+    function animateFlowFreeCompletedPath(path, color) {
+        flowFreeCompletionAnimationToken += 1;
+        const animationToken = flowFreeCompletionAnimationToken;
+
+        const runAnimation = () => {
+            if (animationToken !== flowFreeCompletionAnimationToken) {
+                return;
+            }
+
+            path.forEach((cell, index) => {
+                const cellElement = flowFreeBoard?.querySelector(`[data-flow-row="${cell.row}"][data-flow-col="${cell.col}"]`);
+                if (!cellElement || typeof cellElement.animate !== 'function') {
+                    return;
+                }
+
+                cellElement.getAnimations?.().forEach((animation) => animation.cancel());
+                cellElement.animate([
+                    {
+                        transform: 'scale(1)',
+                        boxShadow: `0 0 0 0 ${color}00`,
+                        filter: 'brightness(1)'
+                    },
+                    {
+                        transform: 'scale(1.12)',
+                        boxShadow: `0 0 0 12px ${color}40`,
+                        filter: 'brightness(1.18)'
+                    },
+                    {
+                        transform: 'scale(1)',
+                        boxShadow: `0 0 0 0 ${color}00`,
+                        filter: 'brightness(1)'
+                    }
+                ], {
+                    duration: 360,
+                    delay: index * 26,
+                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                    fill: 'both'
+                });
+            });
+        };
+
+        window.requestAnimationFrame(() => {
+            if (animationToken !== flowFreeCompletionAnimationToken) {
+                return;
+            }
+
+            runAnimation();
+            window.requestAnimationFrame(() => {
+                if (animationToken !== flowFreeCompletionAnimationToken) {
+                    return;
+                }
+
+                runAnimation();
+                window.requestAnimationFrame(() => {
+                    if (animationToken !== flowFreeCompletionAnimationToken) {
+                        return;
+                    }
+
+                    runAnimation();
+                });
+            });
+        });
+
+        window.setTimeout(() => {
+            if (animationToken !== flowFreeCompletionAnimationToken) {
+                return;
+            }
+
+            runAnimation();
+        }, 48);
+    }
+
+    function processFlowFreePendingPath() {
+        flowFreeCatchupFrame = null;
+
+        if (!flowFreePointerDown || !flowFreeActiveColor || !flowFreePendingTarget) {
+            return;
+        }
+
+        const path = flowFreePaths.get(flowFreeActiveColor) || [];
+        const lastCell = path[path.length - 1];
+
+        if (!lastCell) {
+            flowFreePendingTarget = null;
+            return;
+        }
+
+        const rowDiff = flowFreePendingTarget.row - lastCell.row;
+        const colDiff = flowFreePendingTarget.col - lastCell.col;
+        const distance = Math.abs(rowDiff) + Math.abs(colDiff);
+
+        if (distance === 0) {
+            flowFreePendingTarget = null;
+            return;
+        }
+
+        const nextRow = rowDiff !== 0 && Math.abs(rowDiff) >= Math.abs(colDiff)
+            ? lastCell.row + Math.sign(rowDiff)
+            : lastCell.row;
+        const nextCol = nextRow === lastCell.row
+            ? lastCell.col + Math.sign(colDiff)
+            : lastCell.col;
+
+        const stepResult = extendFlowFreePathStep(nextRow, nextCol, { deferRender: true });
+        scheduleFlowFreeRender();
+
+        if (stepResult === 'completed' || stepResult === 'inactive') {
+            flowFreePendingTarget = null;
+            return;
+        }
+
+        if (stepResult !== 'advanced') {
+            flowFreePendingTarget = null;
+            return;
+        }
+
+        const updatedPath = flowFreePaths.get(flowFreeActiveColor) || [];
+        const updatedLastCell = updatedPath[updatedPath.length - 1];
+        if (!updatedLastCell) {
+            flowFreePendingTarget = null;
+            return;
+        }
+
+        const remainingDistance = Math.abs(flowFreePendingTarget.row - updatedLastCell.row)
+            + Math.abs(flowFreePendingTarget.col - updatedLastCell.col);
+
+        if (remainingDistance === 0) {
+            flowFreePendingTarget = null;
+            return;
+        }
+
+        flowFreeCatchupFrame = window.requestAnimationFrame(processFlowFreePendingPath);
+    }
+
+    function setBreakoutBallVelocity(directionX, directionY) {
+        const magnitude = Math.hypot(directionX, directionY) || 1;
+        breakoutState.ball.vx = (directionX / magnitude) * BREAKOUT_BALL_SPEED;
+        breakoutState.ball.vy = (directionY / magnitude) * BREAKOUT_BALL_SPEED;
+    }
+
+    function resetBreakoutBall() {
+        breakoutState.ball.x = 280;
+        breakoutState.ball.y = 290;
+        setBreakoutBallVelocity(0.45, -1);
+    }
+
+    function resolveBreakoutBrickCollision(brick, previousX, previousY) {
+        const { ball } = breakoutState;
+        const radius = ball.radius;
+        const crossedFromLeft = previousX + radius <= brick.x;
+        const crossedFromRight = previousX - radius >= brick.x + brick.width;
+        const crossedFromTop = previousY + radius <= brick.y;
+        const crossedFromBottom = previousY - radius >= brick.y + brick.height;
+
+        if (crossedFromLeft) {
+            ball.x = brick.x - radius;
+            ball.vx = -Math.abs(ball.vx);
+            return;
+        }
+
+        if (crossedFromRight) {
+            ball.x = brick.x + brick.width + radius;
+            ball.vx = Math.abs(ball.vx);
+            return;
+        }
+
+        if (crossedFromTop) {
+            ball.y = brick.y - radius;
+            ball.vy = -Math.abs(ball.vy);
+            return;
+        }
+
+        if (crossedFromBottom) {
+            ball.y = brick.y + brick.height + radius;
+            ball.vy = Math.abs(ball.vy);
+            return;
+        }
+
+        const overlapLeft = ball.x + radius - brick.x;
+        const overlapRight = brick.x + brick.width - (ball.x - radius);
+        const overlapTop = ball.y + radius - brick.y;
+        const overlapBottom = brick.y + brick.height - (ball.y - radius);
+        const horizontalOverlap = Math.min(overlapLeft, overlapRight);
+        const verticalOverlap = Math.min(overlapTop, overlapBottom);
+
+        if (horizontalOverlap < verticalOverlap) {
+            if (overlapLeft < overlapRight) {
+                ball.x = brick.x - radius;
+                ball.vx = -Math.abs(ball.vx);
+            } else {
+                ball.x = brick.x + brick.width + radius;
+                ball.vx = Math.abs(ball.vx);
+            }
+            return;
+        }
+
+        if (overlapTop < overlapBottom) {
+            ball.y = brick.y - radius;
+            ball.vy = -Math.abs(ball.vy);
+        } else {
+            ball.y = brick.y + brick.height + radius;
+            ball.vy = Math.abs(ball.vy);
+        }
     }
 
     function updateMagicSortHud() {
@@ -8735,6 +9024,16 @@ document.addEventListener('DOMContentLoaded', () => {
         harborRunStartButton.textContent = harborRunRunning ? 'En course' : 'Lancer la route';
     }
 
+    function getHarborRunPlayerPosition() {
+        const safeLaneIndex = Math.max(0, Math.min(HARBOR_RUN_LANES.length - 1, harborRunVisualLane));
+        const lowerLaneIndex = Math.floor(safeLaneIndex);
+        const upperLaneIndex = Math.min(HARBOR_RUN_LANES.length - 1, lowerLaneIndex + 1);
+        const laneProgress = safeLaneIndex - lowerLaneIndex;
+        const lowerPosition = HARBOR_RUN_LANES[lowerLaneIndex];
+        const upperPosition = HARBOR_RUN_LANES[upperLaneIndex];
+        return lowerPosition + ((upperPosition - lowerPosition) * laneProgress);
+    }
+
     function renderHarborRun() {
         const farOffset = (harborRunBackdropOffset * 0.22) % 180;
         const midOffset = (harborRunBackdropOffset * 0.42) % 210;
@@ -8746,7 +9045,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="harborrun-waves harborrun-waves-near" style="background-position: center ${nearOffset}px;"></div>
             <div class="harborrun-foam" style="background-position: center ${foamOffset}px;"></div>
         `;
-        const playerMarkup = `<div class="harborrun-player" style="left: ${HARBOR_RUN_LANES[harborRunLane]}%;"></div>`;
+        const playerMarkup = `<div class="harborrun-player" style="left: ${getHarborRunPlayerPosition()}%;"></div>`;
         const obstaclesMarkup = harborRunObstacles.map((obstacle) => `
             <div
                 class="harborrun-obstacle type-${obstacle.type}"
@@ -8772,6 +9071,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeGameOverModal();
         stopHarborRun();
         harborRunLane = 1;
+        harborRunVisualLane = 1;
         harborRunSafeLane = 1;
         harborRunObstacles = [];
         harborRunScore = 0;
@@ -8783,6 +9083,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function moveHarborRun(direction) {
+        if (!harborRunRunning) {
+            return;
+        }
+
         harborRunLane = Math.max(0, Math.min(HARBOR_RUN_LANES.length - 1, harborRunLane + direction));
         renderHarborRun();
     }
@@ -8843,6 +9147,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const speed = 28 + Math.min(54, harborRunScore * 1.45);
+        const laneSmoothing = Math.min(1, (deltaMs / 1000) * 12);
+        harborRunVisualLane += (harborRunLane - harborRunVisualLane) * laneSmoothing;
         harborRunBackdropOffset += (deltaMs / 1000) * speed * 5.6;
         harborRunObstacles.forEach((obstacle) => {
             obstacle.y += (deltaMs / 1000) * speed;
@@ -8857,7 +9163,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         harborRunObstacles = harborRunObstacles.filter((obstacle) => obstacle.y < 118);
-        harborRunObstacles.sort((firstObstacle, secondObstacle) => firstObstacle.y - secondObstacle.y);
 
         const collided = harborRunObstacles.some((obstacle) => (
             obstacle.lane === harborRunLane
@@ -10803,10 +11108,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawBaieBerry() {
-        const context = baieBerryCanvas?.getContext('2d');
-        if (!context || !baieBerryState) {
+        if (!baieBerryContext || !baieBerryState) {
             return;
         }
+
+        const context = baieBerryContext;
 
         context.clearRect(0, 0, baieBerryCanvas.width, baieBerryCanvas.height);
         const backdrop = context.createLinearGradient(0, 0, 0, baieBerryCanvas.height);
@@ -11012,29 +11318,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawBreakout() {
-        const context = breakoutCanvas?.getContext('2d');
-        if (!context || !breakoutState) {
+        if (!breakoutContext || !breakoutState) {
             return;
         }
 
-        context.clearRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
-        context.fillStyle = '#082f49';
-        context.fillRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
+        breakoutContext.clearRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
+        breakoutContext.fillStyle = '#082f49';
+        breakoutContext.fillRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
 
         breakoutState.bricks.forEach((brick) => {
             if (!brick.alive) {
                 return;
             }
-            context.fillStyle = brick.color;
-            context.fillRect(brick.x, brick.y, brick.width, brick.height);
+            breakoutContext.fillStyle = brick.color;
+            breakoutContext.fillRect(brick.x, brick.y, brick.width, brick.height);
         });
 
-        context.fillStyle = '#f8fafc';
-        context.fillRect(breakoutState.paddle.x, breakoutState.paddle.y, breakoutState.paddle.width, breakoutState.paddle.height);
-        context.beginPath();
-        context.fillStyle = '#facc15';
-        context.arc(breakoutState.ball.x, breakoutState.ball.y, breakoutState.ball.radius, 0, Math.PI * 2);
-        context.fill();
+        breakoutContext.fillStyle = '#f8fafc';
+        breakoutContext.fillRect(breakoutState.paddle.x, breakoutState.paddle.y, breakoutState.paddle.width, breakoutState.paddle.height);
+        breakoutContext.beginPath();
+        breakoutContext.fillStyle = '#facc15';
+        breakoutContext.arc(breakoutState.ball.x, breakoutState.ball.y, breakoutState.ball.radius, 0, Math.PI * 2);
+        breakoutContext.fill();
     }
 
     function initializeBreakout() {
@@ -11043,9 +11348,11 @@ document.addEventListener('DOMContentLoaded', () => {
             lives: 3,
             running: false,
             paddle: { x: 230, y: 388, width: 100, height: 12 },
-            ball: { x: 280, y: 290, vx: 190, vy: -220, radius: 8 },
+            ball: { x: 280, y: 290, vx: 0, vy: 0, radius: 8 },
             bricks: createBreakoutBricks()
         };
+        breakoutRemainingBricks = breakoutState.bricks.length;
+        resetBreakoutBall();
         breakoutScoreDisplay.textContent = '0';
         breakoutLivesDisplay.textContent = '3';
         breakoutHelpText.textContent = `Record actuel: ${breakoutBestScore}. Lance la balle quand tu veux.`;
@@ -11078,33 +11385,58 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             breakoutState.paddle.x = Math.max(0, Math.min(breakoutCanvas.width - breakoutState.paddle.width, breakoutState.paddle.x));
 
-            breakoutState.ball.x += breakoutState.ball.vx * delta;
-            breakoutState.ball.y += breakoutState.ball.vy * delta;
+            const maxDistance = Math.max(
+                Math.abs(breakoutState.ball.vx),
+                Math.abs(breakoutState.ball.vy)
+            ) * delta;
+            const stepCount = Math.max(1, Math.ceil(maxDistance / BREAKOUT_MAX_STEP_DISTANCE));
+            const stepDelta = delta / stepCount;
 
-            if (breakoutState.ball.x <= breakoutState.ball.radius || breakoutState.ball.x >= breakoutCanvas.width - breakoutState.ball.radius) {
-                breakoutState.ball.vx *= -1;
-            }
-            if (breakoutState.ball.y <= breakoutState.ball.radius) {
-                breakoutState.ball.vy *= -1;
-            }
-            if (breakoutState.ball.y + breakoutState.ball.radius >= breakoutState.paddle.y
-                && breakoutState.ball.x >= breakoutState.paddle.x
-                && breakoutState.ball.x <= breakoutState.paddle.x + breakoutState.paddle.width
-                && breakoutState.ball.vy > 0) {
-                breakoutState.ball.vy *= -1;
-                breakoutState.ball.vx = ((breakoutState.ball.x - (breakoutState.paddle.x + breakoutState.paddle.width / 2)) / 50) * 240;
-            }
+            for (let stepIndex = 0; stepIndex < stepCount; stepIndex += 1) {
+                const previousX = breakoutState.ball.x;
+                const previousY = breakoutState.ball.y;
 
-            breakoutState.bricks.forEach((brick) => {
-                if (!brick.alive) {
-                    return;
+                breakoutState.ball.x += breakoutState.ball.vx * stepDelta;
+                breakoutState.ball.y += breakoutState.ball.vy * stepDelta;
+
+                if (breakoutState.ball.x <= breakoutState.ball.radius) {
+                    breakoutState.ball.x = breakoutState.ball.radius;
+                    breakoutState.ball.vx = Math.abs(breakoutState.ball.vx);
+                } else if (breakoutState.ball.x >= breakoutCanvas.width - breakoutState.ball.radius) {
+                    breakoutState.ball.x = breakoutCanvas.width - breakoutState.ball.radius;
+                    breakoutState.ball.vx = -Math.abs(breakoutState.ball.vx);
                 }
-                if (breakoutState.ball.x + breakoutState.ball.radius > brick.x
+
+                if (breakoutState.ball.y <= breakoutState.ball.radius) {
+                    breakoutState.ball.y = breakoutState.ball.radius;
+                    breakoutState.ball.vy = Math.abs(breakoutState.ball.vy);
+                }
+
+                if (breakoutState.ball.y + breakoutState.ball.radius >= breakoutState.paddle.y
+                    && breakoutState.ball.y - breakoutState.ball.radius <= breakoutState.paddle.y + breakoutState.paddle.height
+                    && breakoutState.ball.x + breakoutState.ball.radius >= breakoutState.paddle.x
+                    && breakoutState.ball.x - breakoutState.ball.radius <= breakoutState.paddle.x + breakoutState.paddle.width
+                    && breakoutState.ball.vy > 0) {
+                    breakoutState.ball.y = breakoutState.paddle.y - breakoutState.ball.radius;
+                    const normalizedOffset = Math.max(-1, Math.min(1, (
+                        breakoutState.ball.x - (breakoutState.paddle.x + breakoutState.paddle.width / 2)
+                    ) / (breakoutState.paddle.width / 2)));
+                    const bounceAngle = normalizedOffset * (Math.PI / 3);
+                    setBreakoutBallVelocity(Math.sin(bounceAngle), -Math.cos(bounceAngle));
+                }
+
+                const collidedBrick = breakoutState.bricks.find((brick) => (
+                    brick.alive
+                    && breakoutState.ball.x + breakoutState.ball.radius > brick.x
                     && breakoutState.ball.x - breakoutState.ball.radius < brick.x + brick.width
                     && breakoutState.ball.y + breakoutState.ball.radius > brick.y
-                    && breakoutState.ball.y - breakoutState.ball.radius < brick.y + brick.height) {
-                    brick.alive = false;
-                    breakoutState.ball.vy *= -1;
+                    && breakoutState.ball.y - breakoutState.ball.radius < brick.y + brick.height
+                ));
+
+                if (collidedBrick) {
+                    collidedBrick.alive = false;
+                    breakoutRemainingBricks = Math.max(0, breakoutRemainingBricks - 1);
+                    resolveBreakoutBrickCollision(collidedBrick, previousX, previousY);
                     breakoutState.score += 25;
                     breakoutScoreDisplay.textContent = String(breakoutState.score);
                     if (breakoutState.score > breakoutBestScore) {
@@ -11112,22 +11444,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.localStorage.setItem(BREAKOUT_BEST_KEY, String(breakoutBestScore));
                     }
                 }
-            });
 
-            if (breakoutState.ball.y > breakoutCanvas.height + 20) {
-                breakoutState.lives -= 1;
-                breakoutLivesDisplay.textContent = String(breakoutState.lives);
-                breakoutState.running = false;
-                breakoutState.ball.x = 280;
-                breakoutState.ball.y = 290;
-                breakoutState.ball.vx = 190;
-                breakoutState.ball.vy = -220;
-                breakoutHelpText.textContent = breakoutState.lives > 0 ? 'Balle perdue. Clique relancer.' : `Partie terminee. Score ${breakoutState.score}.`;
-            }
+                if (breakoutState.ball.y - breakoutState.ball.radius > breakoutCanvas.height) {
+                    breakoutState.lives -= 1;
+                    breakoutLivesDisplay.textContent = String(breakoutState.lives);
+                    breakoutState.running = false;
+                    resetBreakoutBall();
+                    breakoutHelpText.textContent = breakoutState.lives > 0 ? 'Balle perdue. Clique relancer.' : `Partie terminee. Score ${breakoutState.score}.`;
+                    break;
+                }
 
-            if (breakoutState.bricks.every((brick) => !brick.alive)) {
-                breakoutState.running = false;
-                breakoutHelpText.textContent = `Victoire ! Score ${breakoutState.score}.`;
+                if (breakoutRemainingBricks === 0) {
+                    breakoutState.running = false;
+                    breakoutHelpText.textContent = `Victoire ! Score ${breakoutState.score}.`;
+                    break;
+                }
             }
         }
 
@@ -11932,6 +12263,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (typeof flowFreeBoard.setPointerCapture === 'function') {
+            flowFreeBoard.setPointerCapture(event.pointerId);
+        }
+
         startFlowFreePath(
             Number(cellButton.dataset.flowRow),
             Number(cellButton.dataset.flowCol)
@@ -11968,6 +12303,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('pointerup', () => {
+        if (flowFreePointerDown) {
+            stopFlowFreePath();
+        }
+    });
+
+    flowFreeBoard.addEventListener('pointerup', (event) => {
+        if (typeof flowFreeBoard.releasePointerCapture === 'function' && flowFreeBoard.hasPointerCapture?.(event.pointerId)) {
+            flowFreeBoard.releasePointerCapture(event.pointerId);
+        }
+    });
+
+    flowFreeBoard.addEventListener('pointercancel', (event) => {
+        if (typeof flowFreeBoard.releasePointerCapture === 'function' && flowFreeBoard.hasPointerCapture?.(event.pointerId)) {
+            flowFreeBoard.releasePointerCapture(event.pointerId);
+        }
         if (flowFreePointerDown) {
             stopFlowFreePath();
         }
@@ -12437,6 +12787,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('resize', () => {
+        if (resizeFrame !== null) {
+            window.cancelAnimationFrame(resizeFrame);
+        }
+
+        resizeFrame = window.requestAnimationFrame(() => {
+            resizeFrame = null;
+
         if (activeGameTab === 'snake') {
             renderSnake();
         }
@@ -12484,6 +12841,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeGameTab === 'breakout') {
             drawBreakout();
         }
+        });
     });
 
     multiplayerCreateRoomButton?.addEventListener('click', () => {
@@ -12523,36 +12881,9 @@ document.addEventListener('DOMContentLoaded', () => {
     showGamePanel('home');
     updateMultiplayerLobby();
     initializeGame();
-    initializeSnake();
-    initializePong();
-    initializeSudoku();
-    initialize2048();
-    initializeAim();
-    initializeMemory();
-    initializeTicTacToe();
-    initializeBattleship();
-    initializeTetris();
-    initializePacman();
-    initializeSolitaire();
-    initializeConnect4();
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
-    initializeRhythm();
-    initializeFlappy();
-    initializeFlowFree();
-    initializeMagicSort();
-    initializeMentalMath();
-    initializeCandyCrush();
-    initializeHarborRun();
-    initializeStacker();
-    initializeCoinClicker();
     startCoinClickerAutoLoop();
-    initializeChess();
-    initializeCheckers();
-    initializeAirHockey();
-    initializeReaction();
-    initializeBaieBerry();
-    initializeBreakout();
     initializeConverter();
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');
