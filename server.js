@@ -13,6 +13,8 @@ const CONNECT4_ROWS = 6;
 const CONNECT4_COLS = 7;
 const CHESS_SIZE = 8;
 const CHECKERS_SIZE = 8;
+const BATTLESHIP_SIZE = 8;
+const BATTLESHIP_SHIPS = [4, 3, 3, 2, 2];
 const PONG_TARGET_SCORE = 7;
 const PONG_BOARD_WIDTH = 700;
 const PONG_BOARD_HEIGHT = Math.round(PONG_BOARD_WIDTH * 9 / 16);
@@ -39,10 +41,12 @@ const CHECKERS_DIRECTIONS = {
 const MAX_PLAYERS_BY_GAME = {
   pong: 2,
   airHockey: 2,
+  battleship: 2,
   ticTacToe: 2,
   connect4: 2,
   chess: 2,
-  checkers: 2
+  checkers: 2,
+  uno: 4
 };
 
 const server = http.createServer(app);
@@ -192,6 +196,105 @@ function createCheckersState() {
   };
 }
 
+function createBattleshipGrid() {
+  return Array.from({ length: BATTLESHIP_SIZE }, () => Array.from({ length: BATTLESHIP_SIZE }, () => ({
+    hasShip: false,
+    hit: false,
+    shipId: null
+  })));
+}
+
+function canPlaceBattleshipShip(grid, row, col, length, horizontal) {
+  for (let index = 0; index < length; index += 1) {
+    const nextRow = row + (horizontal ? 0 : index);
+    const nextCol = col + (horizontal ? index : 0);
+
+    if (!isInsideGameGrid(nextRow, nextCol, BATTLESHIP_SIZE) || grid[nextRow][nextCol].hasShip) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function placeBattleshipFleet(grid) {
+  BATTLESHIP_SHIPS.forEach((length, shipIndex) => {
+    let placed = false;
+
+    while (!placed) {
+      const horizontal = Math.random() > 0.5;
+      const row = Math.floor(Math.random() * BATTLESHIP_SIZE);
+      const col = Math.floor(Math.random() * BATTLESHIP_SIZE);
+
+      if (!canPlaceBattleshipShip(grid, row, col, length, horizontal)) {
+        continue;
+      }
+
+      for (let index = 0; index < length; index += 1) {
+        const nextRow = row + (horizontal ? 0 : index);
+        const nextCol = col + (horizontal ? index : 0);
+        grid[nextRow][nextCol].hasShip = true;
+        grid[nextRow][nextCol].shipId = shipIndex;
+      }
+
+      placed = true;
+    }
+  });
+}
+
+function countRemainingBattleshipShips(grid) {
+  const ships = new Map();
+
+  grid.forEach((row) => {
+    row.forEach((cell) => {
+      if (!cell.hasShip || cell.shipId === null) {
+        return;
+      }
+
+      const ship = ships.get(cell.shipId) || { total: 0, hits: 0 };
+      ship.total += 1;
+      if (cell.hit) {
+        ship.hits += 1;
+      }
+      ships.set(cell.shipId, ship);
+    });
+  });
+
+  return [...ships.values()].filter((ship) => ship.hits < ship.total).length;
+}
+
+function sanitizeBattleshipOwnGrid(grid) {
+  return grid.map((row) => row.map((cell) => ({
+    hasShip: Boolean(cell.hasShip),
+    hit: Boolean(cell.hit),
+    shipId: cell.shipId
+  })));
+}
+
+function sanitizeBattleshipEnemyGrid(grid) {
+  return grid.map((row) => row.map((cell) => ({
+    hasShip: Boolean(cell.hit && cell.hasShip),
+    hit: Boolean(cell.hit),
+    shipId: cell.hit ? cell.shipId : null
+  })));
+}
+
+function createBattleshipState() {
+  const captain1Grid = createBattleshipGrid();
+  const captain2Grid = createBattleshipGrid();
+  placeBattleshipFleet(captain1Grid);
+  placeBattleshipFleet(captain2Grid);
+
+  return {
+    captain1Grid,
+    captain2Grid,
+    currentTurn: 'captain1',
+    winner: null,
+    lastShot: null,
+    round: 1
+  };
+}
+
 function createPongRoundSnapshot(previousState = null) {
   const serveDirection = Math.random() > 0.5 ? 1 : -1;
   const verticalDirection = (Math.random() * 2) - 1;
@@ -259,13 +362,270 @@ function createAirHockeyState() {
   return createAirHockeyRoundSnapshot(null);
 }
 
+function shuffleUnoDeck(cards) {
+  const deck = [...cards];
+
+  for (let index = deck.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [deck[index], deck[randomIndex]] = [deck[randomIndex], deck[index]];
+  }
+
+  return deck;
+}
+
+function createUnoCard(color, value, type = 'number') {
+  return {
+    id: `${color}-${value}-${type}-${Math.random().toString(16).slice(2, 10)}`,
+    color,
+    value,
+    type
+  };
+}
+
+function createUnoDeck() {
+  const deck = [];
+  const colors = ['red', 'yellow', 'green', 'blue'];
+
+  colors.forEach((color) => {
+    deck.push(createUnoCard(color, '0'));
+
+    for (let value = 1; value <= 9; value += 1) {
+      deck.push(createUnoCard(color, String(value)));
+      deck.push(createUnoCard(color, String(value)));
+    }
+
+    ['skip', 'reverse', 'draw2'].forEach((action) => {
+      deck.push(createUnoCard(color, action, action));
+      deck.push(createUnoCard(color, action, action));
+    });
+  });
+
+  for (let index = 0; index < 4; index += 1) {
+    deck.push(createUnoCard('wild', 'wild', 'wild'));
+    deck.push(createUnoCard('wild', 'wildDraw4', 'wildDraw4'));
+  }
+
+  return shuffleUnoDeck(deck);
+}
+
+function ensureUnoDrawPile(state) {
+  if (state.drawPile.length) {
+    return;
+  }
+
+  const topCard = state.discardPile.pop();
+  state.drawPile = shuffleUnoDeck(state.discardPile);
+  state.discardPile = topCard ? [topCard] : [];
+}
+
+function drawUnoCards(state, playerIndex, amount) {
+  const drawnCards = [];
+
+  for (let index = 0; index < amount; index += 1) {
+    ensureUnoDrawPile(state);
+    const card = state.drawPile.pop();
+    if (!card) {
+      break;
+    }
+    state.players[playerIndex].hand.push(card);
+    drawnCards.push(card);
+  }
+
+  return drawnCards;
+}
+
+function getUnoTopCard(state) {
+  return state.discardPile[state.discardPile.length - 1] || null;
+}
+
+function isUnoCardPlayable(card, state) {
+  if (!card || state.winner || state.pendingColorChoice) {
+    return false;
+  }
+
+  const topCard = getUnoTopCard(state);
+  if (!topCard) {
+    return true;
+  }
+
+  if (card.color === 'wild') {
+    return true;
+  }
+
+  if (Number(state.drawPenalty || 0) > 0) {
+    if (card.type === 'wildDraw4') {
+      return true;
+    }
+
+    if (card.type === 'draw2') {
+      return card.color === state.currentColor;
+    }
+
+    return false;
+  }
+
+  const activeColor = ['wild', 'wildDraw4'].includes(topCard.type)
+    ? state.currentColor
+    : topCard.color;
+
+  if (card.type === 'number') {
+    if (topCard.type !== 'number') {
+      return card.color === activeColor;
+    }
+
+    return card.color === activeColor || card.value === topCard.value;
+  }
+
+  if (card.type === 'draw2') {
+    if (topCard.type === 'wildDraw4') {
+      return card.color === state.currentColor;
+    }
+
+    return card.color === activeColor || topCard.type === 'draw2';
+  }
+
+  if (card.type === 'skip' || card.type === 'reverse') {
+    return card.color === activeColor || card.type === topCard.type;
+  }
+
+  return card.color === activeColor;
+}
+
+function getNextUnoPlayerIndex(state, step = 1) {
+  const total = state.players.length;
+  if (!total) {
+    return 0;
+  }
+
+  const offset = (state.currentPlayerIndex + (state.direction * step)) % total;
+  return offset < 0 ? offset + total : offset;
+}
+
+function applyUnoCardEffects(state, card, actorName) {
+  if (card.type === 'reverse') {
+    state.direction *= -1;
+    state.currentPlayerIndex = getNextUnoPlayerIndex(state, state.players.length === 2 ? 2 : 1);
+    state.lastAction = `${actorName} inverse le vent.`;
+    return;
+  }
+
+  if (card.type === 'skip') {
+    state.currentPlayerIndex = getNextUnoPlayerIndex(state, 2);
+    state.lastAction = `${actorName} fait passer le tour suivant.`;
+    return;
+  }
+
+  if (card.type === 'draw2') {
+    state.drawPenalty = Number(state.drawPenalty || 0) + 2;
+    state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+    state.lastAction = `${actorName} impose ${state.drawPenalty} cartes.`;
+    return;
+  }
+
+  if (card.type === 'wildDraw4') {
+    state.drawPenalty = Number(state.drawPenalty || 0) + 4;
+    state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+    state.lastAction = `${actorName} declenche ${state.drawPenalty} cartes.`;
+    return;
+  }
+
+  if (card.type === 'wild') {
+    state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+    state.lastAction = `${actorName} change la couleur.`;
+    return;
+  }
+
+  state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+  state.lastAction = `${actorName} joue ${card.value}.`;
+}
+
+function createUnoState(players = []) {
+  const deck = createUnoDeck();
+  const statePlayers = players.map((player) => ({
+    id: player.id,
+    name: player.name,
+    hand: []
+  }));
+
+  for (let turn = 0; turn < 7; turn += 1) {
+    statePlayers.forEach((player) => {
+      const card = deck.pop();
+      if (card) {
+        player.hand.push(card);
+      }
+    });
+  }
+
+  let topCard = deck.pop() || createUnoCard('red', '0');
+  while (topCard.type === 'wildDraw4') {
+    deck.unshift(topCard);
+    topCard = deck.pop() || createUnoCard('red', '0');
+  }
+
+  return {
+    players: statePlayers,
+    drawPile: deck,
+    discardPile: [topCard],
+    currentPlayerIndex: 0,
+    direction: 1,
+    currentColor: topCard.color === 'wild' ? 'red' : topCard.color,
+    winner: null,
+    pendingColorChoice: null,
+    drawPenalty: 0,
+    lastAction: 'La traversee commence.',
+    turnCount: 1,
+    round: 1
+  };
+}
+
+function getUnoPlayerIndex(room, socketId) {
+  return room.players.findIndex((player) => player.id === socketId);
+}
+
+function buildUnoStateForPlayer(room, socketId) {
+  const playerIndex = getUnoPlayerIndex(room, socketId);
+
+  return {
+    players: room.gameState.players.map((player, index) => ({
+      id: player.id,
+      name: player.name,
+      isYou: player.id === socketId,
+      hand: player.id === socketId ? player.hand.map((card) => ({ ...card })) : [],
+      handCount: player.hand.length,
+      seat: index
+    })),
+    drawPile: Array.from({ length: room.gameState.drawPile.length }, () => ({ hidden: true })),
+    discardPile: room.gameState.discardPile.map((card) => ({ ...card })),
+    currentPlayerIndex: room.gameState.currentPlayerIndex,
+    direction: room.gameState.direction,
+    currentColor: room.gameState.currentColor,
+    winner: room.gameState.winner,
+    pendingColorChoice: room.gameState.pendingColorChoice
+      ? { ...room.gameState.pendingColorChoice }
+      : null,
+    drawPenalty: Number(room.gameState.drawPenalty || 0),
+    lastAction: room.gameState.lastAction,
+    turnCount: room.gameState.turnCount,
+    round: room.gameState.round,
+    youIndex: playerIndex
+  };
+}
+
 function createGameState(gameId) {
+  if (gameId === 'uno') {
+    return createUnoState([]);
+  }
+
   if (gameId === 'pong') {
     return createPongState();
   }
 
   if (gameId === 'airHockey') {
     return createAirHockeyState();
+  }
+
+  if (gameId === 'battleship') {
+    return createBattleshipState();
   }
 
   if (gameId === 'ticTacToe') {
@@ -298,6 +658,13 @@ function resetTicTacToeRound(room, keepScores = true) {
     finished: false,
     winner: null,
     scores: previousScores,
+    round: Number(room.gameState?.round || 0) + 1
+  };
+}
+
+function resetBattleshipRound(room) {
+  room.gameState = {
+    ...createBattleshipState(),
     round: Number(room.gameState?.round || 0) + 1
   };
 }
@@ -349,7 +716,19 @@ function resetCheckersRound(room) {
   };
 }
 
+function resetUnoRound(room) {
+  room.gameState = {
+    ...createUnoState(room.players),
+    round: Number(room.gameState?.round || 0) + 1
+  };
+}
+
 function resetRoomGame(room, keepScores = false) {
+  if (room.gameId === 'uno') {
+    resetUnoRound(room);
+    return;
+  }
+
   if (room.gameId === 'pong') {
     resetPongRound(room, keepScores);
     return;
@@ -357,6 +736,11 @@ function resetRoomGame(room, keepScores = false) {
 
   if (room.gameId === 'airHockey') {
     resetAirHockeyRound(room, keepScores);
+    return;
+  }
+
+  if (room.gameId === 'battleship') {
+    resetBattleshipRound(room);
     return;
   }
 
@@ -424,6 +808,20 @@ function getAirHockeyPlayerRole(room, socketId) {
 
   if (playerIndex === 1) {
     return 'right';
+  }
+
+  return null;
+}
+
+function getBattleshipPlayerRole(room, socketId) {
+  const playerIndex = room.players.findIndex((player) => player.id === socketId);
+
+  if (playerIndex === 0) {
+    return 'captain1';
+  }
+
+  if (playerIndex === 1) {
+    return 'captain2';
   }
 
   return null;
@@ -600,6 +998,30 @@ function clampAirHockeyPuckSpeed(state) {
   const scale = maxSpeed / speed;
   puck.vx *= scale;
   puck.vy *= scale;
+}
+
+function buildBattleshipStateForPlayer(room, socketId) {
+  const role = getBattleshipPlayerRole(room, socketId);
+
+  if (!room?.gameState || !role) {
+    return null;
+  }
+
+  const yourGrid = role === 'captain1' ? room.gameState.captain1Grid : room.gameState.captain2Grid;
+  const enemyGrid = role === 'captain1' ? room.gameState.captain2Grid : room.gameState.captain1Grid;
+
+  return {
+    yourBoard: sanitizeBattleshipOwnGrid(yourGrid),
+    enemyBoard: sanitizeBattleshipEnemyGrid(enemyGrid),
+    yourRemainingShips: countRemainingBattleshipShips(yourGrid),
+    enemyRemainingShips: countRemainingBattleshipShips(enemyGrid),
+    currentTurn: room.gameState.currentTurn,
+    winner: room.gameState.winner,
+    lastShot: room.gameState.lastShot
+      ? { ...room.gameState.lastShot }
+      : null,
+    round: room.gameState.round
+  };
 }
 
 function clampAirHockeyPaddle(paddle, side) {
@@ -1094,15 +1516,23 @@ function buildRoomPayload(room, socketId = null) {
         ? getPongPlayerRole(room, player.id)
         : (room.gameId === 'airHockey'
           ? getAirHockeyPlayerRole(room, player.id)
+        : (room.gameId === 'battleship'
+          ? getBattleshipPlayerRole(room, player.id)
         : (room.gameId === 'ticTacToe'
         ? getTicTacToePlayerSymbol(room, player.id)
         : (room.gameId === 'connect4'
           ? getConnect4PlayerSymbol(room, player.id)
           : (room.gameId === 'chess'
             ? getChessPlayerColor(room, player.id)
-            : (room.gameId === 'checkers' ? getCheckersPlayerColor(room, player.id) : null)))))
+            : (room.gameId === 'checkers'
+              ? getCheckersPlayerColor(room, player.id)
+              : (room.gameId === 'uno' ? `seat-${getUnoPlayerIndex(room, player.id) + 1}` : null)))))))
     })),
-    gameState: ['pong', 'airHockey', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null
+    gameState: room.gameId === 'battleship'
+      ? buildBattleshipStateForPlayer(room, socketId)
+      : (room.gameId === 'uno'
+        ? buildUnoStateForPlayer(room, socketId)
+        : (['pong', 'airHockey', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null))
   };
 }
 
@@ -1355,6 +1785,79 @@ io.on('connection', (socket) => {
     } else {
       room.gameState.rightInput = nextInput;
     }
+  });
+
+  socket.on('battleship:shot', ({ row, col }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'battleship') {
+      socket.emit('room:error', { message: 'Aucune partie de Bataille active.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      return;
+    }
+
+    const playerRole = getBattleshipPlayerRole(room, socket.id);
+    const targetRow = Number(row);
+    const targetCol = Number(col);
+
+    if (!playerRole) {
+      socket.emit('room:error', { message: 'Tu ne fais pas partie de cette manche.' });
+      return;
+    }
+
+    if (!Number.isInteger(targetRow) || !Number.isInteger(targetCol) || !isInsideGameGrid(targetRow, targetCol, BATTLESHIP_SIZE)) {
+      socket.emit('room:error', { message: 'Case invalide.' });
+      return;
+    }
+
+    if (room.gameState.winner || room.gameState.currentTurn !== playerRole) {
+      return;
+    }
+
+    const targetGrid = playerRole === 'captain1' ? room.gameState.captain2Grid : room.gameState.captain1Grid;
+    const targetCell = targetGrid[targetRow][targetCol];
+
+    if (!targetCell || targetCell.hit) {
+      return;
+    }
+
+    targetCell.hit = true;
+    room.gameState.lastShot = {
+      row: targetRow,
+      col: targetCol,
+      by: playerRole,
+      hit: Boolean(targetCell.hasShip)
+    };
+
+    const remainingShips = countRemainingBattleshipShips(targetGrid);
+
+    if (remainingShips === 0) {
+      room.gameState.winner = playerRole;
+      emitRoomUpdate(room);
+      return;
+    }
+
+    room.gameState.currentTurn = playerRole === 'captain1' ? 'captain2' : 'captain1';
+    emitRoomUpdate(room);
+  });
+
+  socket.on('battleship:restart', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'battleship') {
+      return;
+    }
+
+    if (!room.players.some((player) => player.id === socket.id)) {
+      return;
+    }
+
+    resetBattleshipRound(room);
+    emitRoomUpdate(room);
   });
 
   socket.on('tictactoe:move', ({ index }) => {
@@ -1667,6 +2170,134 @@ io.on('connection', (socket) => {
     }
 
     resetCheckersRound(room);
+    emitRoomUpdate(room);
+  });
+
+  socket.on('uno:play-card', ({ cardIndex }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'uno') {
+      socket.emit('room:error', { message: 'Aucune partie de Uno active.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends encore des joueurs dans le salon.' });
+      return;
+    }
+
+    const playerIndex = getUnoPlayerIndex(room, socket.id);
+    if (playerIndex === -1) {
+      socket.emit('room:error', { message: 'Tu ne fais pas partie de cette manche.' });
+      return;
+    }
+
+    if (room.gameState.winner || room.gameState.currentPlayerIndex !== playerIndex || room.gameState.pendingColorChoice) {
+      return;
+    }
+
+    const normalizedIndex = Number(cardIndex);
+    const player = room.gameState.players[playerIndex];
+    const card = player.hand[normalizedIndex];
+
+    if (!Number.isInteger(normalizedIndex) || !card || !isUnoCardPlayable(card, room.gameState)) {
+      return;
+    }
+
+    const [playedCard] = player.hand.splice(normalizedIndex, 1);
+    room.gameState.discardPile.push(playedCard);
+    room.gameState.turnCount += 1;
+
+    if (playedCard.color === 'wild') {
+      room.gameState.pendingColorChoice = {
+        playerId: socket.id,
+        playerIndex,
+        card: { ...playedCard }
+      };
+      room.gameState.lastAction = `${player.name} choisit une nouvelle couleur.`;
+      emitRoomUpdate(room);
+      return;
+    }
+
+    room.gameState.currentColor = playedCard.color;
+    if (!player.hand.length) {
+      room.gameState.winner = player.id;
+      room.gameState.lastAction = `${player.name} remporte la manche.`;
+      emitRoomUpdate(room);
+      return;
+    }
+
+    applyUnoCardEffects(room.gameState, playedCard, player.name);
+    emitRoomUpdate(room);
+  });
+
+  socket.on('uno:choose-color', ({ color }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'uno' || !room.gameState?.pendingColorChoice) {
+      return;
+    }
+
+    if (room.gameState.pendingColorChoice.playerId !== socket.id) {
+      return;
+    }
+
+    const nextColor = ['red', 'yellow', 'green', 'blue'].includes(color) ? color : 'red';
+    const { playerIndex, card } = room.gameState.pendingColorChoice;
+    const player = room.gameState.players[playerIndex];
+    room.gameState.pendingColorChoice = null;
+    room.gameState.currentColor = nextColor;
+
+    if (!player.hand.length) {
+      room.gameState.winner = player.id;
+      room.gameState.lastAction = `${player.name} termine la manche sur ${nextColor}.`;
+      emitRoomUpdate(room);
+      return;
+    }
+
+    applyUnoCardEffects(room.gameState, card, player.name);
+    room.gameState.lastAction = `${player.name} met le cap sur ${nextColor}.`;
+    emitRoomUpdate(room);
+  });
+
+  socket.on('uno:draw-card', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'uno') {
+      socket.emit('room:error', { message: 'Aucune partie de Uno active.' });
+      return;
+    }
+
+    const playerIndex = getUnoPlayerIndex(room, socket.id);
+    if (playerIndex === -1 || room.gameState.winner || room.gameState.currentPlayerIndex !== playerIndex || room.gameState.pendingColorChoice) {
+      return;
+    }
+
+    const amount = Math.max(1, Number(room.gameState.drawPenalty || 0));
+    const drawnCards = drawUnoCards(room.gameState, playerIndex, amount);
+    const player = room.gameState.players[playerIndex];
+    room.gameState.lastAction = `${player.name} pioche ${amount} carte${amount > 1 ? 's' : ''}.`;
+    room.gameState.drawPenalty = 0;
+
+    if (amount > 1 || !drawnCards.length || !isUnoCardPlayable(drawnCards[0], room.gameState)) {
+      room.gameState.currentPlayerIndex = getNextUnoPlayerIndex(room.gameState, 1);
+    }
+
+    emitRoomUpdate(room);
+  });
+
+  socket.on('uno:restart', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'uno') {
+      return;
+    }
+
+    if (!room.players.some((player) => player.id === socket.id)) {
+      return;
+    }
+
+    resetUnoRound(room);
     emitRoomUpdate(room);
   });
 

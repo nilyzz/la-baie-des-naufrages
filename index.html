@@ -190,6 +190,35 @@
 
         <section id="gamesView" class="view" aria-hidden="true">
             <div class="games-layout">
+                <aside id="gamesFiltersCard" class="card games-filters-card" aria-labelledby="gamesFiltersTitle">
+                    <div class="games-filters-copy">
+                        <p class="section-tag">Recherche</p>
+                        <h3 id="gamesFiltersTitle">Trouver un jeu</h3>
+                        <p>Utilise la recherche ou les filtres pour trouver plus vite le bon jeu.</p>
+                    </div>
+
+                    <label class="games-filter-search" for="gamesFilterSearchInput">
+                        <span class="games-filter-search-label">Nom du jeu</span>
+                        <input id="gamesFilterSearchInput" type="search" placeholder="Ex. Sudoku, Pong, Memory">
+                    </label>
+
+                    <div class="games-filter-group">
+                        <p class="games-filter-group-label">Filtres rapides</p>
+                        <div class="games-filter-chip-list" role="group" aria-label="Filtres de jeux">
+                            <button type="button" class="games-filter-chip is-active" data-games-filter="all">Tous</button>
+                            <button type="button" class="games-filter-chip" data-games-filter="puzzle">Puzzle</button>
+                            <button type="button" class="games-filter-chip" data-games-filter="reflexe">Reflexe</button>
+                            <button type="button" class="games-filter-chip" data-games-filter="strategie">Strategie</button>
+                            <button type="button" class="games-filter-chip" data-games-filter="arcade">Arcade</button>
+                        </div>
+                    </div>
+
+                    <div class="games-filter-summary" aria-live="polite">
+                        <strong id="gamesFilterCount">28 jeux visibles</strong>
+                        <p id="gamesFilterHint"></p>
+                    </div>
+                </aside>
+
                 <div id="gamesHomePanel" class="card games-home-card games-panel games-panel-active">
                     <div class="games-home-copy">
                         <p class="section-tag">Jeux</p>
@@ -204,7 +233,7 @@
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="airHockey">
                             <span class="game-home-art game-home-art-airhockey" aria-hidden="true"></span>
-                            <span class="game-home-title">Air Hockey</span>
+                            <span class="game-home-title">Sea Hockey</span>
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="flappy">
                             <span class="game-home-art game-home-art-flappy" aria-hidden="true"></span>
@@ -221,6 +250,10 @@
                         <button type="button" class="game-home-tile" data-open-game="breakout">
                             <span class="game-home-art game-home-art-breakout" aria-hidden="true"></span>
                             <span class="game-home-title">Breakout</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="blockBlast">
+                            <span class="game-home-art game-home-art-blockblast" aria-hidden="true"></span>
+                            <span class="game-home-title">Block Blast!</span>
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="mentalMath">
                             <span class="game-home-art game-home-art-mentalmath" aria-hidden="true"></span>
@@ -310,6 +343,10 @@
                             <span class="game-home-art game-home-art-tetris" aria-hidden="true"></span>
                             <span class="game-home-title">Tetris</span>
                         </button>
+                        <button type="button" class="game-home-tile" data-open-game="uno">
+                            <span class="game-home-art game-home-art-uno" aria-hidden="true"></span>
+                            <span class="game-home-title">Uno</span>
+                        </button>
                     </div>
                 </div>
 
@@ -340,6 +377,10 @@
                         <button type="button" class="game-home-tile" data-open-game="breakout">
                             <span class="game-home-art game-home-art-breakout" aria-hidden="true"></span>
                             <span class="game-home-title">Breakout</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="blockBlast">
+                            <span class="game-home-art game-home-art-blockblast" aria-hidden="true"></span>
+                            <span class="game-home-title">Block Blast!</span>
                         </button>
                         <button type="button" class="game-home-tile" data-open-game="mentalMath">
                             <span class="game-home-art game-home-art-mentalmath" aria-hidden="true"></span>
@@ -408,6 +449,10 @@
                         <button type="button" class="game-home-tile" data-open-game="tetris">
                             <span class="game-home-art game-home-art-tetris" aria-hidden="true"></span>
                             <span class="game-home-title">Tetris</span>
+                        </button>
+                        <button type="button" class="game-home-tile" data-open-game="uno">
+                            <span class="game-home-art game-home-art-uno" aria-hidden="true"></span>
+                            <span class="game-home-title">Uno</span>
                         </button>
                     </div>
                 </div>
@@ -482,9 +527,13 @@
                     </div>
 
                     <div class="games-home-grid" aria-label="Liste des jeux multijoueur">
+                        <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="battleship" data-multiplayer-game-select="battleship">
+                            <span class="game-home-art game-home-art-battleship" aria-hidden="true"></span>
+                            <span class="game-home-title">Bataille</span>
+                        </button>
                         <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="airHockey" data-multiplayer-game-select="airHockey">
                             <span class="game-home-art game-home-art-airhockey" aria-hidden="true"></span>
-                            <span class="game-home-title">Air Hockey</span>
+                            <span class="game-home-title">Sea Hockey</span>
                         </button>
                         <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="pong" data-multiplayer-game-select="pong">
                             <span class="game-home-art game-home-art-pong" aria-hidden="true"></span>
@@ -505,6 +554,10 @@
                         <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="checkers" data-multiplayer-game-select="checkers">
                             <span class="game-home-art game-home-art-checkers" aria-hidden="true"></span>
                             <span class="game-home-title">Dames</span>
+                        </button>
+                        <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="uno" data-multiplayer-game-select="uno">
+                            <span class="game-home-art game-home-art-uno" aria-hidden="true"></span>
+                            <span class="game-home-title">Uno</span>
                         </button>
                     </div>
                 </div>
@@ -695,14 +748,14 @@
                 <div id="battleshipGame" class="card battleship-card games-panel">
                     <div class="battleship-topbar">
                         <div class="battleship-counter-block">
-                            <span class="battleship-counter-label">Ta flotte</span>
+                            <span id="battleshipPlayerLabel" class="battleship-counter-label">Ta flotte</span>
                             <strong id="battleshipPlayerShipsDisplay" class="battleship-counter-value">0</strong>
                         </div>
 
                         <button id="battleshipRestartButton" type="button" class="battleship-face">Nouvelle bataille</button>
 
                         <div class="battleship-counter-block">
-                            <span class="battleship-counter-label">Flotte adverse</span>
+                            <span id="battleshipEnemyLabel" class="battleship-counter-label">Flotte adverse</span>
                             <strong id="battleshipEnemyShipsDisplay" class="battleship-counter-value">0</strong>
                         </div>
                     </div>
@@ -711,12 +764,12 @@
 
                     <div class="battleship-layout">
                         <div class="battleship-board-shell">
-                            <p class="section-tag">Ta flotte</p>
+                            <p id="battleshipPlayerBoardLabel" class="section-tag">Ta flotte</p>
                     <div id="battleshipPlayerBoard" class="battleship-board" aria-label="Plateau de Bataille"></div>
                         </div>
 
                         <div class="battleship-board-shell">
-                            <p class="section-tag">Flotte ennemie</p>
+                            <p id="battleshipEnemyBoardLabel" class="section-tag">Flotte ennemie</p>
                     <div id="battleshipEnemyBoard" class="battleship-board" aria-label="Plateau ennemi de Bataille"></div>
                         </div>
                     </div>
@@ -829,12 +882,17 @@
                         </div>
 
                         <div class="rhythm-counter-block">
+                            <span class="rhythm-counter-label">Fautes</span>
+                            <strong id="rhythmMissesDisplay" class="rhythm-counter-value">0 / 10</strong>
+                        </div>
+
+                        <div class="rhythm-counter-block">
                             <span class="rhythm-counter-label">Temps</span>
-                            <strong id="rhythmTimerDisplay" class="rhythm-counter-value">20</strong>
+                            <strong id="rhythmTimerDisplay" class="rhythm-counter-value">30</strong>
                         </div>
                     </div>
 
-                    <p id="rhythmHelpText" class="rhythm-help">Tape Q, S, D et F au bon moment quand les notes atteignent la ligne de frappe.</p>
+                    <p id="rhythmHelpText" class="rhythm-help">Garde le pont en rythme avec Q, S et D. Trop de fautes et la traversee s arrete.</p>
                     <div id="rhythmBoard" class="rhythm-board" aria-label="Plateau du jeu de rythme"></div>
                 </div>
 
@@ -1074,7 +1132,7 @@
                         <button type="button" class="secondary-button airhockey-mode-button" data-airhockey-mode="duo">2 joueurs</button>
                     </div>
                     <p id="airHockeyHelpText" class="airhockey-help">Joueur gauche: ZQSD. Joueur droit: fleches. En solo, la droite est pilotee par l IA.</p>
-                    <div id="airHockeyBoard" class="airhockey-board" aria-label="Plateau d Air Hockey">
+                    <div id="airHockeyBoard" class="airhockey-board" aria-label="Plateau de Sea Hockey">
                         <div id="airHockeyCountdown" class="airhockey-countdown hidden" aria-hidden="true"></div>
                         <div class="airhockey-goal airhockey-goal-left" aria-hidden="true"></div>
                         <div class="airhockey-goal airhockey-goal-right" aria-hidden="true"></div>
@@ -1142,7 +1200,80 @@
                         </div>
                     </div>
                     <p id="breakoutHelpText" class="breakout-help">Deplace la raquette avec Q/D ou les fleches et casse toutes les briques.</p>
-                    <canvas id="breakoutCanvas" class="breakout-canvas" width="560" height="420"></canvas>
+                    <canvas id="breakoutCanvas" class="breakout-canvas" width="680" height="500"></canvas>
+                </div>
+
+                <div id="blockBlastGame" class="card blockblast-card games-panel">
+                    <div class="blockblast-topbar">
+                        <div class="blockblast-counter-block">
+                            <span class="blockblast-counter-label">Score</span>
+                            <strong id="blockBlastScoreDisplay" class="blockblast-counter-value">0</strong>
+                        </div>
+                        <button id="blockBlastStartButton" type="button" class="blockblast-face">Nouvelle maree</button>
+                        <div class="blockblast-counter-block">
+                            <span class="blockblast-counter-label">Combo</span>
+                            <strong id="blockBlastComboDisplay" class="blockblast-counter-value">x1</strong>
+                        </div>
+                    </div>
+                    <p id="blockBlastHelpText" class="blockblast-help">Choisis une forme, puis pose-la sur le plateau. Les lignes et colonnes completes disparaissent.</p>
+                    <div class="blockblast-shell">
+                        <div id="blockBlastBoard" class="blockblast-board" aria-label="Plateau Block Blast"></div>
+                        <aside class="blockblast-sidebar">
+                            <div class="blockblast-sidebar-card">
+                                <span class="blockblast-sidebar-label">Reserve</span>
+                                <div id="blockBlastPieces" class="blockblast-pieces" aria-label="Pieces Block Blast"></div>
+                            </div>
+                            <div class="blockblast-sidebar-card">
+                                <span class="blockblast-sidebar-label">Objectif</span>
+                                <p class="blockblast-sidebar-text">Garde le pont libre le plus longtemps possible et enchaine les effacements pour faire grimper le score.</p>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+
+                <div id="unoGame" class="card uno-card games-panel">
+                    <div class="uno-topbar">
+                        <div class="uno-counter-block">
+                            <span class="uno-counter-label">Mode</span>
+                            <strong id="unoModeDisplay" class="uno-counter-value">Solo IA</strong>
+                        </div>
+                        <div class="uno-mode-switch" role="group" aria-label="Mode de jeu Uno">
+                            <button type="button" class="secondary-button is-active" data-uno-mode="solo">Contre IA</button>
+                            <button type="button" class="secondary-button" data-uno-mode="online">Online</button>
+                        </div>
+                        <div class="uno-counter-block">
+                            <span class="uno-counter-label">Main</span>
+                            <strong id="unoHandCountDisplay" class="uno-counter-value">0</strong>
+                        </div>
+                    </div>
+                    <p id="unoHelpText" class="uno-help">Joue une carte de la bonne couleur ou de la bonne valeur. Les cartes noires te laissent choisir la couleur.</p>
+                    <div class="uno-table">
+                        <div id="unoOpponentsTop" class="uno-opponents-top" aria-label="Adversaires en haut"></div>
+                        <div id="unoOpponentsLeft" class="uno-opponents-side is-left" aria-label="Adversaires a gauche"></div>
+                        <div id="unoOpponentsRight" class="uno-opponents-side is-right" aria-label="Adversaires a droite"></div>
+                        <div class="uno-center-table">
+                            <button id="unoDrawButton" type="button" class="uno-draw-pile" aria-label="Piocher une carte">
+                                <span>PIOCHE</span>
+                                <strong id="unoDrawCountDisplay">0</strong>
+                            </button>
+                            <div id="unoDiscardPile" class="uno-discard-pile" aria-label="Defausse Uno"></div>
+                            <div class="uno-status-card">
+                                <span class="uno-status-label">Tour</span>
+                                <strong id="unoTurnDisplay" class="uno-status-value">-</strong>
+                            </div>
+                        </div>
+                        <div id="unoColorPicker" class="uno-color-picker hidden" aria-label="Choix de la couleur">
+                            <button type="button" class="uno-color-choice is-red" data-uno-color="red">Rouge</button>
+                            <button type="button" class="uno-color-choice is-yellow" data-uno-color="yellow">Jaune</button>
+                            <button type="button" class="uno-color-choice is-green" data-uno-color="green">Vert</button>
+                            <button type="button" class="uno-color-choice is-blue" data-uno-color="blue">Bleu</button>
+                        </div>
+                        <div id="unoEventBanner" class="uno-event-banner" aria-live="polite"></div>
+                        <div id="unoHand" class="uno-hand" aria-label="Ta main Uno"></div>
+                    </div>
+                    <div class="uno-footer">
+                        <button id="unoRestartButton" type="button" class="uno-face">Rejouer</button>
+                    </div>
                 </div>
             </div>
         </section>

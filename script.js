@@ -18,12 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'cinema.xlsm'
     ];
     const MULTIPLAYER_SUPPORTED_GAMES = {
-        airHockey: 'Air Hockey',
+        airHockey: 'Sea Hockey',
+        battleship: 'Bataille',
         pong: 'Pong',
         ticTacToe: 'Morpion',
         connect4: 'Puissance 4',
         chess: 'Echecs',
-        checkers: 'Dames'
+        checkers: 'Dames',
+        uno: 'Uno'
     };
 
     const loginView = document.getElementById('loginView');
@@ -68,6 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameTabs = document.querySelectorAll('[data-game-tab]');
     const gamesSectionButtons = document.querySelectorAll('[data-games-section]');
     const gameHomeTiles = document.querySelectorAll('[data-open-game]');
+    const gamesLayout = document.querySelector('#gamesView .games-layout');
+    const gamesFiltersCard = document.getElementById('gamesFiltersCard');
+    const gamesFilterSearchInput = document.getElementById('gamesFilterSearchInput');
+    const gamesFilterButtons = document.querySelectorAll('[data-games-filter]');
+    const gamesFilterCount = document.getElementById('gamesFilterCount');
+    const gamesFilterHint = document.getElementById('gamesFilterHint');
     const gameOverModal = document.getElementById('gameOverModal');
     const gameOverTitle = document.getElementById('gameOverTitle');
     const gameOverText = document.getElementById('gameOverText');
@@ -90,6 +98,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerRoomPlayers = document.getElementById('multiplayerRoomPlayers');
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
     let multiplayerCreateLeaveButton = null;
+    const GAME_FILTER_TAGS = {
+        '2048': ['puzzle'],
+        airHockey: ['arcade', 'reflexe'],
+        flappy: ['arcade', 'reflexe'],
+        baieBerry: ['arcade', 'puzzle'],
+        battleship: ['strategie', 'puzzle'],
+        breakout: ['arcade', 'reflexe'],
+        blockBlast: ['puzzle', 'strategie'],
+        mentalMath: ['puzzle', 'reflexe'],
+        coinClicker: ['arcade'],
+        candyCrush: ['puzzle'],
+        checkers: ['strategie'],
+        minesweeper: ['puzzle', 'strategie'],
+        chess: ['strategie'],
+        aim: ['reflexe', 'arcade'],
+        memory: ['puzzle', 'reflexe'],
+        harborRun: ['arcade', 'reflexe'],
+        ticTacToe: ['strategie'],
+        pacman: ['arcade', 'reflexe'],
+        pong: ['arcade', 'reflexe'],
+        reaction: ['reflexe'],
+        solitaire: ['strategie', 'puzzle'],
+        connect4: ['strategie'],
+        rhythm: ['reflexe', 'arcade'],
+        flowFree: ['puzzle'],
+        magicSort: ['puzzle'],
+        snake: ['arcade', 'reflexe'],
+        stacker: ['arcade', 'reflexe'],
+        sudoku: ['puzzle', 'strategie'],
+        tetris: ['puzzle', 'reflexe'],
+        uno: ['strategie', 'arcade']
+    };
+    let activeGamesFilter = 'all';
     const snakeGame = document.getElementById('snakeGame');
     const pongGame = document.getElementById('pongGame');
     const sudokuGame = document.getElementById('sudokuGame');
@@ -152,8 +193,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const battleshipEnemyBoard = document.getElementById('battleshipEnemyBoard');
     const battleshipPlayerShipsDisplay = document.getElementById('battleshipPlayerShipsDisplay');
     const battleshipEnemyShipsDisplay = document.getElementById('battleshipEnemyShipsDisplay');
+    const battleshipPlayerLabel = document.getElementById('battleshipPlayerLabel');
+    const battleshipEnemyLabel = document.getElementById('battleshipEnemyLabel');
+    const battleshipPlayerBoardLabel = document.getElementById('battleshipPlayerBoardLabel');
+    const battleshipEnemyBoardLabel = document.getElementById('battleshipEnemyBoardLabel');
     const battleshipStatusText = document.getElementById('battleshipStatusText');
     const battleshipRestartButton = document.getElementById('battleshipRestartButton');
+    const battleshipModeButtons = document.querySelectorAll('[data-battleship-mode]');
     const tetrisBoard = document.getElementById('tetrisBoard');
     const tetrisScoreDisplay = document.getElementById('tetrisScoreDisplay');
     const tetrisLinesDisplay = document.getElementById('tetrisLinesDisplay');
@@ -182,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rhythmBoard = document.getElementById('rhythmBoard');
     const rhythmScoreDisplay = document.getElementById('rhythmScoreDisplay');
     const rhythmStreakDisplay = document.getElementById('rhythmStreakDisplay');
+    const rhythmMissesDisplay = document.getElementById('rhythmMissesDisplay');
     const rhythmTimerDisplay = document.getElementById('rhythmTimerDisplay');
     const rhythmHelpText = document.getElementById('rhythmHelpText');
     const rhythmStartButton = document.getElementById('rhythmStartButton');
@@ -285,6 +332,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const breakoutLivesDisplay = document.getElementById('breakoutLivesDisplay');
     const breakoutHelpText = document.getElementById('breakoutHelpText');
     const breakoutStartButton = document.getElementById('breakoutStartButton');
+    const blockBlastGame = document.getElementById('blockBlastGame');
+    const blockBlastBoard = document.getElementById('blockBlastBoard');
+    const blockBlastPieces = document.getElementById('blockBlastPieces');
+    const blockBlastScoreDisplay = document.getElementById('blockBlastScoreDisplay');
+    const blockBlastComboDisplay = document.getElementById('blockBlastComboDisplay');
+    const blockBlastHelpText = document.getElementById('blockBlastHelpText');
+    const blockBlastStartButton = document.getElementById('blockBlastStartButton');
+    const unoGame = document.getElementById('unoGame');
+    const unoModeButtons = document.querySelectorAll('[data-uno-mode]');
+    const unoModeDisplay = document.getElementById('unoModeDisplay');
+    const unoHandCountDisplay = document.getElementById('unoHandCountDisplay');
+    const unoHelpText = document.getElementById('unoHelpText');
+    const unoOpponentsTop = document.getElementById('unoOpponentsTop');
+    const unoOpponentsLeft = document.getElementById('unoOpponentsLeft');
+    const unoOpponentsRight = document.getElementById('unoOpponentsRight');
+    const unoDrawButton = document.getElementById('unoDrawButton');
+    const unoDrawCountDisplay = document.getElementById('unoDrawCountDisplay');
+    const unoDiscardPile = document.getElementById('unoDiscardPile');
+    const unoTurnDisplay = document.getElementById('unoTurnDisplay');
+    const unoColorPicker = document.getElementById('unoColorPicker');
+    const unoColorChoiceButtons = document.querySelectorAll('[data-uno-color]');
+    const unoEventBanner = document.getElementById('unoEventBanner');
+    const unoHand = document.getElementById('unoHand');
+    const unoRestartButton = document.getElementById('unoRestartButton');
     const mathPanels = document.querySelectorAll('.math-panel');
     const musicPanels = document.querySelectorAll('.music-panel');
     const calculatorDisplay = document.getElementById('calculatorDisplay');
@@ -335,12 +406,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const CONNECT4_COLS = 7;
     const MEMORY_ICONS = ['⚓', '🦀', '🐚', '🦑', '🪸', '🦞', '🐠', '🧭'];
     const BATTLESHIP_SIZE = 8;
+    const BLOCK_BLAST_SIZE = 8;
+    const BLOCK_BLAST_BEST_KEY = 'baie-des-naufrages-block-blast-best';
+    const UNO_COLORS = ['red', 'yellow', 'green', 'blue'];
+    const BLOCK_BLAST_SHAPES = [
+        { key: 'single', cells: [[0, 0]], color: 'sun' },
+        { key: 'domino', cells: [[0, 0], [1, 0]], color: 'lagoon' },
+        { key: 'trio', cells: [[0, 0], [1, 0], [2, 0]], color: 'gold' },
+        { key: 'quad', cells: [[0, 0], [1, 0], [2, 0], [3, 0]], color: 'reef' },
+        { key: 'square', cells: [[0, 0], [1, 0], [0, 1], [1, 1]], color: 'sand' },
+        { key: 'l-small', cells: [[0, 0], [0, 1], [1, 1]], color: 'coral' },
+        { key: 'l-tall', cells: [[0, 0], [0, 1], [0, 2], [1, 2]], color: 'sun' },
+        { key: 't-small', cells: [[0, 0], [1, 0], [2, 0], [1, 1]], color: 'gold' },
+        { key: 'zig', cells: [[0, 0], [1, 0], [1, 1], [2, 1]], color: 'lagoon' },
+        { key: 'pillar', cells: [[0, 0], [0, 1], [0, 2], [0, 3]], color: 'reef' }
+    ];
     const BATTLESHIP_SHIPS = [4, 3, 3, 2, 2];
     const TETRIS_ROWS = 18;
     const TETRIS_COLS = 10;
     const TETRIS_TICK_MS = 420;
-    const RHYTHM_LANES = ['Q', 'S', 'D', 'F'];
-    const RHYTHM_DURATION_MS = 20000;
+    const RHYTHM_LANES = ['Q', 'S', 'D'];
+    const RHYTHM_DURATION_MS = 30000;
+    const RHYTHM_MAX_MISSES = 10;
     const RHYTHM_BEST_KEY = 'baie-des-naufrages-rhythm-best';
     const FLAPPY_BEST_KEY = 'baie-des-naufrages-flappy-best';
     const HARBOR_RUN_BEST_KEY = 'baie-des-naufrages-harbor-run-best';
@@ -536,6 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerSelectedGameId = null;
     let multiplayerEntryMode = 'create';
     let ticTacToeLastFinishedStateKey = '';
+    let battleshipLastFinishedStateKey = '';
     let pongLastFinishedStateKey = '';
     let connect4LastFinishedStateKey = '';
     let connect4LastMoveAnimationKey = '';
@@ -635,6 +723,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let battleshipFinished = false;
     let battleshipAiTargets = [];
     let battleshipAwaitingAi = false;
+    let battleshipMode = 'solo';
+    let battleshipCurrentTurn = 'captain1';
     let tetrisGrid = [];
     let tetrisPiece = null;
     let tetrisScore = 0;
@@ -674,6 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rhythmNotes = [];
     let rhythmScore = 0;
     let rhythmStreak = 0;
+    let rhythmMisses = 0;
     let rhythmBestScore = Number(window.localStorage.getItem(RHYTHM_BEST_KEY)) || 0;
     let rhythmRunning = false;
     let rhythmStartedAt = 0;
@@ -681,6 +772,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let rhythmSpawnTimer = 0;
     let rhythmAnimationFrame = null;
     let rhythmPadHighlightTimeout = null;
+    let rhythmBoardEffectTimeout = null;
+    let rhythmBursts = [];
     let flappyBirdY = 0;
     let flappyBirdVelocity = 0;
     let flappyPipes = [];
@@ -697,6 +790,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const FLAPPY_BIRD_HEIGHT = 36;
     const FLAPPY_PIPE_WIDTH = 86;
     const FLAPPY_BIRD_OFFSET_X = 0.24;
+    const FLAPPY_BASE_SPAWN_INTERVAL = 1720;
+    const FLAPPY_MIN_SPAWN_INTERVAL = 1240;
+    const FLAPPY_BASE_PIPE_SPEED = 0.176;
+    const FLAPPY_MAX_PIPE_SPEED = 0.244;
     let flowFreeCells = [];
     let flowFreeLevel = null;
     let flowFreePaths = new Map();
@@ -793,6 +890,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let breakoutKeys = new Set();
     let breakoutBestScore = Number(window.localStorage.getItem(BREAKOUT_BEST_KEY)) || 0;
     let breakoutRemainingBricks = 0;
+    let blockBlastState = null;
+    let blockBlastBestScore = Number(window.localStorage.getItem(BLOCK_BLAST_BEST_KEY)) || 0;
+    let blockBlastSelectedPieceIndex = null;
+    let unoMode = 'solo';
+    let unoState = null;
+    let unoAiTimeout = null;
+    let unoPendingColorContext = null;
+    let unoLastWinnerKey = '';
+    let unoEventBannerTimer = null;
+    let unoLastPlayedCardId = '';
+    let unoLastDrawnCardId = '';
+    let unoPreviousOpponentCounts = new Map();
+    let unoOpponentDrawFx = new Map();
+    let unoColorChoiceTimer = null;
+    let unoColorChoicePending = false;
+    let unoPendingPlayAnimation = null;
+    let unoPendingDrawAnimation = false;
+    let unoLastRenderedTopCardId = '';
     let resizeFrame = null;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
@@ -2315,7 +2430,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!canUseMultiplayer) {
-            setMultiplayerStatus('Le multijoueur est prevu pour Air Hockey, Pong, Morpion, Puissance 4, Echecs et Dames.');
+            setMultiplayerStatus('Le multijoueur est prevu pour Bataille, Sea Hockey, Pong, Morpion, Puissance 4, Echecs, Dames et Uno.');
             return;
         }
 
@@ -2383,11 +2498,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     multiplayerJoinRoomCodeInput.value = room.code || '';
                 }
                 syncMultiplayerAirHockeyState();
+                syncMultiplayerBattleshipState();
                 syncMultiplayerPongState();
                 syncMultiplayerTicTacToeState();
                 syncMultiplayerConnect4State();
                 syncMultiplayerChessState();
                 syncMultiplayerCheckersState();
+                syncMultiplayerUnoState();
                 syncMultiplayerEntryModeAccess();
                 updateMultiplayerLobby();
             });
@@ -2400,11 +2517,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 multiplayerEntryMode = getCurrentMultiplayerPlayer()?.isHost ? 'create' : 'join';
                 syncMultiplayerAirHockeyState();
+                syncMultiplayerBattleshipState();
                 syncMultiplayerPongState();
                 syncMultiplayerTicTacToeState();
                 syncMultiplayerConnect4State();
                 syncMultiplayerChessState();
                 syncMultiplayerCheckersState();
+                syncMultiplayerUnoState();
                 const nextUiSignature = getMultiplayerRoomUiSignature(room);
                 if (previousUiSignature !== nextUiSignature) {
                     syncMultiplayerEntryModeAccess();
@@ -2431,16 +2550,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 pongCountdownEndsAt = 0;
                 connect4LastFinishedStateKey = '';
                 ticTacToeLastFinishedStateKey = '';
+                battleshipLastFinishedStateKey = '';
                 chessLastFinishedStateKey = '';
                 checkersLastFinishedStateKey = '';
+                unoLastWinnerKey = '';
                 multiplayerCurrentRoomCode.textContent = '-';
                 multiplayerLobbyPlayersBlock?.classList.add('hidden');
                 closeGameOverModal();
+                if (activeGameTab === 'battleship') {
+                    initializeBattleship();
+                }
                 if (activeGameTab === 'airHockey') {
                     initializeAirHockey();
                 }
                 if (activeGameTab === 'pong') {
                     initializePong();
+                }
+                if (activeGameTab === 'uno') {
+                    initializeUno();
                 }
                 syncMultiplayerEntryModeAccess();
                 updateMultiplayerLobby();
@@ -2606,10 +2733,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showGamePanel(tabId) {
         activeGameTab = tabId;
+        const isDiscoveryPanel = ['home', 'solo', 'multiplayer'].includes(tabId);
         const visibleSection = ['home', 'solo', 'multiplayer'].includes(tabId) ? tabId : activeGamesSection;
         gamesSectionButtons.forEach((button) => {
             button.classList.toggle('is-active', visibleSection === button.dataset.gamesSection);
         });
+        gamesLayout?.classList.toggle('games-layout-focus', !isDiscoveryPanel);
+        gamesFiltersCard?.classList.toggle('hidden', !isDiscoveryPanel);
         gamesHomePanel.classList.toggle('games-panel-active', tabId === 'home');
         gamesSoloPanel.classList.toggle('games-panel-active', tabId === 'solo');
         gamesMultiplayerPanel.classList.toggle('games-panel-active', tabId === 'multiplayer');
@@ -2641,12 +2771,63 @@ document.addEventListener('DOMContentLoaded', () => {
         reactionGame.classList.toggle('games-panel-active', tabId === 'reaction');
         baieBerryGame.classList.toggle('games-panel-active', tabId === 'baieBerry');
         breakoutGame.classList.toggle('games-panel-active', tabId === 'breakout');
+        blockBlastGame.classList.toggle('games-panel-active', tabId === 'blockBlast');
+        unoGame.classList.toggle('games-panel-active', tabId === 'uno');
 
         if (tabId !== 'snake') {
             closeGameOverModal();
         }
 
         updateMultiplayerLobby();
+        updateGamesFilters();
+    }
+
+    function getCurrentGamesGrid() {
+        if (activeGameTab === 'solo') {
+            return gamesSoloPanel?.querySelector('.games-home-grid') || null;
+        }
+
+        if (activeGameTab === 'multiplayer') {
+            return gamesMultiplayerPanel?.querySelector('.games-home-grid') || null;
+        }
+
+        return gamesHomePanel?.querySelector('.games-home-grid') || null;
+    }
+
+    function updateGamesFilters() {
+        const currentGrid = getCurrentGamesGrid();
+        const currentTiles = currentGrid ? Array.from(currentGrid.querySelectorAll('[data-open-game]')) : [];
+        const query = (gamesFilterSearchInput?.value || '').trim().toLowerCase();
+        let visibleCount = 0;
+
+        gameHomeTiles.forEach((tile) => {
+            if (!currentGrid || tile.closest('.games-home-grid') !== currentGrid) {
+                tile.hidden = false;
+                return;
+            }
+
+            const title = tile.querySelector('.game-home-title')?.textContent?.trim().toLowerCase() || '';
+            const tags = GAME_FILTER_TAGS[tile.dataset.openGame] || [];
+            const matchesQuery = !query || title.includes(query);
+            const matchesFilter = activeGamesFilter === 'all' || tags.includes(activeGamesFilter);
+            const isVisible = matchesQuery && matchesFilter;
+            tile.hidden = !isVisible;
+
+            if (isVisible) {
+                visibleCount += 1;
+            }
+        });
+
+        if (gamesFilterCount) {
+            const label = currentTiles.length > 1 ? 'jeux visibles' : 'jeu visible';
+            gamesFilterCount.textContent = `${visibleCount} ${label}`;
+        }
+
+        if (gamesFilterHint) {
+            gamesFilterHint.textContent = visibleCount
+                ? ''
+                : 'Aucun jeu ne correspond a cette recherche. Essaie un autre mot ou un autre filtre.';
+        }
     }
 
     async function setSelectedMultiplayerGame(gameId) {
@@ -3752,8 +3933,57 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateBattleshipHud() {
-        battleshipPlayerShipsDisplay.textContent = String(battleshipPlayerRemainingShips);
-        battleshipEnemyShipsDisplay.textContent = String(battleshipEnemyRemainingShips);
+        if (isMultiplayerBattleshipActive()) {
+            battleshipPlayerLabel.textContent = 'Ta flotte';
+            battleshipEnemyLabel.textContent = 'Flotte adverse';
+            battleshipPlayerBoardLabel.textContent = 'Ta flotte';
+            battleshipEnemyBoardLabel.textContent = 'Flotte adverse';
+            battleshipPlayerShipsDisplay.textContent = String(battleshipPlayerRemainingShips);
+            battleshipEnemyShipsDisplay.textContent = String(battleshipEnemyRemainingShips);
+            return;
+        }
+
+        const isCaptainOneTurn = battleshipMode === 'solo' || battleshipCurrentTurn === 'captain1';
+        const playerLabel = battleshipMode === 'solo'
+            ? 'Ta flotte'
+            : (isCaptainOneTurn ? 'Flotte capitaine 1' : 'Flotte capitaine 2');
+        const enemyLabel = battleshipMode === 'solo'
+            ? 'Flotte adverse'
+            : (isCaptainOneTurn ? 'Flotte capitaine 2' : 'Flotte capitaine 1');
+
+        battleshipPlayerLabel.textContent = playerLabel;
+        battleshipEnemyLabel.textContent = enemyLabel;
+        battleshipPlayerBoardLabel.textContent = playerLabel;
+        battleshipEnemyBoardLabel.textContent = enemyLabel;
+        battleshipPlayerShipsDisplay.textContent = String(isCaptainOneTurn ? battleshipPlayerRemainingShips : battleshipEnemyRemainingShips);
+        battleshipEnemyShipsDisplay.textContent = String(isCaptainOneTurn ? battleshipEnemyRemainingShips : battleshipPlayerRemainingShips);
+    }
+
+    function setBattleshipMode(mode) {
+        battleshipMode = mode === 'duo' ? 'duo' : 'solo';
+        battleshipCurrentTurn = 'captain1';
+        battleshipModeButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.dataset.battleshipMode === battleshipMode);
+        });
+        initializeBattleship();
+    }
+
+    function getBattleshipTurnContext() {
+        if (battleshipMode === 'solo' || battleshipCurrentTurn === 'captain1') {
+            return {
+                attackerName: battleshipMode === 'solo' ? 'Toi' : 'Capitaine 1',
+                defenderName: battleshipMode === 'solo' ? 'la flotte ennemie' : 'Capitaine 2',
+                playerGrid: battleshipPlayerGrid,
+                enemyGrid: battleshipEnemyGrid
+            };
+        }
+
+        return {
+            attackerName: 'Capitaine 2',
+            defenderName: 'Capitaine 1',
+            playerGrid: battleshipEnemyGrid,
+            enemyGrid: battleshipPlayerGrid
+        };
     }
 
     function getBattleshipShipSegmentClass(grid, rowIndex, colIndex) {
@@ -3799,6 +4029,7 @@ document.addEventListener('DOMContentLoaded', () => {
         boardElement.innerHTML = grid.map((row, rowIndex) => row.map((cell, colIndex) => {
             const classes = ['battleship-cell'];
             let innerMarkup = '';
+            let label = '';
             const shouldShowShip = (revealShips && cell.hasShip) || (cell.hit && cell.hasShip);
 
             if (shouldShowShip) {
@@ -3828,12 +4059,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderBattleship() {
-        renderBattleshipBoard(battleshipPlayerBoard, battleshipPlayerGrid, true, 'player');
-        renderBattleshipBoard(battleshipEnemyBoard, battleshipEnemyGrid, false, 'enemy');
+        const context = getBattleshipTurnContext();
+        renderBattleshipBoard(battleshipPlayerBoard, context.playerGrid, true, 'player');
+        renderBattleshipBoard(battleshipEnemyBoard, context.enemyGrid, false, 'enemy');
         updateBattleshipHud();
     }
 
     function initializeBattleship() {
+        if (isMultiplayerBattleshipActive()) {
+            syncMultiplayerBattleshipState();
+            return;
+        }
+
         battleshipPlayerGrid = createBattleshipGrid();
         battleshipEnemyGrid = createBattleshipGrid();
         placeBattleshipFleet(battleshipPlayerGrid);
@@ -3842,17 +4079,30 @@ document.addEventListener('DOMContentLoaded', () => {
         battleshipEnemyRemainingShips = BATTLESHIP_SHIPS.length;
         battleshipFinished = false;
         battleshipAwaitingAi = false;
+        battleshipCurrentTurn = 'captain1';
         battleshipAiTargets = shuffleArray(
             Array.from({ length: BATTLESHIP_SIZE * BATTLESHIP_SIZE }, (_, index) => ({
                 row: Math.floor(index / BATTLESHIP_SIZE),
                 col: index % BATTLESHIP_SIZE
             }))
         );
-        battleshipStatusText.textContent = 'Choisis une case dans la grille ennemie pour ouvrir le feu.';
+        battleshipStatusText.textContent = battleshipMode === 'solo'
+            ? 'Choisis une case dans la grille ennemie pour ouvrir le feu.'
+            : 'Capitaine 1 ouvre le duel. Choisis une case dans la grille ennemie.';
         renderBattleship();
     }
 
     function finishBattleship(playerWon) {
+        if (battleshipMode === 'duo') {
+            battleshipFinished = true;
+            battleshipStatusText.textContent = `${playerWon ? getBattleshipTurnContext().attackerName : getBattleshipTurnContext().defenderName} remporte la bataille dans la baie.`;
+            openGameOverModal(
+                'Bataille terminee',
+                `${playerWon ? getBattleshipTurnContext().attackerName : getBattleshipTurnContext().defenderName} gagne la bataille navale.`
+            );
+            return;
+        }
+
         battleshipFinished = true;
         battleshipStatusText.textContent = playerWon
             ? 'Victoire. La flotte adverse sombre dans la baie.'
@@ -3864,6 +4114,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function runBattleshipAiTurn() {
+        if (battleshipMode !== 'solo') {
+            return;
+        }
+
         if (battleshipFinished) {
             return;
         }
@@ -3895,6 +4149,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleBattleshipShot(row, col) {
+        if (battleshipMode === 'duo') {
+            if (battleshipFinished || battleshipAwaitingAi) {
+                return;
+            }
+
+            const context = getBattleshipTurnContext();
+            const targetCell = context.enemyGrid[row]?.[col];
+
+            if (!targetCell || targetCell.hit) {
+                return;
+            }
+
+            closeGameOverModal();
+            targetCell.hit = true;
+
+            if (targetCell.hasShip) {
+                if (battleshipCurrentTurn === 'captain1') {
+                    battleshipEnemyRemainingShips = countRemainingBattleshipShips(battleshipEnemyGrid);
+                } else {
+                    battleshipPlayerRemainingShips = countRemainingBattleshipShips(battleshipPlayerGrid);
+                }
+
+                battleshipStatusText.textContent = `Touche. ${context.attackerName} frappe un navire de ${context.defenderName}.`;
+                renderBattleship();
+
+                const defenderRemainingShips = battleshipCurrentTurn === 'captain1'
+                    ? battleshipEnemyRemainingShips
+                    : battleshipPlayerRemainingShips;
+
+                if (defenderRemainingShips === 0) {
+                    finishBattleship(true);
+                    return;
+                }
+            } else {
+                battleshipStatusText.textContent = `Dans l eau. ${context.defenderName} prend maintenant la barre.`;
+                renderBattleship();
+            }
+
+            battleshipCurrentTurn = battleshipCurrentTurn === 'captain1' ? 'captain2' : 'captain1';
+            renderBattleship();
+            return;
+        }
+
         if (battleshipFinished || battleshipAwaitingAi) {
             return;
         }
@@ -5095,14 +5392,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateRhythmHud(timeRemainingMs = RHYTHM_DURATION_MS) {
         rhythmScoreDisplay.textContent = String(rhythmScore);
         rhythmStreakDisplay.textContent = String(rhythmStreak);
+        rhythmMissesDisplay.textContent = `${rhythmMisses} / ${RHYTHM_MAX_MISSES}`;
         rhythmTimerDisplay.textContent = String(Math.max(0, Math.ceil(timeRemainingMs / 1000)));
     }
 
     function renderRhythmBoard() {
         rhythmBoard.innerHTML = `
-            <div class="rhythm-lanes">${RHYTHM_LANES.map(() => '<div class="rhythm-lane"></div>').join('')}</div>
+            <div class="rhythm-sky-glow"></div>
+            <div class="rhythm-moon"></div>
+            <div class="rhythm-island rhythm-island-left"></div>
+            <div class="rhythm-island rhythm-island-right"></div>
+            <div class="rhythm-sea"></div>
+            <div class="rhythm-ship" aria-hidden="true"></div>
+            <div class="rhythm-lanes" style="grid-template-columns: repeat(${RHYTHM_LANES.length}, minmax(0, 1fr));">${RHYTHM_LANES.map(() => '<div class="rhythm-lane"></div>').join('')}</div>
+            <div class="rhythm-target-band" aria-hidden="true"></div>
             <div class="rhythm-notes"></div>
-            <div class="rhythm-pads">${RHYTHM_LANES.map((key, index) => `<button type="button" class="rhythm-pad" data-rhythm-lane="${index}">${key}</button>`).join('')}</div>
+            <div class="rhythm-feedback"></div>
+            <div class="rhythm-pads" style="grid-template-columns: repeat(${RHYTHM_LANES.length}, minmax(0, 1fr));">${RHYTHM_LANES.map((key, index) => `<button type="button" class="rhythm-pad" data-rhythm-lane="${index}">${key}</button>`).join('')}</div>
         `;
     }
 
@@ -5124,42 +5430,84 @@ document.addEventListener('DOMContentLoaded', () => {
         rhythmNotes = [];
         rhythmScore = 0;
         rhythmStreak = 0;
+        rhythmMisses = 0;
+        rhythmBursts = [];
         rhythmStartedAt = 0;
         rhythmLastFrame = 0;
         rhythmSpawnTimer = 0;
-        rhythmHelpText.textContent = `Tape ${RHYTHM_LANES.join(', ')} au bon moment quand les notes atteignent la ligne de frappe.`;
+        rhythmHelpText.textContent = `Protege le navire avec ${RHYTHM_LANES.join(', ')}. Tiens jusqu a la fin sans trop rater.`;
         rhythmStartButton.textContent = 'Lancer la cadence';
         updateRhythmHud();
         renderRhythmBoard();
     }
 
-    function highlightRhythmPad(lane) {
+    function triggerRhythmBoardEffect(effectClass) {
+        if (!rhythmBoard) {
+            return;
+        }
+
+        rhythmBoard.classList.remove('is-hit-flash', 'is-miss-flash');
+        void rhythmBoard.offsetWidth;
+        rhythmBoard.classList.add(effectClass);
+
+        if (rhythmBoardEffectTimeout) {
+            window.clearTimeout(rhythmBoardEffectTimeout);
+        }
+
+        rhythmBoardEffectTimeout = window.setTimeout(() => {
+            rhythmBoard.classList.remove('is-hit-flash', 'is-miss-flash');
+            rhythmBoardEffectTimeout = null;
+        }, 280);
+    }
+
+    function highlightRhythmPad(lane, state = 'active') {
+        const pads = rhythmBoard.querySelectorAll('.rhythm-pad');
+        pads.forEach((element) => element.classList.remove('is-active', 'is-success', 'is-fail'));
         const pad = rhythmBoard.querySelector(`[data-rhythm-lane="${lane}"]`);
         pad?.classList.add('is-active');
+        if (state === 'success') {
+            pad?.classList.add('is-success');
+        } else if (state === 'fail') {
+            pad?.classList.add('is-fail');
+        }
         if (rhythmPadHighlightTimeout) {
             window.clearTimeout(rhythmPadHighlightTimeout);
         }
         rhythmPadHighlightTimeout = window.setTimeout(() => {
-            rhythmBoard.querySelectorAll('.rhythm-pad').forEach((element) => element.classList.remove('is-active'));
+            rhythmBoard.querySelectorAll('.rhythm-pad').forEach((element) => element.classList.remove('is-active', 'is-success', 'is-fail'));
         }, 110);
     }
 
     function renderRhythmNotes() {
         const notesLayer = rhythmBoard.querySelector('.rhythm-notes');
+        const feedbackLayer = rhythmBoard.querySelector('.rhythm-feedback');
         if (!notesLayer) {
             return;
         }
 
-        notesLayer.innerHTML = rhythmNotes.map((note) => `
-            <div class="rhythm-note lane-${note.lane}" style="left:calc(${note.lane} * 25% + 11px); top:${note.y}px"></div>
-        `).join('');
+        notesLayer.innerHTML = rhythmNotes.map((note) => {
+            const laneCenter = ((note.lane + 0.5) * 100) / RHYTHM_LANES.length;
+            return `<div class="rhythm-note lane-${note.lane}" style="left:${laneCenter}%; top:${note.y}px"></div>`;
+        }).join('');
+
+        if (feedbackLayer) {
+            feedbackLayer.innerHTML = rhythmBursts.map((burst) => {
+                const laneCenter = ((burst.lane + 0.5) * 100) / RHYTHM_LANES.length;
+                return `<div class="rhythm-burst ${burst.type}" style="left:${laneCenter}%; top:${burst.y}px">${burst.label}</div>`;
+            }).join('');
+        }
     }
 
-    function finishRhythm() {
+    function finishRhythm(reason = 'time') {
         stopRhythm();
-        rhythmHelpText.textContent = `Cadence terminee. Score ${rhythmScore}. Record ${rhythmBestScore}.`;
+        rhythmHelpText.textContent = reason === 'misses'
+            ? `La coque a trop souffert. Score ${rhythmScore}. Record ${rhythmBestScore}.`
+            : `Traversee terminee. Score ${rhythmScore}. Record ${rhythmBestScore}.`;
         rhythmStartButton.textContent = 'Relancer la cadence';
-        openGameOverModal('Fin de cadence', `Score : ${rhythmScore}. Record : ${rhythmBestScore}.`);
+        openGameOverModal(
+            reason === 'misses' ? 'Navire submerge' : 'Fin de cadence',
+            `Score : ${rhythmScore}. Record : ${rhythmBestScore}.`
+        );
     }
 
     function startRhythm() {
@@ -5178,18 +5526,37 @@ document.addEventListener('DOMContentLoaded', () => {
             rhythmLastFrame = timestamp;
             rhythmSpawnTimer += delta;
 
-            if (rhythmSpawnTimer >= 520) {
+            const spawnInterval = Math.max(320, 620 - Math.min(220, rhythmScore * 1.4));
+            if (rhythmSpawnTimer >= spawnInterval) {
                 rhythmSpawnTimer = 0;
-                rhythmNotes.push({ lane: Math.floor(Math.random() * RHYTHM_LANES.length), y: -24 });
+                rhythmNotes.push({
+                    id: `${timestamp}-${Math.random()}`,
+                    lane: Math.floor(Math.random() * RHYTHM_LANES.length),
+                    y: -34
+                });
             }
 
             rhythmNotes = rhythmNotes.filter((note) => {
-                note.y += (delta * 0.34);
-                if (note.y > 360) {
+                note.y += (delta * 0.31) + Math.min(0.16, rhythmScore * 0.0006 * delta);
+                if (note.y > 392) {
                     rhythmStreak = 0;
+                    rhythmMisses += 1;
+                    rhythmBursts.push({
+                        id: `${note.id}-miss`,
+                        lane: note.lane,
+                        y: 320,
+                        label: 'RATE',
+                        type: 'is-miss'
+                    });
                     return false;
                 }
                 return true;
+            });
+
+            rhythmBursts = rhythmBursts.filter((burst) => {
+                burst.y -= delta * 0.05;
+                burst.life = (burst.life || 420) - delta;
+                return burst.life > 0;
             });
 
             renderRhythmNotes();
@@ -5201,8 +5568,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.localStorage.setItem(RHYTHM_BEST_KEY, String(rhythmBestScore));
             }
 
+            if (rhythmMisses >= RHYTHM_MAX_MISSES) {
+                finishRhythm('misses');
+                return;
+            }
+
             if (timeRemaining <= 0) {
-                finishRhythm();
+                finishRhythm('time');
                 return;
             }
 
@@ -5213,22 +5585,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleRhythmHit(lane) {
-        highlightRhythmPad(lane);
-
         if (!rhythmRunning) {
+            highlightRhythmPad(lane, 'active');
             startRhythm();
             return;
         }
 
-        const noteIndex = rhythmNotes.findIndex((note) => note.lane === lane && Math.abs(note.y - 330) <= 36);
+        const noteIndex = rhythmNotes.findIndex((note) => note.lane === lane && Math.abs(note.y - 330) <= 44);
 
         if (noteIndex !== -1) {
+            const note = rhythmNotes[noteIndex];
+            const distance = Math.abs(note.y - 330);
             rhythmNotes.splice(noteIndex, 1);
             rhythmStreak += 1;
-            rhythmScore += 10 + (Math.min(rhythmStreak, 12) * 2);
+            const isPerfect = distance <= 16;
+            rhythmScore += (isPerfect ? 18 : 10) + (Math.min(rhythmStreak, 12) * 2);
+            highlightRhythmPad(lane, 'success');
+            triggerRhythmBoardEffect('is-hit-flash');
+            rhythmBursts.push({
+                id: `${note.id}-hit`,
+                lane,
+                y: 306,
+                label: isPerfect ? 'PARFAIT' : 'BIEN',
+                type: isPerfect ? 'is-perfect' : 'is-good'
+            });
             renderRhythmNotes();
         } else {
             rhythmStreak = 0;
+            rhythmMisses += 1;
+            highlightRhythmPad(lane, 'fail');
+            triggerRhythmBoardEffect('is-miss-flash');
+            rhythmBursts.push({
+                id: `mistap-${performance.now()}`,
+                lane,
+                y: 306,
+                label: 'RATE',
+                type: 'is-miss'
+            });
+        }
+
+        if (rhythmMisses >= RHYTHM_MAX_MISSES) {
+            updateRhythmHud(RHYTHM_DURATION_MS - (performance.now() - rhythmStartedAt));
+            renderRhythmNotes();
+            finishRhythm('misses');
+            return;
         }
 
         updateRhythmHud(RHYTHM_DURATION_MS - (performance.now() - rhythmStartedAt));
@@ -5372,11 +5772,13 @@ document.addEventListener('DOMContentLoaded', () => {
             flappyBirdY += flappyBirdVelocity * (delta / 16);
             flappySpawnTimer += delta;
 
-            if (flappySpawnTimer >= 1780) {
+            const spawnInterval = Math.max(FLAPPY_MIN_SPAWN_INTERVAL, FLAPPY_BASE_SPAWN_INTERVAL - (flappyScore * 20));
+
+            if (flappySpawnTimer >= spawnInterval) {
                 flappySpawnTimer = 0;
-                const baseGapSize = Math.max(196, boardHeight * 0.4);
-                const gapReduction = Math.min(54, flappyScore * 4);
-                const gapSize = Math.max(142, baseGapSize - gapReduction);
+                const baseGapSize = Math.max(188, boardHeight * 0.385);
+                const gapReduction = Math.min(78, flappyScore * 5.5);
+                const gapSize = Math.max(118, baseGapSize - gapReduction);
                 const minCenter = boardHeight * 0.24;
                 const maxCenter = boardHeight * 0.62;
                 const gapCenter = minCenter + (Math.random() * (maxCenter - minCenter));
@@ -5389,8 +5791,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             flappyPipes = flappyPipes.filter((pipe) => pipe.x > -120);
+            const pipeSpeed = Math.min(FLAPPY_MAX_PIPE_SPEED, FLAPPY_BASE_PIPE_SPEED + (flappyScore * 0.0024));
             flappyPipes.forEach((pipe) => {
-                pipe.x -= delta * 0.17;
+                pipe.x -= delta * pipeSpeed;
 
                 if (!pipe.scored && pipe.x + FLAPPY_PIPE_WIDTH < birdX) {
                     pipe.scored = true;
@@ -5404,7 +5807,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-            flappyBackdropOffset += delta * 0.17;
+            flappyBackdropOffset += delta * pipeSpeed;
 
             const hitboxInsetX = 10;
             const hitboxInsetTop = 7;
@@ -8421,8 +8824,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetBreakoutBall() {
-        breakoutState.ball.x = 280;
-        breakoutState.ball.y = 290;
+        breakoutState.ball.x = breakoutCanvas.width / 2;
+        breakoutState.ball.y = breakoutCanvas.height * 0.68;
         setBreakoutBallVelocity(0.45, -1);
     }
 
@@ -10406,6 +10809,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function isMultiplayerBattleshipActive() {
+        return multiplayerActiveRoom?.gameId === 'battleship' && Boolean(multiplayerActiveRoom?.gameState);
+    }
+
+    function getMultiplayerBattleshipRole() {
+        return multiplayerActiveRoom?.players?.find((player) => player.isYou)?.symbol || null;
+    }
+
+    function syncMultiplayerBattleshipState() {
+        if (!isMultiplayerBattleshipActive()) {
+            battleshipLastFinishedStateKey = '';
+            return;
+        }
+
+        battleshipPlayerGrid = multiplayerActiveRoom.gameState.yourBoard.map((row) => row.map((cell) => ({ ...cell })));
+        battleshipEnemyGrid = multiplayerActiveRoom.gameState.enemyBoard.map((row) => row.map((cell) => ({ ...cell })));
+        battleshipPlayerRemainingShips = Number(multiplayerActiveRoom.gameState.yourRemainingShips || 0);
+        battleshipEnemyRemainingShips = Number(multiplayerActiveRoom.gameState.enemyRemainingShips || 0);
+        battleshipCurrentTurn = multiplayerActiveRoom.gameState.currentTurn || 'captain1';
+        battleshipFinished = Boolean(multiplayerActiveRoom.gameState.winner);
+        battleshipAwaitingAi = false;
+
+        const yourRole = getMultiplayerBattleshipRole();
+        const isYourTurn = battleshipCurrentTurn === yourRole;
+        battleshipStatusText.textContent = multiplayerActiveRoom.gameState.winner
+            ? (multiplayerActiveRoom.gameState.winner === yourRole
+                ? 'Victoire. Tu coules la flotte adverse.'
+                : 'Defaite. L adversaire remporte la bataille.')
+            : (isYourTurn
+                ? 'A toi de tirer sur la flotte adverse.'
+                : 'Attends le tir de l adversaire.');
+        renderBattleship();
+
+        if (!multiplayerActiveRoom.gameState.winner) {
+            battleshipLastFinishedStateKey = '';
+            closeGameOverModal();
+            return;
+        }
+
+        const nextFinishedKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner || 'none'}`;
+        if (nextFinishedKey === battleshipLastFinishedStateKey || activeGameTab !== 'battleship') {
+            return;
+        }
+
+        battleshipLastFinishedStateKey = nextFinishedKey;
+
+        if (multiplayerActiveRoom.gameState.winner === yourRole) {
+            openGameOverModal('Victoire', 'Tu remportes cette bataille navale en ligne.');
+        } else {
+            openGameOverModal('C est perdu', 'L adversaire remporte cette bataille navale.');
+        }
+    }
+
     function isMultiplayerAirHockeyActive() {
         return multiplayerActiveRoom?.gameId === 'airHockey' && Boolean(multiplayerActiveRoom?.gameState);
     }
@@ -10625,9 +11081,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         airHockeyLastFinishedStateKey = finishedKey;
         if (airHockeyState.winner === getMultiplayerAirHockeyRole()) {
-            openGameOverModal('Victoire', 'Tu remportes ce duel d Air Hockey en ligne.');
+            openGameOverModal('Victoire', 'Tu remportes ce duel de Sea Hockey en ligne.');
         } else {
-            openGameOverModal('C est perdu', 'L adversaire remporte ce duel d Air Hockey.');
+            openGameOverModal('C est perdu', 'L adversaire remporte ce duel de Sea Hockey.');
         }
     }
 
@@ -10778,7 +11234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         hideAirHockeyCountdown();
         positionAirHockeyPuck();
-        airHockeyHelpText.textContent = 'La balle attend dans un camp. Clique sur Lancer pour engager.';
+        airHockeyHelpText.textContent = 'La balle attend dans un camp. Clique sur Lancer pour engager la partie de Sea Hockey.';
         renderAirHockey();
 
         if (!airHockeyAnimationFrame) {
@@ -10799,7 +11255,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             multiplayerSocket.emit('airhockey:start');
-            setMultiplayerStatus('Le duel d Air Hockey se prepare pour tout le salon.');
+            setMultiplayerStatus('Le duel de Sea Hockey se prepare pour tout le salon.');
             return;
         }
 
@@ -11304,17 +11760,178 @@ document.addEventListener('DOMContentLoaded', () => {
         baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
     }
 
+    function drawBreakoutRoundedRect(context, x, y, width, height, radius) {
+        const clampedRadius = Math.min(radius, width / 2, height / 2);
+        context.beginPath();
+        context.moveTo(x + clampedRadius, y);
+        context.lineTo(x + width - clampedRadius, y);
+        context.quadraticCurveTo(x + width, y, x + width, y + clampedRadius);
+        context.lineTo(x + width, y + height - clampedRadius);
+        context.quadraticCurveTo(x + width, y + height, x + width - clampedRadius, y + height);
+        context.lineTo(x + clampedRadius, y + height);
+        context.quadraticCurveTo(x, y + height, x, y + height - clampedRadius);
+        context.lineTo(x, y + clampedRadius);
+        context.quadraticCurveTo(x, y, x + clampedRadius, y);
+        context.closePath();
+    }
+
     function createBreakoutBricks() {
-        return Array.from({ length: 5 }, (_, row) => (
-            Array.from({ length: 8 }, (_, col) => ({
-                x: 28 + col * 63,
-                y: 42 + row * 28,
-                width: 54,
-                height: 16,
+        const rows = 5;
+        const cols = 8;
+        const sidePadding = 38;
+        const topOffset = 54;
+        const gapX = 10;
+        const gapY = 12;
+        const brickWidth = ((breakoutCanvas.width - (sidePadding * 2)) - (gapX * (cols - 1))) / cols;
+        const brickHeight = 22;
+        const rowThemes = [
+            { top: '#facc15', bottom: '#d97706' },
+            { top: '#fb7185', bottom: '#be123c' },
+            { top: '#38bdf8', bottom: '#2563eb' },
+            { top: '#34d399', bottom: '#0f766e' },
+            { top: '#c084fc', bottom: '#7c3aed' }
+        ];
+
+        return Array.from({ length: rows }, (_, row) => (
+            Array.from({ length: cols }, (_, col) => ({
+                x: sidePadding + col * (brickWidth + gapX),
+                y: topOffset + row * (brickHeight + gapY),
+                width: brickWidth,
+                height: brickHeight,
                 alive: true,
-                color: `hsl(${row * 50 + col * 9} 82% 62%)`
+                theme: rowThemes[row % rowThemes.length]
             }))
         )).flat();
+    }
+
+    function drawBreakoutBackdrop() {
+        const skyGradient = breakoutContext.createLinearGradient(0, 0, 0, breakoutCanvas.height);
+        skyGradient.addColorStop(0, '#7dd3fc');
+        skyGradient.addColorStop(0.48, '#38bdf8');
+        skyGradient.addColorStop(0.72, '#0f766e');
+        skyGradient.addColorStop(1, '#082f49');
+        breakoutContext.fillStyle = skyGradient;
+        breakoutContext.fillRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
+
+        const sunGlow = breakoutContext.createRadialGradient(118, 88, 12, 118, 88, 92);
+        sunGlow.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
+        sunGlow.addColorStop(0.4, 'rgba(251, 191, 36, 0.42)');
+        sunGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
+        breakoutContext.fillStyle = sunGlow;
+        breakoutContext.beginPath();
+        breakoutContext.arc(118, 88, 92, 0, Math.PI * 2);
+        breakoutContext.fill();
+
+        breakoutContext.fillStyle = 'rgba(255, 255, 255, 0.68)';
+        breakoutContext.beginPath();
+        breakoutContext.ellipse(154, 74, 28, 14, 0, 0, Math.PI * 2);
+        breakoutContext.ellipse(186, 72, 34, 18, 0, 0, Math.PI * 2);
+        breakoutContext.ellipse(216, 78, 24, 12, 0, 0, Math.PI * 2);
+        breakoutContext.fill();
+
+        breakoutContext.fillStyle = 'rgba(15, 23, 42, 0.26)';
+        breakoutContext.beginPath();
+        breakoutContext.moveTo(0, breakoutCanvas.height * 0.68);
+        breakoutContext.lineTo(86, breakoutCanvas.height * 0.54);
+        breakoutContext.lineTo(148, breakoutCanvas.height * 0.62);
+        breakoutContext.lineTo(222, breakoutCanvas.height * 0.48);
+        breakoutContext.lineTo(304, breakoutCanvas.height * 0.67);
+        breakoutContext.lineTo(0, breakoutCanvas.height * 0.67);
+        breakoutContext.closePath();
+        breakoutContext.fill();
+
+        breakoutContext.fillStyle = 'rgba(15, 23, 42, 0.38)';
+        breakoutContext.beginPath();
+        breakoutContext.moveTo(breakoutCanvas.width * 0.58, breakoutCanvas.height * 0.68);
+        breakoutContext.lineTo(breakoutCanvas.width * 0.68, breakoutCanvas.height * 0.56);
+        breakoutContext.lineTo(breakoutCanvas.width * 0.78, breakoutCanvas.height * 0.61);
+        breakoutContext.lineTo(breakoutCanvas.width * 0.88, breakoutCanvas.height * 0.5);
+        breakoutContext.lineTo(breakoutCanvas.width, breakoutCanvas.height * 0.68);
+        breakoutContext.closePath();
+        breakoutContext.fill();
+
+        breakoutContext.fillStyle = '#f59e0b';
+        breakoutContext.beginPath();
+        breakoutContext.moveTo(44, breakoutCanvas.height - 54);
+        breakoutContext.quadraticCurveTo(118, breakoutCanvas.height - 110, 196, breakoutCanvas.height - 58);
+        breakoutContext.lineTo(196, breakoutCanvas.height - 26);
+        breakoutContext.lineTo(44, breakoutCanvas.height - 26);
+        breakoutContext.closePath();
+        breakoutContext.fill();
+
+        breakoutContext.fillStyle = '#92400e';
+        breakoutContext.fillRect(102, breakoutCanvas.height - 118, 9, 60);
+        breakoutContext.fillStyle = '#f8fafc';
+        breakoutContext.beginPath();
+        breakoutContext.moveTo(111, breakoutCanvas.height - 116);
+        breakoutContext.lineTo(160, breakoutCanvas.height - 90);
+        breakoutContext.lineTo(111, breakoutCanvas.height - 72);
+        breakoutContext.closePath();
+        breakoutContext.fill();
+
+        breakoutContext.strokeStyle = 'rgba(255,255,255,0.18)';
+        breakoutContext.lineWidth = 3;
+        for (let wave = 0; wave < 5; wave += 1) {
+            const waveY = breakoutCanvas.height - 112 + wave * 18;
+            breakoutContext.beginPath();
+            breakoutContext.moveTo(0, waveY);
+            for (let x = 0; x <= breakoutCanvas.width; x += 36) {
+                breakoutContext.quadraticCurveTo(x + 18, waveY - 8, x + 36, waveY);
+            }
+            breakoutContext.stroke();
+        }
+    }
+
+    function drawBreakoutBrick(brick) {
+        const gradient = breakoutContext.createLinearGradient(brick.x, brick.y, brick.x, brick.y + brick.height);
+        gradient.addColorStop(0, brick.theme.top);
+        gradient.addColorStop(1, brick.theme.bottom);
+
+        drawBreakoutRoundedRect(breakoutContext, brick.x, brick.y, brick.width, brick.height, 8);
+        breakoutContext.fillStyle = gradient;
+        breakoutContext.fill();
+        breakoutContext.strokeStyle = 'rgba(255, 248, 220, 0.28)';
+        breakoutContext.lineWidth = 1;
+        breakoutContext.stroke();
+
+        breakoutContext.fillStyle = 'rgba(255, 255, 255, 0.18)';
+        breakoutContext.fillRect(brick.x + 8, brick.y + 4, brick.width - 16, 4);
+    }
+
+    function drawBreakoutPaddle() {
+        const { paddle } = breakoutState;
+        const hullGradient = breakoutContext.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
+        hullGradient.addColorStop(0, '#f59e0b');
+        hullGradient.addColorStop(1, '#7c2d12');
+
+        drawBreakoutRoundedRect(breakoutContext, paddle.x, paddle.y, paddle.width, paddle.height, 10);
+        breakoutContext.fillStyle = hullGradient;
+        breakoutContext.fill();
+
+        breakoutContext.fillStyle = 'rgba(255, 248, 220, 0.9)';
+        breakoutContext.fillRect(paddle.x + paddle.width * 0.48, paddle.y - 18, 4, 18);
+        breakoutContext.beginPath();
+        breakoutContext.moveTo(paddle.x + paddle.width * 0.5, paddle.y - 18);
+        breakoutContext.lineTo(paddle.x + paddle.width * 0.72, paddle.y - 8);
+        breakoutContext.lineTo(paddle.x + paddle.width * 0.5, paddle.y + 2);
+        breakoutContext.closePath();
+        breakoutContext.fill();
+    }
+
+    function drawBreakoutBall() {
+        const { ball } = breakoutState;
+        const ballGradient = breakoutContext.createRadialGradient(ball.x - 2, ball.y - 2, 2, ball.x, ball.y, ball.radius + 3);
+        ballGradient.addColorStop(0, '#fef3c7');
+        ballGradient.addColorStop(0.42, '#facc15');
+        ballGradient.addColorStop(1, '#b45309');
+
+        breakoutContext.beginPath();
+        breakoutContext.fillStyle = ballGradient;
+        breakoutContext.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        breakoutContext.fill();
+        breakoutContext.strokeStyle = 'rgba(120, 53, 15, 0.52)';
+        breakoutContext.lineWidth = 1.5;
+        breakoutContext.stroke();
     }
 
     function drawBreakout() {
@@ -11323,32 +11940,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         breakoutContext.clearRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
-        breakoutContext.fillStyle = '#082f49';
-        breakoutContext.fillRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
+        drawBreakoutBackdrop();
 
         breakoutState.bricks.forEach((brick) => {
             if (!brick.alive) {
                 return;
             }
-            breakoutContext.fillStyle = brick.color;
-            breakoutContext.fillRect(brick.x, brick.y, brick.width, brick.height);
+            drawBreakoutBrick(brick);
         });
 
-        breakoutContext.fillStyle = '#f8fafc';
-        breakoutContext.fillRect(breakoutState.paddle.x, breakoutState.paddle.y, breakoutState.paddle.width, breakoutState.paddle.height);
-        breakoutContext.beginPath();
-        breakoutContext.fillStyle = '#facc15';
-        breakoutContext.arc(breakoutState.ball.x, breakoutState.ball.y, breakoutState.ball.radius, 0, Math.PI * 2);
-        breakoutContext.fill();
+        drawBreakoutPaddle();
+        drawBreakoutBall();
     }
 
     function initializeBreakout() {
+        const paddleWidth = 116;
+        const paddleHeight = 14;
         breakoutState = {
             score: 0,
             lives: 3,
             running: false,
-            paddle: { x: 230, y: 388, width: 100, height: 12 },
-            ball: { x: 280, y: 290, vx: 0, vy: 0, radius: 8 },
+            paddle: {
+                x: (breakoutCanvas.width - paddleWidth) / 2,
+                y: breakoutCanvas.height - 54,
+                width: paddleWidth,
+                height: paddleHeight
+            },
+            ball: {
+                x: breakoutCanvas.width / 2,
+                y: breakoutCanvas.height * 0.68,
+                vx: 0,
+                vy: 0,
+                radius: 9
+            },
             bricks: createBreakoutBricks()
         };
         breakoutRemainingBricks = breakoutState.bricks.length;
@@ -11464,6 +12088,1066 @@ document.addEventListener('DOMContentLoaded', () => {
 
         drawBreakout();
         breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
+    }
+
+    function createBlockBlastPiece(template) {
+        return {
+            id: `${template.key}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+            key: template.key,
+            color: template.color,
+            cells: template.cells.map(([x, y]) => ({ x, y })),
+            width: Math.max(...template.cells.map(([x]) => x)) + 1,
+            height: Math.max(...template.cells.map(([, y]) => y)) + 1
+        };
+    }
+
+    function createBlockBlastBoard() {
+        return Array.from({ length: BLOCK_BLAST_SIZE }, () => Array.from({ length: BLOCK_BLAST_SIZE }, () => null));
+    }
+
+    function generateBlockBlastPieces() {
+        const pool = [...BLOCK_BLAST_SHAPES];
+        const picks = [];
+
+        while (picks.length < 3) {
+            const index = Math.floor(Math.random() * pool.length);
+            const [template] = pool.splice(index, 1);
+            picks.push(createBlockBlastPiece(template));
+        }
+
+        return picks;
+    }
+
+    function canPlaceBlockBlastPiece(piece, anchorRow, anchorCol) {
+        if (!piece || !blockBlastState) {
+            return false;
+        }
+
+        return piece.cells.every((cell) => {
+            const row = anchorRow + cell.y;
+            const col = anchorCol + cell.x;
+            return row >= 0
+                && row < BLOCK_BLAST_SIZE
+                && col >= 0
+                && col < BLOCK_BLAST_SIZE
+                && !blockBlastState.board[row][col];
+        });
+    }
+
+    function canAnyBlockBlastPieceFit() {
+        if (!blockBlastState) {
+            return false;
+        }
+
+        return blockBlastState.pieces.some((piece) => {
+            if (!piece) {
+                return false;
+            }
+
+            for (let row = 0; row < BLOCK_BLAST_SIZE; row += 1) {
+                for (let col = 0; col < BLOCK_BLAST_SIZE; col += 1) {
+                    if (canPlaceBlockBlastPiece(piece, row, col)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
+    }
+
+    function updateBlockBlastHud() {
+        if (!blockBlastState) {
+            return;
+        }
+
+        blockBlastScoreDisplay.textContent = String(blockBlastState.score);
+        blockBlastComboDisplay.textContent = `x${Math.max(1, blockBlastState.combo)}`;
+    }
+
+    function renderBlockBlastPieces() {
+        if (!blockBlastPieces || !blockBlastState) {
+            return;
+        }
+
+        blockBlastPieces.innerHTML = blockBlastState.pieces.map((piece, index) => {
+            if (!piece) {
+                return '<div class="blockblast-piece-slot is-empty"></div>';
+            }
+
+            return `
+                <button
+                    type="button"
+                    class="blockblast-piece${blockBlastSelectedPieceIndex === index ? ' is-selected' : ''}"
+                    data-blockblast-piece="${index}"
+                    style="--piece-columns:${piece.width}; --piece-rows:${piece.height};"
+                    aria-label="Piece ${index + 1}"
+                >
+                    ${piece.cells.map((cell) => `<span class="blockblast-piece-cell is-${piece.color}" style="grid-column:${cell.x + 1}; grid-row:${cell.y + 1};"></span>`).join('')}
+                </button>
+            `;
+        }).join('');
+    }
+
+    function renderBlockBlastBoard() {
+        if (!blockBlastBoard || !blockBlastState) {
+            return;
+        }
+
+        blockBlastBoard.innerHTML = blockBlastState.board.map((row, rowIndex) => row.map((cell, colIndex) => {
+            const clearing = blockBlastState.clearingCells?.some((entry) => entry.row === rowIndex && entry.col === colIndex);
+            return `
+                <button
+                    type="button"
+                    class="blockblast-cell${cell ? ` is-filled is-${cell.color}` : ''}${clearing ? ' is-clearing' : ''}"
+                    data-blockblast-row="${rowIndex}"
+                    data-blockblast-col="${colIndex}"
+                    aria-label="Case ${rowIndex + 1}-${colIndex + 1}"
+                ></button>
+            `;
+        }).join('')).join('');
+    }
+
+    function renderBlockBlast() {
+        updateBlockBlastHud();
+        renderBlockBlastBoard();
+        renderBlockBlastPieces();
+    }
+
+    function finishBlockBlast() {
+        if (!blockBlastState) {
+            return;
+        }
+
+        blockBlastHelpText.textContent = `Le pont est sature. Score final ${blockBlastState.score}. Record ${blockBlastBestScore}.`;
+        openGameOverModal('Maree bloquee', `Score ${blockBlastState.score}. Record ${blockBlastBestScore}.`);
+    }
+
+    function refillBlockBlastPiecesIfNeeded() {
+        if (!blockBlastState) {
+            return;
+        }
+
+        if (blockBlastState.pieces.every((piece) => !piece)) {
+            blockBlastState.pieces = generateBlockBlastPieces();
+            blockBlastSelectedPieceIndex = null;
+            blockBlastHelpText.textContent = 'Nouvelle cargaison sur le quai. Continue a liberer des lignes.';
+        }
+    }
+
+    function clearBlockBlastLines() {
+        if (!blockBlastState) {
+            return;
+        }
+
+        const rowsToClear = [];
+        const colsToClear = [];
+
+        for (let row = 0; row < BLOCK_BLAST_SIZE; row += 1) {
+            if (blockBlastState.board[row].every(Boolean)) {
+                rowsToClear.push(row);
+            }
+        }
+
+        for (let col = 0; col < BLOCK_BLAST_SIZE; col += 1) {
+            if (blockBlastState.board.every((row) => row[col])) {
+                colsToClear.push(col);
+            }
+        }
+
+        const uniqueCells = new Map();
+        rowsToClear.forEach((row) => {
+            for (let col = 0; col < BLOCK_BLAST_SIZE; col += 1) {
+                uniqueCells.set(`${row}-${col}`, { row, col });
+            }
+        });
+        colsToClear.forEach((col) => {
+            for (let row = 0; row < BLOCK_BLAST_SIZE; row += 1) {
+                uniqueCells.set(`${row}-${col}`, { row, col });
+            }
+        });
+
+        const cleared = [...uniqueCells.values()];
+        blockBlastState.clearingCells = cleared;
+
+        if (!cleared.length) {
+            blockBlastState.combo = 1;
+            blockBlastHelpText.textContent = 'Pose les formes pour preparer un gros nettoyage.';
+            return;
+        }
+
+        cleared.forEach(({ row, col }) => {
+            blockBlastState.board[row][col] = null;
+        });
+
+        blockBlastState.score += cleared.length * 12 * Math.max(1, blockBlastState.combo);
+        blockBlastState.combo += 1;
+
+        if (blockBlastState.score > blockBlastBestScore) {
+            blockBlastBestScore = blockBlastState.score;
+            window.localStorage.setItem(BLOCK_BLAST_BEST_KEY, String(blockBlastBestScore));
+        }
+
+        blockBlastHelpText.textContent = `${cleared.length} cases liberees. La mer reprend de l air.`;
+        renderBlockBlast();
+
+        window.setTimeout(() => {
+            if (!blockBlastState) {
+                return;
+            }
+            blockBlastState.clearingCells = [];
+            renderBlockBlastBoard();
+        }, 220);
+    }
+
+    function placeBlockBlastPiece(row, col) {
+        if (!blockBlastState || blockBlastSelectedPieceIndex === null) {
+            return;
+        }
+
+        const piece = blockBlastState.pieces[blockBlastSelectedPieceIndex];
+        if (!piece || !canPlaceBlockBlastPiece(piece, row, col)) {
+            blockBlastHelpText.textContent = 'Cette forme ne rentre pas ici. Cherche un autre coin du plateau.';
+            return;
+        }
+
+        piece.cells.forEach((cell) => {
+            blockBlastState.board[row + cell.y][col + cell.x] = { color: piece.color };
+        });
+
+        blockBlastState.score += piece.cells.length * 4;
+        blockBlastState.pieces[blockBlastSelectedPieceIndex] = null;
+        blockBlastSelectedPieceIndex = null;
+        clearBlockBlastLines();
+        refillBlockBlastPiecesIfNeeded();
+        renderBlockBlast();
+
+        if (!canAnyBlockBlastPieceFit()) {
+            finishBlockBlast();
+        }
+    }
+
+    function initializeBlockBlast() {
+        closeGameOverModal();
+        blockBlastState = {
+            board: createBlockBlastBoard(),
+            pieces: generateBlockBlastPieces(),
+            score: 0,
+            combo: 1,
+            clearingCells: []
+        };
+        blockBlastSelectedPieceIndex = null;
+        blockBlastHelpText.textContent = 'Choisis une forme puis pose-la sur le pont. Efface des lignes pour garder la baie degagee.';
+        renderBlockBlast();
+    }
+
+    function showUnoEvent(message) {
+        if (!unoEventBanner) {
+            return;
+        }
+
+        unoEventBanner.textContent = message;
+        unoEventBanner.classList.remove('is-pop');
+        void unoEventBanner.offsetWidth;
+        unoEventBanner.classList.add('is-pop');
+
+        if (unoEventBannerTimer) {
+            window.clearTimeout(unoEventBannerTimer);
+        }
+
+        unoEventBannerTimer = window.setTimeout(() => {
+            unoEventBanner?.classList.remove('is-pop');
+            unoEventBannerTimer = null;
+        }, 1200);
+    }
+
+    function shuffleUnoDeck(cards) {
+        const deck = [...cards];
+        for (let index = deck.length - 1; index > 0; index -= 1) {
+            const randomIndex = Math.floor(Math.random() * (index + 1));
+            [deck[index], deck[randomIndex]] = [deck[randomIndex], deck[index]];
+        }
+        return deck;
+    }
+
+    function createUnoCard(color, value, type = 'number') {
+        return {
+            id: `${color}-${value}-${type}-${Math.random().toString(16).slice(2, 10)}`,
+            color,
+            value,
+            type
+        };
+    }
+
+    function createUnoDeck() {
+        const deck = [];
+
+        UNO_COLORS.forEach((color) => {
+            deck.push(createUnoCard(color, '0'));
+            for (let value = 1; value <= 9; value += 1) {
+                deck.push(createUnoCard(color, String(value)));
+                deck.push(createUnoCard(color, String(value)));
+            }
+            ['skip', 'reverse', 'draw2'].forEach((action) => {
+                deck.push(createUnoCard(color, action, action));
+                deck.push(createUnoCard(color, action, action));
+            });
+        });
+
+        for (let index = 0; index < 4; index += 1) {
+            deck.push(createUnoCard('wild', 'wild', 'wild'));
+            deck.push(createUnoCard('wild', 'wildDraw4', 'wildDraw4'));
+        }
+
+        return shuffleUnoDeck(deck);
+    }
+
+    function cloneUnoState(state) {
+        return {
+            players: state.players.map((player) => ({
+                ...player,
+                hand: player.hand.map((card) => ({ ...card }))
+            })),
+            drawPile: state.drawPile.map((card) => ({ ...card })),
+            discardPile: state.discardPile.map((card) => ({ ...card })),
+            currentPlayerIndex: state.currentPlayerIndex,
+            direction: state.direction,
+            currentColor: state.currentColor,
+            winner: state.winner,
+            pendingColorChoice: state.pendingColorChoice ? { ...state.pendingColorChoice } : null,
+            drawPenalty: Number(state.drawPenalty || 0),
+            turnCount: Number(state.turnCount || 1),
+            lastAction: state.lastAction || ''
+        };
+    }
+
+    function buildSoloUnoState() {
+        const deck = createUnoDeck();
+        const players = [
+            { id: 'you', name: 'Toi', hand: [] },
+            { id: 'ai-1', name: 'Barbe-Rouge', hand: [] }
+        ];
+
+        for (let index = 0; index < 7; index += 1) {
+            players.forEach((player) => {
+                player.hand.push(deck.pop());
+            });
+        }
+
+        let topCard = deck.pop();
+        while (topCard.type === 'wildDraw4') {
+            deck.unshift(topCard);
+            topCard = deck.pop();
+        }
+
+        return {
+            players,
+            drawPile: deck,
+            discardPile: [topCard],
+            currentPlayerIndex: 0,
+            direction: 1,
+            currentColor: topCard.color === 'wild' ? 'red' : topCard.color,
+            winner: null,
+            pendingColorChoice: null,
+            drawPenalty: 0,
+            turnCount: 1,
+            lastAction: 'La traversee commence.'
+        };
+    }
+
+    function getUnoTopCard(state = unoState) {
+        return state?.discardPile?.[state.discardPile.length - 1] || null;
+    }
+
+    function ensureUnoDrawPile(state) {
+        if (state.drawPile.length) {
+            return;
+        }
+
+        const topCard = state.discardPile.pop();
+        state.drawPile = shuffleUnoDeck(state.discardPile);
+        state.discardPile = topCard ? [topCard] : [];
+    }
+
+    function drawUnoCards(state, playerIndex, amount) {
+        const cards = [];
+        ensureUnoDrawPile(state);
+
+        for (let index = 0; index < amount; index += 1) {
+            ensureUnoDrawPile(state);
+            const card = state.drawPile.pop();
+            if (!card) {
+                break;
+            }
+            state.players[playerIndex].hand.push(card);
+            cards.push(card);
+        }
+
+        return cards;
+    }
+
+    function isUnoCardPlayable(card, state = unoState) {
+        if (!card || !state || state.winner || state.pendingColorChoice) {
+            return false;
+        }
+
+        const topCard = getUnoTopCard(state);
+        if (!topCard) {
+            return true;
+        }
+
+        if (card.color === 'wild') {
+            return true;
+        }
+
+        if (Number(state.drawPenalty || 0) > 0) {
+            if (card.type === 'wildDraw4') {
+                return true;
+            }
+
+            if (card.type === 'draw2') {
+                return card.color === state.currentColor;
+            }
+
+            return false;
+        }
+
+        const activeColor = ['wild', 'wildDraw4'].includes(topCard.type)
+            ? state.currentColor
+            : topCard.color;
+
+        if (card.type === 'number') {
+            if (topCard.type !== 'number') {
+                return card.color === activeColor;
+            }
+
+            return card.color === activeColor || card.value === topCard.value;
+        }
+
+        if (card.type === 'draw2') {
+            if (topCard.type === 'wildDraw4') {
+                return card.color === state.currentColor;
+            }
+
+            return card.color === activeColor || topCard.type === 'draw2';
+        }
+
+        if (card.type === 'skip' || card.type === 'reverse') {
+            return card.color === activeColor || card.type === topCard.type;
+        }
+
+        return card.color === activeColor;
+    }
+
+    function getNextUnoPlayerIndex(state, step = 1) {
+        const total = state.players.length;
+        const offset = (state.currentPlayerIndex + (state.direction * step)) % total;
+        return offset < 0 ? offset + total : offset;
+    }
+
+    function getUnoDisplayColor(color) {
+        return {
+            red: 'Rouge',
+            yellow: 'Jaune',
+            green: 'Vert',
+            blue: 'Bleu',
+            wild: 'Libre'
+        }[color] || '-';
+    }
+
+    function getUnoCardSortWeight(card) {
+        const colorOrder = {
+            red: 0,
+            yellow: 1,
+            green: 2,
+            blue: 3,
+            wild: 4
+        };
+        const typeOrder = {
+            number: 0,
+            skip: 20,
+            reverse: 21,
+            draw2: 22,
+            wild: 40,
+            wildDraw4: 41
+        };
+        const baseColor = colorOrder[card.color] ?? 9;
+        const baseType = typeOrder[card.type] ?? 99;
+        const numericValue = card.type === 'number' ? Number(card.value) || 0 : 0;
+        return (baseColor * 100) + baseType + numericValue;
+    }
+
+    function applyUnoCardEffects(state, card, actorName) {
+        if (card.type === 'reverse') {
+            state.direction *= -1;
+            if (state.players.length === 2) {
+                state.currentPlayerIndex = getNextUnoPlayerIndex(state, 2);
+            } else {
+                state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+            }
+            state.lastAction = `${actorName} change le vent avec un inversement.`;
+            return;
+        }
+
+        if (card.type === 'skip') {
+            state.currentPlayerIndex = getNextUnoPlayerIndex(state, 2);
+            state.lastAction = `${actorName} fait sauter le prochain tour.`;
+            return;
+        }
+
+        if (card.type === 'draw2') {
+            state.drawPenalty = Number(state.drawPenalty || 0) + 2;
+            state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+            state.lastAction = `${actorName} impose ${state.drawPenalty} cartes.`;
+            return;
+        }
+
+        if (card.type === 'wildDraw4') {
+            state.drawPenalty = Number(state.drawPenalty || 0) + 4;
+            state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+            state.lastAction = `${actorName} dechaine ${state.drawPenalty} cartes.`;
+            return;
+        }
+
+        if (card.type === 'wild') {
+            state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+            state.lastAction = `${actorName} change la couleur du courant.`;
+            return;
+        }
+
+        state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
+        state.lastAction = `${actorName} garde le cap.`;
+    }
+
+    function finalizeUnoPlay(state, playerIndex, cardIndex, chosenColor = null) {
+        const player = state.players[playerIndex];
+        const [card] = player.hand.splice(cardIndex, 1);
+        state.discardPile.push(card);
+        state.currentColor = card.color === 'wild' ? (chosenColor || 'red') : card.color;
+        state.turnCount += 1;
+        unoLastPlayedCardId = card.id;
+        unoLastDrawnCardId = '';
+
+        if (!player.hand.length) {
+            state.winner = player.id;
+            state.lastAction = `${player.name} remporte la traversee.`;
+            return card;
+        }
+
+        applyUnoCardEffects(state, card, player.name);
+        return card;
+    }
+
+    function renderUnoCard(card, options = {}) {
+        if (!card) {
+            return '<div class="uno-card-face is-empty"></div>';
+        }
+
+        const displayColor = options.displayColor || card.color;
+        const label = card.type === 'skip'
+            ? 'STOP'
+            : (card.type === 'reverse'
+                ? 'Reverse'
+                : (card.type === 'draw2'
+                    ? '+2'
+                    : (card.type === 'wildDraw4' ? '+4' : (card.type === 'wild' ? 'Couleur' : card.value))));
+        const visualLabel = card.type === 'skip'
+            ? '⊘'
+            : (card.type === 'reverse'
+                ? '⟲'
+                : (card.type === 'wild' ? '' : label));
+        const isWildFamily = card.type === 'wild' || card.type === 'wildDraw4';
+        const wildIcon = `
+            <span class="uno-card-wild-icon${card.type === 'wildDraw4' ? ' is-draw4' : ''}">
+                <span class="uno-card-wild-dot is-red"></span>
+                <span class="uno-card-wild-dot is-yellow"></span>
+                <span class="uno-card-wild-dot is-green"></span>
+                <span class="uno-card-wild-dot is-blue"></span>
+            </span>
+        `;
+
+        return `
+            <button
+                type="button"
+                class="uno-card-face is-${displayColor}${options.playable ? ' is-playable' : ''}${options.compact ? ' is-compact' : ''}${isWildFamily ? ' is-wild-card' : ''}${options.extraClass ? ` ${options.extraClass}` : ''}"
+                ${options.buttonAttrs || ''}
+            >
+                <span class="uno-card-corner">${card.type === 'wildDraw4' ? '+4' : (isWildFamily ? '' : visualLabel)}</span>
+                <span class="uno-card-center">${isWildFamily ? wildIcon : visualLabel}</span>
+            </button>
+        `;
+    }
+
+    function renderUnoCardBack(compact = false) {
+        return `
+            <div class="uno-card-face is-back${compact ? ' is-back-compact' : ''}">
+                <span class="card-back-emblem uno-card-back-mark"></span>
+            </div>
+        `;
+    }
+
+    function animateUnoCardTravel(cardHtml, fromElement, toElement) {
+        const startRect = fromElement?.getBoundingClientRect?.();
+        const endRect = toElement?.getBoundingClientRect?.();
+        if (!startRect || !endRect) {
+            return;
+        }
+
+        const ghost = document.createElement('div');
+        ghost.className = 'uno-card-travel';
+        ghost.innerHTML = cardHtml;
+
+        const startX = startRect.left + (startRect.width / 2) - 49;
+        const startY = startRect.top + (startRect.height / 2) - 72;
+        const endX = endRect.left + (endRect.width / 2) - 49;
+        const endY = endRect.top + (endRect.height / 2) - 72;
+
+        ghost.style.left = `${startX}px`;
+        ghost.style.top = `${startY}px`;
+        ghost.style.setProperty('--uno-travel-x', `${endX - startX}px`);
+        ghost.style.setProperty('--uno-travel-y', `${endY - startY}px`);
+        document.body.appendChild(ghost);
+
+        window.requestAnimationFrame(() => {
+            ghost.classList.add('is-active');
+        });
+
+        window.setTimeout(() => {
+            ghost.remove();
+        }, 540);
+    }
+
+    function getUnoOpponentSourceElement(playerId, seats = {}) {
+        if (!playerId) {
+            return null;
+        }
+
+        if (seats.topOpponent?.id === playerId) {
+            return unoOpponentsTop?.querySelector('.uno-opponent-cards');
+        }
+
+        if (seats.leftOpponent?.id === playerId) {
+            return unoOpponentsLeft?.querySelector('.uno-opponent-cards');
+        }
+
+        if (seats.rightOpponent?.id === playerId) {
+            return unoOpponentsRight?.querySelector('.uno-opponent-cards');
+        }
+
+        return null;
+    }
+
+    function renderUnoOpponent(player, isActive = false, orientation = 'top') {
+        const count = player.handCount ?? player.hand?.length ?? 0;
+        const backCount = Math.min(count, orientation === 'top' ? 10 : 8);
+        const drawFxCount = Math.min(unoOpponentDrawFx.get(player.id) || 0, backCount);
+        return `
+            <div class="uno-opponent uno-opponent-${orientation}${isActive ? ' is-active' : ''}${player.isYou ? ' is-you' : ''}">
+                <div class="uno-opponent-head">
+                    <span class="uno-opponent-name">${player.name}</span>
+                    <strong class="uno-opponent-count">${count} cartes</strong>
+                </div>
+                <div class="uno-opponent-cards ${orientation === 'top' ? 'is-top' : 'is-side'}">
+                    ${Array.from({ length: backCount }, (_, index) => {
+                        const extraClass = index >= (backCount - drawFxCount) ? ' is-opponent-drawn' : '';
+                        return `<div class="uno-opponent-back-shell${extraClass}">${renderUnoCardBack(true)}</div>`;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function maybeOpenUnoOutcomeModal() {
+        if (!unoState?.winner) {
+            unoLastWinnerKey = '';
+            return;
+        }
+
+        const winnerKey = `${unoMode}:${unoState.turnCount}:${unoState.winner}`;
+        if (winnerKey === unoLastWinnerKey) {
+            return;
+        }
+
+        unoLastWinnerKey = winnerKey;
+        const winner = unoState.players.find((player) => player.id === unoState.winner);
+        const isVictory = winner?.id === 'you' || winner?.isYou;
+        openGameOverModal(isVictory ? 'Victoire' : 'Partie terminee', `${winner?.name || 'Un joueur'} remporte la manche de Uno.`);
+    }
+
+    function updateUnoHud() {
+        if (!unoState) {
+            return;
+        }
+
+        const me = unoState.players.find((player) => player.id === 'you' || player.isYou) || unoState.players[0];
+        const currentPlayer = unoState.players[unoState.currentPlayerIndex];
+        unoModeDisplay.textContent = isMultiplayerUnoActive() ? 'Online' : 'Solo IA';
+        unoHandCountDisplay.textContent = String(me?.hand?.length || 0);
+        unoTurnDisplay.textContent = currentPlayer ? currentPlayer.name : '-';
+        unoHelpText.textContent = unoState.winner
+            ? `${unoState.players.find((player) => player.id === unoState.winner)?.name || 'Un joueur'} a gagne la manche.`
+            : (isMultiplayerUnoActive()
+                ? 'Pose une carte valide quand la main est a toi. Les autres mains restent cachees.'
+                : 'Clique une carte jouable ou pioche si tu es bloque.');
+        unoModeButtons.forEach((button) => {
+            button.classList.toggle('is-active', (button.dataset.unoMode === 'online') === isMultiplayerUnoActive() && (!isMultiplayerUnoActive() || button.dataset.unoMode === 'online'));
+            if (isMultiplayerUnoActive()) {
+                button.disabled = true;
+            } else {
+                button.disabled = false;
+                button.classList.toggle('is-active', button.dataset.unoMode === unoMode);
+            }
+        });
+    }
+
+    function renderUno() {
+        if (!unoState) {
+            return;
+        }
+
+        const me = unoState.players.find((player) => player.id === 'you' || player.isYou) || unoState.players[0];
+        const currentPlayer = unoState.players[unoState.currentPlayerIndex];
+        const topCard = getUnoTopCard();
+        const myTurn = currentPlayer?.id === me?.id;
+        const opponents = unoState.players.filter((player) => player.id !== me?.id);
+        const topOpponent = opponents.length === 1
+            ? opponents[0]
+            : (opponents.length >= 3 ? opponents[0] : null);
+        const leftOpponent = opponents.length === 2
+            ? opponents[0]
+            : (opponents.length >= 3 ? opponents[1] : null);
+        const rightOpponent = opponents.length === 2
+            ? opponents[1]
+            : (opponents.length >= 3 ? opponents[2] : null);
+        let opponentPlayedCard = null;
+
+        opponents.forEach((player) => {
+            const count = player.handCount ?? player.hand?.length ?? 0;
+            const previous = unoPreviousOpponentCounts.get(player.id);
+            if (Number.isFinite(previous) && count > previous) {
+                unoOpponentDrawFx.set(player.id, count - previous);
+            }
+            if (Number.isFinite(previous) && count < previous && topCard?.id && topCard.id !== unoLastRenderedTopCardId) {
+                opponentPlayedCard = player;
+            }
+            unoPreviousOpponentCounts.set(player.id, count);
+        });
+
+        if (unoOpponentsTop) {
+            unoOpponentsTop.innerHTML = topOpponent
+                ? renderUnoOpponent(topOpponent, unoState.players[unoState.currentPlayerIndex]?.id === topOpponent.id, 'top')
+                : '';
+        }
+
+        if (unoOpponentsLeft) {
+            unoOpponentsLeft.innerHTML = leftOpponent
+                ? renderUnoOpponent(leftOpponent, unoState.players[unoState.currentPlayerIndex]?.id === leftOpponent.id, 'left')
+                : '';
+            unoOpponentsLeft.classList.toggle('hidden', !leftOpponent);
+        }
+
+        if (unoOpponentsRight) {
+            unoOpponentsRight.innerHTML = rightOpponent
+                ? renderUnoOpponent(rightOpponent, unoState.players[unoState.currentPlayerIndex]?.id === rightOpponent.id, 'right')
+                : '';
+            unoOpponentsRight.classList.toggle('hidden', !rightOpponent);
+        }
+
+        unoDrawButton.innerHTML = `
+            <span class="uno-draw-stack" aria-hidden="true"></span>
+            <span class="uno-draw-label">PIOCHE</span>
+            <strong class="uno-draw-count-value">${unoState.drawPile.length}</strong>
+        `;
+        unoDiscardPile.innerHTML = renderUnoCard(topCard, {
+            compact: false,
+            displayColor: (topCard?.type === 'wild' || topCard?.type === 'wildDraw4') ? unoState.currentColor : topCard?.color
+        });
+        const sortedHand = (me?.hand || [])
+            .map((card, index) => ({ card, originalIndex: index }))
+            .sort((left, right) => getUnoCardSortWeight(left.card) - getUnoCardSortWeight(right.card));
+        unoHand.innerHTML = sortedHand.map(({ card, originalIndex }) => {
+            const playable = myTurn && isUnoCardPlayable(card);
+            return renderUnoCard(card, {
+                playable,
+                extraClass: `${card.id === unoLastDrawnCardId ? 'is-drawn' : ''}${!playable ? ' is-unplayable' : ''}`.trim(),
+                buttonAttrs: `data-uno-card-index="${originalIndex}"`
+            });
+        }).join('');
+
+        if (topCard?.id === unoLastPlayedCardId) {
+            unoDiscardPile.querySelector('.uno-card-face')?.classList.add('is-played');
+        }
+
+        if (!me?.hand?.length) {
+            unoHand.innerHTML = '<p class="uno-empty-hand">En attente de la fin de manche...</p>';
+        }
+
+        if (unoPendingPlayAnimation) {
+            const discardCard = unoDiscardPile.querySelector('.uno-card-face');
+            if (discardCard) {
+                animateUnoCardTravel(unoPendingPlayAnimation, unoHand, unoDiscardPile);
+            }
+            unoPendingPlayAnimation = null;
+        } else if (opponentPlayedCard && topCard) {
+            const opponentSource = getUnoOpponentSourceElement(opponentPlayedCard.id, { topOpponent, leftOpponent, rightOpponent });
+            if (opponentSource) {
+                animateUnoCardTravel(renderUnoCard(topCard, {
+                    displayColor: (topCard.type === 'wild' || topCard.type === 'wildDraw4') ? unoState.currentColor : topCard.color
+                }), opponentSource, unoDiscardPile);
+            }
+        }
+
+        if (unoPendingDrawAnimation) {
+            animateUnoCardTravel(renderUnoCardBack(), unoDrawButton, unoHand);
+            unoPendingDrawAnimation = false;
+        }
+
+        unoDrawButton.disabled = !myTurn || Boolean(unoState.pendingColorChoice) || Boolean(unoState.winner);
+        unoColorPicker.classList.toggle('hidden', !(unoState.pendingColorChoice && unoState.pendingColorChoice.playerId === me?.id));
+        unoColorPicker.classList.toggle('is-waiting', unoColorChoicePending);
+        unoDrawButton.classList.toggle('is-pulse', myTurn && !unoState.winner);
+        unoEventBanner.textContent = unoState.lastAction || '';
+        if (unoOpponentDrawFx.size) {
+            window.setTimeout(() => {
+                unoOpponentDrawFx.clear();
+                if (activeGameTab === 'uno') {
+                    renderUno();
+                }
+            }, 420);
+        }
+        unoLastRenderedTopCardId = topCard?.id || '';
+        updateUnoHud();
+        maybeOpenUnoOutcomeModal();
+    }
+
+    function chooseUnoAiColor(hand) {
+        const counts = new Map(UNO_COLORS.map((color) => [color, 0]));
+        hand.forEach((card) => {
+            if (counts.has(card.color)) {
+                counts.set(card.color, counts.get(card.color) + 1);
+            }
+        });
+        return [...counts.entries()].sort((left, right) => right[1] - left[1])[0]?.[0] || 'red';
+    }
+
+    function runSoloUnoAiTurn() {
+        if (!unoState || isMultiplayerUnoActive() || unoState.winner) {
+            return;
+        }
+
+        const currentPlayer = unoState.players[unoState.currentPlayerIndex];
+        if (!currentPlayer || currentPlayer.id === 'you') {
+            return;
+        }
+
+        const playableIndex = currentPlayer.hand.findIndex((card) => isUnoCardPlayable(card, unoState));
+
+        if (playableIndex !== -1) {
+            const chosenCard = currentPlayer.hand[playableIndex];
+            const chosenColor = chosenCard.color === 'wild' ? chooseUnoAiColor(currentPlayer.hand) : null;
+            finalizeUnoPlay(unoState, unoState.currentPlayerIndex, playableIndex, chosenColor);
+            showUnoEvent(unoState.lastAction);
+            renderUno();
+        } else {
+            const penalty = Math.max(1, Number(unoState.drawPenalty || 0));
+            drawUnoCards(unoState, unoState.currentPlayerIndex, penalty);
+            unoState.lastAction = `${currentPlayer.name} pioche ${penalty} carte${penalty > 1 ? 's' : ''}.`;
+            unoState.drawPenalty = 0;
+            const drawnIndex = currentPlayer.hand.length - 1;
+            if (penalty === 1 && isUnoCardPlayable(currentPlayer.hand[drawnIndex], unoState)) {
+                const card = currentPlayer.hand[drawnIndex];
+                finalizeUnoPlay(unoState, unoState.currentPlayerIndex, drawnIndex, card.color === 'wild' ? chooseUnoAiColor(currentPlayer.hand) : null);
+            } else {
+                unoState.currentPlayerIndex = getNextUnoPlayerIndex(unoState, 1);
+            }
+            showUnoEvent(unoState.lastAction);
+            renderUno();
+        }
+
+        if (!unoState.winner && unoState.players[unoState.currentPlayerIndex]?.id !== 'you') {
+            if (unoAiTimeout) {
+                window.clearTimeout(unoAiTimeout);
+            }
+            unoAiTimeout = window.setTimeout(() => {
+                unoAiTimeout = null;
+                runSoloUnoAiTurn();
+            }, 650);
+        }
+    }
+
+    function handleSoloUnoCardPlay(cardIndex) {
+        if (!unoState || unoState.winner) {
+            return;
+        }
+
+        const currentPlayer = unoState.players[unoState.currentPlayerIndex];
+        if (!currentPlayer || currentPlayer.id !== 'you') {
+            return;
+        }
+
+        const card = currentPlayer.hand[cardIndex];
+        if (!isUnoCardPlayable(card)) {
+            return;
+        }
+
+        if (card.color === 'wild') {
+            unoPendingColorContext = { cardIndex };
+            unoColorPicker.classList.remove('hidden');
+            unoState.pendingColorChoice = { playerId: 'you', cardId: card.id };
+            renderUno();
+            return;
+        }
+
+        unoPendingPlayAnimation = renderUnoCard(card, {
+            displayColor: card.color,
+            playable: false
+        });
+        finalizeUnoPlay(unoState, unoState.currentPlayerIndex, cardIndex);
+        showUnoEvent(unoState.lastAction);
+        renderUno();
+
+        if (!unoState.winner && unoState.players[unoState.currentPlayerIndex]?.id !== 'you') {
+            unoAiTimeout = window.setTimeout(() => {
+                unoAiTimeout = null;
+                runSoloUnoAiTurn();
+            }, 650);
+        }
+    }
+
+    function drawSoloUnoCard() {
+        if (!unoState || unoState.winner) {
+            return;
+        }
+
+        const currentPlayer = unoState.players[unoState.currentPlayerIndex];
+        if (!currentPlayer || currentPlayer.id !== 'you') {
+            return;
+        }
+
+        const amount = Math.max(1, Number(unoState.drawPenalty || 0));
+        const drawn = drawUnoCards(unoState, unoState.currentPlayerIndex, amount);
+        if (!drawn.length) {
+            return;
+        }
+
+        unoLastDrawnCardId = drawn[0].id;
+        unoPendingDrawAnimation = true;
+        unoState.lastAction = amount > 1 ? `Tu pioches ${amount} cartes.` : 'Tu pioches une carte.';
+        showUnoEvent(unoState.lastAction);
+        if (amount > 1 || !isUnoCardPlayable(drawn[0])) {
+            unoState.currentPlayerIndex = getNextUnoPlayerIndex(unoState, 1);
+        }
+        unoState.drawPenalty = 0;
+        renderUno();
+
+        if (!unoState.winner && unoState.players[unoState.currentPlayerIndex]?.id !== 'you') {
+            unoAiTimeout = window.setTimeout(() => {
+                unoAiTimeout = null;
+                runSoloUnoAiTurn();
+            }, 650);
+        }
+    }
+
+    function chooseSoloUnoColor(color) {
+        if (!unoPendingColorContext || !unoState || unoColorChoicePending) {
+            return;
+        }
+
+        unoColorChoicePending = true;
+        unoColorPicker.classList.add('is-waiting');
+        showUnoEvent(`Couleur ${getUnoDisplayColor(color).toLowerCase()} choisie...`);
+        renderUno();
+
+        if (unoColorChoiceTimer) {
+            window.clearTimeout(unoColorChoiceTimer);
+        }
+
+        unoColorChoiceTimer = window.setTimeout(() => {
+            unoColorChoiceTimer = null;
+            unoColorChoicePending = false;
+            unoState.pendingColorChoice = null;
+            finalizeUnoPlay(unoState, unoState.currentPlayerIndex, unoPendingColorContext.cardIndex, color);
+            unoPendingPlayAnimation = renderUnoCard(unoState.discardPile[unoState.discardPile.length - 1], {
+                displayColor: unoState.currentColor,
+                playable: false
+            });
+            unoPendingColorContext = null;
+            showUnoEvent(unoState.lastAction);
+            renderUno();
+
+            if (!unoState.winner && unoState.players[unoState.currentPlayerIndex]?.id !== 'you') {
+                unoAiTimeout = window.setTimeout(() => {
+                    unoAiTimeout = null;
+                    runSoloUnoAiTurn();
+                }, 650);
+            }
+        }, 500);
+    }
+
+    function setUnoMode(nextMode) {
+        if (isMultiplayerUnoActive()) {
+            setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+            return;
+        }
+
+        unoMode = nextMode === 'online' ? 'online' : 'solo';
+        initializeUno();
+    }
+
+    function isMultiplayerUnoActive() {
+        return multiplayerActiveRoom?.gameId === 'uno' && Boolean(multiplayerActiveRoom?.gameState);
+    }
+
+    function syncMultiplayerUnoState() {
+        if (!isMultiplayerUnoActive()) {
+            if (unoMode === 'online' && activeGameTab === 'uno' && !multiplayerActiveRoom) {
+                initializeUno();
+            }
+            return;
+        }
+
+        unoMode = 'online';
+        unoPendingColorContext = null;
+        unoPreviousOpponentCounts = new Map();
+        unoOpponentDrawFx = new Map();
+        unoColorChoicePending = false;
+        unoPendingPlayAnimation = null;
+        unoPendingDrawAnimation = false;
+        unoLastRenderedTopCardId = '';
+        unoState = cloneUnoState(multiplayerActiveRoom.gameState);
+        unoLastDrawnCardId = '';
+        renderUno();
+    }
+
+    function initializeUno() {
+        closeGameOverModal();
+        if (unoAiTimeout) {
+            window.clearTimeout(unoAiTimeout);
+            unoAiTimeout = null;
+        }
+        if (unoColorChoiceTimer) {
+            window.clearTimeout(unoColorChoiceTimer);
+            unoColorChoiceTimer = null;
+        }
+
+        if (isMultiplayerUnoActive()) {
+            syncMultiplayerUnoState();
+            return;
+        }
+
+        unoMode = 'solo';
+        unoPendingColorContext = null;
+        unoLastWinnerKey = '';
+        unoLastPlayedCardId = '';
+        unoLastDrawnCardId = '';
+        unoPreviousOpponentCounts = new Map();
+        unoOpponentDrawFx = new Map();
+        unoColorChoicePending = false;
+        unoPendingPlayAnimation = null;
+        unoPendingDrawAnimation = false;
+        unoLastRenderedTopCardId = '';
+        unoState = buildSoloUnoState();
+        renderUno();
     }
 
     function openSelectedGame(nextTab) {
@@ -11612,6 +13296,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (nextTab === 'blockBlast') {
+            initializeBlockBlast();
+            return;
+        }
+
+        if (nextTab === 'uno') {
+            initializeUno();
+            return;
+        }
+
         initializeGame();
     }
 
@@ -11630,6 +13324,20 @@ document.addEventListener('DOMContentLoaded', () => {
     gamesSectionButtons.forEach((button) => {
         button.addEventListener('click', () => {
             showGamesSection(button.dataset.gamesSection || 'home');
+        });
+    });
+
+    gamesFilterSearchInput?.addEventListener('input', () => {
+        updateGamesFilters();
+    });
+
+    gamesFilterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            activeGamesFilter = button.dataset.gamesFilter || 'all';
+            gamesFilterButtons.forEach((chip) => {
+                chip.classList.toggle('is-active', chip === button);
+            });
+            updateGamesFilters();
         });
     });
 
@@ -11876,6 +13584,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     battleshipRestartButton.addEventListener('click', () => {
         closeGameOverModal();
+        if (isMultiplayerBattleshipActive()) {
+            multiplayerSocket?.emit('battleship:restart');
+            return;
+        }
         initializeBattleship();
     });
 
@@ -12138,10 +13850,125 @@ document.addEventListener('DOMContentLoaded', () => {
         breakoutState.running = true;
     });
 
+    blockBlastStartButton?.addEventListener('click', () => {
+        initializeBlockBlast();
+    });
+
+    blockBlastPieces?.addEventListener('click', (event) => {
+        const pieceButton = event.target.closest('[data-blockblast-piece]');
+        if (!pieceButton || !blockBlastState) {
+            return;
+        }
+
+        const index = Number(pieceButton.dataset.blockblastPiece);
+        if (!blockBlastState.pieces[index]) {
+            return;
+        }
+
+        blockBlastSelectedPieceIndex = blockBlastSelectedPieceIndex === index ? null : index;
+        renderBlockBlastPieces();
+    });
+
+    blockBlastBoard?.addEventListener('click', (event) => {
+        const cellButton = event.target.closest('[data-blockblast-row]');
+        if (!cellButton) {
+            return;
+        }
+
+        placeBlockBlastPiece(
+            Number(cellButton.dataset.blockblastRow),
+            Number(cellButton.dataset.blockblastCol)
+        );
+    });
+
+    unoModeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            if (button.dataset.unoMode === 'online') {
+                showGamesSection('multiplayer');
+                setSelectedMultiplayerGame('uno');
+                setMultiplayerEntryMode('create');
+                return;
+            }
+
+            setUnoMode(button.dataset.unoMode);
+        });
+    });
+
+    unoDrawButton?.addEventListener('click', () => {
+        if (isMultiplayerUnoActive()) {
+            unoPendingDrawAnimation = true;
+            multiplayerSocket?.emit('uno:draw-card');
+            return;
+        }
+
+        drawSoloUnoCard();
+    });
+
+    unoRestartButton?.addEventListener('click', () => {
+        if (isMultiplayerUnoActive()) {
+            multiplayerSocket?.emit('uno:restart');
+            return;
+        }
+
+        initializeUno();
+    });
+
+    unoColorChoiceButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const color = button.dataset.unoColor;
+            if (!color) {
+                return;
+            }
+
+            if (isMultiplayerUnoActive()) {
+                if (unoColorChoicePending) {
+                    return;
+                }
+                unoColorChoicePending = true;
+                unoColorPicker.classList.add('is-waiting');
+                showUnoEvent(`Couleur ${getUnoDisplayColor(color).toLowerCase()} choisie...`);
+                if (unoColorChoiceTimer) {
+                    window.clearTimeout(unoColorChoiceTimer);
+                }
+                unoColorChoiceTimer = window.setTimeout(() => {
+                    unoColorChoiceTimer = null;
+                    multiplayerSocket?.emit('uno:choose-color', { color });
+                }, 500);
+                return;
+            }
+
+            chooseSoloUnoColor(color);
+        });
+    });
+
+    unoHand?.addEventListener('click', (event) => {
+        const cardButton = event.target.closest('[data-uno-card-index]');
+        if (!cardButton) {
+            return;
+        }
+
+        const cardIndex = Number(cardButton.dataset.unoCardIndex);
+        if (isMultiplayerUnoActive()) {
+            unoPendingPlayAnimation = cardButton.outerHTML;
+            multiplayerSocket?.emit('uno:play-card', { cardIndex });
+            return;
+        }
+
+        handleSoloUnoCardPlay(cardIndex);
+    });
+
     battleshipEnemyBoard.addEventListener('click', (event) => {
         const cellButton = event.target.closest('.battleship-cell');
 
         if (!cellButton) {
+            return;
+        }
+
+        if (isMultiplayerBattleshipActive()) {
+            multiplayerSocket?.emit('battleship:shot', {
+                row: Number(cellButton.dataset.row),
+                col: Number(cellButton.dataset.col)
+            });
             return;
         }
 
@@ -12625,9 +14452,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 s: 1,
                 S: 1,
                 d: 2,
-                D: 2,
-                f: 3,
-                F: 3
+                D: 2
             }[event.key];
 
             if (rhythmLane !== undefined) {
