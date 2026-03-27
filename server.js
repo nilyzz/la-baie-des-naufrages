@@ -413,9 +413,7 @@ function ensureUnoDrawPile(state) {
     return;
   }
 
-  const topCard = state.discardPile.pop();
-  state.drawPile = shuffleUnoDeck(state.discardPile);
-  state.discardPile = topCard ? [topCard] : [];
+  state.drawPile = createUnoDeck();
 }
 
 function drawUnoCards(state, playerIndex, amount) {
@@ -458,7 +456,7 @@ function isUnoCardPlayable(card, state) {
     }
 
     if (card.type === 'draw2') {
-      return card.color === state.currentColor;
+      return true;
     }
 
     return false;
@@ -505,27 +503,27 @@ function applyUnoCardEffects(state, card, actorName) {
   if (card.type === 'reverse') {
     state.direction *= -1;
     state.currentPlayerIndex = getNextUnoPlayerIndex(state, state.players.length === 2 ? 2 : 1);
-    state.lastAction = `${actorName} inverse le vent.`;
+    state.lastAction = `${actorName} inverse le sens.`;
     return;
   }
 
   if (card.type === 'skip') {
     state.currentPlayerIndex = getNextUnoPlayerIndex(state, 2);
-    state.lastAction = `${actorName} fait passer le tour suivant.`;
+    state.lastAction = `${actorName} bloque le tour.`;
     return;
   }
 
   if (card.type === 'draw2') {
     state.drawPenalty = Number(state.drawPenalty || 0) + 2;
     state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
-    state.lastAction = `${actorName} impose ${state.drawPenalty} cartes.`;
+    state.lastAction = `${actorName} met +${state.drawPenalty}.`;
     return;
   }
 
   if (card.type === 'wildDraw4') {
     state.drawPenalty = Number(state.drawPenalty || 0) + 4;
     state.currentPlayerIndex = getNextUnoPlayerIndex(state, 1);
-    state.lastAction = `${actorName} declenche ${state.drawPenalty} cartes.`;
+    state.lastAction = `${actorName} met +${state.drawPenalty}.`;
     return;
   }
 
@@ -723,8 +721,14 @@ function resetUnoRound(room) {
   };
 }
 
+function resetUnoReadyState(room) {
+  room.unoReadyPlayerIds = [];
+  room.unoStarted = false;
+}
+
 function resetRoomGame(room, keepScores = false) {
   if (room.gameId === 'uno') {
+    resetUnoReadyState(room);
     resetUnoRound(room);
     return;
   }
@@ -1512,6 +1516,7 @@ function buildRoomPayload(room, socketId = null) {
       name: player.name,
       isHost: player.id === room.hostId,
       isYou: player.id === socketId,
+      unoReady: room.gameId === 'uno' ? Boolean(room.unoReadyPlayerIds?.includes(player.id)) : false,
       symbol: room.gameId === 'pong'
         ? getPongPlayerRole(room, player.id)
         : (room.gameId === 'airHockey'
@@ -1532,7 +1537,10 @@ function buildRoomPayload(room, socketId = null) {
       ? buildBattleshipStateForPlayer(room, socketId)
       : (room.gameId === 'uno'
         ? buildUnoStateForPlayer(room, socketId)
-        : (['pong', 'airHockey', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null))
+        : (['pong', 'airHockey', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null)),
+    unoReadyCount: room.gameId === 'uno' ? Number(room.unoReadyPlayerIds?.length || 0) : 0,
+    unoReadyTotal: room.gameId === 'uno' ? Number(room.players.length || 0) : 0,
+    unoStarted: room.gameId === 'uno' ? Boolean(room.unoStarted) : false
   };
 }
 
@@ -1575,6 +1583,8 @@ app.post('/api/rooms', (request, response) => {
       gameId: String(request.body?.gameId || 'lobby').trim() || 'lobby',
       hostId: null,
       players: [],
+      unoReadyPlayerIds: [],
+      unoStarted: false,
       gameState: createGameState(String(request.body?.gameId || 'lobby').trim() || 'lobby')
     };
 
@@ -2214,7 +2224,7 @@ io.on('connection', (socket) => {
         playerIndex,
         card: { ...playedCard }
       };
-      room.gameState.lastAction = `${player.name} choisit une nouvelle couleur.`;
+      room.gameState.lastAction = `${player.name} choisit une couleur.`;
       emitRoomUpdate(room);
       return;
     }
@@ -2250,13 +2260,13 @@ io.on('connection', (socket) => {
 
     if (!player.hand.length) {
       room.gameState.winner = player.id;
-      room.gameState.lastAction = `${player.name} termine la manche sur ${nextColor}.`;
+      room.gameState.lastAction = `${player.name} finit en ${nextColor}.`;
       emitRoomUpdate(room);
       return;
     }
 
     applyUnoCardEffects(room.gameState, card, player.name);
-    room.gameState.lastAction = `${player.name} met le cap sur ${nextColor}.`;
+    room.gameState.lastAction = `${player.name} met ${nextColor}.`;
     emitRoomUpdate(room);
   });
 
@@ -2276,7 +2286,7 @@ io.on('connection', (socket) => {
     const amount = Math.max(1, Number(room.gameState.drawPenalty || 0));
     const drawnCards = drawUnoCards(room.gameState, playerIndex, amount);
     const player = room.gameState.players[playerIndex];
-    room.gameState.lastAction = `${player.name} pioche ${amount} carte${amount > 1 ? 's' : ''}.`;
+    room.gameState.lastAction = `${player.name} pioche ${amount}.`;
     room.gameState.drawPenalty = 0;
 
     if (amount > 1 || !drawnCards.length || !isUnoCardPlayable(drawnCards[0], room.gameState)) {
@@ -2301,6 +2311,44 @@ io.on('connection', (socket) => {
     emitRoomUpdate(room);
   });
 
+  socket.on('uno:toggle-ready', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'uno') {
+      return;
+    }
+
+    if (!room.players.some((player) => player.id === socket.id)) {
+      return;
+    }
+
+    if (room.players.length < 2 || room.unoStarted) {
+      emitRoomUpdate(room);
+      return;
+    }
+
+    const readyPlayers = new Set(room.unoReadyPlayerIds || []);
+    if (readyPlayers.has(socket.id)) {
+      readyPlayers.delete(socket.id);
+    } else {
+      readyPlayers.add(socket.id);
+    }
+    room.unoReadyPlayerIds = room.players
+      .map((player) => player.id)
+      .filter((playerId) => readyPlayers.has(playerId));
+
+    if (room.unoReadyPlayerIds.length >= 2 && room.unoReadyPlayerIds.length === room.players.length) {
+      room.unoStarted = true;
+      resetUnoRound(room);
+      io.to(room.code).emit('room:game:start', {
+        code: room.code,
+        gameId: room.gameId
+      });
+    }
+
+    emitRoomUpdate(room);
+  });
+
   socket.on('room:launch-game', () => {
     const room = getRoom(socket.data.roomCode);
 
@@ -2317,6 +2365,12 @@ io.on('connection', (socket) => {
     if (room.players.length < 2) {
       socket.emit('room:error', { message: 'Il faut au moins deux joueurs pour lancer cette partie.' });
       return;
+    }
+
+    if (room.gameId === 'uno') {
+      room.unoStarted = false;
+      room.unoReadyPlayerIds = [];
+      emitRoomUpdate(room);
     }
 
     io.to(room.code).emit('room:game:start', {

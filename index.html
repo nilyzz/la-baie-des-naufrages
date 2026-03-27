@@ -1248,18 +1248,29 @@
                     </div>
                     <p id="unoHelpText" class="uno-help">Joue une carte de la bonne couleur ou de la bonne valeur. Les cartes noires te laissent choisir la couleur.</p>
                     <div class="uno-table">
+                        <div id="unoMenuOverlay" class="uno-menu-overlay">
+                            <div class="uno-menu-card">
+                                <span id="unoMenuEyebrow" class="uno-menu-eyebrow">Baie des cartes</span>
+                                <h3 id="unoMenuTitle" class="uno-menu-title">Uno</h3>
+                                <p id="unoMenuText" class="uno-menu-text">Prepare ta partie avant de larguer les amarres.</p>
+                                <div class="uno-menu-actions">
+                                    <button id="unoMenuActionButton" type="button" class="uno-face">Lancer la partie</button>
+                                    <button id="unoMenuRulesButton" type="button" class="secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
                         <div id="unoOpponentsTop" class="uno-opponents-top" aria-label="Adversaires en haut"></div>
                         <div id="unoOpponentsLeft" class="uno-opponents-side is-left" aria-label="Adversaires a gauche"></div>
                         <div id="unoOpponentsRight" class="uno-opponents-side is-right" aria-label="Adversaires a droite"></div>
                         <div class="uno-center-table">
                             <button id="unoDrawButton" type="button" class="uno-draw-pile" aria-label="Piocher une carte">
                                 <span>PIOCHE</span>
-                                <strong id="unoDrawCountDisplay">0</strong>
                             </button>
                             <div id="unoDiscardPile" class="uno-discard-pile" aria-label="Defausse Uno"></div>
                             <div class="uno-status-card">
                                 <span class="uno-status-label">Tour</span>
                                 <strong id="unoTurnDisplay" class="uno-status-value">-</strong>
+                                <div id="unoEventBanner" class="uno-event-banner" aria-live="polite"></div>
                             </div>
                         </div>
                         <div id="unoColorPicker" class="uno-color-picker hidden" aria-label="Choix de la couleur">
@@ -1268,11 +1279,7 @@
                             <button type="button" class="uno-color-choice is-green" data-uno-color="green">Vert</button>
                             <button type="button" class="uno-color-choice is-blue" data-uno-color="blue">Bleu</button>
                         </div>
-                        <div id="unoEventBanner" class="uno-event-banner" aria-live="polite"></div>
                         <div id="unoHand" class="uno-hand" aria-label="Ta main Uno"></div>
-                    </div>
-                    <div class="uno-footer">
-                        <button id="unoRestartButton" type="button" class="uno-face">Rejouer</button>
                     </div>
                 </div>
             </div>
