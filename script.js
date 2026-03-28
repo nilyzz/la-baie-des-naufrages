@@ -2066,10 +2066,15 @@ document.addEventListener('DOMContentLoaded', () => {
         multiplayerCopyCodeButton.parentElement.appendChild(multiplayerCreateLeaveButton);
     }
 
-    function getPreferredMultiplayerPlayerName() {
-        return multiplayerCreatePlayerNameInput?.value.trim()
-            || multiplayerJoinPlayerNameInput?.value.trim()
-            || '';
+    function getPreferredMultiplayerPlayerName(preferredSource = multiplayerEntryMode) {
+        const createName = multiplayerCreatePlayerNameInput?.value.trim() || '';
+        const joinName = multiplayerJoinPlayerNameInput?.value.trim() || '';
+
+        if (preferredSource === 'join') {
+            return joinName || createName;
+        }
+
+        return createName || joinName;
     }
 
     function getMultiplayerRoomUiSignature(room) {
@@ -2688,7 +2693,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const socket = await ensureMultiplayerConnection();
             socket.emit('room:create', {
                 code: room.code,
-                playerName: getPreferredMultiplayerPlayerName()
+                playerName: getPreferredMultiplayerPlayerName('create')
             });
         } catch (error) {
             setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
@@ -2720,7 +2725,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const socket = await ensureMultiplayerConnection();
             socket.emit('room:join', {
                 code: roomCode,
-                playerName: getPreferredMultiplayerPlayerName()
+                playerName: getPreferredMultiplayerPlayerName('join')
             });
         } catch (error) {
             setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
@@ -10152,10 +10157,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'Les pieces se deplacent selon les regles classiques. La promotion devient une reine et le roque est disponible. La prise en passant n est pas geree ici.';
     }
 
+    function getChessReadySummary() {
+        const readyCount = Number(multiplayerActiveRoom?.chessReadyCount || 0);
+        const readyTotal = Number(multiplayerActiveRoom?.chessReadyTotal || multiplayerActiveRoom?.playerCount || 0);
+        return `${readyCount}/${readyTotal || 0}`;
+    }
+
     function renderChessMenu() {
         if (!chessMenuOverlay || !chessTable) {
             return;
         }
+
+        const isOnline = multiplayerActiveRoom?.gameId === 'chess';
+        const roomStarted = Boolean(multiplayerActiveRoom?.chessStarted);
+        const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+        const readyLabel = currentPlayer?.chessReady ? 'Retirer pret' : 'Mettre pret';
+        const actionLabel = isOnline ? `${readyLabel} (${getChessReadySummary()})` : 'Lancer la partie';
+        const baseText = isOnline
+            ? 'Quand les deux joueurs sont prets, la partie d echecs commence automatiquement.'
+            : 'Installe les pieces et choisis ton mode avant d engager la partie.';
+
+        chessMenuVisible = isOnline ? !roomStarted : chessMenuVisible;
 
         chessMenuOverlay.classList.toggle('hidden', !chessMenuVisible);
         chessMenuOverlay.classList.toggle('is-closing', chessMenuClosing);
@@ -10174,10 +10196,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chessMenuText) {
             chessMenuText.textContent = chessMenuShowingRules
                 ? getChessRulesText()
-                : 'Installe les pieces et choisis ton mode avant d engager la partie.';
+                : baseText;
         }
         if (chessMenuActionButton) {
-            chessMenuActionButton.textContent = chessMenuShowingRules ? 'Retour' : 'Lancer la partie';
+            chessMenuActionButton.textContent = chessMenuShowingRules ? 'Retour' : actionLabel;
         }
         if (chessMenuRulesButton) {
             chessMenuRulesButton.textContent = 'Regles';
@@ -11061,6 +11083,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : null
         };
         chessSelectedSquare = null;
+        renderChessMenu();
         renderChess();
 
         const nextFinishedKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner || 'none'}`;
@@ -14377,6 +14400,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chessMenuShowingRules) {
             chessMenuShowingRules = false;
             renderChessMenu();
+            return;
+        }
+
+        if (isMultiplayerChessActive()) {
+            multiplayerSocket?.emit('chess:toggle-ready');
             return;
         }
 

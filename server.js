@@ -109,6 +109,11 @@ function sanitizePlayerName(name, fallback = 'Pirate') {
   return nextName || fallback;
 }
 
+function getNextPirateFallback(room) {
+  const pirateCount = room.players.filter((player) => player.id !== room.hostId).length;
+  return `Pirate ${pirateCount + 1}`;
+}
+
 function createTicTacToeState() {
   return {
     board: Array(9).fill(''),
@@ -726,10 +731,21 @@ function resetUnoReadyState(room) {
   room.unoStarted = false;
 }
 
+function resetChessReadyState(room) {
+  room.chessReadyPlayerIds = [];
+  room.chessStarted = false;
+}
+
 function resetRoomGame(room, keepScores = false) {
   if (room.gameId === 'uno') {
     resetUnoReadyState(room);
     resetUnoRound(room);
+    return;
+  }
+
+  if (room.gameId === 'chess') {
+    resetChessReadyState(room);
+    resetChessRound(room);
     return;
   }
 
@@ -1666,6 +1682,7 @@ function buildRoomPayload(room, socketId = null) {
       isHost: player.id === room.hostId,
       isYou: player.id === socketId,
       unoReady: room.gameId === 'uno' ? Boolean(room.unoReadyPlayerIds?.includes(player.id)) : false,
+      chessReady: room.gameId === 'chess' ? Boolean(room.chessReadyPlayerIds?.includes(player.id)) : false,
       symbol: room.gameId === 'pong'
         ? getPongPlayerRole(room, player.id)
         : (room.gameId === 'airHockey'
@@ -1689,7 +1706,10 @@ function buildRoomPayload(room, socketId = null) {
         : (['pong', 'airHockey', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null)),
     unoReadyCount: room.gameId === 'uno' ? Number(room.unoReadyPlayerIds?.length || 0) : 0,
     unoReadyTotal: room.gameId === 'uno' ? Number(room.players.length || 0) : 0,
-    unoStarted: room.gameId === 'uno' ? Boolean(room.unoStarted) : false
+    unoStarted: room.gameId === 'uno' ? Boolean(room.unoStarted) : false,
+    chessReadyCount: room.gameId === 'chess' ? Number(room.chessReadyPlayerIds?.length || 0) : 0,
+    chessReadyTotal: room.gameId === 'chess' ? Number(room.players.length || 0) : 0,
+    chessStarted: room.gameId === 'chess' ? Boolean(room.chessStarted) : false
   };
 }
 
@@ -1734,6 +1754,8 @@ app.post('/api/rooms', (request, response) => {
       players: [],
       unoReadyPlayerIds: [],
       unoStarted: false,
+      chessReadyPlayerIds: [],
+      chessStarted: false,
       gameState: createGameState(String(request.body?.gameId || 'lobby').trim() || 'lobby')
     };
 
@@ -1776,7 +1798,7 @@ io.on('connection', (socket) => {
 
     const player = {
       id: socket.id,
-      name: sanitizePlayerName(playerName, room.players.length ? `Pirate ${room.players.length + 1}` : 'Capitaine')
+      name: sanitizePlayerName(playerName, room.players.length ? getNextPirateFallback(room) : 'Capitaine')
     };
 
     room.players.push(player);
@@ -1812,7 +1834,7 @@ io.on('connection', (socket) => {
 
     const player = {
       id: socket.id,
-      name: sanitizePlayerName(playerName, `Pirate ${room.players.length + 1}`)
+      name: sanitizePlayerName(playerName, getNextPirateFallback(room))
     };
 
     room.players.push(player);
@@ -2260,6 +2282,45 @@ io.on('connection', (socket) => {
     emitRoomUpdate(room);
   });
 
+  socket.on('chess:toggle-ready', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'chess') {
+      return;
+    }
+
+    if (!room.players.some((player) => player.id === socket.id)) {
+      return;
+    }
+
+    if (room.players.length < 2 || room.chessStarted) {
+      emitRoomUpdate(room);
+      return;
+    }
+
+    const readyPlayers = new Set(room.chessReadyPlayerIds || []);
+    if (readyPlayers.has(socket.id)) {
+      readyPlayers.delete(socket.id);
+    } else {
+      readyPlayers.add(socket.id);
+    }
+
+    room.chessReadyPlayerIds = room.players
+      .map((player) => player.id)
+      .filter((playerId) => readyPlayers.has(playerId));
+
+    if (room.chessReadyPlayerIds.length >= 2 && room.chessReadyPlayerIds.length === room.players.length) {
+      room.chessStarted = true;
+      resetChessRound(room);
+      io.to(room.code).emit('room:game:start', {
+        code: room.code,
+        gameId: room.gameId
+      });
+    }
+
+    emitRoomUpdate(room);
+  });
+
   socket.on('checkers:move', ({ fromRow, fromCol, toRow, toCol }) => {
     const room = getRoom(socket.data.roomCode);
 
@@ -2529,6 +2590,12 @@ io.on('connection', (socket) => {
     if (room.gameId === 'uno') {
       room.unoStarted = false;
       room.unoReadyPlayerIds = [];
+      emitRoomUpdate(room);
+    }
+
+    if (room.gameId === 'chess') {
+      room.chessStarted = false;
+      room.chessReadyPlayerIds = [];
       emitRoomUpdate(room);
     }
 
