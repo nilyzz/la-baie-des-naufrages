@@ -236,7 +236,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const flappyScoreDisplay = document.getElementById('flappyScoreDisplay');
     const flappyBestDisplay = document.getElementById('flappyBestDisplay');
     const flappyHelpText = document.getElementById('flappyHelpText');
-    const flappyStartButton = document.getElementById('flappyStartButton');
+    const flappyTable = document.getElementById('flappyTable');
+    const flappyMenuOverlay = document.getElementById('flappyMenuOverlay');
+    const flappyMenuEyebrow = document.getElementById('flappyMenuEyebrow');
+    const flappyMenuTitle = document.getElementById('flappyMenuTitle');
+    const flappyMenuText = document.getElementById('flappyMenuText');
+    const flappyMenuActionButton = document.getElementById('flappyMenuActionButton');
+    const flappyMenuRulesButton = document.getElementById('flappyMenuRulesButton');
     const flowFreeGame = document.getElementById('flowFreeGame');
     const flowFreeBoard = document.getElementById('flowFreeBoard');
     const flowFreePairsDisplay = document.getElementById('flowFreePairsDisplay');
@@ -292,6 +298,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const chessStatusDisplay = document.getElementById('chessStatusDisplay');
     const chessHelpText = document.getElementById('chessHelpText');
     const chessResetButton = document.getElementById('chessResetButton');
+    const chessTable = document.getElementById('chessTable');
+    const chessMenuOverlay = document.getElementById('chessMenuOverlay');
+    const chessMenuEyebrow = document.getElementById('chessMenuEyebrow');
+    const chessMenuTitle = document.getElementById('chessMenuTitle');
+    const chessMenuText = document.getElementById('chessMenuText');
+    const chessMenuActionButton = document.getElementById('chessMenuActionButton');
+    const chessMenuRulesButton = document.getElementById('chessMenuRulesButton');
     const chessModeButtons = document.querySelectorAll('[data-chess-mode]');
     const checkersGame = document.getElementById('checkersGame');
     const checkersBoard = document.getElementById('checkersBoard');
@@ -331,7 +344,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const breakoutScoreDisplay = document.getElementById('breakoutScoreDisplay');
     const breakoutLivesDisplay = document.getElementById('breakoutLivesDisplay');
     const breakoutHelpText = document.getElementById('breakoutHelpText');
-    const breakoutStartButton = document.getElementById('breakoutStartButton');
+    const breakoutTable = document.getElementById('breakoutTable');
+    const breakoutMenuOverlay = document.getElementById('breakoutMenuOverlay');
+    const breakoutMenuEyebrow = document.getElementById('breakoutMenuEyebrow');
+    const breakoutMenuTitle = document.getElementById('breakoutMenuTitle');
+    const breakoutMenuText = document.getElementById('breakoutMenuText');
+    const breakoutMenuActionButton = document.getElementById('breakoutMenuActionButton');
+    const breakoutMenuRulesButton = document.getElementById('breakoutMenuRulesButton');
     const blockBlastGame = document.getElementById('blockBlastGame');
     const blockBlastBoard = document.getElementById('blockBlastBoard');
     const blockBlastPieces = document.getElementById('blockBlastPieces');
@@ -393,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const BOARD_SIZE = 14;
     const TOTAL_MINES = 36;
-    const SNAKE_SIZE = 16;
+    const SNAKE_SIZE = 14;
     const SNAKE_TICK_MS = 165;
     const SNAKE_BEST_KEY = 'baie-des-naufrages-snake-best';
     const PONG_TARGET_SCORE = 7;
@@ -635,6 +654,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let checkersLastFinishedStateKey = '';
     let chessLastCaptureFxKey = '';
     let checkersLastCaptureFxKey = '';
+    let chessMenuVisible = true;
+    let chessMenuShowingRules = false;
+    let chessMenuClosing = false;
     let gameBoard = [];
     let flagsPlaced = 0;
     let timer = 0;
@@ -790,6 +812,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let flappyBackdropOffset = 0;
     let flappySplashParticles = [];
     let flappySplashTimeout = null;
+    let flappyMenuVisible = true;
+    let flappyMenuShowingRules = false;
+    let flappyMenuClosing = false;
+    let flappyMenuEntering = false;
+    let flappyMenuResultReason = '';
     const FLAPPY_BIRD_WIDTH = 46;
     const FLAPPY_BIRD_HEIGHT = 36;
     const FLAPPY_PIPE_WIDTH = 86;
@@ -894,9 +921,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let breakoutKeys = new Set();
     let breakoutBestScore = Number(window.localStorage.getItem(BREAKOUT_BEST_KEY)) || 0;
     let breakoutRemainingBricks = 0;
+    let breakoutMenuVisible = true;
+    let breakoutMenuShowingRules = false;
+    let breakoutMenuClosing = false;
     let blockBlastState = null;
     let blockBlastBestScore = Number(window.localStorage.getItem(BLOCK_BLAST_BEST_KEY)) || 0;
     let blockBlastSelectedPieceIndex = null;
+    let blockBlastPreview = null;
+    let blockBlastDragState = null;
+    let blockBlastSuppressClick = false;
     let unoMode = 'solo';
     let unoState = null;
     let unoAiTimeout = null;
@@ -2290,38 +2323,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getChessKingPosition(color) {
-        for (let row = 0; row < CHESS_SIZE; row += 1) {
-            for (let col = 0; col < CHESS_SIZE; col += 1) {
-                const piece = chessState?.board?.[row]?.[col];
-                if (piece?.type === 'king' && piece.color === color) {
-                    return { row, col };
-                }
-            }
-        }
-        return null;
+        return getChessKingPositionForState(chessState, color);
     }
 
     function isChessKingInCheck(color) {
-        const kingPosition = getChessKingPosition(color);
-        if (!kingPosition) {
-            return false;
-        }
-
-        const attackerColor = color === 'white' ? 'black' : 'white';
-        for (let row = 0; row < CHESS_SIZE; row += 1) {
-            for (let col = 0; col < CHESS_SIZE; col += 1) {
-                const piece = chessState?.board?.[row]?.[col];
-                if (!piece || piece.color !== attackerColor) {
-                    continue;
-                }
-
-                if (getChessAttackMoves(chessState, row, col).some((move) => move.row === kingPosition.row && move.col === kingPosition.col)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return isChessKingInCheckForState(chessState, color);
     }
 
     function maybeOpenChessOutcomeModal() {
@@ -5694,6 +5700,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function getFlappyRulesText() {
+        return 'Appuie sur espace, clique ou tapote pour battre des ailes. Traverse entre les arches sans toucher le ciel, les obstacles ou l eau.';
+    }
+
+    function renderFlappyMenu() {
+        if (!flappyMenuOverlay || !flappyTable) {
+            return;
+        }
+
+        flappyMenuOverlay.classList.toggle('hidden', !flappyMenuVisible);
+        flappyMenuOverlay.classList.toggle('is-closing', flappyMenuClosing);
+        flappyMenuOverlay.classList.toggle('is-entering', flappyMenuEntering);
+        flappyTable.classList.toggle('is-menu-open', flappyMenuVisible);
+
+        if (!flappyMenuVisible) {
+            return;
+        }
+
+        const hasFlappyResult = Boolean(flappyMenuResultReason);
+
+        if (flappyMenuEyebrow) {
+            flappyMenuEyebrow.textContent = flappyMenuShowingRules ? 'Regles' : (hasFlappyResult ? 'Fin de vol' : 'Baie d arcade');
+        }
+        if (flappyMenuTitle) {
+            flappyMenuTitle.textContent = flappyMenuShowingRules
+                ? 'Rappel rapide'
+                : (flappyMenuResultReason === 'water'
+                    ? 'Tu t es noye'
+                    : (flappyMenuResultReason === 'sky'
+                        ? 'C est perdu'
+                        : (flappyMenuResultReason === 'pipe'
+                        ? 'Tu t es cogne contre une arche'
+                        : (hasFlappyResult ? 'Partie perdue' : 'Baiely Bird'))));
+        }
+        if (flappyMenuText) {
+            flappyMenuText.textContent = flappyMenuShowingRules
+                ? getFlappyRulesText()
+                : (flappyMenuResultReason === 'water'
+                    ? `Ton oiseau a fini dans l eau. Score ${flappyScore}. Record ${flappyBestScore}.`
+                    : (flappyMenuResultReason === 'sky'
+                        ? `Ton oiseau a perdu le controle en touchant le ciel. Score ${flappyScore}. Record ${flappyBestScore}.`
+                        : (flappyMenuResultReason === 'pipe'
+                        ? `Ton oiseau a touche une arche. Score ${flappyScore}. Record ${flappyBestScore}.`
+                        : (hasFlappyResult
+                            ? `Partie terminee. Score ${flappyScore}. Record ${flappyBestScore}.`
+                            : 'Prepare ton envol avant de battre des ailes entre les arches.'))));
+        }
+        if (flappyMenuActionButton) {
+            flappyMenuActionButton.textContent = flappyMenuShowingRules
+                ? 'Retour'
+                : (hasFlappyResult ? 'Relancer la partie' : 'Lancer la partie');
+        }
+        if (flappyMenuRulesButton) {
+            flappyMenuRulesButton.textContent = 'Regles';
+            flappyMenuRulesButton.hidden = flappyMenuShowingRules;
+        }
+    }
+
+    function startFlappyLaunchSequence() {
+        flappyMenuClosing = true;
+        renderFlappyMenu();
+        window.setTimeout(() => {
+            flappyMenuClosing = false;
+            flappyMenuVisible = false;
+            flappyMenuShowingRules = false;
+            flappyMenuEntering = false;
+            flappyMenuResultReason = '';
+            startFlappy(false);
+            renderFlappyMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeFlappy() {
         stopFlappy();
         closeGameOverModal();
@@ -5708,9 +5786,14 @@ document.addEventListener('DOMContentLoaded', () => {
         flappyScore = 0;
         flappyBackdropOffset = 0;
         flappyHelpText.textContent = 'Espace, clic ou tap pour faire battre les ailes du perroquet pirate et passer entre les mats.';
-        flappyStartButton.textContent = 'Lancer le vol';
         flappyScoreDisplay.textContent = '0';
         flappyBestDisplay.textContent = String(flappyBestScore);
+        flappyMenuVisible = true;
+        flappyMenuShowingRules = false;
+        flappyMenuClosing = false;
+        flappyMenuEntering = false;
+        flappyMenuResultReason = '';
+        renderFlappyMenu();
         renderFlappy();
     }
 
@@ -5750,11 +5833,23 @@ document.addEventListener('DOMContentLoaded', () => {
             renderFlappy();
         }
         flappyHelpText.textContent = `Crash. Score ${flappyScore}. Record ${flappyBestScore}.`;
-        flappyStartButton.textContent = 'Relancer le vol';
-        openGameOverModal('C est perdu', `Ton oiseau a touche une arche. Score : ${flappyScore}.`);
+        flappyMenuResultReason = ['water', 'pipe', 'sky'].includes(reason) ? reason : 'other';
+        flappyMenuShowingRules = false;
+        flappyMenuClosing = false;
+        flappyMenuEntering = true;
+        flappyMenuVisible = true;
+        renderFlappyMenu();
+        window.setTimeout(() => {
+            flappyMenuEntering = false;
+            renderFlappyMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function flapFlappyBird() {
+        if (flappyMenuVisible || flappyMenuClosing) {
+            return;
+        }
+
         if (!flappyRunning) {
             startFlappy();
             return;
@@ -5763,12 +5858,13 @@ document.addEventListener('DOMContentLoaded', () => {
         flappyBirdVelocity = -5.2;
     }
 
-    function startFlappy() {
-        initializeFlappy();
+    function startFlappy(shouldReset = true) {
+        if (shouldReset) {
+            initializeFlappy();
+        }
         flappyRunning = true;
         flappyLastFrame = performance.now();
         flappySpawnTimer = 0;
-        flappyStartButton.textContent = 'Vol en cours';
         flappyBirdVelocity = -5.2;
 
         const step = (timestamp) => {
@@ -5842,7 +5938,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (hitSky || hitWater || hitPipe) {
                 renderFlappy();
-                finishFlappy(hitWater ? 'water' : 'pipe', flappyBirdY + FLAPPY_BIRD_HEIGHT);
+                finishFlappy(hitWater ? 'water' : (hitSky ? 'sky' : 'pipe'), flappyBirdY + FLAPPY_BIRD_HEIGHT);
                 return;
             }
 
@@ -7746,8 +7842,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function ensureSnakeBoard() {
+        snakeBoard?.style.setProperty('--snake-size', String(SNAKE_SIZE));
+
         if (snakeOverlayLayer) {
-            return;
+            const grid = snakeBoard?.querySelector('.snake-grid');
+            const expectedCells = SNAKE_SIZE * SNAKE_SIZE;
+            if (grid?.children.length === expectedCells) {
+                return;
+            }
         }
 
         const grid = document.createElement('div');
@@ -7875,13 +7977,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeSnake() {
+        const centerRow = Math.floor(SNAKE_SIZE / 2);
+        const centerCol = Math.floor(SNAKE_SIZE / 2);
         stopSnake();
         snakeFoodElements.forEach((element) => element.remove());
         snakeFoodElements.clear();
         snake = [
-            { row: 8, col: 6 },
-            { row: 8, col: 5 },
-            { row: 8, col: 4 }
+            { row: centerRow, col: centerCol },
+            { row: centerRow, col: centerCol - 1 },
+            { row: centerRow, col: centerCol - 2 }
         ];
         snakeDirection = { x: 1, y: 0 };
         snakeNextDirection = { x: 1, y: 0 };
@@ -9967,7 +10071,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createChessPiece(type, color) {
-        return { type, color };
+        return { type, color, hasMoved: false };
     }
 
     function createInitialChessBoard() {
@@ -10006,7 +10110,60 @@ document.addEventListener('DOMContentLoaded', () => {
             lastMove: null
         };
         chessSelectedSquare = null;
+        chessMenuVisible = true;
+        chessMenuShowingRules = false;
+        chessMenuClosing = false;
+        renderChessMenu();
         renderChess();
+    }
+
+    function getChessRulesText() {
+        return 'Les pieces se deplacent selon les regles classiques. La promotion devient une reine et le roque est disponible. La prise en passant n est pas geree ici.';
+    }
+
+    function renderChessMenu() {
+        if (!chessMenuOverlay || !chessTable) {
+            return;
+        }
+
+        chessMenuOverlay.classList.toggle('hidden', !chessMenuVisible);
+        chessMenuOverlay.classList.toggle('is-closing', chessMenuClosing);
+        chessTable.classList.toggle('is-menu-open', chessMenuVisible);
+
+        if (!chessMenuVisible) {
+            return;
+        }
+
+        if (chessMenuEyebrow) {
+            chessMenuEyebrow.textContent = chessMenuShowingRules ? 'Regles' : 'Baie strategique';
+        }
+        if (chessMenuTitle) {
+            chessMenuTitle.textContent = chessMenuShowingRules ? 'Rappel rapide' : 'Echecs';
+        }
+        if (chessMenuText) {
+            chessMenuText.textContent = chessMenuShowingRules
+                ? getChessRulesText()
+                : 'Installe les pieces et choisis ton mode avant d engager la partie.';
+        }
+        if (chessMenuActionButton) {
+            chessMenuActionButton.textContent = chessMenuShowingRules ? 'Retour' : 'Lancer la partie';
+        }
+        if (chessMenuRulesButton) {
+            chessMenuRulesButton.textContent = 'Regles';
+            chessMenuRulesButton.hidden = chessMenuShowingRules;
+        }
+    }
+
+    function startChessLaunchSequence() {
+        chessMenuClosing = true;
+        renderChessMenu();
+        window.setTimeout(() => {
+            chessMenuClosing = false;
+            chessMenuVisible = false;
+            chessMenuShowingRules = false;
+            renderChessMenu();
+            renderChess();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function isChessAiTurn() {
@@ -10015,6 +10172,100 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function isInsideGameGrid(row, col, size = 8) {
         return row >= 0 && row < size && col >= 0 && col < size;
+    }
+
+    function getChessOpponentColor(color) {
+        return color === 'white' ? 'black' : 'white';
+    }
+
+    function getChessKingPositionForState(state, color) {
+        for (let row = 0; row < CHESS_SIZE; row += 1) {
+            for (let col = 0; col < CHESS_SIZE; col += 1) {
+                const piece = state?.board?.[row]?.[col];
+                if (piece?.type === 'king' && piece.color === color) {
+                    return { row, col };
+                }
+            }
+        }
+
+        return null;
+    }
+
+    function isChessSquareUnderAttack(state, targetRow, targetCol, attackerColor) {
+        for (let row = 0; row < CHESS_SIZE; row += 1) {
+            for (let col = 0; col < CHESS_SIZE; col += 1) {
+                const piece = state?.board?.[row]?.[col];
+                if (!piece || piece.color !== attackerColor) {
+                    continue;
+                }
+
+                if (getChessAttackMoves(state, row, col).some((move) => move.row === targetRow && move.col === targetCol)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    function isChessKingInCheckForState(state, color) {
+        const kingPosition = getChessKingPositionForState(state, color);
+        if (!kingPosition) {
+            return false;
+        }
+
+        return isChessSquareUnderAttack(state, kingPosition.row, kingPosition.col, getChessOpponentColor(color));
+    }
+
+    function canChessCastle(state, row, col, side) {
+        const king = state?.board?.[row]?.[col];
+        if (!king || king.type !== 'king' || king.hasMoved) {
+            return null;
+        }
+
+        const rookCol = side === 'king' ? CHESS_SIZE - 1 : 0;
+        const rook = state.board[row]?.[rookCol];
+        if (!rook || rook.type !== 'rook' || rook.color !== king.color || rook.hasMoved) {
+            return null;
+        }
+
+        const direction = side === 'king' ? 1 : -1;
+        const targetCol = col + (direction * 2);
+
+        for (let nextCol = col + direction; nextCol !== rookCol; nextCol += direction) {
+            if (state.board[row][nextCol]) {
+                return null;
+            }
+        }
+
+        if (isChessKingInCheckForState(state, king.color)) {
+            return null;
+        }
+
+        const opponentColor = getChessOpponentColor(king.color);
+        for (let step = 1; step <= 2; step += 1) {
+            const passingCol = col + (direction * step);
+            if (isChessSquareUnderAttack(state, row, passingCol, opponentColor)) {
+                return null;
+            }
+        }
+
+        return { row, col: targetCol, castle: side };
+    }
+
+    function shouldFlipChessBoardPerspective() {
+        return isMultiplayerChessActive() && getMultiplayerChessRole() === 'black';
+    }
+
+    function getBoardChessPosition(displayRow, displayCol) {
+        if (!shouldFlipChessBoardPerspective()) {
+            return { row: displayRow, col: displayCol };
+        }
+
+        return {
+            row: CHESS_SIZE - 1 - displayRow,
+            col: CHESS_SIZE - 1 - displayCol
+        };
     }
 
     function getChessMoves(row, col) {
@@ -10102,6 +10353,18 @@ document.addEventListener('DOMContentLoaded', () => {
             [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]].forEach(([rowStep, colStep]) => addMove(row + rowStep, col + colStep));
         }
 
+        const kingPiece = piece.type === 'king' ? piece : null;
+        if (kingPiece) {
+            const kingSideCastle = canChessCastle(chessState, row, col, 'king');
+            const queenSideCastle = canChessCastle(chessState, row, col, 'queen');
+            if (kingSideCastle) {
+                moves.push(kingSideCastle);
+            }
+            if (queenSideCastle) {
+                moves.push(queenSideCastle);
+            }
+        }
+
         return moves;
     }
 
@@ -10136,22 +10399,24 @@ document.addEventListener('DOMContentLoaded', () => {
             chessHelpText.textContent = chessState.winner
                 ? `Échec et mat. ${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Tu remportes' : 'Les Blancs remportent') : (chessMode === 'solo' ? 'L IA remporte' : 'Les Noirs remportent')} la partie.`
                 : (chessMode === 'solo'
-                    ? (checkedColor === 'white' ? 'Ton roi est en echec.' : (checkedColor === 'black' ? 'Le roi adverse est en echec.' : 'Mode 1 joueur: blancs contre IA. Promotion en reine, sans roque.'))
-                    : (checkedColor ? `Le roi ${checkedColor === 'white' ? 'blanc' : 'noir'} est en echec.` : 'Mode 2 joueurs: blancs et noirs en tour par tour. Promotion en reine, sans roque.'));
+                    ? (checkedColor === 'white' ? 'Ton roi est en echec.' : (checkedColor === 'black' ? 'Le roi adverse est en echec.' : 'Mode 1 joueur: blancs contre IA. Promotion en reine, avec roque.'))
+                    : (checkedColor ? `Le roi ${checkedColor === 'white' ? 'blanc' : 'noir'} est en echec.` : 'Mode 2 joueurs: blancs et noirs en tour par tour. Promotion en reine, avec roque.'));
         }
         chessModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.chessMode === chessMode);
             button.disabled = isMultiplayerChessActive();
         });
-        chessBoard.innerHTML = chessState.board.map((rowItems, row) => rowItems.map((piece, col) => {
+        chessBoard.innerHTML = Array.from({ length: CHESS_SIZE }, (_, displayRow) => Array.from({ length: CHESS_SIZE }, (_, displayCol) => {
+            const { row, col } = getBoardChessPosition(displayRow, displayCol);
+            const piece = chessState.board[row][col];
             const dark = (row + col) % 2 === 1;
             const selected = chessSelectedSquare?.row === row && chessSelectedSquare?.col === col;
             const playable = legalMoves.some((move) => move.row === row && move.col === col);
             const captureHit = isBoardCaptureCell(chessState.lastMove, row, col);
             const pieceAnimation = getBoardMoveAnimationMetadata(chessState.lastMove, row, col);
             const checkedKing = checkedKingPosition?.row === row && checkedKingPosition?.col === col;
-            const rankLabel = col === 0 ? String(CHESS_SIZE - row) : '';
-            const fileLabel = row === CHESS_SIZE - 1 ? String.fromCharCode(97 + col) : '';
+            const rankLabel = displayCol === 0 ? String(CHESS_SIZE - row) : '';
+            const fileLabel = displayRow === CHESS_SIZE - 1 ? String.fromCharCode(97 + col) : '';
             return `
                 <button
                     type="button"
@@ -10241,10 +10506,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
-        const nextPiece = { ...movingPiece };
+        const nextPiece = { ...movingPiece, hasMoved: true };
         const capturedPiece = chessState.board[toRow][toCol];
         chessState.board[toRow][toCol] = nextPiece;
         chessState.board[fromRow][fromCol] = null;
+
+        if (nextPiece.type === 'king' && Math.abs(toCol - fromCol) === 2) {
+            const rookFromCol = toCol > fromCol ? CHESS_SIZE - 1 : 0;
+            const rookToCol = toCol > fromCol ? toCol - 1 : toCol + 1;
+            const rookPiece = chessState.board[toRow][rookFromCol];
+            if (rookPiece) {
+                chessState.board[toRow][rookToCol] = { ...rookPiece, hasMoved: true };
+                chessState.board[toRow][rookFromCol] = null;
+            }
+        }
 
         if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
             chessState.board[toRow][toCol] = createChessPiece('queen', nextPiece.color);
@@ -11619,8 +11894,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fruits: [],
             nextLevel: getRandomBaieBerryIndex(),
             score: 0,
-            gameOver: false,
-            mergePairs: new Map()
+            gameOver: false
         };
         baieBerryScoreDisplay.textContent = '0';
         baieBerryNextDisplay.textContent = BAIE_BERRY_FRUITS[baieBerryState.nextLevel].name;
@@ -11668,7 +11942,6 @@ document.addEventListener('DOMContentLoaded', () => {
         baieBerryLastFrame = timestamp;
 
         if (!baieBerryState.gameOver) {
-            const activeMergeKeys = new Set();
             baieBerryState.fruits.forEach((fruit) => {
                 const radius = BAIE_BERRY_FRUITS[fruit.level].radius;
                 fruit.vy += 620 * delta;
@@ -11715,55 +11988,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         fruitA.vy *= 0.94;
                         fruitB.vy *= 0.94;
 
-                        const mergeThreshold = minDistance * 0.96;
-
-                        if (fruitA.level === fruitB.level && fruitA.level < BAIE_BERRY_FRUITS.length - 1 && distance <= mergeThreshold) {
-                            const mergeKey = [fruitA.id, fruitB.id].sort((firstId, secondId) => firstId - secondId).join('-');
-                            activeMergeKeys.add(mergeKey);
-                            const mergeState = baieBerryState.mergePairs.get(mergeKey) || { time: 0 };
-                            mergeState.time = Math.min(0.2, mergeState.time + delta);
-                            baieBerryState.mergePairs.set(mergeKey, mergeState);
-
-                            const mergeProgress = Math.min(1, mergeState.time / 0.12);
-                            fruitA.mergeProgress = Math.max(fruitA.mergeProgress || 0, mergeProgress);
-                            fruitB.mergeProgress = Math.max(fruitB.mergeProgress || 0, mergeProgress);
-
-                            if (mergeState.time >= 0.12) {
-                                const nextLevel = fruitA.level + 1;
-                                baieBerryState.score += BAIE_BERRY_FRUITS[nextLevel].score;
-                                baieBerryState.fruits.splice(compareIndex, 1);
-                                baieBerryState.fruits.splice(index, 1, {
-                                    id: baieBerryNextFruitId++,
-                                    x: (fruitA.x + fruitB.x) / 2,
-                                    y: (fruitA.y + fruitB.y) / 2,
-                                    vx: 0,
-                                    vy: -90,
-                                    rotation: ((fruitA.rotation || 0) + (fruitB.rotation || 0)) / 2,
-                                    mergeProgress: 0,
-                                    level: nextLevel
-                                });
-                                baieBerryState.mergePairs.delete(mergeKey);
-                                baieBerryScoreDisplay.textContent = String(baieBerryState.score);
-                                if (baieBerryState.score > baieBerryBestScore) {
-                                    baieBerryBestScore = baieBerryState.score;
-                                    window.localStorage.setItem(BAIE_BERRY_BEST_KEY, String(baieBerryBestScore));
-                                }
-                                break;
+                        if (fruitA.level === fruitB.level && fruitA.level < BAIE_BERRY_FRUITS.length - 1) {
+                            const nextLevel = fruitA.level + 1;
+                            baieBerryState.score += BAIE_BERRY_FRUITS[nextLevel].score;
+                            baieBerryState.fruits.splice(compareIndex, 1);
+                            baieBerryState.fruits.splice(index, 1, {
+                                id: baieBerryNextFruitId++,
+                                x: (fruitA.x + fruitB.x) / 2,
+                                y: (fruitA.y + fruitB.y) / 2,
+                                vx: (fruitA.vx + fruitB.vx) * 0.15,
+                                vy: Math.min(fruitA.vy, fruitB.vy, 0) - 90,
+                                rotation: ((fruitA.rotation || 0) + (fruitB.rotation || 0)) / 2,
+                                mergeProgress: 0.9,
+                                level: nextLevel
+                            });
+                            baieBerryScoreDisplay.textContent = String(baieBerryState.score);
+                            if (baieBerryState.score > baieBerryBestScore) {
+                                baieBerryBestScore = baieBerryState.score;
+                                window.localStorage.setItem(BAIE_BERRY_BEST_KEY, String(baieBerryBestScore));
                             }
+                            break;
                         }
                     }
                 }
             }
-
-            baieBerryState.mergePairs.forEach((mergeState, mergeKey) => {
-                if (!activeMergeKeys.has(mergeKey)) {
-                    mergeState.time = Math.max(0, mergeState.time - (delta * 1.6));
-
-                    if (mergeState.time <= 0) {
-                        baieBerryState.mergePairs.delete(mergeKey);
-                    }
-                }
-            });
 
             if (baieBerryState.fruits.some((fruit) => fruit.y < 18 && Math.abs(fruit.vy) < 40)) {
                 baieBerryState.gameOver = true;
@@ -11794,11 +12042,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const rows = 5;
         const cols = 8;
         const sidePadding = 38;
-        const topOffset = 54;
+        const topOffset = 28;
         const gapX = 10;
-        const gapY = 12;
+        const gapY = 8;
         const brickWidth = ((breakoutCanvas.width - (sidePadding * 2)) - (gapX * (cols - 1))) / cols;
-        const brickHeight = 22;
+        const brickHeight = 16;
         const rowThemes = [
             { top: '#facc15', bottom: '#d97706' },
             { top: '#fb7185', bottom: '#be123c' },
@@ -11867,27 +12115,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         breakoutContext.fillStyle = '#f59e0b';
         breakoutContext.beginPath();
-        breakoutContext.moveTo(44, breakoutCanvas.height - 54);
-        breakoutContext.quadraticCurveTo(118, breakoutCanvas.height - 110, 196, breakoutCanvas.height - 58);
-        breakoutContext.lineTo(196, breakoutCanvas.height - 26);
-        breakoutContext.lineTo(44, breakoutCanvas.height - 26);
+        breakoutContext.moveTo(34, breakoutCanvas.height - 42);
+        breakoutContext.quadraticCurveTo(96, breakoutCanvas.height - 82, 164, breakoutCanvas.height - 46);
+        breakoutContext.lineTo(164, breakoutCanvas.height - 18);
+        breakoutContext.lineTo(34, breakoutCanvas.height - 18);
         breakoutContext.closePath();
         breakoutContext.fill();
 
         breakoutContext.fillStyle = '#92400e';
-        breakoutContext.fillRect(102, breakoutCanvas.height - 118, 9, 60);
+        breakoutContext.fillRect(84, breakoutCanvas.height - 86, 7, 44);
         breakoutContext.fillStyle = '#f8fafc';
         breakoutContext.beginPath();
-        breakoutContext.moveTo(111, breakoutCanvas.height - 116);
-        breakoutContext.lineTo(160, breakoutCanvas.height - 90);
-        breakoutContext.lineTo(111, breakoutCanvas.height - 72);
+        breakoutContext.moveTo(91, breakoutCanvas.height - 84);
+        breakoutContext.lineTo(132, breakoutCanvas.height - 64);
+        breakoutContext.lineTo(91, breakoutCanvas.height - 50);
         breakoutContext.closePath();
         breakoutContext.fill();
 
         breakoutContext.strokeStyle = 'rgba(255,255,255,0.18)';
-        breakoutContext.lineWidth = 3;
+        breakoutContext.lineWidth = 2;
         for (let wave = 0; wave < 5; wave += 1) {
-            const waveY = breakoutCanvas.height - 112 + wave * 18;
+            const waveY = breakoutCanvas.height - 86 + wave * 13;
             breakoutContext.beginPath();
             breakoutContext.moveTo(0, waveY);
             for (let x = 0; x <= breakoutCanvas.width; x += 36) {
@@ -11902,7 +12150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gradient.addColorStop(0, brick.theme.top);
         gradient.addColorStop(1, brick.theme.bottom);
 
-        drawBreakoutRoundedRect(breakoutContext, brick.x, brick.y, brick.width, brick.height, 8);
+        drawBreakoutRoundedRect(breakoutContext, brick.x, brick.y, brick.width, brick.height, 6);
         breakoutContext.fillStyle = gradient;
         breakoutContext.fill();
         breakoutContext.strokeStyle = 'rgba(255, 248, 220, 0.28)';
@@ -11910,7 +12158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         breakoutContext.stroke();
 
         breakoutContext.fillStyle = 'rgba(255, 255, 255, 0.18)';
-        breakoutContext.fillRect(brick.x + 8, brick.y + 4, brick.width - 16, 4);
+        breakoutContext.fillRect(brick.x + 7, brick.y + 3, brick.width - 14, 3);
     }
 
     function drawBreakoutPaddle() {
@@ -11919,15 +12167,15 @@ document.addEventListener('DOMContentLoaded', () => {
         hullGradient.addColorStop(0, '#f59e0b');
         hullGradient.addColorStop(1, '#7c2d12');
 
-        drawBreakoutRoundedRect(breakoutContext, paddle.x, paddle.y, paddle.width, paddle.height, 10);
+        drawBreakoutRoundedRect(breakoutContext, paddle.x, paddle.y, paddle.width, paddle.height, 8);
         breakoutContext.fillStyle = hullGradient;
         breakoutContext.fill();
 
         breakoutContext.fillStyle = 'rgba(255, 248, 220, 0.9)';
-        breakoutContext.fillRect(paddle.x + paddle.width * 0.48, paddle.y - 18, 4, 18);
+        breakoutContext.fillRect(paddle.x + paddle.width * 0.48, paddle.y - 14, 3, 14);
         breakoutContext.beginPath();
-        breakoutContext.moveTo(paddle.x + paddle.width * 0.5, paddle.y - 18);
-        breakoutContext.lineTo(paddle.x + paddle.width * 0.72, paddle.y - 8);
+        breakoutContext.moveTo(paddle.x + paddle.width * 0.5, paddle.y - 14);
+        breakoutContext.lineTo(paddle.x + paddle.width * 0.7, paddle.y - 6);
         breakoutContext.lineTo(paddle.x + paddle.width * 0.5, paddle.y + 2);
         breakoutContext.closePath();
         breakoutContext.fill();
@@ -11935,7 +12183,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function drawBreakoutBall() {
         const { ball } = breakoutState;
-        const ballGradient = breakoutContext.createRadialGradient(ball.x - 2, ball.y - 2, 2, ball.x, ball.y, ball.radius + 3);
+        const ballGradient = breakoutContext.createRadialGradient(ball.x - 2, ball.y - 2, 2, ball.x, ball.y, ball.radius + 2);
         ballGradient.addColorStop(0, '#fef3c7');
         ballGradient.addColorStop(0.42, '#facc15');
         ballGradient.addColorStop(1, '#b45309');
@@ -11945,7 +12193,7 @@ document.addEventListener('DOMContentLoaded', () => {
         breakoutContext.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
         breakoutContext.fill();
         breakoutContext.strokeStyle = 'rgba(120, 53, 15, 0.52)';
-        breakoutContext.lineWidth = 1.5;
+        breakoutContext.lineWidth = 1.2;
         breakoutContext.stroke();
     }
 
@@ -11968,25 +12216,78 @@ document.addEventListener('DOMContentLoaded', () => {
         drawBreakoutBall();
     }
 
+    function getBreakoutRulesText() {
+        return 'Deplace la raquette avec Q, D ou les fleches. La balle rebondit selon la zone touchee sur le bateau. Casse toutes les briques sans perdre tes trois vies.';
+    }
+
+    function renderBreakoutMenu() {
+        if (!breakoutMenuOverlay || !breakoutTable) {
+            return;
+        }
+
+        breakoutMenuOverlay.classList.toggle('hidden', !breakoutMenuVisible);
+        breakoutMenuOverlay.classList.toggle('is-closing', breakoutMenuClosing);
+        breakoutTable.classList.toggle('is-menu-open', breakoutMenuVisible);
+
+        if (!breakoutMenuVisible) {
+            return;
+        }
+
+        if (breakoutMenuEyebrow) {
+            breakoutMenuEyebrow.textContent = breakoutMenuShowingRules ? 'Regles' : 'Baie d arcade';
+        }
+        if (breakoutMenuTitle) {
+            breakoutMenuTitle.textContent = breakoutMenuShowingRules ? 'Rappel rapide' : 'Breakout';
+        }
+        if (breakoutMenuText) {
+            breakoutMenuText.textContent = breakoutMenuShowingRules
+                ? getBreakoutRulesText()
+                : 'Prepare ta traversee avant d envoyer la balle sur les briques.';
+        }
+        if (breakoutMenuActionButton) {
+            breakoutMenuActionButton.textContent = breakoutMenuShowingRules ? 'Retour' : 'Lancer la partie';
+        }
+        if (breakoutMenuRulesButton) {
+            breakoutMenuRulesButton.textContent = 'Regles';
+            breakoutMenuRulesButton.hidden = breakoutMenuShowingRules;
+        }
+    }
+
+    function startBreakoutLaunchSequence() {
+        breakoutMenuClosing = true;
+        renderBreakoutMenu();
+        window.setTimeout(() => {
+            breakoutMenuClosing = false;
+            breakoutMenuVisible = false;
+            breakoutMenuShowingRules = false;
+            if (breakoutState) {
+                breakoutState.running = true;
+            }
+            renderBreakoutMenu();
+            drawBreakout();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeBreakout() {
-        const paddleWidth = 116;
-        const paddleHeight = 14;
+        const paddleWidth = 92;
+        const paddleHeight = 11;
+        closeGameOverModal();
         breakoutState = {
             score: 0,
             lives: 3,
             running: false,
             paddle: {
                 x: (breakoutCanvas.width - paddleWidth) / 2,
-                y: breakoutCanvas.height - 54,
+                y: breakoutCanvas.height - 34,
                 width: paddleWidth,
                 height: paddleHeight
             },
             ball: {
                 x: breakoutCanvas.width / 2,
-                y: breakoutCanvas.height * 0.68,
+                y: breakoutCanvas.height * 0.62,
                 vx: 0,
                 vy: 0,
-                radius: 9
+                radius: 7
             },
             bricks: createBreakoutBricks()
         };
@@ -11995,6 +12296,10 @@ document.addEventListener('DOMContentLoaded', () => {
         breakoutScoreDisplay.textContent = '0';
         breakoutLivesDisplay.textContent = '3';
         breakoutHelpText.textContent = `Record actuel: ${breakoutBestScore}. Lance la balle quand tu veux.`;
+        breakoutMenuVisible = true;
+        breakoutMenuShowingRules = false;
+        breakoutMenuClosing = false;
+        renderBreakoutMenu();
         drawBreakout();
 
         if (!breakoutAnimationFrame) {
@@ -12180,6 +12485,73 @@ document.addEventListener('DOMContentLoaded', () => {
         blockBlastComboDisplay.textContent = `x${Math.max(1, blockBlastState.combo)}`;
     }
 
+    function clearBlockBlastPreview(shouldRender = true) {
+        if (!blockBlastPreview) {
+            return;
+        }
+
+        blockBlastPreview = null;
+        if (shouldRender) {
+            renderBlockBlastBoard();
+        }
+    }
+
+    function updateBlockBlastPreview(piece, anchorRow, anchorCol) {
+        if (!piece || !Number.isInteger(anchorRow) || !Number.isInteger(anchorCol)) {
+            clearBlockBlastPreview();
+            return false;
+        }
+
+        const keys = piece.cells
+            .map((cell) => ({ row: anchorRow + cell.y, col: anchorCol + cell.x }))
+            .filter((cell) => (
+                cell.row >= 0
+                && cell.row < BLOCK_BLAST_SIZE
+                && cell.col >= 0
+                && cell.col < BLOCK_BLAST_SIZE
+            ))
+            .map((cell) => `${cell.row}-${cell.col}`);
+        const valid = canPlaceBlockBlastPiece(piece, anchorRow, anchorCol);
+        const nextPreview = { keys, valid, row: anchorRow, col: anchorCol };
+        const previewChanged = !blockBlastPreview
+            || blockBlastPreview.valid !== nextPreview.valid
+            || blockBlastPreview.row !== nextPreview.row
+            || blockBlastPreview.col !== nextPreview.col
+            || blockBlastPreview.keys.length !== nextPreview.keys.length
+            || blockBlastPreview.keys.some((key, index) => key !== nextPreview.keys[index]);
+
+        blockBlastPreview = nextPreview;
+        if (previewChanged) {
+            renderBlockBlastBoard();
+        }
+
+        return valid;
+    }
+
+    function getBlockBlastAnchorFromPoint(clientX, clientY) {
+        if (!blockBlastBoard) {
+            return null;
+        }
+
+        const bounds = blockBlastBoard.getBoundingClientRect();
+        if (clientX < bounds.left || clientX > bounds.right || clientY < bounds.top || clientY > bounds.bottom) {
+            return null;
+        }
+
+        const relativeX = (clientX - bounds.left) / bounds.width;
+        const relativeY = (clientY - bounds.top) / bounds.height;
+
+        return {
+            row: Math.max(0, Math.min(BLOCK_BLAST_SIZE - 1, Math.floor(relativeY * BLOCK_BLAST_SIZE))),
+            col: Math.max(0, Math.min(BLOCK_BLAST_SIZE - 1, Math.floor(relativeX * BLOCK_BLAST_SIZE)))
+        };
+    }
+
+    function stopBlockBlastDrag() {
+        blockBlastDragState = null;
+        clearBlockBlastPreview();
+    }
+
     function renderBlockBlastPieces() {
         if (!blockBlastPieces || !blockBlastState) {
             return;
@@ -12209,12 +12581,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const previewKeys = new Set(blockBlastPreview?.keys || []);
+        const previewClassName = blockBlastPreview
+            ? (blockBlastPreview.valid ? ' is-preview-valid' : ' is-preview-invalid')
+            : '';
+
         blockBlastBoard.innerHTML = blockBlastState.board.map((row, rowIndex) => row.map((cell, colIndex) => {
             const clearing = blockBlastState.clearingCells?.some((entry) => entry.row === rowIndex && entry.col === colIndex);
+            const preview = previewKeys.has(`${rowIndex}-${colIndex}`);
             return `
                 <button
                     type="button"
-                    class="blockblast-cell${cell ? ` is-filled is-${cell.color}` : ''}${clearing ? ' is-clearing' : ''}"
+                    class="blockblast-cell${cell ? ` is-filled is-${cell.color}` : ''}${clearing ? ' is-clearing' : ''}${preview ? previewClassName : ''}"
                     data-blockblast-row="${rowIndex}"
                     data-blockblast-col="${colIndex}"
                     aria-label="Case ${rowIndex + 1}-${colIndex + 1}"
@@ -12315,12 +12693,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 220);
     }
 
-    function placeBlockBlastPiece(row, col) {
-        if (!blockBlastState || blockBlastSelectedPieceIndex === null) {
+    function placeBlockBlastPieceAtIndex(pieceIndex, row, col) {
+        if (!blockBlastState || pieceIndex === null) {
             return;
         }
 
-        const piece = blockBlastState.pieces[blockBlastSelectedPieceIndex];
+        const piece = blockBlastState.pieces[pieceIndex];
         if (!piece || !canPlaceBlockBlastPiece(piece, row, col)) {
             blockBlastHelpText.textContent = 'Cette forme ne rentre pas ici. Cherche un autre coin du plateau.';
             return;
@@ -12331,8 +12709,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         blockBlastState.score += piece.cells.length * 4;
-        blockBlastState.pieces[blockBlastSelectedPieceIndex] = null;
+        blockBlastState.pieces[pieceIndex] = null;
         blockBlastSelectedPieceIndex = null;
+        clearBlockBlastPreview(false);
         clearBlockBlastLines();
         refillBlockBlastPiecesIfNeeded();
         renderBlockBlast();
@@ -12340,6 +12719,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!canAnyBlockBlastPieceFit()) {
             finishBlockBlast();
         }
+    }
+
+    function placeBlockBlastPiece(row, col) {
+        if (blockBlastSelectedPieceIndex === null) {
+            return;
+        }
+
+        placeBlockBlastPieceAtIndex(blockBlastSelectedPieceIndex, row, col);
     }
 
     function initializeBlockBlast() {
@@ -12352,7 +12739,9 @@ document.addEventListener('DOMContentLoaded', () => {
             clearingCells: []
         };
         blockBlastSelectedPieceIndex = null;
-        blockBlastHelpText.textContent = 'Choisis une forme puis pose-la sur le pont. Efface des lignes pour garder la baie degagee.';
+        clearBlockBlastPreview(false);
+        stopBlockBlastDrag();
+        blockBlastHelpText.textContent = 'Fais glisser une forme sur le pont. Efface des lignes pour garder la baie degagee.';
         renderBlockBlast();
     }
 
@@ -13830,8 +14219,20 @@ document.addEventListener('DOMContentLoaded', () => {
         startRhythm();
     });
 
-    flappyStartButton.addEventListener('click', () => {
-        startFlappy();
+    flappyMenuActionButton?.addEventListener('click', () => {
+        if (flappyMenuShowingRules) {
+            flappyMenuShowingRules = false;
+            renderFlappyMenu();
+            return;
+        }
+
+        initializeFlappy();
+        startFlappyLaunchSequence();
+    });
+
+    flappyMenuRulesButton?.addEventListener('click', () => {
+        flappyMenuShowingRules = !flappyMenuShowingRules;
+        renderFlappyMenu();
     });
 
     flowFreeRestartButton.addEventListener('click', () => {
@@ -13928,6 +14329,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         initializeChess();
+    });
+
+    chessMenuActionButton?.addEventListener('click', () => {
+        if (chessMenuShowingRules) {
+            chessMenuShowingRules = false;
+            renderChessMenu();
+            return;
+        }
+
+        initializeChess();
+        startChessLaunchSequence();
+    });
+
+    chessMenuRulesButton?.addEventListener('click', () => {
+        chessMenuShowingRules = !chessMenuShowingRules;
+        renderChessMenu();
     });
 
     chessModeButtons.forEach((button) => {
@@ -14046,18 +14463,114 @@ document.addEventListener('DOMContentLoaded', () => {
         dropBaieBerryAt((event.clientX - bounds.left) * scaleX);
     });
 
-    breakoutStartButton?.addEventListener('click', () => {
-        if (!breakoutState || breakoutState.lives <= 0) {
-            initializeBreakout();
+    breakoutMenuActionButton?.addEventListener('click', () => {
+        if (breakoutMenuShowingRules) {
+            breakoutMenuShowingRules = false;
+            renderBreakoutMenu();
+            return;
         }
-        breakoutState.running = true;
+
+        initializeBreakout();
+        startBreakoutLaunchSequence();
+    });
+
+    breakoutMenuRulesButton?.addEventListener('click', () => {
+        breakoutMenuShowingRules = !breakoutMenuShowingRules;
+        renderBreakoutMenu();
     });
 
     blockBlastStartButton?.addEventListener('click', () => {
         initializeBlockBlast();
     });
 
+    blockBlastPieces?.addEventListener('pointerdown', (event) => {
+        const pieceButton = event.target.closest('[data-blockblast-piece]');
+        if (!pieceButton || !blockBlastState) {
+            return;
+        }
+
+        const index = Number(pieceButton.dataset.blockblastPiece);
+        const piece = blockBlastState.pieces[index];
+        if (!piece) {
+            return;
+        }
+
+        event.preventDefault();
+        blockBlastSuppressClick = false;
+        stopBlockBlastDrag();
+        blockBlastDragState = {
+            pointerId: event.pointerId,
+            pieceIndex: index,
+            piece,
+            sourceElement: pieceButton,
+            startX: event.clientX,
+            startY: event.clientY,
+            moved: false
+        };
+    });
+
+    document.addEventListener('pointermove', (event) => {
+        if (!blockBlastDragState || event.pointerId !== blockBlastDragState.pointerId) {
+            return;
+        }
+
+        const dragDistance = Math.hypot(
+            event.clientX - blockBlastDragState.startX,
+            event.clientY - blockBlastDragState.startY
+        );
+        if (dragDistance > 6) {
+            blockBlastDragState.moved = true;
+            blockBlastSuppressClick = true;
+        }
+
+        const anchor = getBlockBlastAnchorFromPoint(event.clientX, event.clientY);
+        if (!anchor) {
+            clearBlockBlastPreview();
+            return;
+        }
+
+        updateBlockBlastPreview(blockBlastDragState.piece, anchor.row, anchor.col);
+    });
+
+    document.addEventListener('pointerup', (event) => {
+        if (!blockBlastDragState || event.pointerId !== blockBlastDragState.pointerId) {
+            return;
+        }
+
+        const anchor = getBlockBlastAnchorFromPoint(event.clientX, event.clientY);
+        const shouldPlace = blockBlastDragState.moved
+            && anchor
+            && canPlaceBlockBlastPiece(blockBlastDragState.piece, anchor.row, anchor.col);
+        const draggedPieceIndex = blockBlastDragState.pieceIndex;
+
+        stopBlockBlastDrag();
+
+        if (shouldPlace) {
+            placeBlockBlastPieceAtIndex(draggedPieceIndex, anchor.row, anchor.col);
+        }
+
+        if (blockBlastSuppressClick) {
+            window.setTimeout(() => {
+                blockBlastSuppressClick = false;
+            }, 0);
+        }
+    });
+
+    document.addEventListener('pointercancel', (event) => {
+        if (!blockBlastDragState || event.pointerId !== blockBlastDragState.pointerId) {
+            return;
+        }
+
+        stopBlockBlastDrag();
+        blockBlastSuppressClick = false;
+    });
+
     blockBlastPieces?.addEventListener('click', (event) => {
+        if (blockBlastSuppressClick) {
+            blockBlastSuppressClick = false;
+            return;
+        }
+
         const pieceButton = event.target.closest('[data-blockblast-piece]');
         if (!pieceButton || !blockBlastState) {
             return;
@@ -14069,10 +14582,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         blockBlastSelectedPieceIndex = blockBlastSelectedPieceIndex === index ? null : index;
+        clearBlockBlastPreview();
         renderBlockBlastPieces();
     });
 
     blockBlastBoard?.addEventListener('click', (event) => {
+        if (blockBlastSuppressClick) {
+            blockBlastSuppressClick = false;
+            return;
+        }
+
         const cellButton = event.target.closest('[data-blockblast-row]');
         if (!cellButton) {
             return;
@@ -14302,6 +14821,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     flappyBoard.addEventListener('pointerdown', (event) => {
         event.preventDefault();
+        if (flappyMenuVisible || flappyMenuClosing) {
+            return;
+        }
         flapFlappyBird();
     });
 

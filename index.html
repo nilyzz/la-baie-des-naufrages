@@ -943,9 +943,6 @@
                             <span class="flappy-counter-label">Score</span>
                             <strong id="flappyScoreDisplay" class="flappy-counter-value">0</strong>
                         </div>
-
-                        <button id="flappyStartButton" type="button" class="flappy-face">Lancer le vol</button>
-
                         <div class="flappy-counter-block">
                             <span class="flappy-counter-label">Record</span>
                             <strong id="flappyBestDisplay" class="flappy-counter-value">0</strong>
@@ -953,7 +950,20 @@
                     </div>
 
                     <p id="flappyHelpText" class="flappy-help">Espace, clic ou tap pour battre des ailes et traverser les arches sans les toucher.</p>
-                    <div id="flappyBoard" class="flappy-board" aria-label="Plateau de Baiely Bird"></div>
+                    <div id="flappyTable" class="flappy-table">
+                        <div id="flappyMenuOverlay" class="flappy-menu-overlay">
+                            <div class="flappy-menu-card">
+                                <span id="flappyMenuEyebrow" class="flappy-menu-eyebrow">Baie d arcade</span>
+                                <h3 id="flappyMenuTitle" class="flappy-menu-title">Baiely Bird</h3>
+                                <p id="flappyMenuText" class="flappy-menu-text">Prepare ton envol avant de battre des ailes entre les arches.</p>
+                                <div class="flappy-menu-actions">
+                                    <button id="flappyMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="flappyMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="flappyBoard" class="flappy-board" aria-label="Plateau de Baiely Bird"></div>
+                    </div>
                 </div>
 
                 <div id="flowFreeGame" class="card flowfree-card games-panel">
@@ -1133,7 +1143,20 @@
                         <button type="button" class="secondary-button chess-mode-button" data-chess-mode="duo">2 joueurs</button>
                     </div>
                     <p id="chessHelpText" class="chess-help">Echecs local a deux joueurs. Roque et prise en passant ne sont pas geres, la promotion devient une reine.</p>
-                    <div id="chessBoard" class="chess-board" aria-label="Echiquier"></div>
+                    <div id="chessTable" class="chess-table">
+                        <div id="chessMenuOverlay" class="chess-menu-overlay">
+                            <div class="chess-menu-card">
+                                <span id="chessMenuEyebrow" class="chess-menu-eyebrow">Baie strategique</span>
+                                <h3 id="chessMenuTitle" class="chess-menu-title">Echecs</h3>
+                                <p id="chessMenuText" class="chess-menu-text">Installe les pieces et choisis ton mode avant d engager la partie.</p>
+                                <div class="chess-menu-actions">
+                                    <button id="chessMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="chessMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="chessBoard" class="chess-board" aria-label="Echiquier"></div>
+                    </div>
                 </div>
 
                 <div id="checkersGame" class="card checkers-card games-panel">
@@ -1234,14 +1257,26 @@
                             <span class="breakout-counter-label">Score</span>
                             <strong id="breakoutScoreDisplay" class="breakout-counter-value">0</strong>
                         </div>
-                        <button id="breakoutStartButton" type="button" class="breakout-face">Lancer</button>
                         <div class="breakout-counter-block">
                             <span class="breakout-counter-label">Vies</span>
                             <strong id="breakoutLivesDisplay" class="breakout-counter-value">3</strong>
                         </div>
                     </div>
                     <p id="breakoutHelpText" class="breakout-help">Deplace la raquette avec Q/D ou les fleches et casse toutes les briques.</p>
-                    <canvas id="breakoutCanvas" class="breakout-canvas" width="680" height="500"></canvas>
+                    <div id="breakoutTable" class="breakout-table">
+                        <div id="breakoutMenuOverlay" class="breakout-menu-overlay">
+                            <div class="breakout-menu-card">
+                                <span id="breakoutMenuEyebrow" class="breakout-menu-eyebrow">Baie d arcade</span>
+                                <h3 id="breakoutMenuTitle" class="breakout-menu-title">Breakout</h3>
+                                <p id="breakoutMenuText" class="breakout-menu-text">Prepare ta traversee avant d envoyer la balle sur les briques.</p>
+                                <div class="breakout-menu-actions">
+                                    <button id="breakoutMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="breakoutMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas id="breakoutCanvas" class="breakout-canvas" width="680" height="404"></canvas>
+                    </div>
                 </div>
 
                 <div id="blockBlastGame" class="card blockblast-card games-panel">
@@ -1256,7 +1291,7 @@
                             <strong id="blockBlastComboDisplay" class="blockblast-counter-value">x1</strong>
                         </div>
                     </div>
-                    <p id="blockBlastHelpText" class="blockblast-help">Choisis une forme, puis pose-la sur le plateau. Les lignes et colonnes completes disparaissent.</p>
+                    <p id="blockBlastHelpText" class="blockblast-help">Fais glisser une forme sur le plateau. Les lignes et colonnes completes disparaissent.</p>
                     <div class="blockblast-shell">
                         <div id="blockBlastBoard" class="blockblast-board" aria-label="Plateau Block Blast"></div>
                         <aside class="blockblast-sidebar">
@@ -1534,9 +1569,6 @@
             <div class="card ad-card">
                 <p class="section-tag">Publicite</p>
                 <h3>Annonce</h3>
-                <p class="ad-card-copy">
-                    Cette zone affiche une pub sur ordinateur. Remplace les identifiants AdSense dans le HTML pour l'activer.
-                </p>
                 <div class="ad-slot-shell">
                     <ins
                         class="adsbygoogle ad-slot"

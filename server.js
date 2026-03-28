@@ -140,7 +140,7 @@ function createConnect4State() {
 }
 
 function createChessPiece(type, color) {
-  return { type, color };
+  return { type, color, hasMoved: false };
 }
 
 function createInitialChessBoard() {
@@ -1328,6 +1328,85 @@ function updatePongRoom(room, deltaSeconds) {
     || room.gameState.ballVelocityY !== previousVelocityY;
 }
 
+function getChessAttackMoves(state, row, col) {
+  const piece = state?.board?.[row]?.[col];
+  if (!piece) {
+    return [];
+  }
+
+  const moves = [];
+  const addMove = (nextRow, nextCol) => {
+    if (!isInsideGameGrid(nextRow, nextCol, CHESS_SIZE)) {
+      return;
+    }
+
+    const target = state.board[nextRow][nextCol];
+    if (!target || target.color !== piece.color) {
+      moves.push({ row: nextRow, col: nextCol });
+    }
+  };
+  const addSlideMoves = (directions) => {
+    directions.forEach(([rowStep, colStep]) => {
+      let nextRow = row + rowStep;
+      let nextCol = col + colStep;
+
+      while (isInsideGameGrid(nextRow, nextCol, CHESS_SIZE)) {
+        const target = state.board[nextRow][nextCol];
+
+        if (!target) {
+          moves.push({ row: nextRow, col: nextCol });
+        } else {
+          if (target.color !== piece.color) {
+            moves.push({ row: nextRow, col: nextCol });
+          }
+          break;
+        }
+
+        nextRow += rowStep;
+        nextCol += colStep;
+      }
+    });
+  };
+
+  if (piece.type === 'pawn') {
+    const direction = piece.color === 'white' ? -1 : 1;
+    [-1, 1].forEach((deltaCol) => {
+      const attackRow = row + direction;
+      const attackCol = col + deltaCol;
+      if (isInsideGameGrid(attackRow, attackCol, CHESS_SIZE)) {
+        moves.push({ row: attackRow, col: attackCol });
+      }
+    });
+    return moves;
+  }
+
+  if (piece.type === 'rook') {
+    addSlideMoves([[1, 0], [-1, 0], [0, 1], [0, -1]]);
+    return moves;
+  }
+
+  if (piece.type === 'bishop') {
+    addSlideMoves([[1, 1], [1, -1], [-1, 1], [-1, -1]]);
+    return moves;
+  }
+
+  if (piece.type === 'queen') {
+    addSlideMoves([[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]);
+    return moves;
+  }
+
+  if (piece.type === 'knight') {
+    [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]].forEach(([rowStep, colStep]) => addMove(row + rowStep, col + colStep));
+    return moves;
+  }
+
+  if (piece.type === 'king') {
+    [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]].forEach(([rowStep, colStep]) => addMove(row + rowStep, col + colStep));
+  }
+
+  return moves;
+}
+
 function getChessMoves(state, row, col) {
   const piece = state?.board[row][col];
 
@@ -1367,6 +1446,68 @@ function getChessMoves(state, row, col) {
         nextCol += colStep;
       }
     });
+  };
+  const getOpponentColor = (color) => (color === 'white' ? 'black' : 'white');
+  const isSquareUnderAttack = (targetRow, targetCol, attackerColor) => {
+    for (let attackRow = 0; attackRow < CHESS_SIZE; attackRow += 1) {
+      for (let attackCol = 0; attackCol < CHESS_SIZE; attackCol += 1) {
+        const attacker = state?.board?.[attackRow]?.[attackCol];
+        if (!attacker || attacker.color !== attackerColor) {
+          continue;
+        }
+
+        if (getChessAttackMoves(state, attackRow, attackCol).some((move) => move.row === targetRow && move.col === targetCol)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+  const isKingInCheck = (color) => {
+    for (let kingRow = 0; kingRow < CHESS_SIZE; kingRow += 1) {
+      for (let kingCol = 0; kingCol < CHESS_SIZE; kingCol += 1) {
+        const king = state?.board?.[kingRow]?.[kingCol];
+        if (king?.type === 'king' && king.color === color) {
+          return isSquareUnderAttack(kingRow, kingCol, getOpponentColor(color));
+        }
+      }
+    }
+
+    return false;
+  };
+  const canCastle = (side) => {
+    if (piece.type !== 'king' || piece.hasMoved) {
+      return null;
+    }
+
+    const rookCol = side === 'king' ? CHESS_SIZE - 1 : 0;
+    const rook = state.board[row]?.[rookCol];
+    if (!rook || rook.type !== 'rook' || rook.color !== piece.color || rook.hasMoved) {
+      return null;
+    }
+
+    const direction = side === 'king' ? 1 : -1;
+    const targetCol = col + (direction * 2);
+
+    for (let nextCol = col + direction; nextCol !== rookCol; nextCol += direction) {
+      if (state.board[row][nextCol]) {
+        return null;
+      }
+    }
+
+    if (isKingInCheck(piece.color)) {
+      return null;
+    }
+
+    for (let step = 1; step <= 2; step += 1) {
+      const passingCol = col + (direction * step);
+      if (isSquareUnderAttack(row, passingCol, getOpponentColor(piece.color))) {
+        return null;
+      }
+    }
+
+    return { row, col: targetCol, castle: side };
   };
 
   if (piece.type === 'pawn') {
@@ -1411,6 +1552,14 @@ function getChessMoves(state, row, col) {
 
   if (piece.type === 'king') {
     [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]].forEach(([rowStep, colStep]) => addMove(row + rowStep, col + colStep));
+    const kingSideCastle = canCastle('king');
+    const queenSideCastle = canCastle('queen');
+    if (kingSideCastle) {
+      moves.push(kingSideCastle);
+    }
+    if (queenSideCastle) {
+      moves.push(queenSideCastle);
+    }
   }
 
   return moves;
@@ -2055,10 +2204,20 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const nextPiece = { ...movingPiece };
+    const nextPiece = { ...movingPiece, hasMoved: true };
     const capturedPiece = room.gameState.board[toRow][toCol];
     room.gameState.board[toRow][toCol] = nextPiece;
     room.gameState.board[fromRow][fromCol] = null;
+
+    if (nextPiece.type === 'king' && Math.abs(toCol - fromCol) === 2) {
+      const rookFromCol = toCol > fromCol ? CHESS_SIZE - 1 : 0;
+      const rookToCol = toCol > fromCol ? toCol - 1 : toCol + 1;
+      const rookPiece = room.gameState.board[toRow][rookFromCol];
+      if (rookPiece) {
+        room.gameState.board[toRow][rookToCol] = { ...rookPiece, hasMoved: true };
+        room.gameState.board[toRow][rookFromCol] = null;
+      }
+    }
 
     if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
       room.gameState.board[toRow][toCol] = createChessPiece('queen', nextPiece.color);
