@@ -134,6 +134,83 @@ body {
     animation: fadeOutDown 0.45s ease forwards;
 }
 
+.site-ads {
+    position: fixed;
+    top: 124px;
+    right: max(16px, calc(50vw - 780px));
+    z-index: 15;
+    width: 280px;
+    height: min(740px, calc(100vh - 156px));
+}
+
+.ad-card {
+    height: 100%;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-card h3 {
+    margin-bottom: 8px;
+}
+
+.ad-card-copy {
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+.ad-slot-shell {
+    position: relative;
+    width: 100%;
+    min-height: 0;
+    height: 100%;
+    flex: 1 1 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px dashed rgba(125, 211, 252, 0.28);
+    background:
+        linear-gradient(180deg, rgba(14, 48, 86, 0.96), rgba(15, 23, 42, 0.96)),
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.16), transparent 48%);
+}
+
+.ad-slot {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 0;
+    height: 100%;
+}
+
+.ad-placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    gap: 10px;
+    padding: 20px;
+    text-align: center;
+    color: rgba(226, 232, 240, 0.88);
+    letter-spacing: 0.04em;
+}
+
+.ad-placeholder span {
+    font-size: 0.84rem;
+    text-transform: uppercase;
+}
+
+.ad-placeholder strong {
+    font-size: 1.2rem;
+}
+
+.site-ads-ready .ad-placeholder {
+    display: none;
+}
+
+.app-shell:has(#loginView.view-active) .site-ads,
+.app-shell:has(#servicesView.view-active) .site-ads {
+    display: none;
+}
+
 .card {
     background: rgba(30, 41, 59, 0.92);
     border: 1px solid var(--border-color);
@@ -6488,6 +6565,14 @@ button:hover {
 }
 
 @media (max-width: 980px) {
+    .app-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .site-ads {
+        display: none;
+    }
+
     .site-header-inner,
     .section-header-card,
     .management-layout,

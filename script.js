@@ -907,6 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let unoLastDrawnCardId = '';
     let unoPreviousOpponentCounts = new Map();
     let unoOpponentDrawFx = new Map();
+    let unoPendingOpponentDrawAnimations = new Map();
     let unoColorChoiceTimer = null;
     let unoColorChoicePending = false;
     let unoPendingPlayAnimation = null;
@@ -12508,10 +12509,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         }
 
-        if (card.color === 'wild') {
-            return true;
-        }
-
         if (Number(state.drawPenalty || 0) > 0) {
             if (card.type === 'wildDraw4') {
                 return true;
@@ -12522,6 +12519,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             return false;
+        }
+
+        if (card.color === 'wild') {
+            return true;
         }
 
         const activeColor = ['wild', 'wildDraw4'].includes(topCard.type)
@@ -12549,6 +12550,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return card.color === activeColor;
+    }
+
+    function hasUnoPenaltyResponse(player, state = unoState) {
+        if (!player || Number(state?.drawPenalty || 0) <= 0) {
+            return false;
+        }
+
+        return (player.hand || []).some((card) => (
+            card?.type === 'draw2' || card?.type === 'wildDraw4'
+        ));
+    }
+
+    function maybeAutoResolveUnoPenalty() {
+        if (!unoState || unoState.winner || unoState.pendingColorChoice || unoDrawRequestPending) {
+            return false;
+        }
+
+        const currentPlayer = unoState.players?.[unoState.currentPlayerIndex];
+        if (!currentPlayer || currentPlayer.id !== 'you' || Number(unoState.drawPenalty || 0) <= 0) {
+            return false;
+        }
+
+        if (hasUnoPenaltyResponse(currentPlayer, unoState)) {
+            return false;
+        }
+
+        unoDrawRequestPending = true;
+        window.setTimeout(() => {
+            if (isMultiplayerUnoActive()) {
+                multiplayerSocket?.emit('uno:draw-card');
+                return;
+            }
+
+            drawSoloUnoCard();
+        }, 240);
+
+        return true;
     }
 
     function getNextUnoPlayerIndex(state, step = 1) {
@@ -12812,6 +12850,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
+    function playUnoPendingOpponentDrawAnimations(seats = {}) {
+        if (!unoPendingOpponentDrawAnimations.size || !unoDrawButton) {
+            return;
+        }
+
+        unoPendingOpponentDrawAnimations.forEach((drawCount, playerId) => {
+            const destination = getUnoOpponentSourceElement(playerId, seats);
+            if (!destination) {
+                return;
+            }
+
+            const totalAnimations = Math.min(Number(drawCount) || 0, 4);
+            for (let index = 0; index < totalAnimations; index += 1) {
+                window.setTimeout(() => {
+                    animateUnoCardTravel(renderUnoCardBack(), unoDrawButton, destination, 'is-opponent-drawn');
+                }, index * 90);
+            }
+        });
+
+        unoPendingOpponentDrawAnimations = new Map();
+    }
+
     function getUnoDealTargetElement(playerId, kind = 'opponent') {
         if (kind === 'self') {
             return unoHand;
@@ -12901,6 +12961,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (maybeAutoResolveUnoPenalty()) {
+            updateUnoHud();
+            renderUnoMenu();
+            return;
+        }
+
         const me = unoState.players.find((player) => player.id === 'you' || player.isYou) || unoState.players[0];
         const currentPlayer = unoState.players[unoState.currentPlayerIndex];
         const topCard = getUnoTopCard();
@@ -12916,13 +12982,15 @@ document.addEventListener('DOMContentLoaded', () => {
             ? opponents[1]
             : (opponents.length >= 3 ? opponents[2] : null);
         let opponentPlayedCard = null;
-        const shouldHideCardsBeforeLaunch = false;
+        const shouldMaskCardsForMenu = unoMenuVisible || unoMenuClosing;
 
         opponents.forEach((player) => {
             const count = player.handCount ?? player.hand?.length ?? 0;
             const previous = unoPreviousOpponentCounts.get(player.id);
             if (Number.isFinite(previous) && count > previous) {
-                unoOpponentDrawFx.set(player.id, count - previous);
+                const drawCount = count - previous;
+                unoOpponentDrawFx.set(player.id, drawCount);
+                unoPendingOpponentDrawAnimations.set(player.id, drawCount);
             }
             if (Number.isFinite(previous) && count < previous && topCard?.id && topCard.id !== unoLastRenderedTopCardId) {
                 opponentPlayedCard = player;
@@ -12934,7 +13002,7 @@ document.addEventListener('DOMContentLoaded', () => {
             unoOpponentsTop.innerHTML = topOpponent
                 ? renderUnoOpponent({
                     ...topOpponent,
-                    handCount: shouldHideCardsBeforeLaunch ? 0 : topOpponent.handCount
+                    handCount: topOpponent.handCount
                 }, unoState.players[unoState.currentPlayerIndex]?.id === topOpponent.id, 'top')
                 : '';
         }
@@ -12943,7 +13011,7 @@ document.addEventListener('DOMContentLoaded', () => {
             unoOpponentsLeft.innerHTML = leftOpponent
                 ? renderUnoOpponent({
                     ...leftOpponent,
-                    handCount: shouldHideCardsBeforeLaunch ? 0 : leftOpponent.handCount
+                    handCount: leftOpponent.handCount
                 }, unoState.players[unoState.currentPlayerIndex]?.id === leftOpponent.id, 'left')
                 : '';
             unoOpponentsLeft.classList.toggle('hidden', !leftOpponent);
@@ -12953,7 +13021,7 @@ document.addEventListener('DOMContentLoaded', () => {
             unoOpponentsRight.innerHTML = rightOpponent
                 ? renderUnoOpponent({
                     ...rightOpponent,
-                    handCount: shouldHideCardsBeforeLaunch ? 0 : rightOpponent.handCount
+                    handCount: rightOpponent.handCount
                 }, unoState.players[unoState.currentPlayerIndex]?.id === rightOpponent.id, 'right')
                 : '';
             unoOpponentsRight.classList.toggle('hidden', !rightOpponent);
@@ -12963,17 +13031,20 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="uno-draw-stack" aria-hidden="true"></span>
             <span class="uno-draw-label">PIOCHE</span>
         `;
-        unoDiscardPile.innerHTML = shouldHideCardsBeforeLaunch ? '' : renderUnoCard(topCard, {
-            compact: false,
-            displayColor: (topCard?.type === 'wild' || topCard?.type === 'wildDraw4') ? unoState.currentColor : topCard?.color
-        });
+        unoDiscardPile.innerHTML = shouldMaskCardsForMenu
+            ? renderUnoCardBack()
+            : renderUnoCard(topCard, {
+                compact: false,
+                displayColor: (topCard?.type === 'wild' || topCard?.type === 'wildDraw4') ? unoState.currentColor : topCard?.color
+            });
         const sortedHand = (me?.hand || [])
             .map((card, index) => ({ card, originalIndex: index }))
             .sort((left, right) => getUnoCardSortWeight(left.card) - getUnoCardSortWeight(right.card));
-        const visibleHand = shouldHideCardsBeforeLaunch
-            ? []
-            : sortedHand;
+        const visibleHand = sortedHand;
         unoHand.innerHTML = visibleHand.map(({ card, originalIndex }) => {
+            if (shouldMaskCardsForMenu) {
+                return renderUnoCardBack();
+            }
             const playable = myTurn && isUnoCardPlayable(card);
             return renderUnoCard(card, {
                 playable,
@@ -12982,11 +13053,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }).join('');
 
-        if (!shouldHideCardsBeforeLaunch && topCard?.id === unoLastPlayedCardId) {
+        if (!shouldMaskCardsForMenu && topCard?.id === unoLastPlayedCardId) {
             unoDiscardPile.querySelector('.uno-card-face')?.classList.add('is-played');
         }
 
-        if (!shouldHideCardsBeforeLaunch && !visibleHand.length && !me?.hand?.length) {
+        if (!shouldMaskCardsForMenu && !visibleHand.length && !me?.hand?.length) {
             unoHand.innerHTML = '<p class="uno-empty-hand">En attente de la fin de manche...</p>';
         }
 
@@ -13008,6 +13079,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (unoPendingDrawAnimation) {
             animateUnoCardTravel(renderUnoCardBack(), unoDrawButton, unoHand);
             unoPendingDrawAnimation = false;
+        }
+
+        if (!shouldMaskCardsForMenu) {
+            playUnoPendingOpponentDrawAnimations({ topOpponent, leftOpponent, rightOpponent });
         }
 
         unoDrawButton.disabled = !myTurn || Boolean(unoState.pendingColorChoice) || Boolean(unoState.winner) || unoDrawRequestPending;
@@ -13226,6 +13301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shouldResetUnoVisualTrackers) {
             unoPreviousOpponentCounts = new Map();
             unoOpponentDrawFx = new Map();
+            unoPendingOpponentDrawAnimations = new Map();
             unoPendingPlayAnimation = null;
             unoPendingDrawAnimation = false;
             unoLastRenderedTopCardId = '';
@@ -13267,6 +13343,7 @@ document.addEventListener('DOMContentLoaded', () => {
         unoLastDrawnCardId = '';
         unoPreviousOpponentCounts = new Map();
         unoOpponentDrawFx = new Map();
+        unoPendingOpponentDrawAnimations = new Map();
         unoColorChoicePending = false;
         unoPendingPlayAnimation = null;
         unoPendingDrawAnimation = false;

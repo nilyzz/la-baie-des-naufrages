@@ -4,8 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="multiplayer-server-url" content="https://la-baie-des-naufrages.onrender.com">
+    <meta name="google-adsense-account" content="ca-pub-1302716532000899">
+    <meta name="description" content="La Baie des naufrages est un site de jeux, cinema, maths et musique dans un univers marin personnalise.">
+    <meta name="theme-color" content="#0E3056">
+    <meta name="robots" content="index, follow">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="La Baie des naufrages">
+    <meta property="og:description" content="Jeux, cinema, maths et musique dans l'univers de La Baie des naufrages.">
+    <meta property="og:url" content="https://labaiedesnaufrages.fr/">
+    <meta property="og:site_name" content="La Baie des naufrages">
+    <meta property="og:image" content="https://labaiedesnaufrages.fr/assets/logo-baie-cartoon.svg">
+    <meta property="og:image:alt" content="Logo de La Baie des naufrages">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="La Baie des naufrages">
+    <meta name="twitter:description" content="Jeux, cinema, maths et musique dans l'univers de La Baie des naufrages.">
+    <meta name="twitter:image" content="https://labaiedesnaufrages.fr/assets/logo-baie-cartoon.svg">
     <title>La Baie des naufragés</title>
+    <link rel="canonical" href="https://labaiedesnaufrages.fr/">
+    <link rel="icon" href="/assets/logo-baie-cartoon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="/assets/logo-baie-cartoon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/assets/logo-baie-cartoon.svg">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="style.css?v=2026-03-25-mobile-1">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "WebSite",
+                    "name": "La Baie des naufrages",
+                    "url": "https://labaiedesnaufrages.fr/",
+                    "description": "Site de jeux, cinema, maths et musique dans un univers marin personnalise."
+                },
+                {
+                    "@type": "Organization",
+                    "name": "La Baie des naufrages",
+                    "url": "https://labaiedesnaufrages.fr/",
+                    "logo": "https://labaiedesnaufrages.fr/assets/logo-baie-cartoon.svg"
+                }
+            ]
+        }
+    </script>
 </head>
 <body>
     <div class="background-glow background-glow-left"></div>
@@ -1483,6 +1523,35 @@
                 </div>
             </div>
         </section>
+
+        <aside
+            class="site-ads"
+            aria-label="Espace publicitaire"
+            data-adsense-client="ca-pub-1302716532000899"
+            data-ad-slot="7342451972"
+        >
+            <div class="card ad-card">
+                <p class="section-tag">Publicite</p>
+                <h3>Annonce</h3>
+                <p class="ad-card-copy">
+                    Cette zone affiche une pub sur ordinateur. Remplace les identifiants AdSense dans le HTML pour l'activer.
+                </p>
+                <div class="ad-slot-shell">
+                    <ins
+                        class="adsbygoogle ad-slot"
+                        style="display:block"
+                        data-ad-client="ca-pub-1302716532000899"
+                        data-ad-slot="7342451972"
+                        data-ad-format="auto"
+                        data-full-width-responsive="true"
+                    ></ins>
+                    <div class="ad-placeholder" aria-hidden="true">
+                        <span>Zone pub a droite</span>
+                        <strong>300 x 600</strong>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </main>
 
     <div id="confirmModal" class="modal hidden" aria-hidden="true">
@@ -1508,6 +1577,44 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        (function () {
+            const adContainer = document.querySelector('.site-ads');
+            const adSlot = document.querySelector('.ad-slot');
+            if (!adContainer || !adSlot) {
+                return;
+            }
+
+            const adClient = adContainer.dataset.adsenseClient || '';
+            const adSlotId = adContainer.dataset.adSlot || '';
+            const isConfigured = /^ca-pub-\d{10,}$/.test(adClient) && /^\d{6,}$/.test(adSlotId);
+
+            if (!isConfigured) {
+                adContainer.classList.add('site-ads-unconfigured');
+                return;
+            }
+
+            adSlot.setAttribute('data-ad-client', adClient);
+            adSlot.setAttribute('data-ad-slot', adSlotId);
+
+            const adsenseScript = document.createElement('script');
+            adsenseScript.async = true;
+            adsenseScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(adClient);
+            adsenseScript.crossOrigin = 'anonymous';
+            adsenseScript.onload = function () {
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    adContainer.classList.add('site-ads-ready');
+                } catch (error) {
+                    adContainer.classList.add('site-ads-unconfigured');
+                }
+            };
+            adsenseScript.onerror = function () {
+                adContainer.classList.add('site-ads-unconfigured');
+            };
+            document.head.appendChild(adsenseScript);
+        })();
+    </script>
     <script src="script.js?v=2026-03-24-3"></script>
 </body>
 </html>

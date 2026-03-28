@@ -1,0 +1,16 @@
+{
+  "name": "La Baie des naufrages",
+  "short_name": "La Baie",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0E3056",
+  "theme_color": "#0E3056",
+  "icons": [
+    {
+      "src": "/assets/logo-baie-cartoon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
