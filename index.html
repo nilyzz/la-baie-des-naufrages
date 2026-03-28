@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="/assets/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.css?v=2026-03-25-mobile-1">
+    <link rel="stylesheet" href="style.css?v=2026-03-28-legal-1">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -52,6 +52,21 @@
     <div class="background-glow background-glow-left"></div>
     <div class="background-glow background-glow-right"></div>
     <div class="page-actions">
+        <button
+            id="openLegalNoticeButton"
+            type="button"
+            class="secondary-button page-action-button page-action-button-legal services-legal-button hidden"
+            aria-label="Ouvrir les mentions légales"
+            title="Mentions légales"
+        >
+            <span class="legal-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <circle cx="12" cy="12" r="8.25" />
+                    <path d="M12 10V16" />
+                    <circle cx="12" cy="7.25" r="0.9" fill="currentColor" stroke="none" />
+                </svg>
+            </span>
+        </button>
         <button id="pageBackButton" type="button" class="secondary-button page-action-button hidden" data-back-to-services="true">Changer de navire</button>
         <button id="logoutButton" type="button" class="secondary-button page-action-button hidden">
             <span class="logout-button-icon" aria-hidden="true">
@@ -72,7 +87,7 @@
                     <img src="assets/logo-baie-cartoon.svg" alt="" class="brand-logo-image">
                 </div>
                 <div class="brand-copy">
-                    <p class="eyebrow">Journal privé</p>
+                    <p class="eyebrow">Plateforme publique</p>
                     <h2>La Baie des naufragés</h2>
                 </div>
             </div>
@@ -1609,6 +1624,34 @@
         </div>
     </div>
 
+    <div id="legalNoticeModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-legal-notice="true"></div>
+        <div class="modal-card card legal-notice-card" role="dialog" aria-modal="true" aria-labelledby="legalNoticeTitle">
+            <p class="section-tag">Informations légales</p>
+            <h3 id="legalNoticeTitle">Mentions légales</h3>
+            <div class="legal-notice-content">
+                <p>Les informations ci-dessous constituent une base publique à compléter avant diffusion large du site.</p>
+
+                <p><strong>Éditeur du site</strong><br>Nom : Nail YAHYAOUI<br>Statut : Éditeur du site à titre non professionnel<br>Adresse : <span class="legal-placeholder">À compléter</span><br>Email de contact : <span class="legal-placeholder">À compléter</span></p>
+
+                <p><strong>Directeur de la publication</strong><br>Nail YAHYAOUI</p>
+
+                <p><strong>Nom du site</strong><br>La Baie des naufragés</p>
+
+                <p><strong>Nom de domaine</strong><br>labaiedesnaufrages.fr</p>
+
+                <p><strong>Hébergement</strong><br>Le site web est hébergé sur GitHub Pages par GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA.<br>Le service multijoueur associé est hébergé sur Render, Inc., 2261 Market Street #4454, San Francisco, CA 94114, USA.</p>
+
+                <p><strong>Propriété intellectuelle</strong><br>Sauf mention contraire, les éléments originaux du site (structure, design, textes, code et créations graphiques propres au projet) ne peuvent pas être réutilisés sans autorisation. Les affiches, images, logos, musiques ou contenus tiers doivent être utilisés uniquement si tu disposes des droits ou autorisations nécessaires.</p>
+
+                <p><strong>Contact</strong><br>Pour toute demande, signalement ou exercice de droit, merci d'écrire à : <span class="legal-placeholder">À compléter</span></p>
+            </div>
+            <div class="form-actions">
+                <button id="closeLegalNoticeButton" type="button" class="secondary-button">Fermer</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
         (function () {
@@ -1625,6 +1668,6 @@
             }
         })();
     </script>
-    <script src="script.js?v=2026-03-24-3"></script>
+    <script src="script.js?v=2026-03-28-legal-1"></script>
 </body>
 </html>

@@ -254,6 +254,44 @@ body {
     padding-inline: 18px;
 }
 
+.page-action-button-legal {
+    justify-content: center;
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+    padding: 0;
+    border-radius: 18px;
+}
+
+.services-legal-button {
+    position: fixed;
+    top: 18px;
+    left: 16px;
+    z-index: 60;
+}
+
+body:has(#servicesView.view-active) .services-legal-button {
+    display: inline-flex !important;
+}
+
+.legal-button-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 23px;
+    height: 23px;
+}
+
+.legal-button-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    stroke-width: 2.15;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .logout-button-icon {
     display: inline-flex;
     align-items: center;
@@ -6538,6 +6576,28 @@ button:hover {
     padding: 28px;
 }
 
+.legal-notice-card {
+    width: min(760px, 100%);
+    max-height: min(80vh, 860px);
+    overflow-y: auto;
+}
+
+.legal-notice-content {
+    display: grid;
+    gap: 16px;
+    margin: 18px 0 0;
+}
+
+.legal-notice-content p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.legal-placeholder {
+    color: #fcd34d;
+    font-weight: 700;
+}
+
 .empty-state {
     text-align: center;
     color: var(--muted-text);
@@ -7168,6 +7228,12 @@ button:hover {
         left: auto;
         display: flex;
         gap: 8px;
+        z-index: 80;
+    }
+
+    .services-legal-button {
+        top: calc(10px + env(safe-area-inset-top, 0));
+        left: 10px;
         z-index: 80;
     }
 

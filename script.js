@@ -62,6 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmText = document.getElementById('confirmText');
     const cancelDeleteButton = document.getElementById('cancelDeleteButton');
     const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+    const legalNoticeModal = document.getElementById('legalNoticeModal');
+    const openLegalNoticeButton = document.getElementById('openLegalNoticeButton');
+    const closeLegalNoticeButton = document.getElementById('closeLegalNoticeButton');
     const minesweeperBoard = document.getElementById('minesweeperBoard');
     const minesweeperGame = document.getElementById('minesweeperGame');
     const mineCountDisplay = document.getElementById('mineCountDisplay');
@@ -1982,6 +1985,26 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmModal.setAttribute('aria-hidden', 'true');
     }
 
+    function openLegalNoticeModal() {
+        if (!legalNoticeModal) {
+            return;
+        }
+
+        legalNoticeModal.classList.remove('hidden');
+        legalNoticeModal.setAttribute('aria-hidden', 'false');
+        closeLegalNoticeButton?.focus();
+    }
+
+    function closeLegalNoticeModal() {
+        if (!legalNoticeModal) {
+            return;
+        }
+
+        legalNoticeModal.classList.add('hidden');
+        legalNoticeModal.setAttribute('aria-hidden', 'true');
+        openLegalNoticeButton?.focus();
+    }
+
     function getSelectedMultiplayerGame() {
         const fallbackGameId = multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || null;
         const activeGameId = MULTIPLAYER_SUPPORTED_GAMES[multiplayerSelectedGameId]
@@ -2116,13 +2139,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function getBoardMoveAnimationMetadata(lastMove, row, col) {
+    function getBoardMoveAnimationMetadata(lastMove, row, col, flip = false) {
         if (!lastMove || lastMove.toRow !== row || lastMove.toCol !== col) {
             return { className: '', style: '' };
         }
 
-        const moveX = Number(lastMove.fromCol) - Number(lastMove.toCol);
-        const moveY = Number(lastMove.fromRow) - Number(lastMove.toRow);
+        const direction = flip ? -1 : 1;
+        const moveX = (Number(lastMove.fromCol) - Number(lastMove.toCol)) * direction;
+        const moveY = (Number(lastMove.fromRow) - Number(lastMove.toRow)) * direction;
         const isKnightMove = lastMove.pieceType === 'knight' && Math.abs(moveX) + Math.abs(moveY) === 3 && Math.abs(moveX) > 0 && Math.abs(moveY) > 0;
         const className = [
             'is-moving',
@@ -2181,15 +2205,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 360);
     }
 
-    function spawnBoardCaptureParticles(boardElement, row, col, tone = 'light') {
+    function spawnBoardCaptureParticles(boardElement, row, col, tone = 'light', positionMapper = null) {
         if (!boardElement) {
             return;
         }
 
         const fragment = document.createDocumentFragment();
         const particleCount = 9;
-        const originX = `${((Number(col) + 0.5) / CHESS_SIZE) * 100}%`;
-        const originY = `${((Number(row) + 0.5) / CHESS_SIZE) * 100}%`;
+        const displayPosition = positionMapper ? positionMapper(Number(row), Number(col)) : { row: Number(row), col: Number(col) };
+        const originX = `${((displayPosition.col + 0.5) / CHESS_SIZE) * 100}%`;
+        const originY = `${((displayPosition.row + 0.5) / CHESS_SIZE) * 100}%`;
         for (let index = 0; index < particleCount; index += 1) {
             const particle = document.createElement('span');
             particle.className = `board-capture-particle is-${tone}`;
@@ -2224,7 +2249,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         chessLastCaptureFxKey = fxKey;
         window.requestAnimationFrame(() => {
-            spawnBoardCaptureParticles(chessBoard, move.capture.row, move.capture.col, move.captureColor === 'black' ? 'dark' : 'light');
+            spawnBoardCaptureParticles(
+                chessBoard,
+                move.capture.row,
+                move.capture.col,
+                move.captureColor === 'black' ? 'dark' : 'light',
+                getDisplayChessPosition
+            );
         });
     }
 
@@ -10257,6 +10288,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return isMultiplayerChessActive() && getMultiplayerChessRole() === 'black';
     }
 
+    function getDisplayChessPosition(row, col) {
+        if (!shouldFlipChessBoardPerspective()) {
+            return { row, col };
+        }
+
+        return {
+            row: CHESS_SIZE - 1 - row,
+            col: CHESS_SIZE - 1 - col
+        };
+    }
+
     function getBoardChessPosition(displayRow, displayCol) {
         if (!shouldFlipChessBoardPerspective()) {
             return { row: displayRow, col: displayCol };
@@ -10413,7 +10455,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const selected = chessSelectedSquare?.row === row && chessSelectedSquare?.col === col;
             const playable = legalMoves.some((move) => move.row === row && move.col === col);
             const captureHit = isBoardCaptureCell(chessState.lastMove, row, col);
-            const pieceAnimation = getBoardMoveAnimationMetadata(chessState.lastMove, row, col);
+            const pieceAnimation = getBoardMoveAnimationMetadata(chessState.lastMove, row, col, shouldFlipChessBoardPerspective());
             const checkedKing = checkedKingPosition?.row === row && checkedKingPosition?.col === col;
             const rankLabel = displayCol === 0 ? String(CHESS_SIZE - row) : '';
             const fileLabel = displayRow === CHESS_SIZE - 1 ? String.fromCharCode(97 + col) : '';
@@ -15033,6 +15075,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    legalNoticeModal?.addEventListener('click', (event) => {
+        if (event.target.dataset.closeLegalNotice === 'true') {
+            closeLegalNoticeModal();
+        }
+    });
+
+    openLegalNoticeButton?.addEventListener('click', () => {
+        openLegalNoticeModal();
+    });
+
+    closeLegalNoticeButton?.addEventListener('click', () => {
+        closeLegalNoticeModal();
+    });
+
     gameOverModal.addEventListener('click', (event) => {
         if (event.target.dataset.closeGameOver === 'true') {
             closeGameOverModal();
@@ -15042,6 +15098,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !confirmModal.classList.contains('hidden')) {
             closeDeleteModal();
+        }
+
+        if (event.key === 'Escape' && legalNoticeModal && !legalNoticeModal.classList.contains('hidden')) {
+            closeLegalNoticeModal();
         }
 
         if (event.key === 'Escape' && !gameOverModal.classList.contains('hidden')) {
