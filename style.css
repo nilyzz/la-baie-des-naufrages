@@ -2,7 +2,7 @@
     --primary-color: #6366f1;
     --bg-color: #0f172a;
     --text-color: #f8fafc;
-    --card-bg: #1e293b;
+    --card-bg: #0c1421;
     --muted-text: #cbd5e1;
     --border-color: rgba(148, 163, 184, 0.18);
     --success-color: #10b981;
@@ -212,7 +212,7 @@ body {
 }
 
 .card {
-    background: rgba(30, 41, 59, 0.92);
+    background: rgba(12, 20, 33, 0.97);
     border: 1px solid var(--border-color);
     border-radius: 24px;
     box-shadow: 0 22px 45px -30px var(--shadow-color);
@@ -220,15 +220,142 @@ body {
 }
 
 .login-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     width: min(520px, 100%);
     margin: 0 auto;
     padding: 40px;
     text-align: center;
 }
 
+.login-card > * {
+    position: relative;
+    z-index: 1;
+}
+
 .login-eyebrow {
     margin-top: -2px;
     margin-bottom: 10px;
+}
+
+.login-bird-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.login-bird-flight {
+    position: absolute;
+    top: clamp(34px, 22%, 96px);
+    left: -96px;
+    width: 88px;
+    height: 52px;
+    opacity: 0.34;
+    filter: blur(0.2px);
+    animation: loginBirdCruise 14s linear infinite;
+}
+
+.login-bird {
+    position: absolute;
+    inset: 0;
+    width: 52px;
+    height: 40px;
+    margin: auto;
+    border-radius: 58% 42% 46% 54% / 44% 46% 54% 56%;
+    background:
+        radial-gradient(circle at 64% 34%, rgba(15, 23, 42, 0.98) 0 8%, transparent 9%),
+        radial-gradient(circle at 58% 74%, rgba(255, 255, 255, 0.18), transparent 20%),
+        linear-gradient(180deg, rgba(239, 68, 68, 0.88), rgba(185, 28, 28, 0.88) 64%, rgba(245, 158, 11, 0.88) 64% 100%);
+    box-shadow:
+        inset -10px 0 0 rgba(14, 165, 233, 0.2),
+        0 10px 18px -12px rgba(15, 23, 42, 0.56);
+    transform-origin: center;
+    animation: loginBirdFlap 0.9s ease-in-out infinite;
+}
+
+.login-bird::before,
+.login-bird::after {
+    content: '';
+    position: absolute;
+}
+
+.login-bird::before {
+    right: -10px;
+    top: 14px;
+    width: 18px;
+    height: 10px;
+    background: linear-gradient(180deg, #facc15, #f97316);
+    clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+
+.login-bird::after {
+    left: 6px;
+    top: -6px;
+    width: 16px;
+    height: 14px;
+    background: linear-gradient(180deg, #1e293b, #020617);
+    border-radius: 8px 8px 2px 2px;
+    box-shadow:
+        6px 4px 0 -4px rgba(255, 255, 255, 0.18),
+        2px 12px 0 -5px rgba(245, 158, 11, 0.96);
+}
+
+@keyframes loginBirdCruise {
+    0% {
+        transform: translate3d(0, 52px, 0) scale(0.94) rotate(5deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.28;
+    }
+    25% {
+        transform: translate3d(180px, 34px, 0) scale(1) rotate(-1deg);
+    }
+    50% {
+        transform: translate3d(320px, 88px, 0) scale(1.04) rotate(3deg);
+        opacity: 0.38;
+    }
+    68% {
+        transform: translate3d(420px, 52px, 0) scale(1) rotate(-2deg);
+        opacity: 0.34;
+    }
+    75% {
+        transform: translate3d(450px, 64px, 0) scale(0.98) rotate(-3deg);
+    }
+    90% {
+        opacity: 0.22;
+    }
+    100% {
+        transform: translate3d(620px, 92px, 0) scale(0.92) rotate(1deg);
+        opacity: 0;
+    }
+}
+
+@keyframes loginBirdFlap {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-8deg) scaleY(1);
+    }
+    50% {
+        transform: translateY(-4px) rotate(8deg) scaleY(0.94);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-bird-flight,
+    .login-bird {
+        animation: none;
+    }
+
+    .login-bird-flight {
+        left: auto;
+        right: 28px;
+        top: 28px;
+        opacity: 0.24;
+    }
 }
 
 .services-shell,
@@ -560,6 +687,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 .games-home-card {
     padding: 24px;
     overflow: hidden;
+    background: rgba(12, 20, 33, 0.97);
 }
 
 .games-home-copy {
@@ -575,7 +703,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     border: 1px solid rgba(96, 165, 250, 0.2);
     background:
         radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 42%),
-        linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.72));
+        linear-gradient(180deg, rgba(6, 10, 20, 0.98), rgba(6, 10, 20, 0.9));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
@@ -1942,7 +2070,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .math-calculator-shell,
 .math-tool-card {
-    background: rgba(15, 23, 42, 0.42);
+    background: rgba(6, 10, 20, 0.9);
     border: 1px solid rgba(99, 102, 241, 0.18);
     border-radius: 22px;
     padding: 22px;
@@ -2391,9 +2519,9 @@ body:has(#servicesView.view-active) .services-legal-button {
     padding: 16px 0 0;
     overflow: hidden;
     background:
-        radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 34%),
-        radial-gradient(circle at 82% 18%, rgba(14, 165, 233, 0.22), transparent 24%),
-        linear-gradient(180deg, rgba(224, 242, 254, 0.98), rgba(186, 230, 253, 0.95));
+        radial-gradient(circle at top, rgba(186, 230, 253, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.26), transparent 24%),
+        linear-gradient(180deg, rgba(28, 58, 92, 0.98), rgba(14, 30, 56, 0.98));
 }
 
 .pong-card::before {
@@ -2454,9 +2582,10 @@ body:has(#servicesView.view-active) .services-legal-button {
 .pong-help {
     margin: 0 0 10px;
     text-align: center;
-    color: #374151 !important;
+    color: #e0f2fe !important;
     font-size: 0.84rem;
     font-weight: 600;
+    text-shadow: 0 1px 10px rgba(8, 47, 73, 0.42);
 }
 
 .pong-mode-switch {
@@ -2538,8 +2667,9 @@ body:has(#servicesView.view-active) .services-legal-button {
     padding: 26px 24px;
     border-radius: 28px;
     background:
-        radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 36%),
-        linear-gradient(180deg, rgba(186, 230, 253, 0.98), rgba(125, 211, 252, 0.96));
+        radial-gradient(circle at top, rgba(186, 230, 253, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.26), transparent 24%),
+        linear-gradient(180deg, rgba(28, 58, 92, 0.98), rgba(14, 30, 56, 0.98));
     box-shadow: 0 24px 48px -30px rgba(15, 23, 42, 0.94);
     display: grid;
     gap: 14px;
@@ -2550,18 +2680,18 @@ body:has(#servicesView.view-active) .services-legal-button {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: #0f766e;
+    color: #a5f3fc;
 }
 
 .pong-menu-title {
     margin: 0;
     font-size: 2rem;
-    color: #0f172a;
+    color: #f8fafc;
 }
 
 .pong-menu-text {
     margin: 0;
-    color: #374151 !important;
+    color: #dbeafe !important;
     opacity: 1;
     font-weight: 600;
     line-height: 1.45;
@@ -2575,9 +2705,9 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .pong-board {
-    width: calc(100% + 24px);
+    width: calc(100% - 12px);
     aspect-ratio: 1.92 / 1;
-    margin: 12px -12px 0;
+    margin: 12px auto 0;
     position: relative;
     overflow: hidden;
     border-radius: 24px;
@@ -2586,14 +2716,11 @@ body:has(#servicesView.view-active) .services-legal-button {
         radial-gradient(circle at 72% 24%, rgba(255, 255, 255, 0.12), transparent 12%),
         radial-gradient(circle at 32% 64%, rgba(255, 255, 255, 0.05), transparent 14%),
         linear-gradient(180deg, rgba(14, 116, 144, 0.28), rgba(8, 47, 73, 0.42) 42%, rgba(15, 23, 42, 0.97));
-    border: 1px solid rgba(125, 211, 252, 0.2);
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
-    border-bottom: 0;
+    border: 2px solid rgba(186, 230, 253, 0.72);
     box-shadow:
         0 20px 44px -30px rgba(8, 47, 73, 0.9),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+        0 0 0 1px rgba(125, 211, 252, 0.28),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .pong-countdown {
@@ -2642,6 +2769,9 @@ body:has(#servicesView.view-active) .services-legal-button {
 .pong-ball {
     position: absolute;
     will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    transition: transform 34ms linear;
 }
 
 .pong-paddle {
@@ -2649,11 +2779,13 @@ body:has(#servicesView.view-active) .services-legal-button {
     height: 104px;
     border-radius: 999px;
     background: linear-gradient(180deg, rgba(14, 116, 144, 0.98), rgba(8, 47, 73, 0.9));
+    border: 2px solid rgba(224, 242, 254, 0.82);
     box-shadow: 0 0 20px rgba(8, 47, 73, 0.22);
 }
 
 .pong-paddle-ai {
     background: linear-gradient(180deg, rgba(8, 47, 73, 0.98), rgba(6, 95, 70, 0.9));
+    border-color: rgba(167, 243, 208, 0.82);
     box-shadow: 0 0 20px rgba(8, 47, 73, 0.24);
 }
 
@@ -2662,6 +2794,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     height: 20px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, rgba(125, 211, 252, 0.9), rgba(2, 132, 199, 0.94) 38%, rgba(8, 47, 73, 0.98) 74%);
+    border: 2px solid rgba(240, 249, 255, 0.92);
     box-shadow: 0 0 22px rgba(8, 47, 73, 0.34);
 }
 
@@ -2840,9 +2973,32 @@ body:has(#servicesView.view-active) .services-legal-button {
     text-align: center;
 }
 
+.game-2048-card {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 14% 12%, rgba(255, 243, 176, 0.18), transparent 20%),
+        radial-gradient(circle at 84% 18%, rgba(96, 165, 250, 0.18), transparent 24%),
+        radial-gradient(circle at 28% 74%, rgba(251, 191, 36, 0.12), transparent 22%),
+        linear-gradient(180deg, rgba(29, 41, 74, 0.98), rgba(15, 23, 42, 0.98));
+}
+
+.game-2048-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 12% 14%, rgba(255, 255, 255, 0.1), transparent 18%),
+        radial-gradient(circle at 82% 22%, rgba(255, 255, 255, 0.06), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,0.08), transparent 34%);
+}
+
 .game-2048-topbar {
+    position: relative;
+    z-index: 1;
     display: grid;
-    grid-template-columns: repeat(3, minmax(150px, 180px));
+    grid-template-columns: repeat(2, minmax(150px, 180px));
     gap: 8px;
     align-items: center;
     justify-content: center;
@@ -2852,13 +3008,19 @@ body:has(#servicesView.view-active) .services-legal-button {
 .game-2048-counter-block {
     padding: 10px;
     border-radius: 14px;
-    background: rgba(15, 23, 42, 0.72);
-    border: 1px solid rgba(99, 102, 241, 0.18);
+    background:
+        radial-gradient(circle at top, rgba(255, 243, 176, 0.16), transparent 46%),
+        linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.94));
+    border: 1px solid rgba(251, 191, 36, 0.22);
     text-align: center;
     min-height: 60px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        0 16px 28px -24px rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(10px);
 }
 
 .game-2048-counter-label {
@@ -2866,32 +3028,104 @@ body:has(#servicesView.view-active) .services-legal-button {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: var(--muted-text);
+    color: #fcd34d;
     margin-bottom: 4px;
 }
 
 .game-2048-counter-value {
     font-size: clamp(1.15rem, 2.6vw, 1.65rem);
-    color: var(--primary-color);
+    color: #f8fafc;
 }
 
 .game-2048-face {
-    width: 100%;
-    min-height: 60px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.9), rgba(251, 191, 36, 0.82));
-    color: white;
-    font-size: 0.95rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    box-shadow: 0 18px 34px -24px rgba(245, 158, 11, 0.72);
+    display: none;
 }
 
 .game-2048-help {
+    position: relative;
+    z-index: 1;
     margin: 0 0 10px;
     text-align: center;
-    color: var(--muted-text);
+    color: #e2e8f0;
     font-size: 0.84rem;
+    font-weight: 600;
+    text-shadow: 0 1px 10px rgba(15, 23, 42, 0.34);
+}
+
+.game-2048-table {
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
+}
+
+.game-2048-table.is-menu-open > :not(.game-2048-menu-overlay) {
+    filter: blur(7px) saturate(0.86);
+    pointer-events: none;
+    user-select: none;
+}
+
+.game-2048-menu-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    border-radius: 24px;
+    background: rgba(15, 23, 42, 0.16);
+    opacity: 1;
+    transition: opacity 260ms ease, transform 260ms ease;
+}
+
+.game-2048-menu-overlay.hidden {
+    display: none;
+}
+
+.game-2048-menu-overlay.is-closing {
+    opacity: 0;
+    transform: scale(1.02);
+}
+
+.game-2048-menu-card {
+    width: min(100%, 420px);
+    padding: 26px 24px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at 14% 12%, rgba(255, 243, 176, 0.18), transparent 20%),
+        radial-gradient(circle at 84% 18%, rgba(96, 165, 250, 0.18), transparent 24%),
+        radial-gradient(circle at 28% 74%, rgba(251, 191, 36, 0.12), transparent 22%),
+        linear-gradient(180deg, rgba(29, 41, 74, 0.98), rgba(15, 23, 42, 0.98));
+    box-shadow: 0 24px 48px -30px rgba(15, 23, 42, 0.94);
+    display: grid;
+    gap: 14px;
+    text-align: center;
+}
+
+.game-2048-menu-eyebrow {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #fde68a;
+}
+
+.game-2048-menu-title {
+    margin: 0;
+    font-size: 2rem;
+    color: #f8fafc;
+}
+
+.game-2048-menu-text {
+    margin: 0;
+    color: #e2e8f0 !important;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.game-2048-menu-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .game-2048-board {
@@ -3062,24 +3296,60 @@ body:has(#servicesView.view-active) .services-legal-button {
 .memory-topbar,
 .tictactoe-topbar {
     display: grid;
-    grid-template-columns: repeat(3, minmax(150px, 180px));
+    grid-template-columns: repeat(2, minmax(150px, 180px));
     gap: 8px;
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
 }
 
+.tictactoe-card {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 14% 12%, rgba(255, 243, 176, 0.14), transparent 20%),
+        radial-gradient(circle at 84% 18%, rgba(96, 165, 250, 0.18), transparent 24%),
+        radial-gradient(circle at 28% 74%, rgba(249, 115, 22, 0.12), transparent 22%),
+        linear-gradient(180deg, rgba(26, 35, 64, 0.98), rgba(12, 18, 36, 0.98));
+}
+
+.tictactoe-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 12% 14%, rgba(255,255,255,0.08), transparent 18%),
+        radial-gradient(circle at 82% 22%, rgba(255,255,255,0.05), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), transparent 34%);
+}
+
+.tictactoe-topbar,
+.tictactoe-help,
+.tictactoe-mode-switch,
+.tictactoe-table,
+.tictactoe-board {
+    position: relative;
+    z-index: 1;
+}
+
 .memory-counter-block,
 .tictactoe-counter-block {
     padding: 10px;
     border-radius: 14px;
-    background: rgba(15, 23, 42, 0.72);
-    border: 1px solid rgba(99, 102, 241, 0.18);
+    background:
+        radial-gradient(circle at top, rgba(251, 191, 36, 0.14), transparent 44%),
+        linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.94));
+    border: 1px solid rgba(249, 115, 22, 0.2);
     text-align: center;
     min-height: 60px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        0 16px 28px -24px rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(10px);
 }
 
 .memory-counter-label,
@@ -3088,14 +3358,14 @@ body:has(#servicesView.view-active) .services-legal-button {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: var(--muted-text);
+    color: #fdba74;
     margin-bottom: 4px;
 }
 
 .memory-counter-value,
 .tictactoe-counter-value {
     font-size: clamp(1.05rem, 2.4vw, 1.55rem);
-    color: var(--primary-color);
+    color: #f8fafc;
 }
 
 .memory-face,
@@ -3115,8 +3385,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .tictactoe-face {
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.92), rgba(99, 102, 241, 0.82));
-    box-shadow: 0 18px 34px -24px rgba(249, 115, 22, 0.62);
+    display: none;
 }
 
 .memory-help,
@@ -3124,7 +3393,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 .battleship-help {
     margin: 0 0 10px;
     text-align: center;
-    color: var(--muted-text);
+    color: #e2e8f0;
     font-size: 0.84rem;
 }
 
@@ -3137,13 +3406,90 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .tictactoe-mode-button {
     min-width: 128px;
+    background: rgba(15, 23, 42, 0.62);
+    color: #e2e8f0;
+    border: 1px solid rgba(96, 165, 250, 0.22);
 }
 
 .tictactoe-mode-button.is-active {
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.92), rgba(99, 102, 241, 0.82));
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.96), rgba(59, 130, 246, 0.88));
     color: white;
     border-color: rgba(191, 219, 254, 0.22);
     box-shadow: 0 16px 28px -24px rgba(249, 115, 22, 0.56);
+}
+
+.tictactoe-table {
+    margin-top: 12px;
+}
+
+.tictactoe-table.is-menu-open > :not(.tictactoe-menu-overlay) {
+    filter: blur(7px) saturate(0.86);
+    pointer-events: none;
+    user-select: none;
+}
+
+.tictactoe-menu-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    border-radius: 28px;
+    background: rgba(15, 23, 42, 0.16);
+    opacity: 1;
+    transition: opacity 260ms ease, transform 260ms ease;
+}
+
+.tictactoe-menu-overlay.hidden {
+    display: none;
+}
+
+.tictactoe-menu-overlay.is-closing {
+    opacity: 0;
+    transform: scale(1.02);
+}
+
+.tictactoe-menu-card {
+    width: min(100%, 420px);
+    padding: 26px 24px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at 14% 12%, rgba(255, 243, 176, 0.14), transparent 20%),
+        radial-gradient(circle at 84% 18%, rgba(96, 165, 250, 0.18), transparent 24%),
+        radial-gradient(circle at 28% 74%, rgba(249, 115, 22, 0.12), transparent 22%),
+        linear-gradient(180deg, rgba(26, 35, 64, 0.98), rgba(12, 18, 36, 0.98));
+    box-shadow: 0 24px 48px -30px rgba(15, 23, 42, 0.94);
+    display: grid;
+    gap: 14px;
+    text-align: center;
+}
+
+.tictactoe-menu-eyebrow {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #fdba74;
+}
+
+.tictactoe-menu-title {
+    margin: 0;
+    font-size: 2rem;
+    color: #f8fafc;
+}
+
+.tictactoe-menu-text {
+    margin: 0;
+    color: #e2e8f0 !important;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.tictactoe-menu-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .battleship-topbar {
@@ -3481,9 +3827,9 @@ body:has(#servicesView.view-active) .services-legal-button {
     width: min(100%, 860px);
     overflow: hidden;
     background:
-        radial-gradient(circle at 16% 10%, rgba(255,255,255,0.2), transparent 22%),
-        radial-gradient(circle at 84% 18%, rgba(56, 189, 248, 0.24), transparent 24%),
-        linear-gradient(180deg, rgba(186, 230, 253, 0.98), rgba(125, 211, 252, 0.97));
+        radial-gradient(circle at 16% 10%, rgba(255,255,255,0.16), transparent 22%),
+        radial-gradient(circle at 84% 18%, rgba(184, 221, 244, 0.18), transparent 24%),
+        linear-gradient(180deg, rgba(184, 221, 244, 0.98), rgba(19, 95, 143, 0.97));
 }
 
 .chess-card::before {
@@ -3617,8 +3963,9 @@ body:has(#servicesView.view-active) .services-legal-button {
     padding: 26px 24px;
     border-radius: 28px;
     background:
-        radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 36%),
-        linear-gradient(180deg, rgba(186, 230, 253, 0.98), rgba(125, 211, 252, 0.97));
+        radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 36%),
+        radial-gradient(circle at 84% 18%, rgba(184, 221, 244, 0.18), transparent 24%),
+        linear-gradient(180deg, rgba(184, 221, 244, 0.98), rgba(19, 95, 143, 0.97));
     box-shadow: 0 24px 48px -30px rgba(15, 23, 42, 0.94);
     display: grid;
     gap: 14px;
@@ -5270,8 +5617,8 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .mentalmath-stage {
-    width: min(100%, 520px);
-    margin: 0 auto;
+    width: 100%;
+    margin: 12px 0 0;
 }
 
 .mentalmath-question-card .feedback {
@@ -5279,14 +5626,168 @@ body:has(#servicesView.view-active) .services-legal-button {
     text-align: center;
 }
 
+.mentalmath-card {
+    position: relative;
+    width: min(100%, 760px);
+    padding: 16px 0 0;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 14% 12%, rgba(186, 230, 253, 0.14), transparent 20%),
+        radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.24), transparent 24%),
+        radial-gradient(circle at 28% 68%, rgba(125, 211, 252, 0.08), transparent 20%),
+        linear-gradient(180deg, rgba(25, 55, 96, 0.98), rgba(11, 27, 55, 0.98));
+}
+
+.mentalmath-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 12% 14%, rgba(125, 211, 252, 0.2), transparent 18%),
+        radial-gradient(circle at 84% 18%, rgba(2, 132, 199, 0.14), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.08), transparent 40%);
+}
+
+.mentalmath-topbar,
+.mentalmath-help {
+    position: relative;
+    z-index: 1;
+    padding-inline: 16px;
+}
+
+.mentalmath-topbar {
+    grid-template-columns: repeat(2, minmax(150px, 180px));
+    justify-content: center;
+}
+
+.mentalmath-counter-block {
+    background: rgba(255,255,255,0.86);
+    box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.92);
+    border: 0;
+}
+
+.mentalmath-counter-label {
+    color: #0f766e;
+}
+
+.mentalmath-counter-value {
+    color: #111827;
+}
+
+.mentalmath-help {
+    margin: 0 0 10px;
+    text-align: center;
+    color: #e0f2fe !important;
+    font-weight: 600;
+    text-shadow: 0 1px 10px rgba(8, 47, 73, 0.36);
+}
+
+.mentalmath-table {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 620px);
+    margin: 12px auto 0;
+    overflow: hidden;
+    border-radius: 24px 24px 22px 22px;
+}
+
+.mentalmath-table.is-menu-open > :not(.mentalmath-menu-overlay) {
+    filter: blur(7px) saturate(0.86);
+    pointer-events: none;
+    user-select: none;
+}
+
+.mentalmath-menu-overlay {
+    position: absolute;
+    inset: 16px 0 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    border-radius: 24px 24px 22px 22px;
+    background: rgba(8, 47, 73, 0.18);
+    opacity: 1;
+    transition: opacity 260ms ease, transform 260ms ease;
+}
+
+.mentalmath-menu-overlay.is-entering {
+    animation: mentalmathMenuFadeIn 260ms ease;
+}
+
+.mentalmath-menu-overlay.hidden {
+    display: none;
+}
+
+.mentalmath-menu-overlay.is-closing {
+    opacity: 0;
+    transform: scale(1.02);
+}
+
+.mentalmath-menu-card {
+    width: min(100%, 420px);
+    padding: 26px 24px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at 14% 12%, rgba(186, 230, 253, 0.14), transparent 20%),
+        radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.24), transparent 24%),
+        radial-gradient(circle at 28% 68%, rgba(125, 211, 252, 0.08), transparent 20%),
+        linear-gradient(180deg, rgba(25, 55, 96, 0.98), rgba(11, 27, 55, 0.98));
+    box-shadow: 0 24px 48px -30px rgba(15, 23, 42, 0.94);
+    display: grid;
+    gap: 14px;
+    text-align: center;
+}
+
+.mentalmath-menu-eyebrow {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #a5f3fc;
+}
+
+.mentalmath-menu-title {
+    margin: 0;
+    font-size: 2rem;
+    color: #f8fafc;
+}
+
+.mentalmath-menu-text {
+    margin: 0;
+    color: #dbeafe !important;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.mentalmath-menu-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@keyframes mentalmathMenuFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .mentalmath-question-card {
-    padding: 24px;
-    border-radius: 24px;
+    padding: 28px 24px;
+    border-radius: 24px 24px 22px 22px;
     text-align: center;
     background:
-        radial-gradient(circle at top, rgba(56, 189, 248, 0.14), transparent 40%),
-        rgba(15, 23, 42, 0.58);
-    border: 1px solid rgba(37, 99, 235, 0.18);
+        radial-gradient(circle at top, rgba(186, 230, 253, 0.12), transparent 38%),
+        linear-gradient(180deg, rgba(20, 41, 72, 0.96), rgba(11, 25, 48, 0.94));
+    border: 0;
+    box-shadow:
+        0 20px 44px -30px rgba(8, 47, 73, 0.62),
+        inset 0 0 0 1px rgba(186, 230, 253, 0.18);
 }
 
 .mentalmath-label {
@@ -5294,24 +5795,87 @@ body:has(#servicesView.view-active) .services-legal-button {
     text-transform: uppercase;
     letter-spacing: 0.18em;
     font-size: 0.76rem;
-    color: var(--muted-text);
+    color: #a5f3fc;
 }
 
 .mentalmath-question {
     margin: 0 0 18px;
     font-size: clamp(2rem, 7vw, 3.4rem);
+    color: #f8fafc;
 }
 
 .mentalmath-form {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 1fr;
     gap: 12px;
 }
 
 .mentalmath-form input {
     min-height: 56px;
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    background: rgba(255,255,255,0.92);
+    color: #0f172a;
+    border: 1px solid rgba(125, 211, 252, 0.82);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+}
+
+.mentalmath-keypad {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    padding: 12px;
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 34%),
+        linear-gradient(180deg, rgba(186, 230, 253, 0.62), rgba(125, 211, 252, 0.52));
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.46),
+        0 16px 26px -24px rgba(8, 47, 73, 0.34);
+}
+
+.mentalmath-key {
+    min-height: 58px;
+    border-radius: 18px;
+    background: rgba(240, 249, 255, 0.92);
+    color: #0f172a;
+    border: 1px solid rgba(125, 211, 252, 0.78);
+    box-shadow: 0 12px 24px -22px rgba(8, 47, 73, 0.42);
+    font-size: 1.12rem;
+    font-weight: 800;
+}
+
+.mentalmath-key:hover {
+    background: rgba(224, 242, 254, 0.98);
+    color: #0f172a;
+    filter: none;
+}
+
+.mentalmath-key:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.mentalmath-key-action {
+    background: rgba(186, 230, 253, 0.94);
+}
+
+.mentalmath-key-clear {
+    grid-row: span 2;
+}
+
+.mentalmath-key-zero {
+    grid-column: span 3;
+}
+
+.mentalmath-submit-button {
+    min-height: 58px;
+    border-radius: 18px;
+    align-self: stretch;
+    background: linear-gradient(135deg, rgba(14, 116, 144, 0.96), rgba(2, 132, 199, 0.9));
+    box-shadow: 0 18px 30px -24px rgba(14, 116, 144, 0.62);
 }
 
 .candycrush-board {
@@ -6069,21 +6633,32 @@ body:has(#servicesView.view-active) .services-legal-button {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
-    padding: 10px;
+    padding: 14px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.18), transparent 14%),
+        radial-gradient(circle at 78% 22%, rgba(255, 255, 255, 0.1), transparent 12%),
+        linear-gradient(180deg, rgba(59, 130, 246, 0.16), rgba(249, 115, 22, 0.1)),
+        rgba(15, 23, 42, 0.42);
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        0 22px 40px -32px rgba(15, 23, 42, 0.86);
 }
 
 .tictactoe-cell {
     position: relative;
     border-radius: 22px;
     background:
-        linear-gradient(180deg, rgba(99, 102, 241, 0.18), rgba(59, 130, 246, 0.12)),
-        rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(148, 163, 184, 0.14);
+        radial-gradient(circle at 26% 22%, rgba(255,255,255,0.14), transparent 18%),
+        linear-gradient(180deg, rgba(99, 102, 241, 0.16), rgba(59, 130, 246, 0.08)),
+        rgba(15, 23, 42, 0.76);
+    border: 1px solid rgba(191, 219, 254, 0.12);
     display: grid;
     place-items: center;
     aspect-ratio: 1 / 1;
     padding: 0;
     overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
 }
 
 .tictactoe-cell span {
@@ -6566,6 +7141,7 @@ button:hover {
 .form-card,
 .manage-list-card {
     padding: 28px;
+    background: rgba(6, 10, 20, 0.98);
 }
 
 .hero {
@@ -6798,24 +7374,86 @@ button:hover {
 
 .legal-notice-card {
     width: min(760px, 100%);
-    max-height: min(80vh, 860px);
-    overflow-y: auto;
+    min-height: min(620px, calc(100vh - 40px));
+    max-height: calc(100vh - 40px);
+    padding: clamp(18px, 2.4vh, 28px);
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    gap: 10px;
 }
 
 .legal-notice-content {
     display: grid;
-    gap: 16px;
-    margin: 18px 0 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+    margin: 4px 0 0;
+    align-content: start;
 }
 
 .legal-notice-content p {
     margin: 0;
-    line-height: 1.6;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.42);
+    border: 1px solid rgba(99, 102, 241, 0.12);
+    line-height: 1.45;
+    font-size: clamp(0.83rem, 1.35vh, 0.96rem);
+ }
+
+.legal-notice-content p:first-child {
+    grid-column: 1 / -1;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.legal-notice-card .section-tag {
+    margin-bottom: 0;
+}
+
+.legal-notice-card h3 {
+    margin-bottom: 0;
+    font-size: clamp(1.45rem, 2.6vh, 1.8rem);
+}
+
+.legal-notice-card .form-actions {
+    margin-top: 2px;
+    justify-content: flex-end;
 }
 
 .legal-placeholder {
     color: #fcd34d;
     font-weight: 700;
+}
+
+@media (max-width: 720px), (max-height: 760px) {
+    .legal-notice-card {
+        width: min(680px, 100%);
+        min-height: auto;
+        max-height: calc(100vh - 24px);
+        padding: 18px;
+        gap: 8px;
+    }
+
+    .legal-notice-content {
+        gap: 10px 12px;
+    }
+
+    .legal-notice-content p {
+        padding: 10px 12px;
+        font-size: clamp(0.77rem, 1.18vh, 0.88rem);
+        line-height: 1.32;
+    }
+}
+
+@media (max-width: 640px) {
+    .legal-notice-content {
+        grid-template-columns: 1fr;
+    }
+
+    .legal-notice-content p:first-child {
+        grid-column: auto;
+    }
 }
 
 .empty-state {
@@ -9074,11 +9712,270 @@ button:hover {
     box-shadow: 0 10px 18px -14px rgba(15, 23, 42, 0.72);
     border: 2px solid rgba(255,255,255,0.26);
     pointer-events: none;
+    z-index: 3;
+}
+
+.baieberry-drop-line {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    width: 4px;
+    border-radius: 999px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.92) 10%,
+            rgba(255, 255, 255, 0.92) 90%,
+            rgba(255, 255, 255, 0) 100%
+        ),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.96) 0 8px,
+            rgba(255, 255, 255, 0.18) 8px 16px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.14) 0%,
+            rgba(255, 255, 255, 0.95) 50%,
+            rgba(255, 255, 255, 0.14) 100%
+        );
+    mask: linear-gradient(180deg, transparent 0, black 8%, black 92%, transparent 100%);
+    -webkit-mask: linear-gradient(180deg, transparent 0, black 8%, black 92%, transparent 100%);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        0 0 16px rgba(255, 255, 255, 0.18),
+        0 0 26px rgba(96, 165, 250, 0.12);
+    opacity: 0.92;
+    transition: opacity 240ms ease;
+    transform-origin: top center;
+    pointer-events: none;
     z-index: 2;
+}
+
+.baieberry-drop-line::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.8) 0 3px,
+        transparent 3px 16px
+    );
+    opacity: 0.7;
 }
 
 .baieberry-stage {
     transition: transform 110ms ease;
+}
+
+.baieberry-card {
+    position: relative;
+    width: min(100%, 760px);
+    padding: 16px 0 0;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 16% 14%, rgba(255, 255, 255, 0.16), transparent 20%),
+        radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.18), transparent 24%),
+        linear-gradient(180deg, rgba(147, 197, 253, 0.98) 0%, rgba(20, 184, 166, 0.96) 100%);
+}
+
+.baieberry-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 12% 14%, rgba(255, 255, 255, 0.16), transparent 18%),
+        radial-gradient(circle at 84% 18%, rgba(14, 165, 233, 0.16), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.1), transparent 40%);
+}
+
+.baieberry-card.games-panel {
+    overflow: hidden;
+}
+
+.baieberry-topbar,
+.baieberry-help,
+.baieberry-layout {
+    position: relative;
+    z-index: 1;
+    padding-inline: 16px;
+}
+
+.baieberry-topbar {
+    grid-template-columns: repeat(3, minmax(132px, 172px));
+    justify-content: center;
+}
+
+.baieberry-counter-block {
+    background: rgba(255,255,255,0.86);
+    box-shadow: inset 0 0 0 1px rgba(191, 219, 254, 0.92);
+    border: 0;
+}
+
+.baieberry-counter-label {
+    color: #1d4ed8;
+}
+
+.baieberry-counter-value {
+    color: #111827;
+}
+
+.baieberry-counter-block-preview {
+    gap: 4px;
+}
+
+.baieberry-next-preview {
+    --baieberry-preview-color: #60a5fa;
+    width: 36px;
+    height: 36px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.18) 24%, transparent 25%),
+        radial-gradient(circle at 50% 50%, var(--baieberry-preview-color), rgba(15,23,42,0.72) 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.32),
+        0 10px 18px -14px rgba(15, 23, 42, 0.72);
+}
+
+.baieberry-help {
+    color: #374151 !important;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.baieberry-layout {
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+.baieberry-table {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 444px);
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    overflow: hidden;
+    border-radius: 24px 24px 22px 22px;
+}
+
+.baieberry-table.is-menu-open > :not(.baieberry-menu-overlay) {
+    filter: blur(7px) saturate(0.86);
+    pointer-events: none;
+    user-select: none;
+}
+
+.baieberry-menu-overlay {
+    position: absolute;
+    inset: 16px 0 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    border-radius: 24px 24px 22px 22px;
+    background: rgba(30, 64, 175, 0.18);
+    opacity: 1;
+    transition: opacity 260ms ease, transform 260ms ease;
+}
+
+.baieberry-menu-overlay.is-entering {
+    animation: baieberryMenuFadeIn 260ms ease;
+}
+
+.baieberry-menu-overlay.hidden {
+    display: none;
+}
+
+.baieberry-menu-overlay.is-closing {
+    opacity: 0;
+    transform: scale(1.02);
+}
+
+.baieberry-menu-card {
+    width: min(100%, 420px);
+    padding: 26px 24px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at 16% 14%, rgba(255, 255, 255, 0.16), transparent 20%),
+        radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.18), transparent 24%),
+        linear-gradient(180deg, rgba(147, 197, 253, 0.98) 0%, rgba(20, 184, 166, 0.96) 100%);
+    box-shadow: 0 24px 48px -30px rgba(15, 23, 42, 0.94);
+    display: grid;
+    gap: 14px;
+    text-align: center;
+}
+
+.baieberry-menu-eyebrow {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #1d4ed8;
+}
+
+.baieberry-menu-title {
+    margin: 0;
+    font-size: 2rem;
+    color: #0f172a;
+}
+
+.baieberry-menu-text {
+    margin: 0;
+    color: #374151 !important;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.baieberry-menu-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@keyframes baieberryMenuFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.baieberry-stage {
+    width: 100%;
+    margin: 12px 0 0;
+}
+
+.baieberry-canvas {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    max-width: none;
+    margin: 0;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 24px 24px 22px 22px;
+    box-shadow:
+        0 20px 44px -30px rgba(30, 64, 175, 0.55),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 760px) {
+    .baieberry-table {
+        width: min(100%, 444px);
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 .game-home-art-airhockey::before,

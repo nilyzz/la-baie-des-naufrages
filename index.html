@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="/assets/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.css?v=2026-03-28-legal-1">
+    <link rel="stylesheet" href="style.css?v=2026-03-28-bird-1">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -117,6 +117,11 @@
     <main class="app-shell">
         <section id="loginView" class="view view-active">
             <div class="card login-card">
+                <div class="login-bird-scene" aria-hidden="true">
+                    <div class="login-bird-flight">
+                        <span class="login-bird"></span>
+                    </div>
+                </div>
                 <h1>La Baie des naufragés</h1>
                 <p class="eyebrow login-eyebrow">Embarquement</p>
 
@@ -733,7 +738,20 @@
                     </div>
 
                     <p class="game-2048-help">Fl&egrave;ches ou ZQSD pour faire glisser les tuiles. Fusionne jusqu'&agrave; 2048.</p>
-                    <div id="game2048Board" class="game-2048-board" aria-label="Plateau du 2048"></div>
+                    <div id="game2048Table" class="game-2048-table">
+                        <div id="game2048MenuOverlay" class="game-2048-menu-overlay">
+                            <div class="game-2048-menu-card">
+                                <span id="game2048MenuEyebrow" class="game-2048-menu-eyebrow">Baie d arcade</span>
+                                <h3 id="game2048MenuTitle" class="game-2048-menu-title">2048</h3>
+                                <p id="game2048MenuText" class="game-2048-menu-text">Fais glisser les tuiles pour fusionner les valeurs et atteindre 2048 sans bloquer la grille.</p>
+                                <div class="game-2048-menu-actions">
+                                    <button id="game2048MenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="game2048MenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="game2048Board" class="game-2048-board" aria-label="Plateau du 2048"></div>
+                    </div>
                 </div>
 
                 <div id="aimGame" class="card aim-card games-panel">
@@ -806,7 +824,20 @@
                     </div>
 
                     <p id="ticTacToeHelpText" class="tictactoe-help">Mode 1 joueur: aligne trois symboles contre l IA pirate.</p>
-                    <div id="ticTacToeBoard" class="tictactoe-board" aria-label="Plateau du Morpion"></div>
+                    <div id="ticTacToeTable" class="tictactoe-table">
+                        <div id="ticTacToeMenuOverlay" class="tictactoe-menu-overlay">
+                            <div class="tictactoe-menu-card">
+                                <span id="ticTacToeMenuEyebrow" class="tictactoe-menu-eyebrow">Baie strategique</span>
+                                <h3 id="ticTacToeMenuTitle" class="tictactoe-menu-title">Morpion</h3>
+                                <p id="ticTacToeMenuText" class="tictactoe-menu-text">Aligne trois symboles avant l equipage adverse pour prendre le pont.</p>
+                                <div class="tictactoe-menu-actions">
+                                    <button id="ticTacToeMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="ticTacToeMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="ticTacToeBoard" class="tictactoe-board" aria-label="Plateau du Morpion"></div>
+                    </div>
                 </div>
 
                 <div id="battleshipGame" class="card battleship-card games-panel">
@@ -1033,9 +1064,6 @@
                             <span class="mentalmath-counter-label">Score</span>
                             <strong id="mentalMathScoreDisplay" class="mentalmath-counter-value">0</strong>
                         </div>
-
-                        <button id="mentalMathRestartButton" type="button" class="mentalmath-face">Nouveau quiz</button>
-
                         <div class="mentalmath-counter-block">
                             <span class="mentalmath-counter-label">Temps</span>
                             <strong id="mentalMathRoundDisplay" class="mentalmath-counter-value">15.0s</strong>
@@ -1043,15 +1071,42 @@
                     </div>
 
                     <p id="mentalMathHelpText" class="mentalmath-help">Le chrono descend. Reponds juste et vite pour regagner un peu de temps et pousser ton score au plus haut.</p>
-                    <div class="mentalmath-stage">
-                        <div class="mentalmath-question-card">
-                            <p class="mentalmath-label">Question</p>
-                            <div id="mentalMathQuestion" class="mentalmath-question" aria-live="polite">12 + 8 = ?</div>
-                            <form id="mentalMathForm" class="mentalmath-form">
-                                <input id="mentalMathAnswerInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ta reponse" autocomplete="off">
-                                <button id="mentalMathSubmitButton" type="submit" class="primary-button">Valider</button>
-                            </form>
-                            <p id="mentalMathFeedback" class="feedback" aria-live="polite"></p>
+                    <div id="mentalMathTable" class="mentalmath-table">
+                        <div id="mentalMathMenuOverlay" class="mentalmath-menu-overlay">
+                            <div class="mentalmath-menu-card">
+                                <span id="mentalMathMenuEyebrow" class="mentalmath-menu-eyebrow">Baie d arcade</span>
+                                <h3 id="mentalMathMenuTitle" class="mentalmath-menu-title">Jeu Calcul</h3>
+                                <p id="mentalMathMenuText" class="mentalmath-menu-text">Prepare-toi a enchainer les calculs avant que le chrono ne te rattrape.</p>
+                                <div class="mentalmath-menu-actions">
+                                    <button id="mentalMathMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="mentalMathMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mentalmath-stage">
+                            <div class="mentalmath-question-card">
+                                <p class="mentalmath-label">Question</p>
+                                <div id="mentalMathQuestion" class="mentalmath-question" aria-live="polite">12 + 8 = ?</div>
+                                <form id="mentalMathForm" class="mentalmath-form">
+                                    <input id="mentalMathAnswerInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ta reponse" autocomplete="off" readonly>
+                                    <div class="mentalmath-keypad" aria-label="Pave numerique">
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="7">7</button>
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="8">8</button>
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="9">9</button>
+                                        <button type="button" class="secondary-button mentalmath-key mentalmath-key-action" data-mental-math-action="backspace">⌫</button>
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="4">4</button>
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="5">5</button>
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="6">6</button>
+                                        <button type="button" class="secondary-button mentalmath-key mentalmath-key-action mentalmath-key-clear" data-mental-math-action="clear">C</button>
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="1">1</button>
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="2">2</button>
+                                        <button type="button" class="secondary-button mentalmath-key" data-mental-math-key="3">3</button>
+                                        <button type="button" class="secondary-button mentalmath-key mentalmath-key-zero" data-mental-math-key="0">0</button>
+                                        <button id="mentalMathSubmitButton" type="submit" class="primary-button mentalmath-key mentalmath-submit-button">Valider</button>
+                                    </div>
+                                </form>
+                                <p id="mentalMathFeedback" class="feedback" aria-live="polite"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1260,26 +1315,35 @@
                             <span class="baieberry-counter-label">Score</span>
                             <strong id="baieBerryScoreDisplay" class="baieberry-counter-value">0</strong>
                         </div>
-                        <button id="baieBerryStartButton" type="button" class="baieberry-face">Nouvelle recolte</button>
                         <div class="baieberry-counter-block">
+                            <span class="baieberry-counter-label">Record</span>
+                            <strong id="baieBerryBestDisplay" class="baieberry-counter-value">0</strong>
+                        </div>
+                        <div class="baieberry-counter-block baieberry-counter-block-preview">
                             <span class="baieberry-counter-label">Suivant</span>
-                            <strong id="baieBerryNextDisplay" class="baieberry-counter-value">Myrtille</strong>
+                            <div id="baieBerryNextDisplay" class="baieberry-next-preview" aria-label="Fruit suivant"></div>
                         </div>
                     </div>
                     <p id="baieBerryHelpText" class="baieberry-help">Clique dans la colonne pour laisser tomber un fruit. Deux fruits identiques fusionnent en plus gros.</p>
-                    <div class="baieberry-meta">
-                        <div class="baieberry-meta-card">
-                            <span class="baieberry-meta-label">Apres</span>
-                            <strong id="baieBerryAfterNextDisplay" class="baieberry-meta-value">Framboise</strong>
+                    <div class="baieberry-layout">
+                        <div id="baieBerryTable" class="baieberry-table">
+                            <div id="baieBerryMenuOverlay" class="baieberry-menu-overlay">
+                                <div class="baieberry-menu-card">
+                                    <span id="baieBerryMenuEyebrow" class="baieberry-menu-eyebrow">Baie d arcade</span>
+                                    <h3 id="baieBerryMenuTitle" class="baieberry-menu-title">BaieBerry</h3>
+                                    <p id="baieBerryMenuText" class="baieberry-menu-text">Prepare ta recolte avant de laisser tomber les fruits dans le panier.</p>
+                                    <div class="baieberry-menu-actions">
+                                        <button id="baieBerryMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                        <button id="baieBerryMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="baieberry-stage">
+                                <div id="baieBerryDropLine" class="baieberry-drop-line" aria-hidden="true"></div>
+                                <div id="baieBerryDropGuide" class="baieberry-drop-guide" aria-hidden="true"></div>
+                                <canvas id="baieBerryCanvas" class="baieberry-canvas" width="360" height="460"></canvas>
+                            </div>
                         </div>
-                        <div class="baieberry-meta-card">
-                            <span class="baieberry-meta-label">Objectif</span>
-                            <strong id="baieBerryObjectiveDisplay" class="baieberry-meta-value">Atteins 1500 points</strong>
-                        </div>
-                    </div>
-                    <div class="baieberry-stage">
-                        <div id="baieBerryDropGuide" class="baieberry-drop-guide" aria-hidden="true"></div>
-                        <canvas id="baieBerryCanvas" class="baieberry-canvas" width="360" height="460"></canvas>
                     </div>
                 </div>
 

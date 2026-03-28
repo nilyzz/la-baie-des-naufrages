@@ -180,9 +180,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const sudokuRestartButton = document.getElementById('sudokuRestartButton');
     const sudokuHelpText = document.getElementById('sudokuHelpText');
     const game2048Board = document.getElementById('game2048Board');
+    const game2048Table = document.getElementById('game2048Table');
     const game2048ScoreDisplay = document.getElementById('game2048ScoreDisplay');
     const game2048BestScoreDisplay = document.getElementById('game2048BestScoreDisplay');
     const game2048RestartButton = document.getElementById('game2048RestartButton');
+    const game2048MenuOverlay = document.getElementById('game2048MenuOverlay');
+    const game2048MenuEyebrow = document.getElementById('game2048MenuEyebrow');
+    const game2048MenuTitle = document.getElementById('game2048MenuTitle');
+    const game2048MenuText = document.getElementById('game2048MenuText');
+    const game2048MenuActionButton = document.getElementById('game2048MenuActionButton');
+    const game2048MenuRulesButton = document.getElementById('game2048MenuRulesButton');
     const aimBoard = document.getElementById('aimBoard');
     const aimScoreDisplay = document.getElementById('aimScoreDisplay');
     const aimTimerDisplay = document.getElementById('aimTimerDisplay');
@@ -194,11 +201,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const memoryMovesDisplay = document.getElementById('memoryMovesDisplay');
     const memoryRestartButton = document.getElementById('memoryRestartButton');
     const ticTacToeBoard = document.getElementById('ticTacToeBoard');
+    const ticTacToeTable = document.getElementById('ticTacToeTable');
     const ticTacToeTurnDisplay = document.getElementById('ticTacToeTurnDisplay');
     const ticTacToeScoreDisplay = document.getElementById('ticTacToeScoreDisplay');
     const ticTacToeHelpText = document.getElementById('ticTacToeHelpText');
     const ticTacToeRestartButton = document.getElementById('ticTacToeRestartButton');
     const ticTacToeModeButtons = document.querySelectorAll('[data-tictactoe-mode]');
+    const ticTacToeMenuOverlay = document.getElementById('ticTacToeMenuOverlay');
+    const ticTacToeMenuEyebrow = document.getElementById('ticTacToeMenuEyebrow');
+    const ticTacToeMenuTitle = document.getElementById('ticTacToeMenuTitle');
+    const ticTacToeMenuText = document.getElementById('ticTacToeMenuText');
+    const ticTacToeMenuActionButton = document.getElementById('ticTacToeMenuActionButton');
+    const ticTacToeMenuRulesButton = document.getElementById('ticTacToeMenuRulesButton');
     const battleshipPlayerBoard = document.getElementById('battleshipPlayerBoard');
     const battleshipEnemyBoard = document.getElementById('battleshipEnemyBoard');
     const battleshipPlayerShipsDisplay = document.getElementById('battleshipPlayerShipsDisplay');
@@ -269,11 +283,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const mentalMathScoreDisplay = document.getElementById('mentalMathScoreDisplay');
     const mentalMathRoundDisplay = document.getElementById('mentalMathRoundDisplay');
     const mentalMathHelpText = document.getElementById('mentalMathHelpText');
-    const mentalMathRestartButton = document.getElementById('mentalMathRestartButton');
+    const mentalMathTable = document.getElementById('mentalMathTable');
+    const mentalMathMenuOverlay = document.getElementById('mentalMathMenuOverlay');
+    const mentalMathMenuEyebrow = document.getElementById('mentalMathMenuEyebrow');
+    const mentalMathMenuTitle = document.getElementById('mentalMathMenuTitle');
+    const mentalMathMenuText = document.getElementById('mentalMathMenuText');
+    const mentalMathMenuActionButton = document.getElementById('mentalMathMenuActionButton');
+    const mentalMathMenuRulesButton = document.getElementById('mentalMathMenuRulesButton');
     const mentalMathQuestion = document.getElementById('mentalMathQuestion');
     const mentalMathForm = document.getElementById('mentalMathForm');
     const mentalMathAnswerInput = document.getElementById('mentalMathAnswerInput');
     const mentalMathSubmitButton = document.getElementById('mentalMathSubmitButton');
+    const mentalMathKeypadButtons = document.querySelectorAll('[data-mental-math-key], [data-mental-math-action]');
     const mentalMathFeedback = document.getElementById('mentalMathFeedback');
     const candyCrushGame = document.getElementById('candyCrushGame');
     const candyCrushBoard = document.getElementById('candyCrushBoard');
@@ -342,14 +363,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const baieBerryGame = document.getElementById('baieBerryGame');
     const baieBerryCanvas = document.getElementById('baieBerryCanvas');
     const baieBerryContext = baieBerryCanvas?.getContext('2d');
+    const baieBerryTable = document.getElementById('baieBerryTable');
     const baieBerryStage = baieBerryGame?.querySelector('.baieberry-stage');
+    const baieBerryDropLine = document.getElementById('baieBerryDropLine');
     const baieBerryDropGuide = document.getElementById('baieBerryDropGuide');
     const baieBerryScoreDisplay = document.getElementById('baieBerryScoreDisplay');
+    const baieBerryBestDisplay = document.getElementById('baieBerryBestDisplay');
     const baieBerryNextDisplay = document.getElementById('baieBerryNextDisplay');
-    const baieBerryAfterNextDisplay = document.getElementById('baieBerryAfterNextDisplay');
-    const baieBerryObjectiveDisplay = document.getElementById('baieBerryObjectiveDisplay');
+    const baieBerryObjectiveDisplay = { textContent: '' };
     const baieBerryHelpText = document.getElementById('baieBerryHelpText');
-    const baieBerryStartButton = document.getElementById('baieBerryStartButton');
+    const baieBerryMenuOverlay = document.getElementById('baieBerryMenuOverlay');
+    const baieBerryMenuEyebrow = document.getElementById('baieBerryMenuEyebrow');
+    const baieBerryMenuTitle = document.getElementById('baieBerryMenuTitle');
+    const baieBerryMenuText = document.getElementById('baieBerryMenuText');
+    const baieBerryMenuActionButton = document.getElementById('baieBerryMenuActionButton');
+    const baieBerryMenuRulesButton = document.getElementById('baieBerryMenuRulesButton');
     const breakoutGame = document.getElementById('breakoutGame');
     const breakoutCanvas = document.getElementById('breakoutCanvas');
     const breakoutContext = breakoutCanvas?.getContext('2d');
@@ -472,8 +500,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const BAIE_BERRY_BEST_KEY = 'baie-des-naufrages-baieberry-best';
     const BAIE_BERRY_DANGER_LINE_Y = 74;
     const BAIE_BERRY_DANGER_DURATION_MS = 1600;
+    const BAIE_BERRY_DANGER_GRACE_MS = 700;
     const BAIE_BERRY_COMBO_WINDOW_MS = 1400;
     const BAIE_BERRY_SHAKE_DECAY = 0.9;
+    const BAIE_BERRY_DROP_COOLDOWN_MS = 500;
     const BREAKOUT_BEST_KEY = 'baie-des-naufrages-breakout-best';
     const BREAKOUT_BALL_SPEED = 320;
     const BREAKOUT_MAX_STEP_DISTANCE = 4;
@@ -729,6 +759,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongMenuClosing = false;
     let pongMenuEntering = false;
     let pongMenuResult = null;
+    let pongBoardMetrics = null;
+    let pongRenderMetrics = null;
+    const PONG_SERVE_SPEED_X = 388;
+    const PONG_SERVE_SPEED_Y = 228;
+    const PONG_FIRST_RETURN_SPEED_X = 620;
+    const PONG_FIRST_RETURN_Y_MULTIPLIER = 1.35;
+    const PONG_RALLY_SPEED_INCREMENT = 20;
+    const PONG_MAX_STEP_SECONDS = 1 / 120;
     let sudokuPuzzle = null;
     let sudokuBoardState = [];
     let sudokuSelectedCell = null;
@@ -751,6 +789,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let game2048Animating = false;
     let game2048AnimationTimeout = null;
     let game2048QueuedMove = null;
+    let game2048MenuVisible = true;
+    let game2048MenuShowingRules = false;
+    let game2048MenuClosing = false;
     let aimTargets = [];
     let aimScore = 0;
     let aimBestScore = Number(window.localStorage.getItem(AIM_BEST_KEY)) || 0;
@@ -775,6 +816,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let ticTacToeFinished = false;
     let ticTacToeMode = 'solo';
     let ticTacToeAiTimeout = null;
+    let ticTacToeMenuVisible = true;
+    let ticTacToeMenuShowingRules = false;
+    let ticTacToeMenuClosing = false;
+    let ticTacToeMenuResult = null;
     let battleshipPlayerGrid = [];
     let battleshipEnemyGrid = [];
     let battleshipPlayerRemainingShips = 0;
@@ -883,6 +928,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let mentalMathTimerInterval = null;
     let mentalMathRoundRunning = false;
     let mentalMathQuestionStartedAt = 0;
+    let mentalMathMenuVisible = true;
+    let mentalMathMenuShowingRules = false;
+    let mentalMathMenuClosing = false;
+    let mentalMathMenuEntering = false;
+    let mentalMathMenuResult = false;
     let candyCrushGrid = [];
     let candyCrushSelectedCell = null;
     let candyCrushScore = 0;
@@ -951,6 +1001,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let baieBerryLastFrame = 0;
     let baieBerryBestScore = Number(window.localStorage.getItem(BAIE_BERRY_BEST_KEY)) || 0;
     let baieBerryNextFruitId = 1;
+    let baieBerryLastPointerX = null;
+    let baieBerryDropLineTimer = null;
+    let baieBerryLastDropAt = 0;
+    let baieBerryMenuVisible = true;
+    let baieBerryMenuShowingRules = false;
+    let baieBerryMenuClosing = false;
+    let baieBerryMenuEntering = false;
+    let baieBerryMenuResult = false;
     let breakoutState = null;
     let breakoutAnimationFrame = null;
     let breakoutLastFrame = 0;
@@ -3494,6 +3552,83 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     }
 
+    function getTicTacToeRulesText() {
+        return 'Placez chacun votre symbole a tour de role. Le premier a aligner trois cases gagne la manche. En solo, tu affrontes l IA pirate.';
+    }
+
+    function renderTicTacToeMenu() {
+        if (!ticTacToeMenuOverlay || !ticTacToeTable) {
+            return;
+        }
+
+        ticTacToeMenuOverlay.classList.toggle('hidden', !ticTacToeMenuVisible);
+        ticTacToeMenuOverlay.classList.toggle('is-closing', ticTacToeMenuClosing);
+        ticTacToeTable.classList.toggle('is-menu-open', ticTacToeMenuVisible);
+
+        if (!ticTacToeMenuVisible) {
+            return;
+        }
+
+        const isOutcome = Boolean(ticTacToeMenuResult);
+
+        if (ticTacToeMenuEyebrow) {
+            ticTacToeMenuEyebrow.textContent = ticTacToeMenuShowingRules
+                ? 'Regles'
+                : (isOutcome ? 'Fin de manche' : 'Baie strategique');
+        }
+
+        if (ticTacToeMenuTitle) {
+            ticTacToeMenuTitle.textContent = ticTacToeMenuShowingRules
+                ? 'Rappel rapide'
+                : (ticTacToeMenuResult === 'win'
+                    ? 'Victoire'
+                    : (ticTacToeMenuResult === 'loss'
+                        ? 'Defaite'
+                        : (ticTacToeMenuResult === 'draw' ? 'Match nul' : 'Morpion')));
+        }
+
+        if (ticTacToeMenuText) {
+            ticTacToeMenuText.textContent = ticTacToeMenuShowingRules
+                ? getTicTacToeRulesText()
+                : (ticTacToeMenuResult === 'win'
+                    ? (ticTacToeMode === 'duo' ? 'Le joueur 1 prend le pont. Relancez une nouvelle manche.' : 'Ton equipage tient le pont. Relance une nouvelle manche.')
+                    : (ticTacToeMenuResult === 'loss'
+                        ? (ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont. Relancez une nouvelle manche.' : 'L IA pirate prend le pont. Relance une nouvelle manche.')
+                        : (ticTacToeMenuResult === 'draw'
+                            ? 'Personne ne prend l avantage. Relance une nouvelle manche.'
+                            : 'Aligne trois symboles avant l equipage adverse pour prendre le pont.')));
+        }
+
+        if (ticTacToeMenuActionButton) {
+            ticTacToeMenuActionButton.textContent = ticTacToeMenuShowingRules
+                ? 'Retour'
+                : (isOutcome ? 'Relancer la partie' : 'Lancer la partie');
+        }
+
+        if (ticTacToeMenuRulesButton) {
+            ticTacToeMenuRulesButton.textContent = 'Regles';
+            ticTacToeMenuRulesButton.hidden = ticTacToeMenuShowingRules;
+        }
+    }
+
+    function closeTicTacToeMenu() {
+        ticTacToeMenuClosing = true;
+        renderTicTacToeMenu();
+        window.setTimeout(() => {
+            ticTacToeMenuClosing = false;
+            ticTacToeMenuVisible = false;
+            ticTacToeMenuShowingRules = false;
+            renderTicTacToeMenu();
+        }, 220);
+    }
+
+    function showTicTacToeMenu() {
+        ticTacToeMenuVisible = true;
+        ticTacToeMenuShowingRules = false;
+        ticTacToeMenuClosing = false;
+        renderTicTacToeMenu();
+    }
+
     function getTicTacToeWinner() {
         const lines = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -3598,7 +3733,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!ticTacToeFinished) {
             ticTacToeLastFinishedStateKey = '';
-            closeGameOverModal();
             return;
         }
 
@@ -3614,16 +3748,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (multiplayerActiveRoom.gameState.winner === 'draw') {
-            openGameOverModal('Match nul', 'La manche en ligne se termine sans vainqueur.');
-            return;
+            ticTacToeMenuResult = 'draw';
+        } else if (multiplayerActiveRoom.gameState.winner === getMultiplayerTicTacToeRole()) {
+            ticTacToeMenuResult = 'win';
+        } else {
+            ticTacToeMenuResult = 'loss';
         }
 
-        if (multiplayerActiveRoom.gameState.winner === getMultiplayerTicTacToeRole()) {
-            openGameOverModal('Victoire', 'Tu remportes cette manche de morpion en ligne.');
-            return;
-        }
-
-        openGameOverModal('C est perdu', 'L adversaire remporte cette manche de morpion.');
+        showTicTacToeMenu();
     }
 
     function initializeTicTacToe() {
@@ -3737,6 +3869,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function initializeTicTacToe() {
         if (isMultiplayerTicTacToeActive()) {
             closeGameOverModal();
+            ticTacToeMenuVisible = false;
+            ticTacToeMenuShowingRules = false;
+            ticTacToeMenuClosing = false;
+            renderTicTacToeMenu();
             syncMultiplayerTicTacToeState();
             return;
         }
@@ -3750,8 +3886,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ticTacToeBoardState = Array(9).fill('');
         ticTacToeCurrentPlayer = 'anchor';
         ticTacToeFinished = false;
+        ticTacToeMenuResult = null;
         updateTicTacToeHud();
         renderTicTacToeBoard();
+        showTicTacToeMenu();
     }
 
     function finishTicTacToeRound(winner) {
@@ -3760,18 +3898,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (winner === 'anchor') {
             ticTacToeScores.anchor += 1;
             ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 1 tient le pont.' : 'Victoire. Ton equipage tient le pont.';
-            openGameOverModal('Victoire', ticTacToeMode === 'duo' ? 'Le joueur 1 remporte la manche de morpion.' : 'Tu as battu l IA pirate au morpion.');
+            ticTacToeMenuResult = 'win';
         } else if (winner === 'skull') {
             ticTacToeScores.skull += 1;
             ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont.' : 'Defaite. L IA pirate prend le pont.';
-            openGameOverModal(ticTacToeMode === 'duo' ? 'Joueur 2 gagne' : 'C est perdu', ticTacToeMode === 'duo' ? 'Le joueur 2 remporte le duel de morpion.' : 'L IA pirate remporte le duel.');
+            ticTacToeMenuResult = 'loss';
         } else {
             ticTacToeHelpText.textContent = 'Match nul. Personne ne prend l avantage.';
-            openGameOverModal('Match nul', 'La manche se termine sans vainqueur.');
+            ticTacToeMenuResult = 'draw';
         }
 
         updateTicTacToeHud();
         renderTicTacToeBoard();
+        showTicTacToeMenu();
     }
 
     function handleTicTacToeMove(index, player = 'anchor') {
@@ -6640,10 +6779,11 @@ document.addEventListener('DOMContentLoaded', () => {
             aiSpeed: pongMode === 'duo' ? 380 : 312,
             ballX: (boardWidth - ballSize) / 2,
             ballY: (boardHeight - ballSize) / 2,
-            ballVelocityX: 388 * serveDirection,
-            ballVelocityY: 228 * verticalDirection,
+            ballVelocityX: PONG_SERVE_SPEED_X * serveDirection,
+            ballVelocityY: PONG_SERVE_SPEED_Y * verticalDirection,
             countdownActive: true,
-            aiDriftTimer: 0
+            aiDriftTimer: 0,
+            serveBoostPending: true
         };
     }
 
@@ -6818,23 +6958,46 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const renderWidth = pongBoard.clientWidth || activePongState.boardWidth;
-        const renderHeight = pongBoard.clientHeight || activePongState.boardHeight;
-        const scaleX = renderWidth / activePongState.boardWidth;
-        const scaleY = renderHeight / activePongState.boardHeight;
+        if (!pongBoardMetrics
+            || pongBoardMetrics.boardWidth !== activePongState.boardWidth
+            || pongBoardMetrics.boardHeight !== activePongState.boardHeight) {
+            const renderWidth = pongBoard.clientWidth || activePongState.boardWidth;
+            const renderHeight = pongBoard.clientHeight || activePongState.boardHeight;
+            pongBoardMetrics = {
+                boardWidth: activePongState.boardWidth,
+                boardHeight: activePongState.boardHeight,
+                scaleX: renderWidth / activePongState.boardWidth,
+                scaleY: renderHeight / activePongState.boardHeight
+            };
+        }
+
+        const { scaleX, scaleY } = pongBoardMetrics;
         const leftX = activePongState.paddleOffset * scaleX;
         const rightX = (activePongState.boardWidth - activePongState.paddleOffset - activePongState.paddleWidth) * scaleX;
+        const paddleWidth = `${activePongState.paddleWidth * scaleX}px`;
+        const paddleHeight = `${activePongState.paddleHeight * scaleY}px`;
+        const ballSize = `${activePongState.ballSize * scaleX}px`;
 
-        pongPlayerPaddle.style.width = `${activePongState.paddleWidth * scaleX}px`;
-        pongPlayerPaddle.style.height = `${activePongState.paddleHeight * scaleY}px`;
-        pongAiPaddle.style.width = `${activePongState.paddleWidth * scaleX}px`;
-        pongAiPaddle.style.height = `${activePongState.paddleHeight * scaleY}px`;
-        pongBall.style.width = `${activePongState.ballSize * scaleX}px`;
-        pongBall.style.height = `${activePongState.ballSize * scaleY}px`;
+        if (!pongRenderMetrics
+            || pongRenderMetrics.paddleWidth !== paddleWidth
+            || pongRenderMetrics.paddleHeight !== paddleHeight
+            || pongRenderMetrics.ballSize !== ballSize) {
+            pongPlayerPaddle.style.width = paddleWidth;
+            pongPlayerPaddle.style.height = paddleHeight;
+            pongAiPaddle.style.width = paddleWidth;
+            pongAiPaddle.style.height = paddleHeight;
+            pongBall.style.width = ballSize;
+            pongBall.style.height = ballSize;
+            pongRenderMetrics = {
+                paddleWidth,
+                paddleHeight,
+                ballSize
+            };
+        }
 
-        pongPlayerPaddle.style.transform = `translate(${leftX}px, ${activePongState.playerY * scaleY}px)`;
-        pongAiPaddle.style.transform = `translate(${rightX}px, ${activePongState.aiY * scaleY}px)`;
-        pongBall.style.transform = `translate(${activePongState.ballX * scaleX}px, ${activePongState.ballY * scaleY}px)`;
+        pongPlayerPaddle.style.transform = `translate3d(${leftX.toFixed(2)}px, ${(activePongState.playerY * scaleY).toFixed(2)}px, 0)`;
+        pongAiPaddle.style.transform = `translate3d(${rightX.toFixed(2)}px, ${(activePongState.aiY * scaleY).toFixed(2)}px, 0)`;
+        pongBall.style.transform = `translate3d(${(activePongState.ballX * scaleX).toFixed(2)}px, ${(activePongState.ballY * scaleY).toFixed(2)}px, 0)`;
     }
 
     function getPongBounceVelocityY(impact) {
@@ -6846,6 +7009,111 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return nextVelocityY;
+    }
+
+    function getPongReturnVelocityX(currentVelocityX, serveBoostPending) {
+        const nextSpeedX = serveBoostPending
+            ? Math.max(Math.abs(currentVelocityX) + PONG_RALLY_SPEED_INCREMENT, PONG_FIRST_RETURN_SPEED_X)
+            : (Math.abs(currentVelocityX) + PONG_RALLY_SPEED_INCREMENT);
+
+        return Math.sign(currentVelocityX || 1) * nextSpeedX;
+    }
+
+    function getPongReturnVelocityY(impact, serveBoostPending) {
+        const nextVelocityY = getPongBounceVelocityY(impact);
+        return serveBoostPending ? (nextVelocityY * PONG_FIRST_RETURN_Y_MULTIPLIER) : nextVelocityY;
+    }
+
+    function updatePongStep(delta) {
+        const leftDirection = (pongKeys.has('z') || pongKeys.has('Z') || (pongMode === 'solo' && pongKeys.has('ArrowUp')) ? -1 : 0)
+            + (pongKeys.has('s') || pongKeys.has('S') || (pongMode === 'solo' && pongKeys.has('ArrowDown')) ? 1 : 0);
+
+        pongState.playerY += leftDirection * pongState.playerSpeed * delta;
+        pongState.playerY = Math.max(0, Math.min(pongState.playerY, pongState.boardHeight - pongState.paddleHeight));
+
+        if (pongMode === 'duo') {
+            const rightDirection = (pongKeys.has('ArrowUp') ? -1 : 0) + (pongKeys.has('ArrowDown') ? 1 : 0);
+            pongState.aiY += rightDirection * pongState.playerSpeed * delta;
+        } else {
+            const ballCenter = pongState.ballY + (pongState.ballSize / 2);
+            const approachingAi = pongState.ballVelocityX > 0;
+            const anticipationTime = approachingAi ? 0.085 : 0.03;
+            const anticipatedCenter = ballCenter + (pongState.ballVelocityY * anticipationTime);
+            const desiredAiY = approachingAi
+                ? Math.max(
+                    0,
+                    Math.min(
+                        anticipatedCenter - (pongState.paddleHeight / 2),
+                        pongState.boardHeight - pongState.paddleHeight
+                    )
+                )
+                : ((pongState.boardHeight - pongState.paddleHeight) / 2);
+            pongState.aiTargetY += (desiredAiY - pongState.aiTargetY) * Math.min(1, delta * (approachingAi ? 7.5 : 4.5));
+            const targetDelta = pongState.aiTargetY - pongState.aiY;
+            const maxStep = pongState.aiSpeed * delta * (approachingAi ? 1 : 0.72);
+            pongState.aiY += Math.max(-maxStep, Math.min(maxStep, targetDelta));
+        }
+        pongState.aiY = Math.max(0, Math.min(pongState.aiY, pongState.boardHeight - pongState.paddleHeight));
+
+        pongState.ballX += pongState.ballVelocityX * delta;
+        pongState.ballY += pongState.ballVelocityY * delta;
+
+        if (pongState.ballY < 0) {
+            pongState.ballY = Math.abs(pongState.ballY);
+            pongState.ballVelocityY = Math.abs(pongState.ballVelocityY);
+        }
+
+        const maxBallY = pongState.boardHeight - pongState.ballSize;
+
+        if (pongState.ballY > maxBallY) {
+            pongState.ballY = maxBallY - (pongState.ballY - maxBallY);
+            pongState.ballVelocityY = -Math.abs(pongState.ballVelocityY);
+        }
+
+        const playerPaddleX = pongState.paddleOffset;
+        const aiPaddleX = pongState.boardWidth - pongState.paddleOffset - pongState.paddleWidth;
+
+        const hitsPlayer = pongState.ballX <= playerPaddleX + pongState.paddleWidth
+            && pongState.ballX + pongState.ballSize >= playerPaddleX
+            && pongState.ballY + pongState.ballSize >= pongState.playerY
+            && pongState.ballY <= pongState.playerY + pongState.paddleHeight
+            && pongState.ballVelocityX < 0;
+
+        if (hitsPlayer) {
+            const impact = ((pongState.ballY + (pongState.ballSize / 2)) - (pongState.playerY + (pongState.paddleHeight / 2))) / (pongState.paddleHeight / 2);
+            const serveBoostPending = pongState.serveBoostPending;
+            pongState.ballX = playerPaddleX + pongState.paddleWidth;
+            pongState.ballVelocityX = Math.abs(getPongReturnVelocityX(pongState.ballVelocityX, serveBoostPending));
+            pongState.ballVelocityY = getPongReturnVelocityY(impact, serveBoostPending);
+            pongState.serveBoostPending = false;
+        }
+
+        const hitsAi = pongState.ballX + pongState.ballSize >= aiPaddleX
+            && pongState.ballX <= aiPaddleX + pongState.paddleWidth
+            && pongState.ballY + pongState.ballSize >= pongState.aiY
+            && pongState.ballY <= pongState.aiY + pongState.paddleHeight
+            && pongState.ballVelocityX > 0;
+
+        if (hitsAi) {
+            const impact = ((pongState.ballY + (pongState.ballSize / 2)) - (pongState.aiY + (pongState.paddleHeight / 2))) / (pongState.paddleHeight / 2);
+            const serveBoostPending = pongState.serveBoostPending;
+            pongState.ballX = aiPaddleX - pongState.ballSize;
+            pongState.ballVelocityX = -Math.abs(getPongReturnVelocityX(pongState.ballVelocityX, serveBoostPending));
+            pongState.ballVelocityY = getPongReturnVelocityY(impact, serveBoostPending);
+            pongState.serveBoostPending = false;
+        }
+
+        if (pongState.ballX + pongState.ballSize < 0) {
+            scorePongPoint(false);
+            return true;
+        }
+
+        if (pongState.ballX > pongState.boardWidth) {
+            scorePongPoint(true);
+            return true;
+        }
+
+        return false;
     }
 
     function resetPongRound() {
@@ -6876,6 +7144,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pongPaused = false;
         pongLastFrame = 0;
         pongRenderLastFrame = 0;
+        pongBoardMetrics = null;
+        pongRenderMetrics = null;
         pongDisplayState = null;
         pongLocalPredictedPaddleY = null;
         pongLastNetworkSyncAt = 0;
@@ -6963,84 +7233,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const leftDirection = (pongKeys.has('z') || pongKeys.has('Z') || (pongMode === 'solo' && pongKeys.has('ArrowUp')) ? -1 : 0)
-            + (pongKeys.has('s') || pongKeys.has('S') || (pongMode === 'solo' && pongKeys.has('ArrowDown')) ? 1 : 0);
+        let remainingDelta = delta;
 
-        pongState.playerY += leftDirection * pongState.playerSpeed * delta;
-        pongState.playerY = Math.max(0, Math.min(pongState.playerY, pongState.boardHeight - pongState.paddleHeight));
+        while (remainingDelta > 0 && pongRunning && pongState && !pongState.countdownActive) {
+            const stepDelta = Math.min(remainingDelta, PONG_MAX_STEP_SECONDS);
+            const pointScored = updatePongStep(stepDelta);
+            remainingDelta -= stepDelta;
 
-        if (pongMode === 'duo') {
-            const rightDirection = (pongKeys.has('ArrowUp') ? -1 : 0) + (pongKeys.has('ArrowDown') ? 1 : 0);
-            pongState.aiY += rightDirection * pongState.playerSpeed * delta;
-        } else {
-            const ballCenter = pongState.ballY + (pongState.ballSize / 2);
-            const approachingAi = pongState.ballVelocityX > 0;
-            const anticipationTime = approachingAi ? 0.085 : 0.03;
-            const anticipatedCenter = ballCenter + (pongState.ballVelocityY * anticipationTime);
-            const desiredAiY = approachingAi
-                ? Math.max(
-                    0,
-                    Math.min(
-                        anticipatedCenter - (pongState.paddleHeight / 2),
-                        pongState.boardHeight - pongState.paddleHeight
-                    )
-                )
-                : ((pongState.boardHeight - pongState.paddleHeight) / 2);
-            pongState.aiTargetY += (desiredAiY - pongState.aiTargetY) * Math.min(1, delta * (approachingAi ? 7.5 : 4.5));
-            const targetDelta = pongState.aiTargetY - pongState.aiY;
-            const maxStep = pongState.aiSpeed * delta * (approachingAi ? 1 : 0.72);
-            pongState.aiY += Math.max(-maxStep, Math.min(maxStep, targetDelta));
-        }
-        pongState.aiY = Math.max(0, Math.min(pongState.aiY, pongState.boardHeight - pongState.paddleHeight));
-
-        pongState.ballX += pongState.ballVelocityX * delta;
-        pongState.ballY += pongState.ballVelocityY * delta;
-
-        if (pongState.ballY < 0) {
-            pongState.ballY = Math.abs(pongState.ballY);
-            pongState.ballVelocityY = Math.abs(pongState.ballVelocityY);
-        }
-
-        const maxBallY = pongState.boardHeight - pongState.ballSize;
-
-        if (pongState.ballY > maxBallY) {
-            pongState.ballY = maxBallY - (pongState.ballY - maxBallY);
-            pongState.ballVelocityY = -Math.abs(pongState.ballVelocityY);
-        }
-
-        const playerPaddleX = pongState.paddleOffset;
-        const aiPaddleX = pongState.boardWidth - pongState.paddleOffset - pongState.paddleWidth;
-
-        const hitsPlayer = pongState.ballX <= playerPaddleX + pongState.paddleWidth
-            && pongState.ballX + pongState.ballSize >= playerPaddleX
-            && pongState.ballY + pongState.ballSize >= pongState.playerY
-            && pongState.ballY <= pongState.playerY + pongState.paddleHeight
-            && pongState.ballVelocityX < 0;
-
-        if (hitsPlayer) {
-            const impact = ((pongState.ballY + (pongState.ballSize / 2)) - (pongState.playerY + (pongState.paddleHeight / 2))) / (pongState.paddleHeight / 2);
-            pongState.ballX = playerPaddleX + pongState.paddleWidth;
-            pongState.ballVelocityX = Math.abs(pongState.ballVelocityX) + 20;
-            pongState.ballVelocityY = getPongBounceVelocityY(impact);
-        }
-
-        const hitsAi = pongState.ballX + pongState.ballSize >= aiPaddleX
-            && pongState.ballX <= aiPaddleX + pongState.paddleWidth
-            && pongState.ballY + pongState.ballSize >= pongState.aiY
-            && pongState.ballY <= pongState.aiY + pongState.paddleHeight
-            && pongState.ballVelocityX > 0;
-
-        if (hitsAi) {
-            const impact = ((pongState.ballY + (pongState.ballSize / 2)) - (pongState.aiY + (pongState.paddleHeight / 2))) / (pongState.paddleHeight / 2);
-            pongState.ballX = aiPaddleX - pongState.ballSize;
-            pongState.ballVelocityX = -(Math.abs(pongState.ballVelocityX) + 20);
-            pongState.ballVelocityY = getPongBounceVelocityY(impact);
-        }
-
-        if (pongState.ballX + pongState.ballSize < 0) {
-            scorePongPoint(false);
-        } else if (pongState.ballX > pongState.boardWidth) {
-            scorePongPoint(true);
+            if (pointScored) {
+                break;
+            }
         }
 
         renderPong();
@@ -7568,6 +7770,58 @@ document.addEventListener('DOMContentLoaded', () => {
         game2048BestScoreDisplay.textContent = String(game2048BestScore);
     }
 
+    function get2048RulesText() {
+        return 'Fleches ou ZQSD pour faire glisser toutes les tuiles. Quand deux valeurs identiques se rencontrent, elles fusionnent. Atteins 2048 et evite de bloquer toute la grille.';
+    }
+
+    function render2048Menu() {
+        if (!game2048MenuOverlay || !game2048Table) {
+            return;
+        }
+
+        game2048MenuOverlay.classList.toggle('hidden', !game2048MenuVisible);
+        game2048MenuOverlay.classList.toggle('is-closing', game2048MenuClosing);
+        game2048Table.classList.toggle('is-menu-open', game2048MenuVisible);
+
+        if (!game2048MenuVisible) {
+            return;
+        }
+
+        if (game2048MenuEyebrow) {
+            game2048MenuEyebrow.textContent = game2048MenuShowingRules ? 'Regles' : 'Baie d arcade';
+        }
+
+        if (game2048MenuTitle) {
+            game2048MenuTitle.textContent = game2048MenuShowingRules ? 'Rappel rapide' : '2048';
+        }
+
+        if (game2048MenuText) {
+            game2048MenuText.textContent = game2048MenuShowingRules
+                ? get2048RulesText()
+                : 'Fais glisser les tuiles pour fusionner les valeurs et atteindre 2048 sans bloquer la grille.';
+        }
+
+        if (game2048MenuActionButton) {
+            game2048MenuActionButton.textContent = game2048MenuShowingRules ? 'Retour' : 'Lancer la partie';
+        }
+
+        if (game2048MenuRulesButton) {
+            game2048MenuRulesButton.textContent = 'Regles';
+            game2048MenuRulesButton.hidden = game2048MenuShowingRules;
+        }
+    }
+
+    function close2048Menu() {
+        game2048MenuClosing = true;
+        render2048Menu();
+        window.setTimeout(() => {
+            game2048MenuClosing = false;
+            game2048MenuVisible = false;
+            game2048MenuShowingRules = false;
+            render2048Menu();
+        }, 220);
+    }
+
     function ensure2048Board() {
         if (game2048TileLayer) {
             return;
@@ -7738,6 +7992,10 @@ document.addEventListener('DOMContentLoaded', () => {
         add2048Tile(true);
         update2048Hud();
         render2048();
+        game2048MenuVisible = true;
+        game2048MenuShowingRules = false;
+        game2048MenuClosing = false;
+        render2048Menu();
     }
 
     function get2048TargetPosition(lineIndex, targetIndex, direction) {
@@ -9399,9 +9657,83 @@ document.addEventListener('DOMContentLoaded', () => {
         mentalMathAnswerInput.value = '';
         mentalMathAnswerInput.disabled = !mentalMathRoundRunning;
         mentalMathSubmitButton.disabled = !mentalMathRoundRunning;
+        mentalMathKeypadButtons.forEach((button) => {
+            button.disabled = !mentalMathRoundRunning;
+        });
         if (activeGameTab === 'mentalMath' && mentalMathRoundRunning) {
-            mentalMathAnswerInput.focus();
+            mentalMathAnswerInput.blur();
         }
+    }
+
+    function getMentalMathRulesText() {
+        return 'Le chrono descend en continu. Reponds juste et vite pour gagner du temps, enchainer les calculs et faire grimper ton score avant la fin.';
+    }
+
+    function renderMentalMathMenu() {
+        if (!mentalMathMenuOverlay || !mentalMathTable) {
+            return;
+        }
+
+        mentalMathMenuOverlay.classList.toggle('hidden', !mentalMathMenuVisible);
+        mentalMathMenuOverlay.classList.toggle('is-closing', mentalMathMenuClosing);
+        mentalMathMenuOverlay.classList.toggle('is-entering', mentalMathMenuEntering);
+        mentalMathTable.classList.toggle('is-menu-open', mentalMathMenuVisible);
+
+        if (!mentalMathMenuVisible) {
+            return;
+        }
+
+        if (mentalMathMenuEyebrow) {
+            mentalMathMenuEyebrow.textContent = mentalMathMenuShowingRules ? 'Regles' : (mentalMathMenuResult ? 'Fin de partie' : 'Baie d arcade');
+        }
+        if (mentalMathMenuTitle) {
+            mentalMathMenuTitle.textContent = mentalMathMenuShowingRules
+                ? 'Rappel rapide'
+                : (mentalMathMenuResult ? 'Temps ecoule' : 'Jeu Calcul');
+        }
+        if (mentalMathMenuText) {
+            mentalMathMenuText.textContent = mentalMathMenuShowingRules
+                ? getMentalMathRulesText()
+                : (mentalMathMenuResult
+                    ? `Tu as enchaine ${mentalMathScore} bonne${mentalMathScore > 1 ? 's' : ''} reponse${mentalMathScore > 1 ? 's' : ''}.`
+                    : 'Prepare-toi a enchainer les calculs avant que le chrono ne te rattrape.');
+        }
+        if (mentalMathMenuActionButton) {
+            mentalMathMenuActionButton.textContent = mentalMathMenuShowingRules
+                ? 'Retour'
+                : (mentalMathMenuResult ? 'Relancer la partie' : 'Lancer la partie');
+        }
+        if (mentalMathMenuRulesButton) {
+            mentalMathMenuRulesButton.textContent = 'Regles';
+            mentalMathMenuRulesButton.hidden = mentalMathMenuShowingRules;
+        }
+    }
+
+    function startMentalMathLaunchSequence() {
+        mentalMathMenuClosing = true;
+        renderMentalMathMenu();
+        window.setTimeout(() => {
+            mentalMathMenuClosing = false;
+            mentalMathMenuVisible = false;
+            mentalMathMenuShowingRules = false;
+            mentalMathMenuEntering = false;
+            mentalMathMenuResult = false;
+            startMentalMathRound();
+            renderMentalMathMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealMentalMathOutcomeMenu() {
+        mentalMathMenuShowingRules = false;
+        mentalMathMenuClosing = false;
+        mentalMathMenuEntering = true;
+        mentalMathMenuVisible = true;
+        mentalMathMenuResult = true;
+        renderMentalMathMenu();
+        window.setTimeout(() => {
+            mentalMathMenuEntering = false;
+            renderMentalMathMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function stopMentalMathTimer() {
@@ -9418,7 +9750,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mentalMathFeedback.textContent = `Temps ecoule. Score final : ${mentalMathScore}.`;
         mentalMathHelpText.textContent = 'La maree s est retiree. Relance une partie pour tenter de battre ton score.';
         renderMentalMathQuestion();
-        openGameOverModal('Temps ecoule', `Tu as enchaine ${mentalMathScore} bonne${mentalMathScore > 1 ? 's' : ''} reponse${mentalMathScore > 1 ? 's' : ''}.`);
+        revealMentalMathOutcomeMenu();
     }
 
     function startMentalMathTimer() {
@@ -9439,18 +9771,32 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMentalMathQuestion();
     }
 
-    function initializeMentalMath() {
-        closeGameOverModal();
-        stopMentalMathTimer();
-        mentalMathScore = 0;
-        mentalMathCurrentQuestion = null;
-        mentalMathTimeRemainingMs = MENTAL_MATH_START_TIME_MS;
+    function startMentalMathRound() {
         mentalMathRoundRunning = true;
         mentalMathQuestionStartedAt = performance.now();
         mentalMathFeedback.textContent = '';
         mentalMathHelpText.textContent = 'Le chrono file. Reponds vite et juste pour regagner du temps.';
-        advanceMentalMathQuestion();
+        renderMentalMathQuestion();
         startMentalMathTimer();
+    }
+
+    function initializeMentalMath() {
+        closeGameOverModal();
+        stopMentalMathTimer();
+        mentalMathScore = 0;
+        mentalMathCurrentQuestion = generateMentalMathQuestion(0);
+        mentalMathTimeRemainingMs = MENTAL_MATH_START_TIME_MS;
+        mentalMathRoundRunning = false;
+        mentalMathQuestionStartedAt = performance.now();
+        mentalMathMenuVisible = true;
+        mentalMathMenuShowingRules = false;
+        mentalMathMenuClosing = false;
+        mentalMathMenuEntering = false;
+        mentalMathMenuResult = false;
+        mentalMathFeedback.textContent = '';
+        mentalMathHelpText.textContent = 'Le chrono descend. Reponds juste et vite pour regagner un peu de temps et pousser ton score au plus haut.';
+        renderMentalMathQuestion();
+        renderMentalMathMenu();
     }
 
     function submitMentalMathAnswer() {
@@ -9478,6 +9824,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         advanceMentalMathQuestion();
+    }
+
+    function handleMentalMathKeypadInput(value) {
+        if (!mentalMathRoundRunning || !mentalMathAnswerInput) {
+            return;
+        }
+
+        mentalMathAnswerInput.value = `${mentalMathAnswerInput.value}${value}`.slice(0, 6);
+    }
+
+    function handleMentalMathKeypadAction(action) {
+        if (!mentalMathRoundRunning || !mentalMathAnswerInput) {
+            return;
+        }
+
+        if (action === 'backspace') {
+            mentalMathAnswerInput.value = mentalMathAnswerInput.value.slice(0, -1);
+            return;
+        }
+
+        if (action === 'clear') {
+            mentalMathAnswerInput.value = '';
+        }
     }
 
     function getRandomCandyType() {
@@ -12183,8 +12552,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         baieBerryScoreDisplay.textContent = String(baieBerryState.score);
-        baieBerryNextDisplay.textContent = BAIE_BERRY_FRUITS[baieBerryState.nextQueue[0]].name;
-        baieBerryAfterNextDisplay.textContent = BAIE_BERRY_FRUITS[baieBerryState.nextQueue[1]].name;
+        baieBerryBestDisplay.textContent = String(baieBerryBestScore);
+        const nextFruit = BAIE_BERRY_FRUITS[baieBerryState.nextQueue[1]];
+        baieBerryNextDisplay.style.setProperty('--baieberry-preview-color', nextFruit.color);
+        baieBerryNextDisplay.setAttribute('aria-label', `Fruit suivant: ${nextFruit.name}`);
         baieBerryObjectiveDisplay.textContent = baieBerryState.objective.completed
             ? `${baieBerryState.objective.label} ✓`
             : baieBerryState.objective.label;
@@ -12243,7 +12614,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateBaieBerryDropGuide(positionX = null) {
-        if (!baieBerryDropGuide || !baieBerryState) {
+        if (!baieBerryDropGuide || !baieBerryDropLine || !baieBerryState) {
             return;
         }
 
@@ -12252,11 +12623,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const clampedX = positionX === null
             ? (baieBerryCanvas.width / 2)
             : Math.max(nextFruit.radius, Math.min(baieBerryCanvas.width - nextFruit.radius, positionX));
+        const renderedBounds = baieBerryCanvas.getBoundingClientRect();
+        const scaleX = (renderedBounds.width || baieBerryCanvas.width) / baieBerryCanvas.width;
+        const scaleY = (renderedBounds.height || baieBerryCanvas.height) / baieBerryCanvas.height;
+        const visualGuideSize = guideSize * Math.min(scaleX, scaleY);
+        const visualX = clampedX * scaleX;
 
-        baieBerryDropGuide.style.width = `${guideSize}px`;
-        baieBerryDropGuide.style.height = `${guideSize}px`;
-        baieBerryDropGuide.style.transform = `translateX(${clampedX - (guideSize / 2)}px)`;
+        baieBerryDropGuide.style.width = `${visualGuideSize}px`;
+        baieBerryDropGuide.style.height = `${visualGuideSize}px`;
+        baieBerryDropGuide.style.transform = `translateX(${visualX - (visualGuideSize / 2)}px)`;
         baieBerryDropGuide.style.setProperty('--baieberry-guide-color', nextFruit.color);
+        baieBerryDropLine.style.height = `${Math.max(0, renderedBounds.height - visualGuideSize - 22)}px`;
+        baieBerryDropLine.style.transform = `translateX(${visualX - 1}px)`;
+        baieBerryDropLine.style.setProperty('--baieberry-guide-color', nextFruit.color);
+        baieBerryDropLine.style.opacity = '0.92';
     }
 
     function drawBaieBerryFruit(context, fruit, alpha = 1) {
@@ -12266,6 +12646,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const eyeY = -config.radius * 0.08;
         const blink = fruit.blink ?? 1;
         const mouthCurve = fruit.expression === 'happy' ? 1 : fruit.expression === 'worried' ? -1 : 0;
+        const pirateVariant = (fruit.id + fruit.level) % 5;
         const gradient = context.createRadialGradient(
             -config.radius * 0.35,
             -config.radius * 0.42,
@@ -12308,36 +12689,154 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         context.fill();
 
-        context.beginPath();
-        context.strokeStyle = 'rgba(34,197,94,0.92)';
-        context.lineWidth = Math.max(2, config.radius * 0.07);
-        context.moveTo(0, -config.radius * 0.92);
-        context.quadraticCurveTo(
-            config.radius * 0.08,
-            -config.radius * 1.18,
-            config.radius * 0.26,
-            -config.radius * 1.04
-        );
-        context.stroke();
+        if (pirateVariant === 1 || pirateVariant === 3) {
+            const bandanaBase = pirateVariant === 1
+                ? 'rgba(153, 27, 27, 0.96)'
+                : 'rgba(30, 64, 175, 0.96)';
+            const bandanaHighlight = pirateVariant === 1
+                ? 'rgba(248, 113, 113, 0.34)'
+                : 'rgba(147, 197, 253, 0.34)';
 
-        context.beginPath();
-        context.fillStyle = 'rgba(74, 222, 128, 0.95)';
-        context.ellipse(
-            config.radius * 0.12,
-            -config.radius * 0.96,
-            config.radius * 0.18,
-            config.radius * 0.1,
-            0.45,
-            0,
-            Math.PI * 2
-        );
-        context.fill();
+            context.beginPath();
+            context.fillStyle = bandanaBase;
+            context.moveTo(-config.radius * 0.88, -config.radius * 0.38);
+            context.quadraticCurveTo(-config.radius * 0.3, -config.radius * 0.84, 0, -config.radius * 0.82);
+            context.quadraticCurveTo(config.radius * 0.34, -config.radius * 0.82, config.radius * 0.88, -config.radius * 0.38);
+            context.quadraticCurveTo(config.radius * 0.44, -config.radius * 0.08, 0, -config.radius * 0.14);
+            context.quadraticCurveTo(-config.radius * 0.46, -config.radius * 0.08, -config.radius * 0.88, -config.radius * 0.38);
+            context.closePath();
+            context.fill();
+
+            context.beginPath();
+            context.strokeStyle = bandanaHighlight;
+            context.lineWidth = Math.max(1.4, config.radius * 0.045);
+            context.moveTo(-config.radius * 0.54, -config.radius * 0.4);
+            context.quadraticCurveTo(0, -config.radius * 0.58, config.radius * 0.56, -config.radius * 0.4);
+            context.stroke();
+
+            context.beginPath();
+            context.fillStyle = bandanaBase;
+            context.ellipse(config.radius * 0.74, -config.radius * 0.04, config.radius * 0.1, config.radius * 0.22, -0.46, 0, Math.PI * 2);
+            context.fill();
+
+            context.beginPath();
+            context.fillStyle = bandanaBase;
+            context.ellipse(config.radius * 0.86, config.radius * 0.12, config.radius * 0.07, config.radius * 0.18, -0.12, 0, Math.PI * 2);
+            context.fill();
+        } else if (pirateVariant === 4) {
+            context.beginPath();
+            context.fillStyle = 'rgba(68, 37, 20, 0.98)';
+            context.moveTo(-config.radius * 0.78, -config.radius * 0.76);
+            context.quadraticCurveTo(-config.radius * 0.48, -config.radius * 1.16, -config.radius * 0.06, -config.radius * 1.06);
+            context.quadraticCurveTo(config.radius * 0.14, -config.radius * 1.4, config.radius * 0.34, -config.radius * 1.04);
+            context.quadraticCurveTo(config.radius * 0.58, -config.radius * 1.12, config.radius * 0.8, -config.radius * 0.76);
+            context.quadraticCurveTo(config.radius * 0.28, -config.radius * 0.92, -config.radius * 0.12, -config.radius * 0.88);
+            context.quadraticCurveTo(-config.radius * 0.42, -config.radius * 0.86, -config.radius * 0.78, -config.radius * 0.76);
+            context.closePath();
+            context.fill();
+
+            context.beginPath();
+            context.fillStyle = 'rgba(51, 29, 16, 0.98)';
+            context.ellipse(0, -config.radius * 0.74, config.radius * 0.82, config.radius * 0.14, -0.04, 0, Math.PI * 2);
+            context.fill();
+
+            context.beginPath();
+            context.strokeStyle = 'rgba(251, 191, 36, 0.68)';
+            context.lineWidth = Math.max(1.2, config.radius * 0.036);
+            context.moveTo(-config.radius * 0.3, -config.radius * 0.86);
+            context.quadraticCurveTo(config.radius * 0.02, -config.radius * 0.96, config.radius * 0.28, -config.radius * 0.84);
+            context.stroke();
+
+            context.beginPath();
+            context.fillStyle = 'rgba(245, 158, 11, 0.96)';
+            context.fillRect(-config.radius * 0.06, -config.radius * 0.98, config.radius * 0.12, config.radius * 0.08);
+
+            context.beginPath();
+            context.fillStyle = 'rgba(255, 248, 220, 0.9)';
+            context.arc(0, -config.radius * 0.94, Math.max(1.2, config.radius * 0.045), 0, Math.PI * 2);
+            context.fill();
+
+            context.beginPath();
+            context.strokeStyle = 'rgba(255,255,255,0.12)';
+            context.lineWidth = Math.max(1, config.radius * 0.03);
+            context.moveTo(-config.radius * 0.18, -config.radius * 1.02);
+            context.quadraticCurveTo(config.radius * 0.02, -config.radius * 1.2, config.radius * 0.2, -config.radius * 1.04);
+            context.stroke();
+        } else {
+            context.beginPath();
+            context.strokeStyle = 'rgba(34,197,94,0.92)';
+            context.lineWidth = Math.max(2, config.radius * 0.07);
+            context.moveTo(0, -config.radius * 0.92);
+            context.quadraticCurveTo(
+                config.radius * 0.08,
+                -config.radius * 1.18,
+                config.radius * 0.26,
+                -config.radius * 1.04
+            );
+            context.stroke();
+
+            context.beginPath();
+            context.fillStyle = 'rgba(74, 222, 128, 0.95)';
+            context.ellipse(
+                config.radius * 0.12,
+                -config.radius * 0.96,
+                config.radius * 0.18,
+                config.radius * 0.1,
+                0.45,
+                0,
+                Math.PI * 2
+            );
+            context.fill();
+        }
 
         context.fillStyle = 'rgba(15, 23, 42, 0.92)';
+        if (pirateVariant === 2 || pirateVariant === 4) {
+            context.beginPath();
+            context.lineWidth = Math.max(1.5, config.radius * 0.048);
+            context.strokeStyle = 'rgba(127, 29, 29, 0.88)';
+            context.moveTo(-eyeOffsetX - (config.radius * 0.2), eyeY - (config.radius * 0.16));
+            context.lineTo(-eyeOffsetX + (config.radius * 0.2), eyeY + (config.radius * 0.14));
+            context.moveTo(-eyeOffsetX - (config.radius * 0.18), eyeY + (config.radius * 0.14));
+            context.lineTo(-eyeOffsetX + (config.radius * 0.22), eyeY - (config.radius * 0.12));
+            context.stroke();
+        }
+
+        if (pirateVariant === 3) {
+            context.beginPath();
+            context.strokeStyle = 'rgba(15, 23, 42, 0.78)';
+            context.lineWidth = Math.max(1.6, config.radius * 0.05);
+            context.moveTo(-config.radius * 0.68, eyeY - (config.radius * 0.08));
+            context.lineTo(eyeOffsetX - (config.radius * 0.2), eyeY - (config.radius * 0.04));
+            context.moveTo(eyeOffsetX + (config.radius * 0.2), eyeY - (config.radius * 0.04));
+            context.lineTo(config.radius * 0.68, eyeY - (config.radius * 0.08));
+            context.stroke();
+
+            context.beginPath();
+            context.fillStyle = 'rgba(17, 24, 39, 0.98)';
+            context.ellipse(eyeOffsetX, eyeY, Math.max(4, config.radius * 0.19), Math.max(4, config.radius * 0.15), -0.08, 0, Math.PI * 2);
+            context.fill();
+
+            context.beginPath();
+            context.strokeStyle = 'rgba(255,255,255,0.14)';
+            context.lineWidth = Math.max(0.9, config.radius * 0.024);
+            context.moveTo(eyeOffsetX - (config.radius * 0.08), eyeY - (config.radius * 0.08));
+            context.lineTo(eyeOffsetX + (config.radius * 0.06), eyeY - (config.radius * 0.16));
+            context.stroke();
+        } else {
+            context.beginPath();
+            context.ellipse(eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
+            context.fill();
+        }
+
         context.beginPath();
         context.ellipse(-eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
-        context.ellipse(eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
         context.fill();
+
+        if (pirateVariant !== 3) {
+            context.beginPath();
+            context.ellipse(eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
+            context.fill();
+        }
 
         context.beginPath();
         context.strokeStyle = 'rgba(15, 23, 42, 0.72)';
@@ -12351,6 +12850,22 @@ document.addEventListener('DOMContentLoaded', () => {
             context.lineTo(config.radius * 0.14, config.radius * 0.22);
         }
         context.stroke();
+
+        if (pirateVariant === 0) {
+            context.beginPath();
+            context.strokeStyle = 'rgba(255,255,255,0.62)';
+            context.lineWidth = Math.max(1, config.radius * 0.035);
+            context.moveTo(config.radius * 0.1, config.radius * 0.02);
+            context.lineTo(config.radius * 0.26, config.radius * 0.14);
+            context.stroke();
+        } else if (pirateVariant === 4) {
+            context.beginPath();
+            context.strokeStyle = 'rgba(120, 53, 15, 0.76)';
+            context.lineWidth = Math.max(1.4, config.radius * 0.05);
+            context.moveTo(config.radius * 0.04, config.radius * 0.02);
+            context.quadraticCurveTo(config.radius * 0.18, config.radius * 0.16, config.radius * 0.34, config.radius * 0.08);
+            context.stroke();
+        }
         context.restore();
     }
 
@@ -12436,17 +12951,99 @@ document.addEventListener('DOMContentLoaded', () => {
             context.restore();
         });
 
-        if (baieBerryState.comboCount > 1 && baieBerryState.comboExpiresAt > performance.now()) {
-            context.save();
-            context.fillStyle = 'rgba(250, 204, 21, 0.92)';
-            context.font = '700 24px "Trebuchet MS", sans-serif';
-            context.textAlign = 'center';
-            context.fillText(`Combo x${baieBerryState.comboCount}`, baieBerryCanvas.width * 0.5, 42);
-            context.restore();
+    }
+
+    function getBaieBerryRulesText() {
+        return 'Glisse la recolte en cliquant ou en touchant la colonne voulue. Deux fruits identiques fusionnent au simple contact, mais la ligne rouge ne doit jamais rester occupee trop longtemps.';
+    }
+
+    function renderBaieBerryMenu() {
+        if (!baieBerryMenuOverlay || !baieBerryTable) {
+            return;
+        }
+
+        baieBerryMenuOverlay.classList.toggle('hidden', !baieBerryMenuVisible);
+        baieBerryMenuOverlay.classList.toggle('is-closing', baieBerryMenuClosing);
+        baieBerryMenuOverlay.classList.toggle('is-entering', baieBerryMenuEntering);
+        baieBerryTable.classList.toggle('is-menu-open', baieBerryMenuVisible);
+        if (baieBerryNextDisplay) {
+            baieBerryNextDisplay.style.opacity = baieBerryMenuVisible ? '0' : '1';
+        }
+        if (baieBerryDropGuide) {
+            baieBerryDropGuide.style.opacity = baieBerryMenuVisible ? '0' : '1';
+        }
+        if (baieBerryDropLine) {
+            baieBerryDropLine.style.opacity = baieBerryMenuVisible ? '0' : '0.92';
+        }
+
+        if (!baieBerryMenuVisible) {
+            return;
+        }
+
+        const currentScore = baieBerryState?.score ?? 0;
+        const objectiveLabel = baieBerryState?.objective?.label ?? 'Atteins 1500 points';
+        const objectiveStatus = baieBerryState?.objective?.completed ? 'Objectif accompli.' : `Objectif du jour: ${objectiveLabel}.`;
+
+        if (baieBerryMenuEyebrow) {
+            baieBerryMenuEyebrow.textContent = baieBerryMenuShowingRules ? 'Regles' : (baieBerryMenuResult ? 'Fin de recolte' : 'Baie d arcade');
+        }
+        if (baieBerryMenuTitle) {
+            baieBerryMenuTitle.textContent = baieBerryMenuShowingRules
+                ? 'Rappel rapide'
+                : (baieBerryMenuResult ? 'Recolte terminee' : 'BaieBerry');
+        }
+        if (baieBerryMenuText) {
+            baieBerryMenuText.textContent = baieBerryMenuShowingRules
+                ? getBaieBerryRulesText()
+                : (baieBerryMenuResult
+                    ? `Score ${currentScore}. ${objectiveStatus} La ligne rouge est restee occupee trop longtemps.`
+                    : 'Prepare ta recolte avant de laisser tomber les fruits dans le panier.');
+        }
+        if (baieBerryMenuActionButton) {
+            baieBerryMenuActionButton.textContent = baieBerryMenuShowingRules
+                ? 'Retour'
+                : (baieBerryMenuResult ? 'Relancer la partie' : 'Lancer la partie');
+        }
+        if (baieBerryMenuRulesButton) {
+            baieBerryMenuRulesButton.textContent = 'Regles';
+            baieBerryMenuRulesButton.hidden = baieBerryMenuShowingRules;
         }
     }
 
+    function startBaieBerryLaunchSequence() {
+        baieBerryMenuClosing = true;
+        renderBaieBerryMenu();
+        window.setTimeout(() => {
+            baieBerryMenuClosing = false;
+            baieBerryMenuVisible = false;
+            baieBerryMenuShowingRules = false;
+            baieBerryMenuEntering = false;
+            baieBerryMenuResult = false;
+            refreshBaieBerryHud();
+            updateBaieBerryDropGuide(baieBerryLastPointerX ?? (baieBerryCanvas.width / 2));
+            renderBaieBerryMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealBaieBerryOutcomeMenu() {
+        baieBerryMenuShowingRules = false;
+        baieBerryMenuClosing = false;
+        baieBerryMenuEntering = true;
+        baieBerryMenuVisible = true;
+        baieBerryMenuResult = true;
+        renderBaieBerryMenu();
+        window.setTimeout(() => {
+            baieBerryMenuEntering = false;
+            renderBaieBerryMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeBaieBerry() {
+        closeGameOverModal();
+        if (baieBerryDropLineTimer) {
+            window.clearTimeout(baieBerryDropLineTimer);
+            baieBerryDropLineTimer = null;
+        }
         baieBerryState = {
             fruits: [],
             nextQueue: [getRandomBaieBerryIndex(), getRandomBaieBerryIndex()],
@@ -12461,10 +13058,19 @@ document.addEventListener('DOMContentLoaded', () => {
             shake: 0,
             elapsed: 0
         };
+        baieBerryLastFrame = 0;
+        baieBerryLastPointerX = baieBerryCanvas.width / 2;
+        baieBerryLastDropAt = 0;
+        baieBerryMenuVisible = true;
+        baieBerryMenuShowingRules = false;
+        baieBerryMenuClosing = false;
+        baieBerryMenuEntering = false;
+        baieBerryMenuResult = false;
         refreshBaieBerryHud();
-        baieBerryHelpText.textContent = `Record actuel: ${baieBerryBestScore}. Surveille la ligne rouge et vise l objectif du jour.`;
+        baieBerryHelpText.textContent = 'Surveille la ligne rouge et vise une grande chaine de fusions.';
         updateBaieBerryDropGuide();
         drawBaieBerry();
+        renderBaieBerryMenu();
 
         if (!baieBerryAnimationFrame) {
             baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
@@ -12476,6 +13082,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const now = performance.now();
+        if ((now - baieBerryLastDropAt) < BAIE_BERRY_DROP_COOLDOWN_MS) {
+            return;
+        }
+        baieBerryLastDropAt = now;
+
+        baieBerryLastPointerX = x;
+        if (baieBerryDropLine) {
+            baieBerryDropLine.style.opacity = '0';
+        }
+        if (baieBerryDropLineTimer) {
+            window.clearTimeout(baieBerryDropLineTimer);
+            baieBerryDropLineTimer = null;
+        }
+
         const level = baieBerryState.nextQueue[0];
         const radius = BAIE_BERRY_FRUITS[level].radius;
         baieBerryState.fruits.push({
@@ -12484,6 +13105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             y: radius + 4,
             vx: 0,
             vy: 0,
+            spawnedAt: now,
             rotation: 0,
             mergeProgress: 0,
             blink: 1,
@@ -12492,7 +13114,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         baieBerryState.nextQueue = [baieBerryState.nextQueue[1], getRandomBaieBerryIndex()];
         refreshBaieBerryHud();
-        updateBaieBerryDropGuide(x);
+        updateBaieBerryDropGuide(baieBerryLastPointerX ?? x);
+        if (baieBerryDropLine) {
+            baieBerryDropLine.style.opacity = '0';
+        }
+        baieBerryDropLineTimer = window.setTimeout(() => {
+            baieBerryDropLineTimer = null;
+            if (!baieBerryState?.gameOver && !baieBerryMenuVisible && !baieBerryMenuClosing) {
+                updateBaieBerryDropGuide(baieBerryLastPointerX ?? x);
+            }
+        }, 220);
     }
 
     function updateBaieBerry(timestamp) {
@@ -12588,6 +13219,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 comboBonus ? `+${BAIE_BERRY_FRUITS[nextLevel].score + comboBonus}` : `+${BAIE_BERRY_FRUITS[nextLevel].score}`,
                                 '#fde68a'
                             );
+                            if (baieBerryState.comboCount > 1) {
+                                addBaieBerryScorePopup(
+                                    mergeX,
+                                    mergeY - 34,
+                                    `x${baieBerryState.comboCount}`,
+                                    '#e2e8f0'
+                                );
+                            }
                             baieBerryState.shake = Math.min(18, 8 + (nextLevel * 1.8) + (baieBerryState.comboCount * 1.5));
                             baieBerryHelpText.textContent = baieBerryState.comboCount > 1
                                 ? `Combo x${baieBerryState.comboCount}. Les fusions s enchainent.`
@@ -12604,7 +13243,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            const touchesDangerLine = baieBerryState.fruits.some((fruit) => (fruit.y - BAIE_BERRY_FRUITS[fruit.level].radius) <= BAIE_BERRY_DANGER_LINE_Y);
+            const dangerNow = performance.now();
+            const touchesDangerLine = baieBerryState.fruits.some((fruit) => (
+                (dangerNow - (fruit.spawnedAt || 0)) >= BAIE_BERRY_DANGER_GRACE_MS
+                && (fruit.y - BAIE_BERRY_FRUITS[fruit.level].radius) <= BAIE_BERRY_DANGER_LINE_Y
+            ));
             baieBerryState.dangerTime = touchesDangerLine
                 ? Math.min(BAIE_BERRY_DANGER_DURATION_MS, baieBerryState.dangerTime + (delta * 1000))
                 : Math.max(0, baieBerryState.dangerTime - (delta * 700));
@@ -12634,7 +13277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (baieBerryState.dangerTime >= BAIE_BERRY_DANGER_DURATION_MS) {
                 baieBerryState.gameOver = true;
                 baieBerryHelpText.textContent = `Recolte terminee. Score ${baieBerryState.score}. La ligne rouge est restee occupee trop longtemps.`;
-                openGameOverModal('Recolte terminee', `Score ${baieBerryState.score}. ${baieBerryState.objective.completed ? 'Objectif accompli.' : 'Objectif non complete.'}`);
+                revealBaieBerryOutcomeMenu();
             }
         }
 
@@ -12729,25 +13372,6 @@ document.addEventListener('DOMContentLoaded', () => {
         breakoutContext.lineTo(breakoutCanvas.width * 0.78, breakoutCanvas.height * 0.61);
         breakoutContext.lineTo(breakoutCanvas.width * 0.88, breakoutCanvas.height * 0.5);
         breakoutContext.lineTo(breakoutCanvas.width, breakoutCanvas.height * 0.68);
-        breakoutContext.closePath();
-        breakoutContext.fill();
-
-        breakoutContext.fillStyle = '#f59e0b';
-        breakoutContext.beginPath();
-        breakoutContext.moveTo(34, breakoutCanvas.height - 42);
-        breakoutContext.quadraticCurveTo(96, breakoutCanvas.height - 82, 164, breakoutCanvas.height - 46);
-        breakoutContext.lineTo(164, breakoutCanvas.height - 18);
-        breakoutContext.lineTo(34, breakoutCanvas.height - 18);
-        breakoutContext.closePath();
-        breakoutContext.fill();
-
-        breakoutContext.fillStyle = '#92400e';
-        breakoutContext.fillRect(84, breakoutCanvas.height - 86, 7, 44);
-        breakoutContext.fillStyle = '#f8fafc';
-        breakoutContext.beginPath();
-        breakoutContext.moveTo(91, breakoutCanvas.height - 84);
-        breakoutContext.lineTo(132, breakoutCanvas.height - 64);
-        breakoutContext.lineTo(91, breakoutCanvas.height - 50);
         breakoutContext.closePath();
         breakoutContext.fill();
 
@@ -14733,6 +15357,21 @@ document.addEventListener('DOMContentLoaded', () => {
         initialize2048();
     });
 
+    game2048MenuActionButton?.addEventListener('click', () => {
+        if (game2048MenuShowingRules) {
+            game2048MenuShowingRules = false;
+            render2048Menu();
+            return;
+        }
+
+        close2048Menu();
+    });
+
+    game2048MenuRulesButton?.addEventListener('click', () => {
+        game2048MenuShowingRules = !game2048MenuShowingRules;
+        render2048Menu();
+    });
+
     aimStartButton.addEventListener('click', () => {
         closeGameOverModal();
         initializeAim();
@@ -14791,6 +15430,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         initializeTicTacToe();
+    });
+
+    ticTacToeMenuActionButton?.addEventListener('click', () => {
+        if (ticTacToeMenuShowingRules) {
+            ticTacToeMenuShowingRules = false;
+            renderTicTacToeMenu();
+            return;
+        }
+
+        ticTacToeMenuResult = null;
+        closeTicTacToeMenu();
+    });
+
+    ticTacToeMenuRulesButton?.addEventListener('click', () => {
+        ticTacToeMenuShowingRules = !ticTacToeMenuShowingRules;
+        renderTicTacToeMenu();
     });
 
     ticTacToeModeButtons.forEach((button) => {
@@ -14883,9 +15538,20 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeMagicSort();
     });
 
-    mentalMathRestartButton.addEventListener('click', () => {
-        closeGameOverModal();
+    mentalMathMenuActionButton?.addEventListener('click', () => {
+        if (mentalMathMenuShowingRules) {
+            mentalMathMenuShowingRules = false;
+            renderMentalMathMenu();
+            return;
+        }
+
         initializeMentalMath();
+        startMentalMathLaunchSequence();
+    });
+
+    mentalMathMenuRulesButton?.addEventListener('click', () => {
+        mentalMathMenuShowingRules = !mentalMathMenuShowingRules;
+        renderMentalMathMenu();
     });
 
     mentalMathForm?.addEventListener('submit', (event) => {
@@ -14893,8 +15559,57 @@ document.addEventListener('DOMContentLoaded', () => {
         submitMentalMathAnswer();
     });
 
+    mentalMathKeypadButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const key = button.dataset.mentalMathKey;
+            const action = button.dataset.mentalMathAction;
+
+            if (key) {
+                handleMentalMathKeypadInput(key);
+                return;
+            }
+
+            if (action) {
+                handleMentalMathKeypadAction(action);
+            }
+        });
+    });
+
     mentalMathAnswerInput?.addEventListener('input', () => {
         mentalMathAnswerInput.value = mentalMathAnswerInput.value.replace(/\D/g, '');
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (activeGameTab !== 'mentalMath' || mentalMathMenuVisible || mentalMathMenuClosing) {
+            return;
+        }
+
+        if (!mentalMathRoundRunning) {
+            return;
+        }
+
+        if (/^\d$/.test(event.key)) {
+            event.preventDefault();
+            handleMentalMathKeypadInput(event.key);
+            return;
+        }
+
+        if (event.key === 'Backspace') {
+            event.preventDefault();
+            handleMentalMathKeypadAction('backspace');
+            return;
+        }
+
+        if (event.key === 'Delete') {
+            event.preventDefault();
+            handleMentalMathKeypadAction('clear');
+            return;
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            submitMentalMathAnswer();
+        }
     });
 
     candyCrushRestartButton.addEventListener('click', () => {
@@ -15089,18 +15804,37 @@ document.addEventListener('DOMContentLoaded', () => {
         reactionHelpText.textContent = 'Bien joue. Relance pour tenter un meilleur reflexe.';
     });
 
-    baieBerryStartButton?.addEventListener('click', () => {
+    baieBerryMenuActionButton?.addEventListener('click', () => {
+        if (baieBerryMenuShowingRules) {
+            baieBerryMenuShowingRules = false;
+            renderBaieBerryMenu();
+            return;
+        }
+
         initializeBaieBerry();
+        startBaieBerryLaunchSequence();
+    });
+
+    baieBerryMenuRulesButton?.addEventListener('click', () => {
+        baieBerryMenuShowingRules = !baieBerryMenuShowingRules;
+        renderBaieBerryMenu();
     });
 
     baieBerryCanvas?.addEventListener('pointermove', (event) => {
+        if (baieBerryMenuVisible || baieBerryMenuClosing) {
+            return;
+        }
         const bounds = baieBerryCanvas.getBoundingClientRect();
         const scaleX = baieBerryCanvas.width / bounds.width;
         const x = (event.clientX - bounds.left) * scaleX;
+        baieBerryLastPointerX = x;
         updateBaieBerryDropGuide(x);
     });
 
     baieBerryCanvas?.addEventListener('click', (event) => {
+        if (baieBerryMenuVisible || baieBerryMenuClosing) {
+            return;
+        }
         const bounds = baieBerryCanvas.getBoundingClientRect();
         const scaleX = baieBerryCanvas.width / bounds.width;
         dropBaieBerryAt((event.clientX - bounds.left) * scaleX);
@@ -16154,3 +16888,5 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleSessionTimeout();
     }
 });
+
+
