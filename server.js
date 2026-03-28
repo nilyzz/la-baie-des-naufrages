@@ -18,9 +18,9 @@ const BATTLESHIP_SHIPS = [4, 3, 3, 2, 2];
 const PONG_TARGET_SCORE = 7;
 const PONG_BOARD_WIDTH = 700;
 const PONG_BOARD_HEIGHT = Math.round(PONG_BOARD_WIDTH * 9 / 16);
-const PONG_PADDLE_HEIGHT = 92;
-const PONG_PADDLE_WIDTH = 14;
-const PONG_BALL_SIZE = 16;
+const PONG_PADDLE_HEIGHT = 104;
+const PONG_PADDLE_WIDTH = 16;
+const PONG_BALL_SIZE = 20;
 const PONG_PADDLE_OFFSET = 22;
 const PONG_PLAYER_SPEED = 380;
 const PONG_BALL_SPEED_X = 388;
@@ -1300,11 +1300,12 @@ function updatePongRoom(room, deltaSeconds) {
 
   const leftPaddleX = PONG_PADDLE_OFFSET;
   const rightPaddleX = PONG_BOARD_WIDTH - PONG_PADDLE_OFFSET - PONG_PADDLE_WIDTH;
+  const pongCollisionMargin = 8;
 
-  const hitsLeft = room.gameState.ballX <= leftPaddleX + PONG_PADDLE_WIDTH
-    && room.gameState.ballX + PONG_BALL_SIZE >= leftPaddleX
-    && room.gameState.ballY + PONG_BALL_SIZE >= room.gameState.leftY
-    && room.gameState.ballY <= room.gameState.leftY + PONG_PADDLE_HEIGHT
+  const hitsLeft = room.gameState.ballX <= leftPaddleX + PONG_PADDLE_WIDTH + pongCollisionMargin
+    && room.gameState.ballX + PONG_BALL_SIZE >= leftPaddleX - pongCollisionMargin
+    && room.gameState.ballY + PONG_BALL_SIZE >= room.gameState.leftY - pongCollisionMargin
+    && room.gameState.ballY <= room.gameState.leftY + PONG_PADDLE_HEIGHT + pongCollisionMargin
     && room.gameState.ballVelocityX < 0;
 
   if (hitsLeft) {
@@ -1314,10 +1315,10 @@ function updatePongRoom(room, deltaSeconds) {
     room.gameState.ballVelocityY = getPongBounceVelocityY(impact);
   }
 
-  const hitsRight = room.gameState.ballX + PONG_BALL_SIZE >= rightPaddleX
-    && room.gameState.ballX <= rightPaddleX + PONG_PADDLE_WIDTH
-    && room.gameState.ballY + PONG_BALL_SIZE >= room.gameState.rightY
-    && room.gameState.ballY <= room.gameState.rightY + PONG_PADDLE_HEIGHT
+  const hitsRight = room.gameState.ballX + PONG_BALL_SIZE >= rightPaddleX - pongCollisionMargin
+    && room.gameState.ballX <= rightPaddleX + PONG_PADDLE_WIDTH + pongCollisionMargin
+    && room.gameState.ballY + PONG_BALL_SIZE >= room.gameState.rightY - pongCollisionMargin
+    && room.gameState.ballY <= room.gameState.rightY + PONG_PADDLE_HEIGHT + pongCollisionMargin
     && room.gameState.ballVelocityX > 0;
 
   if (hitsRight) {

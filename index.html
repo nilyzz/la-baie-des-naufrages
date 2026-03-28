@@ -60,11 +60,7 @@
             title="Mentions légales"
         >
             <span class="legal-button-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false">
-                    <circle cx="12" cy="12" r="8.25" />
-                    <path d="M12 10V16" />
-                    <circle cx="12" cy="7.25" r="0.9" fill="currentColor" stroke="none" />
-                </svg>
+                <span class="legal-button-glyph">§</span>
             </span>
         </button>
         <button id="pageBackButton" type="button" class="secondary-button page-action-button hidden" data-back-to-services="true">Changer de navire</button>
@@ -266,6 +262,8 @@
                             <button type="button" class="games-filter-chip" data-games-filter="reflexe">Reflexe</button>
                             <button type="button" class="games-filter-chip" data-games-filter="strategie">Strategie</button>
                             <button type="button" class="games-filter-chip" data-games-filter="arcade">Arcade</button>
+                            <button type="button" class="games-filter-chip" data-games-filter="table">Jeu de table</button>
+                            <button type="button" class="games-filter-chip" data-games-filter="carte">Jeu de carte</button>
                         </div>
                     </div>
 
@@ -561,7 +559,7 @@
                                 <div class="multiplayer-entry-fields multiplayer-entry-fields-join">
                                     <label id="multiplayerJoinPlayerField" class="multiplayer-lobby-field">
                                         <span>Pseudo du joueur</span>
-                                        <input id="multiplayerJoinPlayerNameInput" type="text" maxlength="24" placeholder="Pirate 2" autocomplete="nickname">
+                                        <input id="multiplayerJoinPlayerNameInput" type="text" maxlength="24" placeholder="Pirate 1" autocomplete="nickname">
                                     </label>
 
                                     <label id="multiplayerJoinCodeField" class="multiplayer-lobby-field">
@@ -666,9 +664,6 @@
                             <span class="pong-counter-label" id="pongLeftLabel">Joueur 1</span>
                             <strong id="pongPlayerScoreDisplay" class="pong-counter-value">0</strong>
                         </div>
-
-                        <button id="pongStartButton" type="button" class="pong-face">Lancer le duel</button>
-
                         <div class="pong-counter-block">
                             <span class="pong-counter-label" id="pongRightLabel">IA</span>
                             <strong id="pongAiScoreDisplay" class="pong-counter-value">0</strong>
@@ -681,12 +676,25 @@
                     </div>
 
                     <p class="pong-help" id="pongHelpText">Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l IA. Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas.</p>
-                    <div id="pongBoard" class="pong-board" aria-label="Plateau du Pong">
-                        <div class="pong-center-line" aria-hidden="true"></div>
-                        <div id="pongCountdown" class="pong-countdown hidden" aria-hidden="true"></div>
-                        <div id="pongPlayerPaddle" class="pong-paddle pong-paddle-player" aria-hidden="true"></div>
-                        <div id="pongAiPaddle" class="pong-paddle pong-paddle-ai" aria-hidden="true"></div>
-                        <div id="pongBall" class="pong-ball" aria-hidden="true"></div>
+                    <div id="pongTable" class="pong-table">
+                        <div id="pongMenuOverlay" class="pong-menu-overlay">
+                            <div class="pong-menu-card">
+                                <span id="pongMenuEyebrow" class="pong-menu-eyebrow">Baie d arcade</span>
+                                <h3 id="pongMenuTitle" class="pong-menu-title">Pong</h3>
+                                <p id="pongMenuText" class="pong-menu-text">Choisis ton mode, puis lance le duel dans la baie.</p>
+                                <div class="pong-menu-actions">
+                                    <button id="pongMenuActionButton" type="button" class="game-menu-primary-button">Lancer le duel</button>
+                                    <button id="pongMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pongBoard" class="pong-board" aria-label="Plateau du Pong">
+                            <div class="pong-center-line" aria-hidden="true"></div>
+                            <div id="pongCountdown" class="pong-countdown hidden" aria-hidden="true"></div>
+                            <div id="pongPlayerPaddle" class="pong-paddle pong-paddle-player" aria-hidden="true"></div>
+                            <div id="pongAiPaddle" class="pong-paddle pong-paddle-ai" aria-hidden="true"></div>
+                            <div id="pongBall" class="pong-ball" aria-hidden="true"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -739,7 +747,7 @@
 
                         <div class="aim-counter-block">
                             <span class="aim-counter-label">Mar&eacute;e</span>
-                            <strong id="aimTimerDisplay" class="aim-counter-value">30</strong>
+                            <strong id="aimTimerDisplay" class="aim-counter-value">20</strong>
                         </div>
 
                         <div class="aim-counter-block">
@@ -749,9 +757,9 @@
                     </div>
 
                     <div class="aim-duration-switch" role="group" aria-label="Durée de jeu OursAim">
-                        <button type="button" class="secondary-button aim-duration-button is-active" data-aim-duration="30">30s</button>
+                        <button type="button" class="secondary-button aim-duration-button is-active" data-aim-duration="20">20s</button>
+                        <button type="button" class="secondary-button aim-duration-button" data-aim-duration="40">40s</button>
                         <button type="button" class="secondary-button aim-duration-button" data-aim-duration="60">60s</button>
-                        <button type="button" class="secondary-button aim-duration-button" data-aim-duration="90">90s</button>
                     </div>
 
                     <p class="aim-help">OursAim. Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l eau te co&ucirc;te des points.</p>
@@ -1029,18 +1037,18 @@
                         <button id="mentalMathRestartButton" type="button" class="mentalmath-face">Nouveau quiz</button>
 
                         <div class="mentalmath-counter-block">
-                            <span class="mentalmath-counter-label">Manche</span>
-                            <strong id="mentalMathRoundDisplay" class="mentalmath-counter-value">1 / 10</strong>
+                            <span class="mentalmath-counter-label">Temps</span>
+                            <strong id="mentalMathRoundDisplay" class="mentalmath-counter-value">15.0s</strong>
                         </div>
                     </div>
 
-                    <p id="mentalMathHelpText" class="mentalmath-help">Reponds vite aux calculs avant la fin des 10 manches.</p>
+                    <p id="mentalMathHelpText" class="mentalmath-help">Le chrono descend. Reponds juste et vite pour regagner un peu de temps et pousser ton score au plus haut.</p>
                     <div class="mentalmath-stage">
                         <div class="mentalmath-question-card">
                             <p class="mentalmath-label">Question</p>
                             <div id="mentalMathQuestion" class="mentalmath-question" aria-live="polite">12 + 8 = ?</div>
                             <form id="mentalMathForm" class="mentalmath-form">
-                                <input id="mentalMathAnswerInput" type="number" inputmode="numeric" placeholder="Ta reponse" autocomplete="off">
+                                <input id="mentalMathAnswerInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ta reponse" autocomplete="off">
                                 <button id="mentalMathSubmitButton" type="submit" class="primary-button">Valider</button>
                             </form>
                             <p id="mentalMathFeedback" class="feedback" aria-live="polite"></p>
@@ -1147,7 +1155,6 @@
                             <span class="chess-counter-label">Tour</span>
                             <strong id="chessTurnDisplay" class="chess-counter-value">Blancs</strong>
                         </div>
-                        <button id="chessResetButton" type="button" class="chess-face">Nouvelle partie</button>
                         <div class="chess-counter-block">
                             <span class="chess-counter-label">Etat</span>
                             <strong id="chessStatusDisplay" class="chess-counter-value">En cours</strong>
@@ -1260,6 +1267,16 @@
                         </div>
                     </div>
                     <p id="baieBerryHelpText" class="baieberry-help">Clique dans la colonne pour laisser tomber un fruit. Deux fruits identiques fusionnent en plus gros.</p>
+                    <div class="baieberry-meta">
+                        <div class="baieberry-meta-card">
+                            <span class="baieberry-meta-label">Apres</span>
+                            <strong id="baieBerryAfterNextDisplay" class="baieberry-meta-value">Framboise</strong>
+                        </div>
+                        <div class="baieberry-meta-card">
+                            <span class="baieberry-meta-label">Objectif</span>
+                            <strong id="baieBerryObjectiveDisplay" class="baieberry-meta-value">Atteins 1500 points</strong>
+                        </div>
+                    </div>
                     <div class="baieberry-stage">
                         <div id="baieBerryDropGuide" class="baieberry-drop-guide" aria-hidden="true"></div>
                         <canvas id="baieBerryCanvas" class="baieberry-canvas" width="360" height="460"></canvas>

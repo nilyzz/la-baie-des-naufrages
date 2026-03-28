@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const LEGAL_NOTICE_ANIMATION_MS = 220;
     const SESSION_KEY = 'baie-des-naufrages-session';
     const SESSION_TIMEOUT_MS = 2 * 60 * 60 * 1000;
     const multiplayerServerMeta = document.querySelector('meta[name="multiplayer-server-url"]');
@@ -106,24 +107,24 @@ document.addEventListener('DOMContentLoaded', () => {
         airHockey: ['arcade', 'reflexe'],
         flappy: ['arcade', 'reflexe'],
         baieBerry: ['arcade', 'puzzle'],
-        battleship: ['strategie', 'puzzle'],
+        battleship: ['strategie', 'puzzle', 'table'],
         breakout: ['arcade', 'reflexe'],
         blockBlast: ['puzzle', 'strategie'],
         mentalMath: ['puzzle', 'reflexe'],
         coinClicker: ['arcade'],
         candyCrush: ['puzzle'],
-        checkers: ['strategie'],
+        checkers: ['strategie', 'table'],
         minesweeper: ['puzzle', 'strategie'],
-        chess: ['strategie'],
+        chess: ['strategie', 'table'],
         aim: ['reflexe', 'arcade'],
-        memory: ['puzzle', 'reflexe'],
+        memory: ['puzzle', 'reflexe', 'carte'],
         harborRun: ['arcade', 'reflexe'],
-        ticTacToe: ['strategie'],
+        ticTacToe: ['strategie', 'table'],
         pacman: ['arcade', 'reflexe'],
         pong: ['arcade', 'reflexe'],
         reaction: ['reflexe'],
-        solitaire: ['strategie', 'puzzle'],
-        connect4: ['strategie'],
+        solitaire: ['strategie', 'puzzle', 'carte'],
+        connect4: ['strategie', 'table'],
         rhythm: ['reflexe', 'arcade'],
         flowFree: ['puzzle'],
         magicSort: ['puzzle'],
@@ -131,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stacker: ['arcade', 'reflexe'],
         sudoku: ['puzzle', 'strategie'],
         tetris: ['puzzle', 'reflexe'],
-        uno: ['strategie', 'arcade']
+        uno: ['strategie', 'arcade', 'carte']
     };
     let activeGamesFilter = 'all';
     const snakeGame = document.getElementById('snakeGame');
@@ -156,17 +157,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const snakeBestScoreDisplay = document.getElementById('snakeBestScoreDisplay');
     const snakeStartButton = document.getElementById('snakeStartButton');
     const pongBoard = document.getElementById('pongBoard');
+    const pongTable = document.getElementById('pongTable');
     const pongCountdown = document.getElementById('pongCountdown');
     const pongPlayerPaddle = document.getElementById('pongPlayerPaddle');
     const pongAiPaddle = document.getElementById('pongAiPaddle');
     const pongBall = document.getElementById('pongBall');
     const pongPlayerScoreDisplay = document.getElementById('pongPlayerScoreDisplay');
     const pongAiScoreDisplay = document.getElementById('pongAiScoreDisplay');
-    const pongStartButton = document.getElementById('pongStartButton');
     const pongLeftLabel = document.getElementById('pongLeftLabel');
     const pongRightLabel = document.getElementById('pongRightLabel');
     const pongHelpText = document.getElementById('pongHelpText');
     const pongModeButtons = document.querySelectorAll('[data-pong-mode]');
+    const pongMenuOverlay = document.getElementById('pongMenuOverlay');
+    const pongMenuEyebrow = document.getElementById('pongMenuEyebrow');
+    const pongMenuTitle = document.getElementById('pongMenuTitle');
+    const pongMenuText = document.getElementById('pongMenuText');
+    const pongMenuActionButton = document.getElementById('pongMenuActionButton');
+    const pongMenuRulesButton = document.getElementById('pongMenuRulesButton');
     const sudokuBoard = document.getElementById('sudokuBoard');
     const sudokuFilledDisplay = document.getElementById('sudokuFilledDisplay');
     const sudokuDifficultyDisplay = document.getElementById('sudokuDifficultyDisplay');
@@ -300,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
     const chessStatusDisplay = document.getElementById('chessStatusDisplay');
     const chessHelpText = document.getElementById('chessHelpText');
-    const chessResetButton = document.getElementById('chessResetButton');
     const chessTable = document.getElementById('chessTable');
     const chessMenuOverlay = document.getElementById('chessMenuOverlay');
     const chessMenuEyebrow = document.getElementById('chessMenuEyebrow');
@@ -336,9 +342,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const baieBerryGame = document.getElementById('baieBerryGame');
     const baieBerryCanvas = document.getElementById('baieBerryCanvas');
     const baieBerryContext = baieBerryCanvas?.getContext('2d');
+    const baieBerryStage = baieBerryGame?.querySelector('.baieberry-stage');
     const baieBerryDropGuide = document.getElementById('baieBerryDropGuide');
     const baieBerryScoreDisplay = document.getElementById('baieBerryScoreDisplay');
     const baieBerryNextDisplay = document.getElementById('baieBerryNextDisplay');
+    const baieBerryAfterNextDisplay = document.getElementById('baieBerryAfterNextDisplay');
+    const baieBerryObjectiveDisplay = document.getElementById('baieBerryObjectiveDisplay');
     const baieBerryHelpText = document.getElementById('baieBerryHelpText');
     const baieBerryStartButton = document.getElementById('baieBerryStartButton');
     const breakoutGame = document.getElementById('breakoutGame');
@@ -424,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const GAME_2048_BEST_KEY = 'baie-des-naufrages-2048-best';
     const AIM_GRID_SIZE = 6;
     const AIM_TARGET_COUNT = 5;
-    const AIM_DEFAULT_ROUND_SECONDS = 30;
+    const AIM_DEFAULT_ROUND_SECONDS = 20;
     const AIM_HIT_SCORE = 12;
     const AIM_MISS_SCORE = 5;
     const AIM_BEST_KEY = 'baie-des-naufrages-aim-best';
@@ -461,6 +470,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const COIN_CLICKER_STORAGE_KEY = 'baie-des-naufrages-coin-clicker';
     const REACTION_BEST_KEY = 'baie-des-naufrages-reaction-best';
     const BAIE_BERRY_BEST_KEY = 'baie-des-naufrages-baieberry-best';
+    const BAIE_BERRY_DANGER_LINE_Y = 74;
+    const BAIE_BERRY_DANGER_DURATION_MS = 1600;
+    const BAIE_BERRY_COMBO_WINDOW_MS = 1400;
+    const BAIE_BERRY_SHAKE_DECAY = 0.9;
     const BREAKOUT_BEST_KEY = 'baie-des-naufrages-breakout-best';
     const BREAKOUT_BALL_SPEED = 320;
     const BREAKOUT_MAX_STEP_DISTANCE = 4;
@@ -477,7 +490,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAGIC_SORT_TUBE_CAPACITY = 4;
     const MAGIC_SORT_FILLED_TUBES = 6;
     const MAGIC_SORT_EMPTY_TUBES = 2;
-    const MENTAL_MATH_TOTAL_ROUNDS = 10;
+    const MENTAL_MATH_START_TIME_MS = 15000;
+    const MENTAL_MATH_TICK_MS = 100;
+    const MENTAL_MATH_BASE_REWARD_MS = 1800;
+    const MENTAL_MATH_FAST_REWARD_MS = 1200;
+    const MENTAL_MATH_FAST_WINDOW_MS = 4000;
+    const MENTAL_MATH_MAX_TIME_MS = 30000;
     const CHESS_SIZE = 8;
     const CHECKERS_SIZE = 8;
     const AIR_HOCKEY_GOAL_SCORE = 5;
@@ -520,7 +538,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Groseille', radius: 28, color: '#f97316', score: 56 },
         { name: 'Mure', radius: 36, color: '#a78bfa', score: 120 },
         { name: 'Cassis', radius: 46, color: '#4338ca', score: 260 },
-        { name: 'Baie Royale', radius: 58, color: '#facc15', score: 560 }
+        { name: 'Baie Royale', radius: 58, color: '#facc15', score: 560 },
+        { name: 'Perle Marine', radius: 72, color: '#2dd4bf', score: 1120 },
+        { name: 'Rubis des Flots', radius: 88, color: '#ef4444', score: 2240 },
+        { name: 'Couronne Abyssale', radius: 106, color: '#0f172a', score: 4480 }
     ];
     const TETRIS_PIECES = {
         I: { color: '#38bdf8', shape: [[1, 1, 1, 1]] },
@@ -653,6 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongLastFinishedStateKey = '';
     let connect4LastFinishedStateKey = '';
     let connect4LastMoveAnimationKey = '';
+    let chessLastMoveAnimationKey = '';
     let chessLastFinishedStateKey = '';
     let checkersLastFinishedStateKey = '';
     let chessLastCaptureFxKey = '';
@@ -660,6 +682,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let chessMenuVisible = true;
     let chessMenuShowingRules = false;
     let chessMenuClosing = false;
+    let chessMenuEntering = false;
+    let chessOutcomeMenuTimer = null;
+    let chessOutcomeMenuEnterTimer = null;
     let gameBoard = [];
     let flagsPlaced = 0;
     let timer = 0;
@@ -699,6 +724,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongCountdownTimer = null;
     let pongCountdownCompleteTimer = null;
     let pongMode = 'solo';
+    let pongMenuVisible = true;
+    let pongMenuShowingRules = false;
+    let pongMenuClosing = false;
+    let pongMenuEntering = false;
+    let pongMenuResult = null;
     let sudokuPuzzle = null;
     let sudokuBoardState = [];
     let sudokuSelectedCell = null;
@@ -848,8 +878,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let magicSortSelectedTube = null;
     let magicSortMoves = 0;
     let mentalMathScore = 0;
-    let mentalMathRound = 0;
     let mentalMathCurrentQuestion = null;
+    let mentalMathTimeRemainingMs = MENTAL_MATH_START_TIME_MS;
+    let mentalMathTimerInterval = null;
+    let mentalMathRoundRunning = false;
+    let mentalMathQuestionStartedAt = 0;
     let candyCrushGrid = [];
     let candyCrushSelectedCell = null;
     let candyCrushScore = 0;
@@ -1991,6 +2024,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         legalNoticeModal.classList.remove('hidden');
+        window.requestAnimationFrame(() => {
+            legalNoticeModal.classList.add('modal-visible');
+        });
         legalNoticeModal.setAttribute('aria-hidden', 'false');
         closeLegalNoticeButton?.focus();
     }
@@ -2000,9 +2036,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        legalNoticeModal.classList.add('hidden');
+        legalNoticeModal.classList.remove('modal-visible');
         legalNoticeModal.setAttribute('aria-hidden', 'true');
-        openLegalNoticeButton?.focus();
+
+        window.setTimeout(() => {
+            if (!legalNoticeModal.classList.contains('modal-visible')) {
+                legalNoticeModal.classList.add('hidden');
+                openLegalNoticeButton?.focus();
+            }
+        }, LEGAL_NOTICE_ANIMATION_MS);
     }
 
     function getSelectedMultiplayerGame() {
@@ -2162,6 +2204,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const midY = Math.abs(moveY) === 2 ? 0 : moveY;
         const style = `style="--move-x:${moveX}; --move-y:${moveY}; --move-mid-x:${midX}; --move-mid-y:${midY};"`;
         return { className, style };
+    }
+
+    function getBoardMoveAnimationKey(lastMove) {
+        if (!lastMove) {
+            return '';
+        }
+
+        return [
+            lastMove.pieceType,
+            lastMove.fromRow,
+            lastMove.fromCol,
+            lastMove.toRow,
+            lastMove.toCol,
+            lastMove.capture?.row ?? '-',
+            lastMove.capture?.col ?? '-',
+            lastMove.captureColor ?? '-'
+        ].join(':');
     }
 
     function isBoardCaptureCell(lastMove, row, col) {
@@ -2379,6 +2438,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         chessLastFinishedStateKey = finishedKey;
+        revealChessOutcomeMenuWithDelay();
+        return;
         if (chessMode === 'solo') {
             openGameOverModal(
                 chessState.winner === 'white' ? 'Victoire' : 'Échec et mat',
@@ -6232,7 +6293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setAimRoundDuration(seconds) {
-        if (![30, 60, 90].includes(seconds) || aimRoundSeconds === seconds) {
+        if (![20, 40, 60].includes(seconds) || aimRoundSeconds === seconds) {
             return;
         }
 
@@ -6261,6 +6322,148 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return 0;
+    }
+
+    function getPongRulesText() {
+        return 'Deplace ta raquette avec Z et S ou avec les fleches. Renvoie la balle sans la laisser filer et marque 7 points pour gagner le duel.';
+    }
+
+    function getPongMenuOutcomeContent() {
+        if (isMultiplayerPongActive()) {
+            const gameState = multiplayerActiveRoom?.gameState;
+            if (!gameState?.finished) {
+                return null;
+            }
+
+            return gameState.winner === getMultiplayerPongRole()
+                ? {
+                    eyebrow: 'Victoire',
+                    title: 'Tu remportes le duel',
+                    text: 'Belle trajectoire. Remets-toi en selle pour une nouvelle manche.'
+                }
+                : {
+                    eyebrow: 'Defaite',
+                    title: 'C est perdu',
+                    text: 'L adversaire remporte le duel. Tu peux patienter ou relancer si tu es l hote.'
+                };
+        }
+
+        if (!pongMenuResult) {
+            return null;
+        }
+
+        if (pongMode === 'duo') {
+            return pongMenuResult === 'left'
+                ? {
+                    eyebrow: 'Fin de duel',
+                    title: 'Joueur 1 gagne',
+                    text: 'La balle echappe au joueur 2. Relance une manche quand vous voulez.'
+                }
+                : {
+                    eyebrow: 'Fin de duel',
+                    title: 'Joueur 2 gagne',
+                    text: 'La balle echappe au joueur 1. Relance une manche quand vous voulez.'
+                };
+        }
+
+        return pongMenuResult === 'win'
+            ? {
+                eyebrow: 'Victoire',
+                title: 'Tu remportes le duel',
+                text: 'Belle serie. Relance une partie ou relis les regles avant de repartir.'
+            }
+            : {
+                eyebrow: 'Defaite',
+                title: 'C est perdu',
+                text: 'L autre rive t echappe cette fois. Relance une partie pour retenter ta chance.'
+            };
+    }
+
+    function renderPongMenu() {
+        if (!pongMenuOverlay || !pongTable) {
+            return;
+        }
+
+        const isOnline = multiplayerActiveRoom?.gameId === 'pong';
+        const gameState = multiplayerActiveRoom?.gameState || null;
+        const countdownActive = Boolean(gameState?.countdownEndsAt && Number(gameState.countdownEndsAt) > Date.now());
+        const roomStarted = Boolean(gameState?.running || countdownActive);
+        const roomFinished = Boolean(gameState?.finished);
+        const isHost = Boolean(getCurrentMultiplayerPlayer()?.isHost);
+        const hasEnoughPlayers = Number(multiplayerActiveRoom?.playerCount || 0) >= 2;
+        const outcomeContent = getPongMenuOutcomeContent();
+        const hasResult = Boolean(outcomeContent);
+        const actionLabel = isOnline
+            ? ((roomFinished ? 'Relancer le duel' : 'Lancer le duel'))
+            : (hasResult ? 'Relancer le duel' : 'Lancer le duel');
+        const baseText = isOnline
+            ? 'Quand l hote lance le duel, toute la room bascule sur le terrain.'
+            : 'Choisis ton mode, puis lance le duel dans la baie.';
+
+        pongMenuVisible = isOnline ? (!roomStarted || roomFinished) : pongMenuVisible;
+
+        pongMenuOverlay.classList.toggle('hidden', !pongMenuVisible);
+        pongMenuOverlay.classList.toggle('is-closing', pongMenuClosing);
+        pongMenuOverlay.classList.toggle('is-entering', pongMenuEntering);
+        pongTable.classList.toggle('is-menu-open', pongMenuVisible);
+
+        if (!pongMenuVisible) {
+            return;
+        }
+
+        if (pongMenuEyebrow) {
+            pongMenuEyebrow.textContent = pongMenuShowingRules ? 'Regles' : (outcomeContent?.eyebrow || 'Baie d arcade');
+        }
+        if (pongMenuTitle) {
+            pongMenuTitle.textContent = pongMenuShowingRules ? 'Rappel rapide' : (outcomeContent?.title || 'Pong');
+        }
+        if (pongMenuText) {
+            pongMenuText.textContent = pongMenuShowingRules ? getPongRulesText() : (outcomeContent?.text || baseText);
+        }
+        if (pongMenuActionButton) {
+            pongMenuActionButton.textContent = pongMenuShowingRules ? 'Retour' : actionLabel;
+            pongMenuActionButton.disabled = pongMenuShowingRules
+                ? false
+                : (isOnline ? (!isHost || !hasEnoughPlayers) : false);
+        }
+        if (pongMenuRulesButton) {
+            pongMenuRulesButton.textContent = 'Regles';
+            pongMenuRulesButton.hidden = pongMenuShowingRules;
+        }
+    }
+
+    function startPongLaunchSequence(onComplete = null) {
+        pongMenuClosing = true;
+        renderPongMenu();
+        window.setTimeout(() => {
+            pongMenuClosing = false;
+            pongMenuVisible = false;
+            pongMenuShowingRules = false;
+            pongMenuEntering = false;
+            renderPongMenu();
+            onComplete?.();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealPongOutcomeMenuWithDelay() {
+        pongMenuVisible = false;
+        pongMenuShowingRules = false;
+        pongMenuClosing = false;
+        pongMenuEntering = false;
+        renderPongMenu();
+
+        window.setTimeout(() => {
+            pongMenuVisible = true;
+            pongMenuShowingRules = false;
+            pongMenuClosing = false;
+            pongMenuEntering = true;
+            renderPongMenu();
+
+            window.setTimeout(() => {
+                pongMenuEntering = false;
+                renderPongMenu();
+            }, UNO_MENU_CLOSE_DURATION_MS);
+        }, 420);
     }
 
     function pushMultiplayerPongInput() {
@@ -6371,12 +6574,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         pongLastFinishedStateKey = finishedStateKey;
-        const currentRole = getMultiplayerPongRole();
-        if (nextState.winner === currentRole) {
-            openGameOverModal('Victoire', 'Tu remportes ce duel de Pong en ligne.');
-        } else {
-            openGameOverModal('C est perdu', 'L adversaire remporte ce duel de Pong.');
-        }
+        revealPongOutcomeMenuWithDelay();
     }
 
     function updatePongHud() {
@@ -6401,8 +6599,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.classList.remove('is-active');
                 button.disabled = true;
             });
-            pongStartButton.textContent = getCurrentMultiplayerPlayer()?.isHost ? 'Lancer le duel' : 'En attente';
-            pongStartButton.disabled = multiplayerBusy || !getCurrentMultiplayerPlayer()?.isHost || (multiplayerActiveRoom?.playerCount || 0) < 2;
+            renderPongMenu();
             return;
         }
 
@@ -6415,22 +6612,15 @@ document.addEventListener('DOMContentLoaded', () => {
             button.classList.toggle('is-active', button.dataset.pongMode === pongMode);
             button.disabled = false;
         });
-        if (pongPaused) {
-            pongStartButton.textContent = 'Reprendre le duel';
-            pongStartButton.disabled = false;
-            return;
-        }
-
-        pongStartButton.textContent = pongRunning ? 'Duel en cours' : 'Lancer le duel';
-        pongStartButton.disabled = false;
+        renderPongMenu();
     }
 
     function createPongRoundState() {
         const boardWidth = pongBoard.clientWidth || 700;
         const boardHeight = pongBoard.clientHeight || Math.round(boardWidth * 9 / 16);
-        const paddleHeight = 92;
-        const paddleWidth = 14;
-        const ballSize = 16;
+        const paddleHeight = 104;
+        const paddleWidth = 16;
+        const ballSize = 20;
         const paddleOffset = 22;
         const centerY = (boardHeight - paddleHeight) / 2;
         const serveDirection = Math.random() > 0.5 ? 1 : -1;
@@ -6628,9 +6818,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        pongPlayerPaddle.style.transform = `translate(${activePongState.paddleOffset}px, ${activePongState.playerY}px)`;
-        pongAiPaddle.style.transform = `translate(${activePongState.boardWidth - activePongState.paddleOffset - activePongState.paddleWidth}px, ${activePongState.aiY}px)`;
-        pongBall.style.transform = `translate(${activePongState.ballX}px, ${activePongState.ballY}px)`;
+        const renderWidth = pongBoard.clientWidth || activePongState.boardWidth;
+        const renderHeight = pongBoard.clientHeight || activePongState.boardHeight;
+        const scaleX = renderWidth / activePongState.boardWidth;
+        const scaleY = renderHeight / activePongState.boardHeight;
+        const leftX = activePongState.paddleOffset * scaleX;
+        const rightX = (activePongState.boardWidth - activePongState.paddleOffset - activePongState.paddleWidth) * scaleX;
+
+        pongPlayerPaddle.style.width = `${activePongState.paddleWidth * scaleX}px`;
+        pongPlayerPaddle.style.height = `${activePongState.paddleHeight * scaleY}px`;
+        pongAiPaddle.style.width = `${activePongState.paddleWidth * scaleX}px`;
+        pongAiPaddle.style.height = `${activePongState.paddleHeight * scaleY}px`;
+        pongBall.style.width = `${activePongState.ballSize * scaleX}px`;
+        pongBall.style.height = `${activePongState.ballSize * scaleY}px`;
+
+        pongPlayerPaddle.style.transform = `translate(${leftX}px, ${activePongState.playerY * scaleY}px)`;
+        pongAiPaddle.style.transform = `translate(${rightX}px, ${activePongState.aiY * scaleY}px)`;
+        pongBall.style.transform = `translate(${activePongState.ballX * scaleX}px, ${activePongState.ballY * scaleY}px)`;
     }
 
     function getPongBounceVelocityY(impact) {
@@ -6735,12 +6939,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function finishPongOutcome(playerWon) {
         stopPong();
-        openGameOverModal(
-            playerWon ? 'Victoire' : (pongMode === 'duo' ? 'Joueur 2 gagne' : 'C est perdu'),
-            playerWon
-                ? (pongMode === 'duo' ? 'Le joueur 1 remporte le duel.' : 'Le duel est gagne. La baie t acclame.')
-                : (pongMode === 'duo' ? 'Le joueur 2 remporte le duel sur le clavier.' : 'L IA remporte la manche. Le courant t echappe.')
-        );
+        pongMenuResult = pongMode === 'duo' ? (playerWon ? 'left' : 'right') : (playerWon ? 'win' : 'loss');
+        revealPongOutcomeMenuWithDelay();
     }
 
     function updatePongFrame(timestamp) {
@@ -6777,19 +6977,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const approachingAi = pongState.ballVelocityX > 0;
             const anticipationTime = approachingAi ? 0.085 : 0.03;
             const anticipatedCenter = ballCenter + (pongState.ballVelocityY * anticipationTime);
-            const desiredAiY = Math.max(
-                0,
-                Math.min(
-                    anticipatedCenter - (pongState.paddleHeight / 2),
-                    pongState.boardHeight - pongState.paddleHeight
+            const desiredAiY = approachingAi
+                ? Math.max(
+                    0,
+                    Math.min(
+                        anticipatedCenter - (pongState.paddleHeight / 2),
+                        pongState.boardHeight - pongState.paddleHeight
+                    )
                 )
-            );
-            pongState.aiDriftTimer = Math.max(0, (pongState.aiDriftTimer || 0) - delta);
-            if (pongState.aiDriftTimer <= 0) {
-                const driftAmount = approachingAi ? 18 : 28;
-                pongState.aiTargetY = desiredAiY + ((Math.random() - 0.5) * driftAmount);
-                pongState.aiDriftTimer = approachingAi ? (0.1 + (Math.random() * 0.06)) : (0.16 + (Math.random() * 0.08));
-            }
+                : ((pongState.boardHeight - pongState.paddleHeight) / 2);
+            pongState.aiTargetY += (desiredAiY - pongState.aiTargetY) * Math.min(1, delta * (approachingAi ? 7.5 : 4.5));
             const targetDelta = pongState.aiTargetY - pongState.aiY;
             const maxStep = pongState.aiSpeed * delta * (approachingAi ? 1 : 0.72);
             pongState.aiY += Math.max(-maxStep, Math.min(maxStep, targetDelta));
@@ -6855,12 +7052,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initializePong() {
         if (isMultiplayerPongActive()) {
+            pongMenuResult = null;
             syncMultiplayerPongState();
             return;
         }
 
         stopPong();
         resetPongMatch();
+        pongMenuResult = null;
+        pongMenuVisible = true;
+        pongMenuShowingRules = false;
+        pongMenuClosing = false;
+        pongMenuEntering = false;
+        renderPongMenu();
     }
 
     function setPongMode(nextMode) {
@@ -6897,6 +7101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeGameOverModal();
         pongKeys.clear();
         pongLastNetworkSyncAt = 0;
+        pongMenuResult = null;
         resetPongMatch();
         pongRunning = true;
         pongPaused = false;
@@ -9158,11 +9363,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateMentalMathHud() {
         mentalMathScoreDisplay.textContent = String(mentalMathScore);
-        mentalMathRoundDisplay.textContent = `${Math.min(mentalMathRound, MENTAL_MATH_TOTAL_ROUNDS)} / ${MENTAL_MATH_TOTAL_ROUNDS}`;
+        mentalMathRoundDisplay.textContent = `${Math.max(0, mentalMathTimeRemainingMs / 1000).toFixed(1)}s`;
     }
 
-    function generateMentalMathQuestion(round) {
-        const difficulty = Math.min(4, Math.floor((round - 1) / 3));
+    function generateMentalMathQuestion(score) {
+        const difficulty = Math.min(4, Math.floor(score / 4));
         const operationRoll = Math.floor(Math.random() * 4);
 
         if (operationRoll === 0) {
@@ -9192,36 +9397,64 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMentalMathHud();
         mentalMathQuestion.textContent = mentalMathCurrentQuestion?.prompt || '--';
         mentalMathAnswerInput.value = '';
-        if (activeGameTab === 'mentalMath') {
+        mentalMathAnswerInput.disabled = !mentalMathRoundRunning;
+        mentalMathSubmitButton.disabled = !mentalMathRoundRunning;
+        if (activeGameTab === 'mentalMath' && mentalMathRoundRunning) {
             mentalMathAnswerInput.focus();
         }
     }
 
-    function advanceMentalMathQuestion() {
-        if (mentalMathRound > MENTAL_MATH_TOTAL_ROUNDS) {
-            mentalMathHelpText.textContent = 'La traversee mentale est terminee.';
-            openGameOverModal('Quiz termine', `Tu as obtenu ${mentalMathScore} / ${MENTAL_MATH_TOTAL_ROUNDS}.`);
-            mentalMathRound = MENTAL_MATH_TOTAL_ROUNDS;
-            updateMentalMathHud();
-            return;
+    function stopMentalMathTimer() {
+        if (mentalMathTimerInterval) {
+            window.clearInterval(mentalMathTimerInterval);
+            mentalMathTimerInterval = null;
         }
+    }
 
-        mentalMathCurrentQuestion = generateMentalMathQuestion(mentalMathRound);
+    function finishMentalMathRound() {
+        stopMentalMathTimer();
+        mentalMathRoundRunning = false;
+        mentalMathTimeRemainingMs = 0;
+        mentalMathFeedback.textContent = `Temps ecoule. Score final : ${mentalMathScore}.`;
+        mentalMathHelpText.textContent = 'La maree s est retiree. Relance une partie pour tenter de battre ton score.';
+        renderMentalMathQuestion();
+        openGameOverModal('Temps ecoule', `Tu as enchaine ${mentalMathScore} bonne${mentalMathScore > 1 ? 's' : ''} reponse${mentalMathScore > 1 ? 's' : ''}.`);
+    }
+
+    function startMentalMathTimer() {
+        stopMentalMathTimer();
+        mentalMathTimerInterval = window.setInterval(() => {
+            mentalMathTimeRemainingMs = Math.max(0, mentalMathTimeRemainingMs - MENTAL_MATH_TICK_MS);
+            updateMentalMathHud();
+
+            if (mentalMathTimeRemainingMs <= 0) {
+                finishMentalMathRound();
+            }
+        }, MENTAL_MATH_TICK_MS);
+    }
+
+    function advanceMentalMathQuestion() {
+        mentalMathCurrentQuestion = generateMentalMathQuestion(mentalMathScore);
+        mentalMathQuestionStartedAt = performance.now();
         renderMentalMathQuestion();
     }
 
     function initializeMentalMath() {
         closeGameOverModal();
+        stopMentalMathTimer();
         mentalMathScore = 0;
-        mentalMathRound = 1;
         mentalMathCurrentQuestion = null;
+        mentalMathTimeRemainingMs = MENTAL_MATH_START_TIME_MS;
+        mentalMathRoundRunning = true;
+        mentalMathQuestionStartedAt = performance.now();
         mentalMathFeedback.textContent = '';
-        mentalMathHelpText.textContent = 'Resolvez 10 calculs avant la fin de la traversee.';
+        mentalMathHelpText.textContent = 'Le chrono file. Reponds vite et juste pour regagner du temps.';
         advanceMentalMathQuestion();
+        startMentalMathTimer();
     }
 
     function submitMentalMathAnswer() {
-        if (!mentalMathCurrentQuestion) {
+        if (!mentalMathCurrentQuestion || !mentalMathRoundRunning) {
             return;
         }
 
@@ -9232,15 +9465,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (userAnswer === mentalMathCurrentQuestion.answer) {
+            const responseTimeMs = Math.max(0, performance.now() - mentalMathQuestionStartedAt);
+            const fastRewardRatio = Math.max(0, (MENTAL_MATH_FAST_WINDOW_MS - responseTimeMs) / MENTAL_MATH_FAST_WINDOW_MS);
+            const timeReward = MENTAL_MATH_BASE_REWARD_MS + (MENTAL_MATH_FAST_REWARD_MS * fastRewardRatio);
             mentalMathScore += 1;
-            mentalMathFeedback.textContent = 'Bonne reponse.';
-            mentalMathHelpText.textContent = 'Le capitaine approuve ce calcul.';
+            mentalMathTimeRemainingMs = Math.min(MENTAL_MATH_MAX_TIME_MS, mentalMathTimeRemainingMs + timeReward);
+            mentalMathFeedback.textContent = `Bonne reponse. +${(timeReward / 1000).toFixed(1)}s`;
+            mentalMathHelpText.textContent = 'Belle reponse. Enchaine pour garder la maree avec toi.';
         } else {
             mentalMathFeedback.textContent = `Presque. Il fallait ${mentalMathCurrentQuestion.answer}.`;
-            mentalMathHelpText.textContent = 'On garde le cap, meme apres une erreur.';
+            mentalMathHelpText.textContent = 'Pas de bonus cette fois. Repars vite sur le calcul suivant.';
         }
 
-        mentalMathRound += 1;
         advanceMentalMathQuestion();
     }
 
@@ -10125,7 +10361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeChess() {
-        if (isMultiplayerChessActive()) {
+        if (multiplayerActiveRoom?.gameId === 'chess') {
             syncMultiplayerChessState();
             return;
         }
@@ -10134,6 +10370,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chessLastMoveResetTimer) {
             window.clearTimeout(chessLastMoveResetTimer);
             chessLastMoveResetTimer = null;
+        }
+        if (chessOutcomeMenuTimer) {
+            window.clearTimeout(chessOutcomeMenuTimer);
+            chessOutcomeMenuTimer = null;
+        }
+        if (chessOutcomeMenuEnterTimer) {
+            window.clearTimeout(chessOutcomeMenuEnterTimer);
+            chessOutcomeMenuEnterTimer = null;
         }
         if (chessAiTimeout) {
             window.clearTimeout(chessAiTimeout);
@@ -10145,10 +10389,12 @@ document.addEventListener('DOMContentLoaded', () => {
             winner: null,
             lastMove: null
         };
+        chessLastMoveAnimationKey = '';
         chessSelectedSquare = null;
         chessMenuVisible = true;
         chessMenuShowingRules = false;
         chessMenuClosing = false;
+        chessMenuEntering = false;
         renderChessMenu();
         renderChess();
     }
@@ -10163,6 +10409,78 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${readyCount}/${readyTotal || 0}`;
     }
 
+    function getChessMenuOutcomeContent() {
+        if (!chessState?.winner) {
+            return null;
+        }
+
+        if (isMultiplayerChessActive()) {
+            return chessState.winner === getMultiplayerChessRole()
+                ? {
+                    eyebrow: 'Victoire',
+                    title: 'Tu remportes la partie',
+                    text: 'Echec et mat. Tu peux te remettre pret pour relancer une manche.'
+                }
+                : {
+                    eyebrow: 'Defaite',
+                    title: 'C est perdu',
+                    text: 'Echec et mat. L adversaire remporte la partie. Tu peux te remettre pret pour la suivante.'
+                };
+        }
+
+        if (chessMode === 'solo') {
+            return chessState.winner === 'white'
+                ? {
+                    eyebrow: 'Victoire',
+                    title: 'Tu remportes la partie',
+                    text: 'Le roi adverse tombe. Tu peux relancer une nouvelle partie ou relire les regles.'
+                }
+                : {
+                    eyebrow: 'Defaite',
+                    title: 'C est perdu',
+                    text: 'Ton roi est mat. Relance une partie pour retenter ta chance.'
+                };
+        }
+
+        return {
+            eyebrow: 'Fin de partie',
+            title: chessState.winner === 'white' ? 'Blancs gagnent' : 'Noirs gagnent',
+            text: `Echec et mat. ${chessState.winner === 'white' ? 'Les Blancs' : 'Les Noirs'} remportent la partie.`
+        };
+    }
+
+    function revealChessOutcomeMenuWithDelay() {
+        if (chessOutcomeMenuTimer) {
+            window.clearTimeout(chessOutcomeMenuTimer);
+            chessOutcomeMenuTimer = null;
+        }
+        if (chessOutcomeMenuEnterTimer) {
+            window.clearTimeout(chessOutcomeMenuEnterTimer);
+            chessOutcomeMenuEnterTimer = null;
+        }
+
+        chessMenuVisible = false;
+        chessMenuShowingRules = false;
+        chessMenuClosing = false;
+        chessMenuEntering = false;
+        renderChessMenu();
+
+        chessOutcomeMenuTimer = window.setTimeout(() => {
+            chessOutcomeMenuTimer = null;
+            chessMenuVisible = true;
+            chessMenuShowingRules = false;
+            chessMenuClosing = false;
+            chessMenuEntering = true;
+            renderChessMenu();
+
+            chessOutcomeMenuEnterTimer = window.setTimeout(() => {
+                chessOutcomeMenuEnterTimer = null;
+                chessMenuEntering = false;
+                renderChessMenu();
+            }, UNO_MENU_CLOSE_DURATION_MS);
+        }, 420);
+    }
+
     function renderChessMenu() {
         if (!chessMenuOverlay || !chessTable) {
             return;
@@ -10171,16 +10489,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const isOnline = multiplayerActiveRoom?.gameId === 'chess';
         const roomStarted = Boolean(multiplayerActiveRoom?.chessStarted);
         const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+        const outcomeContent = getChessMenuOutcomeContent();
+        const hasResult = Boolean(outcomeContent);
         const readyLabel = currentPlayer?.chessReady ? 'Retirer pret' : 'Mettre pret';
-        const actionLabel = isOnline ? `${readyLabel} (${getChessReadySummary()})` : 'Lancer la partie';
+        const actionLabel = isOnline
+            ? `${readyLabel} (${getChessReadySummary()})`
+            : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
         const baseText = isOnline
             ? 'Quand les deux joueurs sont prets, la partie d echecs commence automatiquement.'
             : 'Installe les pieces et choisis ton mode avant d engager la partie.';
 
-        chessMenuVisible = isOnline ? !roomStarted : chessMenuVisible;
+        chessMenuVisible = isOnline ? (!roomStarted || hasResult) : chessMenuVisible;
 
         chessMenuOverlay.classList.toggle('hidden', !chessMenuVisible);
         chessMenuOverlay.classList.toggle('is-closing', chessMenuClosing);
+        chessMenuOverlay.classList.toggle('is-entering', chessMenuEntering);
         chessTable.classList.toggle('is-menu-open', chessMenuVisible);
 
         if (!chessMenuVisible) {
@@ -10188,15 +10511,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (chessMenuEyebrow) {
-            chessMenuEyebrow.textContent = chessMenuShowingRules ? 'Regles' : 'Baie strategique';
+            chessMenuEyebrow.textContent = chessMenuShowingRules ? 'Regles' : (outcomeContent?.eyebrow || 'Baie strategique');
         }
         if (chessMenuTitle) {
-            chessMenuTitle.textContent = chessMenuShowingRules ? 'Rappel rapide' : 'Echecs';
+            chessMenuTitle.textContent = chessMenuShowingRules ? 'Rappel rapide' : (outcomeContent?.title || 'Echecs');
         }
         if (chessMenuText) {
             chessMenuText.textContent = chessMenuShowingRules
                 ? getChessRulesText()
-                : baseText;
+                : (outcomeContent?.text || baseText);
         }
         if (chessMenuActionButton) {
             chessMenuActionButton.textContent = chessMenuShowingRules ? 'Retour' : actionLabel;
@@ -10214,6 +10537,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chessMenuClosing = false;
             chessMenuVisible = false;
             chessMenuShowingRules = false;
+            chessMenuEntering = false;
             renderChessMenu();
             renderChess();
         }, UNO_MENU_CLOSE_DURATION_MS);
@@ -10438,6 +10762,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const blackInCheck = isChessKingInCheck('black');
         const checkedColor = whiteInCheck ? 'white' : (blackInCheck ? 'black' : null);
         const checkedKingPosition = checkedColor ? getChessKingPosition(checkedColor) : null;
+        const nextAnimationKey = getBoardMoveAnimationKey(chessState.lastMove);
+        const shouldAnimateLastMove = Boolean(chessState.lastMove) && nextAnimationKey !== chessLastMoveAnimationKey;
         chessBoard.classList.toggle('is-check', Boolean(checkedColor) && !chessState.winner);
         chessBoard.classList.toggle('is-checkmate', Boolean(chessState.winner));
         if (isMultiplayerChessActive()) {
@@ -10458,8 +10784,8 @@ document.addEventListener('DOMContentLoaded', () => {
             chessStatusDisplay.textContent = chessState.winner
                 ? `${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Toi' : 'Blancs') : (chessMode === 'solo' ? 'IA' : 'Noirs')} gagnent`
                 : (checkedColor
-                    ? `Échec sur ${checkedColor === 'white' ? (chessMode === 'solo' ? 'toi' : 'les Blancs') : (chessMode === 'solo' ? 'l IA' : 'les Noirs')}`
-                    : (chessMode === 'solo' && chessState.turn === 'black' ? 'IA joue' : 'En cours'));
+                    ? `Echec ${checkedColor === 'white' ? 'blanc' : 'noir'}`
+                    : 'En cours');
             chessHelpText.textContent = chessState.winner
                 ? `Échec et mat. ${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Tu remportes' : 'Les Blancs remportent') : (chessMode === 'solo' ? 'L IA remporte' : 'Les Noirs remportent')} la partie.`
                 : (chessMode === 'solo'
@@ -10477,7 +10803,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const selected = chessSelectedSquare?.row === row && chessSelectedSquare?.col === col;
             const playable = legalMoves.some((move) => move.row === row && move.col === col);
             const captureHit = isBoardCaptureCell(chessState.lastMove, row, col);
-            const pieceAnimation = getBoardMoveAnimationMetadata(chessState.lastMove, row, col, shouldFlipChessBoardPerspective());
+            const pieceAnimation = getBoardMoveAnimationMetadata(
+                shouldAnimateLastMove ? chessState.lastMove : null,
+                row,
+                col,
+                shouldFlipChessBoardPerspective()
+            );
             const checkedKing = checkedKingPosition?.row === row && checkedKingPosition?.col === col;
             const rankLabel = displayCol === 0 ? String(CHESS_SIZE - row) : '';
             const fileLabel = displayRow === CHESS_SIZE - 1 ? String.fromCharCode(97 + col) : '';
@@ -10494,9 +10825,10 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('')).join('');
 
-        if (chessState.lastMove) {
+        if (chessState.lastMove && shouldAnimateLastMove) {
             scheduleChessMoveAnimationClear();
         }
+        chessLastMoveAnimationKey = nextAnimationKey;
         maybePlayChessCaptureFx();
         maybeOpenChessOutcomeModal();
     }
@@ -11055,6 +11387,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function syncMultiplayerChessState() {
         if (!isMultiplayerChessActive()) {
+            chessLastMoveAnimationKey = '';
             chessLastFinishedStateKey = '';
             chessLastCaptureFxKey = '';
             return;
@@ -11063,6 +11396,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chessLastMoveResetTimer) {
             window.clearTimeout(chessLastMoveResetTimer);
             chessLastMoveResetTimer = null;
+        }
+        if (chessOutcomeMenuTimer) {
+            window.clearTimeout(chessOutcomeMenuTimer);
+            chessOutcomeMenuTimer = null;
+        }
+        if (chessOutcomeMenuEnterTimer) {
+            window.clearTimeout(chessOutcomeMenuEnterTimer);
+            chessOutcomeMenuEnterTimer = null;
         }
         if (chessAiTimeout) {
             window.clearTimeout(chessAiTimeout);
@@ -11089,6 +11430,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextFinishedKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner || 'none'}`;
         if (!multiplayerActiveRoom.gameState.winner) {
             chessLastFinishedStateKey = '';
+            chessMenuEntering = false;
             closeGameOverModal();
             return;
         }
@@ -11098,11 +11440,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         chessLastFinishedStateKey = nextFinishedKey;
-        if (multiplayerActiveRoom.gameState.winner === getMultiplayerChessRole()) {
-            openGameOverModal('Victoire', 'Tu remportes cette partie d echecs en ligne.');
-        } else {
-            openGameOverModal('C est perdu', 'L adversaire remporte cette partie d echecs.');
-        }
+        revealChessOutcomeMenuWithDelay();
     }
 
     function isMultiplayerCheckersActive() {
@@ -11829,12 +12167,87 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.floor(Math.random() * Math.min(4, BAIE_BERRY_FRUITS.length));
     }
 
+    function getRandomBaieBerryObjective() {
+        const targets = [
+            { type: 'score', target: 1500, label: 'Atteins 1500 points' },
+            { type: 'score', target: 3000, label: 'Atteins 3000 points' },
+            { type: 'level', target: 6, label: 'Cree une Perle Marine' },
+            { type: 'level', target: 7, label: 'Cree un Rubis des Flots' }
+        ];
+        return { ...targets[Math.floor(Math.random() * targets.length)], completed: false };
+    }
+
+    function refreshBaieBerryHud() {
+        if (!baieBerryState) {
+            return;
+        }
+
+        baieBerryScoreDisplay.textContent = String(baieBerryState.score);
+        baieBerryNextDisplay.textContent = BAIE_BERRY_FRUITS[baieBerryState.nextQueue[0]].name;
+        baieBerryAfterNextDisplay.textContent = BAIE_BERRY_FRUITS[baieBerryState.nextQueue[1]].name;
+        baieBerryObjectiveDisplay.textContent = baieBerryState.objective.completed
+            ? `${baieBerryState.objective.label} ✓`
+            : baieBerryState.objective.label;
+    }
+
+    function addBaieBerryParticles(x, y, color, count = 14) {
+        if (!baieBerryState) {
+            return;
+        }
+
+        for (let index = 0; index < count; index += 1) {
+            const maxLife = 0.7 + (Math.random() * 0.45);
+            baieBerryState.particles.push({
+                x,
+                y,
+                vx: (Math.random() - 0.5) * 220,
+                vy: -40 - (Math.random() * 180),
+                life: maxLife,
+                maxLife,
+                size: 3 + (Math.random() * 7),
+                color
+            });
+        }
+    }
+
+    function addBaieBerryScorePopup(x, y, text, color = '#f8fafc') {
+        baieBerryState?.scorePopups.push({
+            x,
+            y,
+            vy: -36,
+            life: 1,
+            text,
+            color
+        });
+    }
+
+    function updateBaieBerryObjective(lastMergedLevel = null) {
+        if (!baieBerryState || baieBerryState.objective.completed) {
+            return;
+        }
+
+        const { objective } = baieBerryState;
+        if (objective.type === 'score' && baieBerryState.score >= objective.target) {
+            objective.completed = true;
+        }
+
+        if (objective.type === 'level' && lastMergedLevel !== null && lastMergedLevel >= objective.target) {
+            objective.completed = true;
+        }
+
+        if (objective.completed) {
+            baieBerryHelpText.textContent = `Objectif accompli: ${objective.label}. Continue de faire grimper la recolte.`;
+            addBaieBerryScorePopup(baieBerryCanvas.width * 0.5, 108, 'Objectif atteint', '#fde68a');
+            refreshBaieBerryHud();
+        }
+    }
+
     function updateBaieBerryDropGuide(positionX = null) {
         if (!baieBerryDropGuide || !baieBerryState) {
             return;
         }
 
-        const nextFruit = BAIE_BERRY_FRUITS[baieBerryState.nextLevel];
+        const nextFruit = BAIE_BERRY_FRUITS[baieBerryState.nextQueue[0]];
         const guideSize = Math.max(28, nextFruit.radius * 1.6);
         const clampedX = positionX === null
             ? (baieBerryCanvas.width / 2)
@@ -11849,6 +12262,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function drawBaieBerryFruit(context, fruit, alpha = 1) {
         const config = BAIE_BERRY_FRUITS[fruit.level];
         const mergeScale = fruit.mergeProgress ? (1 + (fruit.mergeProgress * 0.14)) : 1;
+        const eyeOffsetX = config.radius * 0.22;
+        const eyeY = -config.radius * 0.08;
+        const blink = fruit.blink ?? 1;
+        const mouthCurve = fruit.expression === 'happy' ? 1 : fruit.expression === 'worried' ? -1 : 0;
         const gradient = context.createRadialGradient(
             -config.radius * 0.35,
             -config.radius * 0.42,
@@ -11915,6 +12332,25 @@ document.addEventListener('DOMContentLoaded', () => {
             Math.PI * 2
         );
         context.fill();
+
+        context.fillStyle = 'rgba(15, 23, 42, 0.92)';
+        context.beginPath();
+        context.ellipse(-eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
+        context.ellipse(eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
+        context.fill();
+
+        context.beginPath();
+        context.strokeStyle = 'rgba(15, 23, 42, 0.72)';
+        context.lineWidth = Math.max(2, config.radius * 0.07);
+        if (mouthCurve > 0) {
+            context.arc(0, config.radius * 0.14, config.radius * 0.18, 0.15, Math.PI - 0.15);
+        } else if (mouthCurve < 0) {
+            context.arc(0, config.radius * 0.3, config.radius * 0.16, Math.PI * 1.12, Math.PI * 1.88);
+        } else {
+            context.moveTo(-config.radius * 0.14, config.radius * 0.22);
+            context.lineTo(config.radius * 0.14, config.radius * 0.22);
+        }
+        context.stroke();
         context.restore();
     }
 
@@ -11935,35 +12371,98 @@ document.addEventListener('DOMContentLoaded', () => {
         context.fillRect(0, 0, baieBerryCanvas.width, baieBerryCanvas.height);
 
         context.fillStyle = 'rgba(255,255,255,0.14)';
-        for (let bubbleIndex = 0; bubbleIndex < 10; bubbleIndex += 1) {
-            const x = 30 + (bubbleIndex * 34) % baieBerryCanvas.width;
-            const y = 26 + (bubbleIndex * 57) % baieBerryCanvas.height;
-            const radius = 4 + (bubbleIndex % 3) * 2;
+        for (let bubbleIndex = 0; bubbleIndex < 16; bubbleIndex += 1) {
+            const drift = ((baieBerryState.elapsed || 0) * (8 + bubbleIndex)) % (baieBerryCanvas.height + 80);
+            const x = 26 + (bubbleIndex * 21) % (baieBerryCanvas.width - 52);
+            const y = baieBerryCanvas.height + 30 - drift;
+            const radius = 3 + (bubbleIndex % 4) * 1.7;
             context.beginPath();
             context.arc(x, y, radius, 0, Math.PI * 2);
             context.fill();
+        }
+
+        for (let kelpIndex = 0; kelpIndex < 6; kelpIndex += 1) {
+            const baseX = 34 + (kelpIndex * 58);
+            const sway = Math.sin((baieBerryState.elapsed || 0) * 1.8 + kelpIndex) * 8;
+            context.beginPath();
+            context.moveTo(baseX, baieBerryCanvas.height - 16);
+            context.quadraticCurveTo(baseX + sway, baieBerryCanvas.height - 92, baseX - (sway * 0.6), baieBerryCanvas.height - 164);
+            context.strokeStyle = 'rgba(16, 185, 129, 0.28)';
+            context.lineWidth = 8;
+            context.lineCap = 'round';
+            context.stroke();
+        }
+
+        const dangerRatio = Math.min(1, baieBerryState.dangerTime / BAIE_BERRY_DANGER_DURATION_MS);
+        if (dangerRatio > 0) {
+            context.fillStyle = `rgba(239, 68, 68, ${0.08 + (dangerRatio * 0.18)})`;
+            context.fillRect(0, 0, baieBerryCanvas.width, BAIE_BERRY_DANGER_LINE_Y + 8);
         }
 
         context.fillStyle = 'rgba(255,255,255,0.1)';
         context.fillRect(18, 12, baieBerryCanvas.width - 36, 6);
         context.fillStyle = 'rgba(255,255,255,0.08)';
         context.fillRect(12, baieBerryCanvas.height - 28, baieBerryCanvas.width - 24, 12);
+        context.fillStyle = 'rgba(239, 68, 68, 0.16)';
+        context.fillRect(18, BAIE_BERRY_DANGER_LINE_Y - 4, baieBerryCanvas.width - 36, 8);
+        context.strokeStyle = `rgba(254, 202, 202, ${0.5 + (dangerRatio * 0.45)})`;
+        context.lineWidth = 3;
+        context.beginPath();
+        context.moveTo(18, BAIE_BERRY_DANGER_LINE_Y);
+        context.lineTo(baieBerryCanvas.width - 18, BAIE_BERRY_DANGER_LINE_Y);
+        context.stroke();
 
         baieBerryState.fruits.forEach((fruit) => {
             drawBaieBerryFruit(context, fruit);
         });
+
+        baieBerryState.particles.forEach((particle) => {
+            context.save();
+            context.globalAlpha = Math.max(0, particle.life / particle.maxLife);
+            context.fillStyle = particle.color;
+            context.beginPath();
+            context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            context.fill();
+            context.restore();
+        });
+
+        baieBerryState.scorePopups.forEach((popup) => {
+            context.save();
+            context.globalAlpha = popup.life;
+            context.fillStyle = popup.color;
+            context.font = '700 18px "Trebuchet MS", sans-serif';
+            context.textAlign = 'center';
+            context.fillText(popup.text, popup.x, popup.y);
+            context.restore();
+        });
+
+        if (baieBerryState.comboCount > 1 && baieBerryState.comboExpiresAt > performance.now()) {
+            context.save();
+            context.fillStyle = 'rgba(250, 204, 21, 0.92)';
+            context.font = '700 24px "Trebuchet MS", sans-serif';
+            context.textAlign = 'center';
+            context.fillText(`Combo x${baieBerryState.comboCount}`, baieBerryCanvas.width * 0.5, 42);
+            context.restore();
+        }
     }
 
     function initializeBaieBerry() {
         baieBerryState = {
             fruits: [],
-            nextLevel: getRandomBaieBerryIndex(),
+            nextQueue: [getRandomBaieBerryIndex(), getRandomBaieBerryIndex()],
             score: 0,
-            gameOver: false
+            gameOver: false,
+            dangerTime: 0,
+            comboCount: 0,
+            comboExpiresAt: 0,
+            objective: getRandomBaieBerryObjective(),
+            particles: [],
+            scorePopups: [],
+            shake: 0,
+            elapsed: 0
         };
-        baieBerryScoreDisplay.textContent = '0';
-        baieBerryNextDisplay.textContent = BAIE_BERRY_FRUITS[baieBerryState.nextLevel].name;
-        baieBerryHelpText.textContent = `Record actuel: ${baieBerryBestScore}`;
+        refreshBaieBerryHud();
+        baieBerryHelpText.textContent = `Record actuel: ${baieBerryBestScore}. Surveille la ligne rouge et vise l objectif du jour.`;
         updateBaieBerryDropGuide();
         drawBaieBerry();
 
@@ -11977,7 +12476,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const level = baieBerryState.nextLevel;
+        const level = baieBerryState.nextQueue[0];
         const radius = BAIE_BERRY_FRUITS[level].radius;
         baieBerryState.fruits.push({
             id: baieBerryNextFruitId++,
@@ -11987,10 +12486,12 @@ document.addEventListener('DOMContentLoaded', () => {
             vy: 0,
             rotation: 0,
             mergeProgress: 0,
+            blink: 1,
+            expression: 'focused',
             level
         });
-        baieBerryState.nextLevel = getRandomBaieBerryIndex();
-        baieBerryNextDisplay.textContent = BAIE_BERRY_FRUITS[baieBerryState.nextLevel].name;
+        baieBerryState.nextQueue = [baieBerryState.nextQueue[1], getRandomBaieBerryIndex()];
+        refreshBaieBerryHud();
         updateBaieBerryDropGuide(x);
     }
 
@@ -12005,6 +12506,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const delta = Math.min(0.032, (timestamp - baieBerryLastFrame) / 1000);
         baieBerryLastFrame = timestamp;
+        baieBerryState.elapsed += delta;
 
         if (!baieBerryState.gameOver) {
             baieBerryState.fruits.forEach((fruit) => {
@@ -12015,6 +12517,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 fruit.rotation = (fruit.rotation || 0) + ((fruit.vx * delta) / Math.max(12, radius));
                 fruit.vx *= fruit.y >= baieBerryCanvas.height - radius - 1 ? 0.992 : 0.998;
                 fruit.mergeProgress = 0;
+                fruit.blink = Math.sin((baieBerryState.elapsed * 2.4) + fruit.id) > 0.96 ? 0.18 : 1;
+                fruit.expression = Math.abs(fruit.vy) < 35 ? 'happy' : 'focused';
 
                 if (fruit.x < radius || fruit.x > baieBerryCanvas.width - radius) {
                     fruit.x = Math.max(radius, Math.min(baieBerryCanvas.width - radius, fruit.x));
@@ -12055,19 +12559,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         if (fruitA.level === fruitB.level && fruitA.level < BAIE_BERRY_FRUITS.length - 1) {
                             const nextLevel = fruitA.level + 1;
-                            baieBerryState.score += BAIE_BERRY_FRUITS[nextLevel].score;
+                            const now = performance.now();
+                            baieBerryState.comboCount = baieBerryState.comboExpiresAt > now
+                                ? baieBerryState.comboCount + 1
+                                : 1;
+                            baieBerryState.comboExpiresAt = now + BAIE_BERRY_COMBO_WINDOW_MS;
+                            const comboBonus = baieBerryState.comboCount > 1 ? baieBerryState.comboCount * 35 : 0;
+                            baieBerryState.score += BAIE_BERRY_FRUITS[nextLevel].score + comboBonus;
+                            const mergeX = (fruitA.x + fruitB.x) / 2;
+                            const mergeY = (fruitA.y + fruitB.y) / 2;
                             baieBerryState.fruits.splice(compareIndex, 1);
                             baieBerryState.fruits.splice(index, 1, {
                                 id: baieBerryNextFruitId++,
-                                x: (fruitA.x + fruitB.x) / 2,
-                                y: (fruitA.y + fruitB.y) / 2,
+                                x: mergeX,
+                                y: mergeY,
                                 vx: (fruitA.vx + fruitB.vx) * 0.15,
                                 vy: Math.min(fruitA.vy, fruitB.vy, 0) - 90,
                                 rotation: ((fruitA.rotation || 0) + (fruitB.rotation || 0)) / 2,
                                 mergeProgress: 0.9,
+                                blink: 1,
+                                expression: 'happy',
                                 level: nextLevel
                             });
-                            baieBerryScoreDisplay.textContent = String(baieBerryState.score);
+                            addBaieBerryParticles(mergeX, mergeY, BAIE_BERRY_FRUITS[nextLevel].color, 18 + (baieBerryState.comboCount * 3));
+                            addBaieBerryScorePopup(
+                                mergeX,
+                                mergeY - 10,
+                                comboBonus ? `+${BAIE_BERRY_FRUITS[nextLevel].score + comboBonus}` : `+${BAIE_BERRY_FRUITS[nextLevel].score}`,
+                                '#fde68a'
+                            );
+                            baieBerryState.shake = Math.min(18, 8 + (nextLevel * 1.8) + (baieBerryState.comboCount * 1.5));
+                            baieBerryHelpText.textContent = baieBerryState.comboCount > 1
+                                ? `Combo x${baieBerryState.comboCount}. Les fusions s enchainent.`
+                                : `Fusion ${BAIE_BERRY_FRUITS[nextLevel].name}. Continue la recolte.`;
+                            refreshBaieBerryHud();
+                            updateBaieBerryObjective(nextLevel);
                             if (baieBerryState.score > baieBerryBestScore) {
                                 baieBerryBestScore = baieBerryState.score;
                                 window.localStorage.setItem(BAIE_BERRY_BEST_KEY, String(baieBerryBestScore));
@@ -12078,9 +12604,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            if (baieBerryState.fruits.some((fruit) => fruit.y < 18 && Math.abs(fruit.vy) < 40)) {
+            const touchesDangerLine = baieBerryState.fruits.some((fruit) => (fruit.y - BAIE_BERRY_FRUITS[fruit.level].radius) <= BAIE_BERRY_DANGER_LINE_Y);
+            baieBerryState.dangerTime = touchesDangerLine
+                ? Math.min(BAIE_BERRY_DANGER_DURATION_MS, baieBerryState.dangerTime + (delta * 1000))
+                : Math.max(0, baieBerryState.dangerTime - (delta * 700));
+
+            baieBerryState.particles = baieBerryState.particles.filter((particle) => {
+                particle.x += particle.vx * delta;
+                particle.y += particle.vy * delta;
+                particle.vy += 220 * delta;
+                particle.life -= delta;
+                return particle.life > 0;
+            });
+
+            baieBerryState.scorePopups = baieBerryState.scorePopups.filter((popup) => {
+                popup.y += popup.vy * delta;
+                popup.life -= delta * 1.2;
+                return popup.life > 0;
+            });
+
+            baieBerryState.shake *= BAIE_BERRY_SHAKE_DECAY;
+            if (baieBerryStage) {
+                const intensity = baieBerryState.shake;
+                baieBerryStage.style.transform = intensity > 0.2
+                    ? `translate(${(Math.random() - 0.5) * intensity}px, ${(Math.random() - 0.5) * intensity}px)`
+                    : 'translate(0, 0)';
+            }
+
+            if (baieBerryState.dangerTime >= BAIE_BERRY_DANGER_DURATION_MS) {
                 baieBerryState.gameOver = true;
-                baieBerryHelpText.textContent = `Recolte terminee. Score ${baieBerryState.score}.`;
+                baieBerryHelpText.textContent = `Recolte terminee. Score ${baieBerryState.score}. La ligne rouge est restee occupee trop longtemps.`;
+                openGameOverModal('Recolte terminee', `Score ${baieBerryState.score}. ${baieBerryState.objective.completed ? 'Objectif accompli.' : 'Objectif non complete.'}`);
             }
         }
 
@@ -14127,8 +14681,27 @@ document.addEventListener('DOMContentLoaded', () => {
         startSnake();
     });
 
-    pongStartButton.addEventListener('click', () => {
-        startPong();
+    pongMenuActionButton?.addEventListener('click', () => {
+        if (pongMenuShowingRules) {
+            pongMenuShowingRules = false;
+            renderPongMenu();
+            return;
+        }
+
+        if (isMultiplayerPongActive()) {
+            startPong();
+            return;
+        }
+
+        initializePong();
+        startPongLaunchSequence(() => {
+            startPong();
+        });
+    });
+
+    pongMenuRulesButton?.addEventListener('click', () => {
+        pongMenuShowingRules = !pongMenuShowingRules;
+        renderPongMenu();
     });
 
     pongModeButtons.forEach((button) => {
@@ -14320,6 +14893,10 @@ document.addEventListener('DOMContentLoaded', () => {
         submitMentalMathAnswer();
     });
 
+    mentalMathAnswerInput?.addEventListener('input', () => {
+        mentalMathAnswerInput.value = mentalMathAnswerInput.value.replace(/\D/g, '');
+    });
+
     candyCrushRestartButton.addEventListener('click', () => {
         closeGameOverModal();
         initializeCandyCrush();
@@ -14335,10 +14912,20 @@ document.addEventListener('DOMContentLoaded', () => {
         dropStackerLayer();
     });
 
-    coinClickerButton?.addEventListener('click', () => {
+    coinClickerButton?.addEventListener('pointerdown', (event) => {
+        if (event.pointerType !== 'mouse' || event.button !== 0) {
+            return;
+        }
+
         coinClickerState.coins += getCoinClickerCoinsPerClick();
         saveCoinClickerState();
         renderCoinClicker();
+    });
+
+    coinClickerButton?.addEventListener('keydown', (event) => {
+        if (event.code === 'Space' || event.code === 'Enter') {
+            event.preventDefault();
+        }
     });
 
     coinClickerResetButton?.addEventListener('click', () => {
@@ -14382,20 +14969,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCoinClicker();
     });
 
-    chessResetButton?.addEventListener('click', () => {
-        if (isMultiplayerChessActive()) {
-            if (!multiplayerSocket?.connected) {
-                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
-                return;
-            }
-
-            multiplayerSocket.emit('chess:restart');
-            return;
-        }
-
-        initializeChess();
-    });
-
     chessMenuActionButton?.addEventListener('click', () => {
         if (chessMenuShowingRules) {
             chessMenuShowingRules = false;
@@ -14403,7 +14976,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (isMultiplayerChessActive()) {
+        if (multiplayerActiveRoom?.gameId === 'chess') {
             multiplayerSocket?.emit('chess:toggle-ready');
             return;
         }
