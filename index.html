@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="multiplayer-server-url" content="https://la-baie-des-naufrages.onrender.com">
     <meta name="google-adsense-account" content="ca-pub-1302716532000899">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1302716532000899" crossorigin="anonymous"></script>
     <meta name="description" content="La Baie des naufrages est un site de jeux, cinema, maths et musique dans un univers marin personnalise.">
     <meta name="theme-color" content="#0E3056">
     <meta name="robots" content="index, follow">
@@ -1584,35 +1585,12 @@
             if (!adContainer || !adSlot) {
                 return;
             }
-
-            const adClient = adContainer.dataset.adsenseClient || '';
-            const adSlotId = adContainer.dataset.adSlot || '';
-            const isConfigured = /^ca-pub-\d{10,}$/.test(adClient) && /^\d{6,}$/.test(adSlotId);
-
-            if (!isConfigured) {
+            try {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+                adContainer.classList.add('site-ads-ready');
+            } catch (error) {
                 adContainer.classList.add('site-ads-unconfigured');
-                return;
             }
-
-            adSlot.setAttribute('data-ad-client', adClient);
-            adSlot.setAttribute('data-ad-slot', adSlotId);
-
-            const adsenseScript = document.createElement('script');
-            adsenseScript.async = true;
-            adsenseScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(adClient);
-            adsenseScript.crossOrigin = 'anonymous';
-            adsenseScript.onload = function () {
-                try {
-                    (window.adsbygoogle = window.adsbygoogle || []).push({});
-                    adContainer.classList.add('site-ads-ready');
-                } catch (error) {
-                    adContainer.classList.add('site-ads-unconfigured');
-                }
-            };
-            adsenseScript.onerror = function () {
-                adContainer.classList.add('site-ads-unconfigured');
-            };
-            document.head.appendChild(adsenseScript);
         })();
     </script>
     <script src="script.js?v=2026-03-24-3"></script>
