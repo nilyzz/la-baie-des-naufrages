@@ -1,0 +1,30 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <rect x="8" y="8" width="48" height="48" rx="14" fill="url(#board)"/>
+  <circle cx="23" cy="23" r="7.5" fill="url(#dark)"/>
+  <circle cx="41" cy="41" r="7.5" fill="url(#red)"/>
+  <circle cx="23" cy="23" r="4.2" stroke="#CBD5E1" stroke-opacity="0.3" stroke-width="1.4"/>
+  <circle cx="41" cy="41" r="4.2" stroke="#FFE4E6" stroke-opacity="0.34" stroke-width="1.4"/>
+  <defs>
+    <linearGradient id="bg" x1="7" y1="6" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#082637"/>
+      <stop offset="0.56" stop-color="#11739A"/>
+      <stop offset="1" stop-color="#0A3552"/>
+    </linearGradient>
+    <pattern id="board" patternUnits="userSpaceOnUse" width="16" height="16">
+      <rect width="16" height="16" fill="#78B9E6"/>
+      <rect width="8" height="8" fill="#0D4568"/>
+      <rect x="8" y="8" width="8" height="8" fill="#0D4568"/>
+    </pattern>
+    <radialGradient id="dark" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(20 19) rotate(50.1944) scale(9.65285)">
+      <stop stop-color="#64748B"/>
+      <stop offset="0.66" stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#020617"/>
+    </radialGradient>
+    <radialGradient id="red" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(38 37) rotate(50.1944) scale(9.65285)">
+      <stop stop-color="#FB7185"/>
+      <stop offset="0.64" stop-color="#E11D48"/>
+      <stop offset="1" stop-color="#881337"/>
+    </radialGradient>
+  </defs>
+</svg>

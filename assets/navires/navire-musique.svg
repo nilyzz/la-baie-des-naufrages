@@ -1,0 +1,43 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="musicBg" x1="88" y1="82" x2="424" y2="432" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2DD4BF"/>
+      <stop offset="0.55" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#F472B6"/>
+    </linearGradient>
+    <linearGradient id="musicNote" x1="160" y1="110" x2="356" y2="320" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E8F2FF"/>
+    </linearGradient>
+    <linearGradient id="musicOutline" x1="140" y1="92" x2="374" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FBFF"/>
+      <stop offset="1" stop-color="#D8E7FF"/>
+    </linearGradient>
+    <linearGradient id="waveMusicA" x1="120" y1="336" x2="392" y2="398" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F3FEFF"/>
+      <stop offset="1" stop-color="#FFE5F4"/>
+    </linearGradient>
+    <linearGradient id="waveMusicB" x1="132" y1="358" x2="384" y2="412" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DDFDFF"/>
+      <stop offset="1" stop-color="#FFF1F8"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="44" y="44" width="424" height="424" rx="116" fill="url(#musicBg)"/>
+  <circle cx="256" cy="188" r="114" fill="#0F766E" fill-opacity="0.14"/>
+
+  <g transform="translate(98 52) scale(0.62)">
+    <path d="M152 132V328" stroke="url(#musicOutline)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M152 132L360 98V286" stroke="url(#musicOutline)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M196 198L318 180V274" stroke="url(#musicOutline)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M196 198V318" stroke="url(#musicOutline)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <circle cx="126" cy="360" r="44" fill="url(#musicNote)"/>
+    <circle cx="286" cy="318" r="44" fill="url(#musicNote)"/>
+    <circle cx="126" cy="360" r="31" fill="url(#musicBg)" fill-opacity="0.18"/>
+    <circle cx="286" cy="318" r="31" fill="url(#musicBg)" fill-opacity="0.18"/>
+  </g>
+
+  <path d="M122 340C152 324 179 316 209 316C242 316 265 331 297 331C327 331 353 323 391 303" stroke="url(#waveMusicA)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M134 370C163 354 188 347 214 347C243 347 267 361 297 361C327 361 351 354 380 342" stroke="url(#waveMusicB)" stroke-width="12" stroke-linecap="round"/>
+</svg>

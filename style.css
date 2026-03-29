@@ -925,8 +925,8 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .game-home-art {
-    width: 58px;
-    height: 58px;
+    width: 64px;
+    height: 64px;
     border-radius: 19px;
     display: block;
     position: relative;
@@ -1703,6 +1703,156 @@ body:has(#servicesView.view-active) .services-legal-button {
         linear-gradient(180deg, rgba(255,255,255,0.18), transparent 24%),
         linear-gradient(180deg, #f97316, #7c2d12);
     box-shadow: 18px -18px 0 -6px rgba(148,163,184,0.98);
+}
+
+.game-home-art-2048 {
+    background: url("assets/games/game-2048.svg") center / cover no-repeat;
+}
+
+.game-home-art-2048::before,
+.game-home-art-2048::after,
+.game-home-art-battleship::before,
+.game-home-art-battleship::after,
+.game-home-art-minesweeper::before,
+.game-home-art-minesweeper::after,
+.game-home-art-tictactoe::before,
+.game-home-art-tictactoe::after,
+.game-home-art-pacman::before,
+.game-home-art-pacman::after,
+.game-home-art-snake::before,
+.game-home-art-snake::after,
+.game-home-art-connect4::before,
+.game-home-art-connect4::after,
+.game-home-art-tetris::before,
+.game-home-art-tetris::after {
+    content: none;
+}
+
+.game-home-art-battleship {
+    background: url("assets/games/game-battleship.svg") center / cover no-repeat;
+}
+
+.game-home-art-minesweeper {
+    background: url("assets/games/game-minesweeper.svg") center / cover no-repeat;
+}
+
+.game-home-art-tictactoe {
+    background: url("assets/games/game-tictactoe.svg") center / cover no-repeat;
+}
+
+.game-home-art-pacman {
+    background: url("assets/games/game-baie-man.svg") center / cover no-repeat;
+}
+
+.game-home-art-snake {
+    background: url("assets/games/game-snake.svg") center / cover no-repeat;
+}
+
+.game-home-art-connect4 {
+    background: url("assets/games/game-coin4.svg") center / cover no-repeat;
+}
+
+.game-home-art-tetris {
+    background: url("assets/games/game-baietris.svg") center / cover no-repeat;
+}
+
+.game-home-art-pong,
+.game-home-art-sudoku,
+.game-home-art-aim,
+.game-home-art-memory,
+.game-home-art-solitaire,
+.game-home-art-rhythm,
+.game-home-art-flappy,
+.game-home-art-flowfree,
+.game-home-art-magicsort,
+.game-home-art-mentalmath,
+.game-home-art-candycrush,
+.game-home-art-harborrun,
+.game-home-art-stacker {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.game-home-art-pong {
+    background-image: url("assets/games/game-pong.svg");
+}
+
+.game-home-art-sudoku {
+    background-image: url("assets/games/game-sudoku.svg");
+}
+
+.game-home-art-aim {
+    background-image: url("assets/games/game-aim.svg");
+}
+
+.game-home-art-memory {
+    background-image: url("assets/games/game-memory.svg");
+}
+
+.game-home-art-solitaire {
+    background-image: url("assets/games/game-solitaire.svg");
+}
+
+.game-home-art-rhythm {
+    background-image: url("assets/games/game-rhythm.svg");
+}
+
+.game-home-art-flappy {
+    background-image: url("assets/games/game-flappy.svg");
+}
+
+.game-home-art-flowfree {
+    background-image: url("assets/games/game-flowfree.svg");
+}
+
+.game-home-art-magicsort {
+    background-image: url("assets/games/game-magicsort.svg");
+}
+
+.game-home-art-mentalmath {
+    background-image: url("assets/games/game-mentalmath.svg");
+}
+
+.game-home-art-candycrush {
+    background-image: url("assets/games/game-candycrush.svg");
+}
+
+.game-home-art-harborrun {
+    background-image: url("assets/games/game-harborrun.svg");
+}
+
+.game-home-art-stacker {
+    background-image: url("assets/games/game-stacker.svg");
+}
+
+.game-home-art-pong::before,
+.game-home-art-pong::after,
+.game-home-art-sudoku::before,
+.game-home-art-sudoku::after,
+.game-home-art-aim::before,
+.game-home-art-aim::after,
+.game-home-art-memory::before,
+.game-home-art-memory::after,
+.game-home-art-solitaire::before,
+.game-home-art-solitaire::after,
+.game-home-art-rhythm::before,
+.game-home-art-rhythm::after,
+.game-home-art-flappy::before,
+.game-home-art-flappy::after,
+.game-home-art-flowfree::before,
+.game-home-art-flowfree::after,
+.game-home-art-magicsort::before,
+.game-home-art-magicsort::after,
+.game-home-art-mentalmath::before,
+.game-home-art-mentalmath::after,
+.game-home-art-candycrush::before,
+.game-home-art-candycrush::after,
+.game-home-art-harborrun::before,
+.game-home-art-harborrun::after,
+.game-home-art-stacker::before,
+.game-home-art-stacker::after {
+    content: none;
 }
 
 .game-home-title {
@@ -5187,7 +5337,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .solitaire-playing-card.is-hidden,
 .solitaire-playing-card-back {
-    background: url("assets/logo-baie-cartoon.svg") center / 100% 100% no-repeat;
+    background: url("assets/branding/logo-baie-cartoon.svg") center / 100% 100% no-repeat;
     color: white;
     letter-spacing: 0.12em;
     overflow: hidden;
@@ -5197,7 +5347,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     display: block;
     width: 68%;
     height: 68%;
-    background: url("assets/logo-baie-cartoon.svg") center / contain no-repeat;
+    background: url("assets/branding/logo-baie-cartoon.svg") center / contain no-repeat;
     filter: drop-shadow(0 8px 10px rgba(15, 23, 42, 0.28));
 }
 
@@ -6556,7 +6706,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .memory-card-back {
     opacity: 1;
-    background: url("assets/logo-baie-cartoon.svg") center / 100% 100% no-repeat;
+    background: url("assets/branding/logo-baie-cartoon.svg") center / 100% 100% no-repeat;
     border: 1px solid rgba(125, 211, 252, 0.2);
     overflow: hidden;
 }
@@ -9996,112 +10146,94 @@ button:hover {
     position: absolute;
 }
 
+.game-home-art-airhockey,
+.game-home-art-coinclicker,
+.game-home-art-chess,
+.game-home-art-checkers,
+.game-home-art-reaction,
+.game-home-art-baieberry,
+.game-home-art-breakout {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.game-home-art-airhockey {
+    background-image: url("assets/games/game-airhockey.svg");
+}
+
 .game-home-art-airhockey::before {
-    inset: 8px;
-    border-radius: 14px;
-    background:
-        linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.74) 49% 51%, transparent 51%),
-        radial-gradient(circle at center, transparent 0 10px, rgba(255,255,255,0.34) 10px 12px, transparent 13px),
-        linear-gradient(180deg, #7dd3fc, #0284c7 58%, #0f172a);
+    content: none;
 }
 
 .game-home-art-airhockey::after {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at 34% 30%, rgba(255,255,255,0.96), rgba(255,255,255,0.2) 28%, transparent 29%),
-        radial-gradient(circle at center, #f8fafc, #cbd5e1 54%, #0f172a 100%);
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow:
-        -14px 0 0 -3px rgba(251, 113, 133, 0.98),
-        14px 0 0 -3px rgba(96, 165, 250, 0.98);
+    content: none;
+}
+
+.game-home-art-coinclicker {
+    background-image: url("assets/games/game-coinclicker.svg");
 }
 
 .game-home-art-coinclicker::before {
-    inset: 7px;
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at 30% 26%, rgba(255, 251, 235, 0.96) 0 9%, rgba(255,255,255,0.18) 10% 17%, transparent 18%),
-        radial-gradient(circle at 50% 50%, #fcd34d 0 54%, #f59e0b 70%, #b45309 100%);
-    box-shadow:
-        inset 0 0 0 3px rgba(250, 204, 21, 0.4),
-        inset 0 7px 12px rgba(255,255,255,0.22);
+    content: none;
 }
 
 .game-home-art-coinclicker::after {
-    inset: 0;
-    background:
-        radial-gradient(circle at 50% 50%, transparent 0 13px, rgba(120,53,15,0.84) 13px 15px, transparent 16px),
-        radial-gradient(circle at 50% 50%, rgba(120,53,15,0.88) 0 3px, transparent 4px),
-        linear-gradient(0deg, transparent 26px, rgba(120,53,15,0.9) 26px 29px, transparent 29px) center / 14px 100% no-repeat,
-        linear-gradient(90deg, transparent 26px, rgba(120,53,15,0.9) 26px 29px, transparent 29px) center / 100% 14px no-repeat;
+    content: none;
+}
+
+.game-home-art-chess {
+    background-image: url("assets/games/game-chess-knight.svg");
 }
 
 .game-home-art-chess::before {
-    inset: 8px;
-    border-radius: 14px;
-    background:
-        conic-gradient(from 45deg, #1e293b 0 25%, #f8fafc 0 50%, #1e293b 0 75%, #f8fafc 0),
-        linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+    content: none;
 }
 
 .game-home-art-chess::after {
-    inset: 0;
-    background:
-        radial-gradient(circle at 22px 37px, rgba(15,23,42,0.96) 0 6px, transparent 7px),
-        linear-gradient(180deg, rgba(15,23,42,0.96) 0 14px, transparent 14px) 16px 18px / 12px 16px no-repeat,
-        radial-gradient(circle at 40px 21px, rgba(248,250,252,0.98) 0 5px, transparent 6px),
-        linear-gradient(180deg, rgba(248,250,252,0.98) 0 12px, transparent 12px) 34px 24px / 10px 14px no-repeat;
+    content: none;
+}
+
+.game-home-art-checkers {
+    background-image: url("assets/games/game-checkers.svg");
 }
 
 .game-home-art-checkers::before {
-    inset: 8px;
-    border-radius: 14px;
-    background:
-        conic-gradient(from 45deg, #1e293b 0 25%, #f8fafc 0 50%, #1e293b 0 75%, #f8fafc 0),
-        linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+    content: none;
 }
 
 .game-home-art-checkers::after {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at 34% 28%, rgba(255,255,255,0.24), transparent 18%),
-        radial-gradient(circle at center, #fb7185, #e11d48 68%, #881337 100%);
-    right: 10px;
-    bottom: 10px;
-    box-shadow:
-        -22px -20px 0 -1px rgba(100, 116, 139, 0.98),
-        inset 0 0 0 2px rgba(255,255,255,0.12);
+    content: none;
+}
+
+.game-home-art-reaction {
+    background-image: url("assets/games/game-reaction.svg");
 }
 
 .game-home-art-reaction::before {
-    inset: 14px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #fef08a, #f59e0b 75%, transparent 76%);
+    content: none;
+}
+
+.game-home-art-reaction::after,
+.game-home-art-baieberry::after,
+.game-home-art-breakout::after {
+    content: none;
+}
+
+.game-home-art-baieberry {
+    background-image: url("assets/games/game-baieberry.svg");
 }
 
 .game-home-art-baieberry::before {
-    inset: 9px;
-    border-radius: 14px;
-    background:
-        radial-gradient(circle at 28% 66%, #60a5fa 0 12%, transparent 13%),
-        radial-gradient(circle at 50% 42%, #fb7185 0 14%, transparent 15%),
-        radial-gradient(circle at 70% 66%, #a78bfa 0 16%, transparent 17%),
-        linear-gradient(180deg, #1e3a8a, #0f172a);
+    content: none;
+}
+
+.game-home-art-breakout {
+    background-image: url("assets/games/game-break-it.svg");
 }
 
 .game-home-art-breakout::before {
-    inset: 10px;
-    border-radius: 14px;
-    background:
-        linear-gradient(90deg, #fb7185 0 31%, transparent 31% 34%, #fbbf24 34% 65%, transparent 65% 68%, #34d399 68% 100%) top / 100% 12px no-repeat,
-        linear-gradient(90deg, transparent 20%, #f8fafc 20% 80%, transparent 80%) bottom 12px center / 48px 6px no-repeat,
-        linear-gradient(180deg, #0ea5e9, #0f172a);
+    content: none;
 }
 
 @media (max-width: 600px) {
@@ -10125,43 +10257,19 @@ button:hover {
 }
 
 .game-home-art-blockblast {
-    background:
-        radial-gradient(circle at 28% 24%, rgba(255,255,255,0.55), transparent 18%),
-        linear-gradient(135deg, rgba(8, 145, 178, 0.92), rgba(15, 118, 110, 0.88) 52%, rgba(30, 64, 175, 0.9));
+    background: url("assets/games/game-blockline.svg") center / cover no-repeat;
 }
 
 .game-home-art-blockblast::before {
-    content: '';
-    position: absolute;
-    inset: 18% 20%;
-    background:
-        linear-gradient(90deg, transparent 0 16%, rgba(255,255,255,0.18) 16% 18%, transparent 18% 34%, rgba(255,255,255,0.18) 34% 36%, transparent 36% 52%, rgba(255,255,255,0.18) 52% 54%, transparent 54% 70%, rgba(255,255,255,0.18) 70% 72%, transparent 72%),
-        linear-gradient(transparent 0 16%, rgba(255,255,255,0.18) 16% 18%, transparent 18% 34%, rgba(255,255,255,0.18) 34% 36%, transparent 36% 52%, rgba(255,255,255,0.18) 52% 54%, transparent 54% 70%, rgba(255,255,255,0.18) 70% 72%, transparent 72%),
-        linear-gradient(135deg, rgba(251, 191, 36, 0.88), rgba(245, 158, 11, 0.76));
-    border-radius: 16px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22);
+    content: none;
 }
 
 .game-home-art-uno {
-    background:
-        radial-gradient(circle at 68% 24%, rgba(255,255,255,0.48), transparent 20%),
-        linear-gradient(135deg, rgba(239, 68, 68, 0.92), rgba(30, 64, 175, 0.9));
+    background: url("assets/games/game-buno.svg") center / cover no-repeat;
 }
 
 .game-home-art-uno::before {
-    content: 'UNO';
-    position: absolute;
-    inset: 22% 18%;
-    display: grid;
-    place-items: center;
-    border-radius: 999px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(254, 240, 138, 0.92));
-    color: #9a3412;
-    font-size: 1rem;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    transform: rotate(-16deg);
-    box-shadow: 0 10px 20px -16px rgba(15, 23, 42, 0.88);
+    content: none;
 }
 
 .blockblast-card,
@@ -10761,7 +10869,7 @@ button:hover {
 
 .uno-draw-stack::after {
     background:
-        url("assets/logo-baie-cartoon.svg") center / 64% 64% no-repeat,
+        url("assets/branding/logo-baie-cartoon.svg") center / 64% 64% no-repeat,
         linear-gradient(135deg, #1e3a8a, #0f172a);
     box-shadow:
         inset 0 0 0 1px rgba(191, 219, 254, 0.12),
@@ -10939,7 +11047,7 @@ button:hover {
     width: 72%;
     height: 72%;
     display: block;
-    background: url("assets/logo-baie-cartoon.svg") center / contain no-repeat;
+    background: url("assets/branding/logo-baie-cartoon.svg") center / contain no-repeat;
     filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.36));
 }
 

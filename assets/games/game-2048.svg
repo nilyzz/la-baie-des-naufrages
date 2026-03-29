@@ -1,0 +1,31 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <rect x="12" y="12" width="18" height="18" rx="5" fill="url(#tile2)"/>
+  <rect x="34" y="12" width="18" height="18" rx="5" fill="url(#tile4)"/>
+  <rect x="12" y="34" width="18" height="18" rx="5" fill="url(#tile8)"/>
+  <rect x="34" y="34" width="18" height="18" rx="5" fill="url(#tile2048)"/>
+  <text x="43" y="46.5" text-anchor="middle" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="7.2" font-weight="900">2048</text>
+  <defs>
+    <linearGradient id="bg" x1="7" y1="6" x2="58" y2="59" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2B3159"/>
+      <stop offset="0.52" stop-color="#182132"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="tile2" x1="21" y1="12" x2="21" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#BFDBFE"/>
+      <stop offset="1" stop-color="#93C5FD"/>
+    </linearGradient>
+    <linearGradient id="tile4" x1="43" y1="12" x2="43" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#93C5FD"/>
+      <stop offset="1" stop-color="#60A5FA"/>
+    </linearGradient>
+    <linearGradient id="tile8" x1="21" y1="34" x2="21" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="tile2048" x1="43" y1="34" x2="43" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#070B16"/>
+    </linearGradient>
+  </defs>
+</svg>

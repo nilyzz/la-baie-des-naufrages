@@ -23,10 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
         battleship: 'Bataille',
         pong: 'Pong',
         ticTacToe: 'Morpion',
-        connect4: 'Puissance 4',
+        connect4: 'Coin 4',
         chess: 'Echecs',
         checkers: 'Dames',
-        uno: 'Uno'
+        uno: 'Buno'
     };
 
     const loginView = document.getElementById('loginView');
@@ -2601,7 +2601,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!canUseMultiplayer) {
-            setMultiplayerStatus('Le multijoueur est prevu pour Bataille, Sea Hockey, Pong, Morpion, Puissance 4, Echecs, Dames et Uno.');
+            setMultiplayerStatus('Le multijoueur est prevu pour Bataille, Sea Hockey, Pong, Morpion, Coin 4, Echecs, Dames et Buno.');
             return;
         }
 
@@ -4109,16 +4109,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (multiplayerActiveRoom.gameState.winner === 'draw') {
-            openGameOverModal('Match nul', 'La manche en ligne de Puissance 4 se termine sans vainqueur.');
+            openGameOverModal('Match nul', 'La manche en ligne de Coin 4 se termine sans vainqueur.');
             return;
         }
 
         if (multiplayerActiveRoom.gameState.winner === getMultiplayerConnect4Role()) {
-            openGameOverModal('Victoire', 'Tu remportes cette manche de Puissance 4 en ligne.');
+            openGameOverModal('Victoire', 'Tu remportes cette manche de Coin 4 en ligne.');
             return;
         }
 
-        openGameOverModal('C est perdu', 'L adversaire remporte cette manche de Puissance 4.');
+        openGameOverModal('C est perdu', 'L adversaire remporte cette manche de Coin 4.');
     }
 
     function createBattleshipGrid() {
@@ -5541,14 +5541,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (winner === 'player') {
             connect4Scores.player += 1;
             connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 1 aligne quatre jetons.' : 'Victoire. Tu controles la colonne du pont.';
-            openGameOverModal('Victoire', connect4Mode === 'duo' ? 'Le joueur 1 remporte la manche de Puissance 4.' : 'Tu as battu l IA au Puissance 4.');
+            openGameOverModal('Victoire', connect4Mode === 'duo' ? 'Le joueur 1 remporte la manche de Coin 4.' : 'Tu as battu l IA a Coin 4.');
         } else if (winner === 'ai') {
             connect4Scores.ai += 1;
             connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 2 aligne quatre jetons.' : 'L IA a aligne quatre jetons.';
-            openGameOverModal(connect4Mode === 'duo' ? 'Joueur 2 gagne' : 'C est perdu', connect4Mode === 'duo' ? 'Le joueur 2 remporte la manche de Puissance 4.' : 'L IA remporte la manche de Puissance 4.');
+            openGameOverModal(connect4Mode === 'duo' ? 'Joueur 2 gagne' : 'C est perdu', connect4Mode === 'duo' ? 'Le joueur 2 remporte la manche de Coin 4.' : 'L IA remporte la manche de Coin 4.');
         } else {
             connect4HelpText.textContent = 'La grille est pleine. Aucun navire ne prend l avantage.';
-            openGameOverModal('Match nul', 'Plus de place. La manche de Puissance 4 se termine sans vainqueur.');
+            openGameOverModal('Match nul', 'Plus de place. La manche de Coin 4 se termine sans vainqueur.');
         }
 
         updateConnect4Hud();
@@ -5660,7 +5660,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="rhythm-island rhythm-island-left"></div>
             <div class="rhythm-island rhythm-island-right"></div>
             <div class="rhythm-sea"></div>
-            <div class="rhythm-ship" aria-hidden="true"></div>
             <div class="rhythm-lanes" style="grid-template-columns: repeat(${RHYTHM_LANES.length}, minmax(0, 1fr));">${RHYTHM_LANES.map(() => '<div class="rhythm-lane"></div>').join('')}</div>
             <div class="rhythm-target-band" aria-hidden="true"></div>
             <div class="rhythm-notes"></div>
@@ -13480,7 +13479,7 @@ document.addEventListener('DOMContentLoaded', () => {
             breakoutMenuEyebrow.textContent = breakoutMenuShowingRules ? 'Regles' : 'Baie d arcade';
         }
         if (breakoutMenuTitle) {
-            breakoutMenuTitle.textContent = breakoutMenuShowingRules ? 'Rappel rapide' : 'Breakout';
+            breakoutMenuTitle.textContent = breakoutMenuShowingRules ? 'Rappel rapide' : 'Break It';
         }
         if (breakoutMenuText) {
             breakoutMenuText.textContent = breakoutMenuShowingRules
@@ -14274,7 +14273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             unoMenuEyebrow.textContent = unoMenuShowingRules ? 'Regles' : (isOnline ? 'Salle multijoueur' : 'Baie des cartes');
         }
         if (unoMenuTitle) {
-            unoMenuTitle.textContent = unoMenuShowingRules ? 'Rappel rapide' : 'Uno';
+            unoMenuTitle.textContent = unoMenuShowingRules ? 'Rappel rapide' : 'Buno';
         }
         if (unoMenuText) {
             unoMenuText.textContent = unoMenuShowingRules ? getUnoRulesText() : baseText;
@@ -14558,7 +14557,7 @@ document.addEventListener('DOMContentLoaded', () => {
         unoLastWinnerKey = winnerKey;
         const winner = unoState.players.find((player) => player.id === unoState.winner);
         const isVictory = winner?.id === 'you' || winner?.isYou;
-        openGameOverModal(isVictory ? 'Victoire' : 'Partie terminee', `${winner?.name || 'Un joueur'} remporte la manche de Uno.`);
+        openGameOverModal(isVictory ? 'Victoire' : 'Partie terminee', `${winner?.name || 'Un joueur'} remporte la manche de Buno.`);
     }
 
     function updateUnoHud() {

@@ -1,0 +1,29 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <rect x="12" y="12" width="40" height="40" rx="10" fill="url(#panel)" stroke="#FBBF24" stroke-opacity="0.18"/>
+  <path d="M22 22H42V30" stroke="url(#ropePink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22 42V32H34" stroke="url(#ropeBlue)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="22" cy="22" r="4" fill="#FB7185" stroke="#F3E3BF" stroke-width="1.2"/>
+  <circle cx="42" cy="30" r="4" fill="#FB7185" stroke="#F3E3BF" stroke-width="1.2"/>
+  <circle cx="22" cy="42" r="4" fill="#38BDF8" stroke="#F3E3BF" stroke-width="1.2"/>
+  <circle cx="34" cy="32" r="4" fill="#38BDF8" stroke="#F3E3BF" stroke-width="1.2"/>
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4A2B16"/>
+      <stop offset="0.58" stop-color="#2F1B0F"/>
+      <stop offset="1" stop-color="#160C06"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="32" y1="12" x2="32" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B2314" stop-opacity="0.86"/>
+      <stop offset="1" stop-color="#25150B" stop-opacity="0.92"/>
+    </linearGradient>
+    <linearGradient id="ropePink" x1="32" y1="22" x2="32" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDA4AF"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <linearGradient id="ropeBlue" x1="28" y1="32" x2="28" y2="42" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DD3FC"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+</svg>

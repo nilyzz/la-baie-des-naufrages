@@ -1,0 +1,46 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gamesBg" x1="88" y1="82" x2="424" y2="432" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#50DFFF"/>
+      <stop offset="1" stop-color="#0E94C3"/>
+    </linearGradient>
+    <linearGradient id="padFill" x1="156" y1="148" x2="356" y2="286" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7FEFF"/>
+      <stop offset="1" stop-color="#D4F6FF"/>
+    </linearGradient>
+    <linearGradient id="padTop" x1="166" y1="158" x2="346" y2="220" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#9AEAFF" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="waveGamesA" x1="120" y1="336" x2="392" y2="398" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EDFEFF"/>
+      <stop offset="1" stop-color="#CCF8FF"/>
+    </linearGradient>
+    <linearGradient id="waveGamesB" x1="132" y1="358" x2="384" y2="412" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#CFF9FF"/>
+      <stop offset="1" stop-color="#F3FEFF"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="44" y="44" width="424" height="424" rx="116" fill="url(#gamesBg)"/>
+  <circle cx="256" cy="188" r="114" fill="#0F617C" fill-opacity="0.14"/>
+
+  <rect x="138" y="136" width="236" height="136" rx="30" fill="url(#padFill)"/>
+  <rect x="152" y="150" width="208" height="36" rx="18" fill="url(#padTop)"/>
+  <rect x="176" y="180" width="60" height="60" rx="13" fill="#C4F6FF"/>
+  <rect x="276" y="180" width="60" height="60" rx="13" fill="#C4F6FF"/>
+
+  <path d="M188 210H226" stroke="#1092BB" stroke-width="15" stroke-linecap="round"/>
+  <path d="M207 191V229" stroke="#1092BB" stroke-width="15" stroke-linecap="round"/>
+
+  <circle cx="294" cy="210" r="12.5" fill="#1092BB"/>
+  <circle cx="328" cy="210" r="12.5" fill="#1092BB"/>
+  <circle cx="294" cy="210" r="4" fill="#C8F9FF"/>
+  <circle cx="328" cy="210" r="4" fill="#C8F9FF"/>
+
+  <rect x="236" y="204" width="42" height="10" rx="5" fill="#1092BB" fill-opacity="0.78"/>
+  <rect x="236" y="222" width="42" height="10" rx="5" fill="#1092BB" fill-opacity="0.52"/>
+
+  <path d="M122 340C152 324 179 316 209 316C242 316 265 331 297 331C327 331 353 323 391 303" stroke="url(#waveGamesA)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M134 370C163 354 188 347 214 347C243 347 267 361 297 361C327 361 351 354 380 342" stroke="url(#waveGamesB)" stroke-width="12" stroke-linecap="round"/>
+</svg>

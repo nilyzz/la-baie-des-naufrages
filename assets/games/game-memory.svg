@@ -1,0 +1,21 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <g transform="rotate(-10 24 30)">
+    <rect x="12" y="16" width="22" height="28" rx="6" fill="url(#front)" stroke="#6EE7B7" stroke-opacity="0.18"/>
+    <text x="23" y="35.5" text-anchor="middle" fill="#A7F3D0" font-family="Segoe UI Symbol, Apple Color Emoji, Noto Color Emoji, sans-serif" font-size="13">⚓</text>
+  </g>
+  <g transform="rotate(10 40 34)">
+    <rect x="30" y="20" width="22" height="28" rx="6" fill="url(#front)" stroke="#6EE7B7" stroke-opacity="0.18"/>
+    <text x="41" y="40" text-anchor="middle" fill="#A7F3D0" font-family="Segoe UI Symbol, Apple Color Emoji, Noto Color Emoji, sans-serif" font-size="13">🧭</text>
+  </g>
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20324B"/>
+      <stop offset="1" stop-color="#101A2A"/>
+    </linearGradient>
+    <linearGradient id="front" x1="23" y1="18" x2="23" y2="42" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1F5F63" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#1D4ED8" stop-opacity="0.22"/>
+    </linearGradient>
+  </defs>
+</svg>
