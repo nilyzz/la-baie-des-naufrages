@@ -944,9 +944,6 @@
                             <span class="connect4-counter-label">Tour</span>
                             <strong id="connect4TurnDisplay" class="connect4-counter-value">Toi</strong>
                         </div>
-
-                        <button id="connect4RestartButton" type="button" class="connect4-face">Nouvelle manche</button>
-
                         <div class="connect4-counter-block">
                             <span class="connect4-counter-label">Score</span>
                             <strong id="connect4ScoreDisplay" class="connect4-counter-value">Toi 0 - 0 IA</strong>
@@ -959,7 +956,20 @@
                     </div>
 
                     <p id="connect4HelpText" class="connect4-help">Mode 1 joueur: clique une colonne pour y larguer un jeton contre l IA.</p>
-                    <div id="connect4Board" class="connect4-board" aria-label="Plateau de Coin 4"></div>
+                    <div id="connect4Table" class="connect4-table">
+                        <div id="connect4MenuOverlay" class="connect4-menu-overlay">
+                            <div class="connect4-menu-card">
+                                <span id="connect4MenuEyebrow" class="connect4-menu-eyebrow">Pont des corsaires</span>
+                                <h3 id="connect4MenuTitle" class="connect4-menu-title">Coin 4</h3>
+                                <p id="connect4MenuText" class="connect4-menu-text">Choisis ton mode puis aligne quatre jetons avant ton rival sur le pont.</p>
+                                <div class="connect4-menu-actions">
+                                    <button id="connect4MenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="connect4MenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="connect4Board" class="connect4-board" aria-label="Plateau de Coin 4"></div>
+                    </div>
                 </div>
 
                 <div id="rhythmGame" class="card rhythm-card games-panel">
@@ -1242,7 +1252,6 @@
                             <span class="checkers-counter-label">Tour</span>
                             <strong id="checkersTurnDisplay" class="checkers-counter-value">Rouges</strong>
                         </div>
-                        <button id="checkersResetButton" type="button" class="checkers-face">Nouvelle partie</button>
                         <div class="checkers-counter-block">
                             <span class="checkers-counter-label">Pions noirs</span>
                             <strong id="checkersCountDisplay" class="checkers-counter-value">12</strong>
@@ -1253,7 +1262,20 @@
                         <button type="button" class="secondary-button checkers-mode-button" data-checkers-mode="duo">2 joueurs</button>
                     </div>
                     <p id="checkersHelpText" class="checkers-help">Dames local a deux joueurs. Les captures sont possibles, et un pion promu devient roi en arrivant au bout.</p>
-                    <div id="checkersBoard" class="checkers-board" aria-label="Plateau de dames"></div>
+                    <div id="checkersTable" class="checkers-table">
+                        <div id="checkersMenuOverlay" class="checkers-menu-overlay">
+                            <div class="checkers-menu-card">
+                                <span id="checkersMenuEyebrow" class="checkers-menu-eyebrow">Baie strategique</span>
+                                <h3 id="checkersMenuTitle" class="checkers-menu-title">Dames</h3>
+                                <p id="checkersMenuText" class="checkers-menu-text">Installe les pions et choisis ton mode avant d engager la partie.</p>
+                                <div class="checkers-menu-actions">
+                                    <button id="checkersMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="checkersMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="checkersBoard" class="checkers-board" aria-label="Plateau de dames"></div>
+                    </div>
                 </div>
 
                 <div id="airHockeyGame" class="card airhockey-card games-panel">
