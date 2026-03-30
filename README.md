@@ -2,6 +2,10 @@
 
 Ce projet contient maintenant un serveur Express + Socket.IO compatible avec Render pour le mode multijoueur.
 
+## Roadmap jeux
+
+La feuille de route du remaster du navire `Jeux` est disponible dans [docs/games-remaster-roadmap.md](c:\Users\Nail\Desktop\la-baie-des-naufrages-main 29 mars 2026\docs\games-remaster-roadmap.md).
+
 ## Deploiement Render
 
 1. Pousse le projet sur GitHub.

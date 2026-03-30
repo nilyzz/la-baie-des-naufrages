@@ -525,8 +525,8 @@
                         </div>
 
                         <div class="multiplayer-entry-switch" role="group" aria-label="Choix du parcours multijoueur">
-                            <button id="multiplayerCreateModeButton" type="button" class="multiplayer-entry-button is-active" data-multiplayer-mode="create">Creer un salon</button>
-                            <button id="multiplayerJoinModeButton" type="button" class="multiplayer-entry-button" data-multiplayer-mode="join">Rejoindre un salon</button>
+                            <button id="multiplayerCreateModeButton" type="button" class="multiplayer-entry-button multiplayer-entry-button-success is-active" data-multiplayer-mode="create">Creer un salon</button>
+                            <button id="multiplayerJoinModeButton" type="button" class="multiplayer-entry-button multiplayer-entry-button-success" data-multiplayer-mode="join">Rejoindre un salon</button>
                         </div>
 
                         <div class="multiplayer-entry-panels">
@@ -545,7 +545,7 @@
                                 </div>
 
                                 <div class="multiplayer-entry-actions">
-                                    <button id="multiplayerCreateRoomButton" type="button" class="primary-button">Creer le salon</button>
+                                    <button id="multiplayerCreateRoomButton" type="button" class="primary-button multiplayer-button-success">Creer le salon</button>
                                     <button id="multiplayerCopyCodeButton" type="button" class="secondary-button">Copier le code</button>
                                     <div class="multiplayer-room-inline">
                                         <span class="multiplayer-room-inline-label">Salon actif</span>
@@ -574,7 +574,7 @@
                                 </div>
 
                                 <div class="multiplayer-entry-actions">
-                                    <button id="multiplayerJoinRoomButton" type="button" class="secondary-button">Rejoindre avec le code</button>
+                                    <button id="multiplayerJoinRoomButton" type="button" class="secondary-button multiplayer-button-success">Rejoindre avec le code</button>
                                 </div>
                             </section>
                         </div>
@@ -640,8 +640,21 @@
                         </div>
                     </div>
 
-                    <p class="minesweeper-help">Clic gauche pour r&eacute;v&eacute;ler. Clic droit pour poser un drapeau.</p>
-                    <div id="minesweeperBoard" class="minesweeper-board" aria-label="Grille du D&eacute;mineur"></div>
+                    <p id="minesweeperHelpText" class="minesweeper-help">Clic gauche pour r&eacute;v&eacute;ler. Clic droit pour poser un drapeau.</p>
+                    <div id="minesweeperTable" class="minesweeper-table">
+                        <div id="minesweeperMenuOverlay" class="minesweeper-menu-overlay">
+                            <div class="minesweeper-menu-card">
+                                <span id="minesweeperMenuEyebrow" class="minesweeper-menu-eyebrow">Champ de mines du recif</span>
+                                <h3 id="minesweeperMenuTitle" class="minesweeper-menu-title">Demineur</h3>
+                                <p id="minesweeperMenuText" class="minesweeper-menu-text">Repere les zones sures du recif, pose tes drapeaux et traverse sans toucher une mine.</p>
+                                <div class="minesweeper-menu-actions">
+                                    <button id="minesweeperMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="minesweeperMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="minesweeperBoard" class="minesweeper-board" aria-label="Grille du D&eacute;mineur"></div>
+                    </div>
                 </div>
 
                 <div id="snakeGame" class="card snake-card games-panel">
@@ -659,8 +672,21 @@
                         </div>
                     </div>
 
-                    <p class="snake-help">Fl&egrave;ches ou ZQSD pour tourner. Attrape les lanternes sans percuter la coque.</p>
-                    <div id="snakeBoard" class="snake-board" aria-label="Plateau du Snake"></div>
+                    <p id="snakeHelpText" class="snake-help">Fl&egrave;ches ou ZQSD pour tourner. Attrape les lanternes sans percuter la coque.</p>
+                    <div id="snakeTable" class="snake-table">
+                        <div id="snakeMenuOverlay" class="snake-menu-overlay">
+                            <div class="snake-menu-card">
+                                <span id="snakeMenuEyebrow" class="snake-menu-eyebrow">Serpent de mer</span>
+                                <h3 id="snakeMenuTitle" class="snake-menu-title">Snake</h3>
+                                <p id="snakeMenuText" class="snake-menu-text">Glisse entre les courants, ramasse les lanternes et allonge ton serpent sans heurter la coque.</p>
+                                <div class="snake-menu-actions">
+                                    <button id="snakeMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="snakeMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="snakeBoard" class="snake-board" aria-label="Plateau du Snake"></div>
+                    </div>
                 </div>
 
                 <div id="pongGame" class="card pong-card games-panel">
@@ -709,17 +735,35 @@
                             <span class="sudoku-counter-label">Score</span>
                             <strong id="sudokuFilledDisplay" class="sudoku-counter-value">0</strong>
                         </div>
-
-                        <button id="sudokuRestartButton" type="button" class="sudoku-face">Nouvelle grille</button>
-
                         <div class="sudoku-counter-block">
                             <span class="sudoku-counter-label">Erreurs</span>
-                            <strong id="sudokuDifficultyDisplay" class="sudoku-counter-value">0 / 3</strong>
+                            <strong id="sudokuMistakesDisplay" class="sudoku-counter-value">0 / 3</strong>
                         </div>
+                        <div class="sudoku-counter-block">
+                            <span class="sudoku-counter-label">Temps</span>
+                            <strong id="sudokuTimerDisplay" class="sudoku-counter-value">0s</strong>
+                        </div>
+                    </div>
+                    <div class="sudoku-controls">
+                        <button id="sudokuDifficultyButton" type="button" class="sudoku-face sudoku-face-secondary">Difficulte : Moussaillon</button>
+                        <button id="sudokuRestartButton" type="button" class="sudoku-face">Nouvelle grille</button>
                     </div>
 
                     <p id="sudokuHelpText" class="sudoku-help">Clique une case vide puis tape de 1 &agrave; 9. Suppr ou retour arri&egrave;re pour effacer.</p>
-                    <div id="sudokuBoard" class="sudoku-board" aria-label="Grille du Sudoku"></div>
+                    <div id="sudokuTable" class="sudoku-table">
+                        <div id="sudokuMenuOverlay" class="sudoku-menu-overlay">
+                            <div class="sudoku-menu-card">
+                                <span id="sudokuMenuEyebrow" class="sudoku-menu-eyebrow">Carte de navigation</span>
+                                <h3 id="sudokuMenuTitle" class="sudoku-menu-title">Sudoku</h3>
+                                <p id="sudokuMenuText" class="sudoku-menu-text">Complete la carte sans repeter de chiffre sur une ligne, une colonne ou un carre de 3 par 3.</p>
+                                <div class="sudoku-menu-actions">
+                                    <button id="sudokuMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="sudokuMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="sudokuBoard" class="sudoku-board" aria-label="Grille du Sudoku"></div>
+                    </div>
                 </div>
 
                 <div id="game2048" class="card game-2048-card games-panel">
@@ -790,17 +834,27 @@
                             <span class="memory-counter-label">Paires</span>
                             <strong id="memoryPairsDisplay" class="memory-counter-value">0 / 8</strong>
                         </div>
-
-                        <button id="memoryRestartButton" type="button" class="memory-face">Nouvelle mar&eacute;e</button>
-
                         <div class="memory-counter-block">
                             <span class="memory-counter-label">Coups</span>
                             <strong id="memoryMovesDisplay" class="memory-counter-value">0</strong>
                         </div>
                     </div>
 
-                    <p class="memory-help">Retourne les cartes du pont et retrouve toutes les paires marines.</p>
-                    <div id="memoryBoard" class="memory-board" aria-label="Grille du Memory"></div>
+                    <p id="memoryHelpText" class="memory-help">Retourne les cartes du pont et retrouve toutes les paires marines.</p>
+                    <div id="memoryTable" class="memory-table">
+                        <div id="memoryMenuOverlay" class="memory-menu-overlay">
+                            <div class="memory-menu-card">
+                                <span id="memoryMenuEyebrow" class="memory-menu-eyebrow">Pont des souvenirs</span>
+                                <h3 id="memoryMenuTitle" class="memory-menu-title">Memory</h3>
+                                <p id="memoryMenuText" class="memory-menu-text">Retourne les cartes du pont et retrouve toutes les paires avant la fin de la maree.</p>
+                                <div class="memory-menu-actions">
+                                    <button id="memoryMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="memoryMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="memoryBoard" class="memory-board" aria-label="Grille du Memory"></div>
+                    </div>
                 </div>
 
                 <div id="ticTacToeGame" class="card tictactoe-card games-panel">
@@ -1296,6 +1350,17 @@
                     </div>
                     <p id="airHockeyHelpText" class="airhockey-help">Joueur gauche: ZQSD. Joueur droit: fleches. En solo, la droite est pilotee par l IA.</p>
                     <div id="airHockeyBoard" class="airhockey-board" aria-label="Plateau de Sea Hockey">
+                        <div id="airHockeyMenuOverlay" class="airhockey-menu-overlay">
+                            <div class="airhockey-menu-card">
+                                <span id="airHockeyMenuEyebrow" class="airhockey-menu-eyebrow">Duel de pont</span>
+                                <h3 id="airHockeyMenuTitle" class="airhockey-menu-title">Sea Hockey</h3>
+                                <p id="airHockeyMenuText" class="airhockey-menu-text">Choisis ton mode puis engage le palet sur le pont glissant de la baie.</p>
+                                <div class="airhockey-menu-actions">
+                                    <button id="airHockeyMenuActionButton" type="button" class="game-menu-primary-button">Lancer le duel</button>
+                                    <button id="airHockeyMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
                         <div id="airHockeyCountdown" class="airhockey-countdown hidden" aria-hidden="true"></div>
                         <div class="airhockey-goal airhockey-goal-left" aria-hidden="true"></div>
                         <div class="airhockey-goal airhockey-goal-right" aria-hidden="true"></div>
@@ -1349,21 +1414,21 @@
                     <p id="baieBerryHelpText" class="baieberry-help">Clique dans la colonne pour laisser tomber un fruit. Deux fruits identiques fusionnent en plus gros.</p>
                     <div class="baieberry-layout">
                         <div id="baieBerryTable" class="baieberry-table">
-                            <div id="baieBerryMenuOverlay" class="baieberry-menu-overlay">
-                                <div class="baieberry-menu-card">
-                                    <span id="baieBerryMenuEyebrow" class="baieberry-menu-eyebrow">Baie d arcade</span>
-                                    <h3 id="baieBerryMenuTitle" class="baieberry-menu-title">BaieBerry</h3>
-                                    <p id="baieBerryMenuText" class="baieberry-menu-text">Prepare ta recolte avant de laisser tomber les fruits dans le panier.</p>
-                                    <div class="baieberry-menu-actions">
-                                        <button id="baieBerryMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                        <button id="baieBerryMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="baieberry-stage">
                                 <div id="baieBerryDropLine" class="baieberry-drop-line" aria-hidden="true"></div>
                                 <div id="baieBerryDropGuide" class="baieberry-drop-guide" aria-hidden="true"></div>
                                 <canvas id="baieBerryCanvas" class="baieberry-canvas" width="360" height="460"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="baieBerryMenuOverlay" class="baieberry-menu-overlay">
+                        <div class="baieberry-menu-card">
+                            <span id="baieBerryMenuEyebrow" class="baieberry-menu-eyebrow">Baie d arcade</span>
+                            <h3 id="baieBerryMenuTitle" class="baieberry-menu-title">BaieBerry</h3>
+                            <p id="baieBerryMenuText" class="baieberry-menu-text">Prepare ta recolte avant de laisser tomber les fruits dans le panier.</p>
+                            <div class="baieberry-menu-actions">
+                                <button id="baieBerryMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                <button id="baieBerryMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
                             </div>
                         </div>
                     </div>

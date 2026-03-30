@@ -19,9 +19,10 @@ const PONG_TARGET_SCORE = 7;
 const PONG_BOARD_WIDTH = 700;
 const PONG_BOARD_HEIGHT = Math.round(PONG_BOARD_WIDTH * 9 / 16);
 const PONG_PADDLE_HEIGHT = 104;
-const PONG_PADDLE_WIDTH = 16;
+const PONG_PADDLE_WIDTH = 24;
 const PONG_BALL_SIZE = 20;
 const PONG_PADDLE_OFFSET = 22;
+const PONG_COLLISION_MARGIN = 2;
 const PONG_PLAYER_SPEED = 380;
 const PONG_BALL_SPEED_X = 388;
 const PONG_COUNTDOWN_MS = 2320;
@@ -1300,7 +1301,7 @@ function updatePongRoom(room, deltaSeconds) {
 
   const leftPaddleX = PONG_PADDLE_OFFSET;
   const rightPaddleX = PONG_BOARD_WIDTH - PONG_PADDLE_OFFSET - PONG_PADDLE_WIDTH;
-  const pongCollisionMargin = 8;
+  const pongCollisionMargin = PONG_COLLISION_MARGIN;
 
   const hitsLeft = room.gameState.ballX <= leftPaddleX + PONG_PADDLE_WIDTH + pongCollisionMargin
     && room.gameState.ballX + PONG_BALL_SIZE >= leftPaddleX - pongCollisionMargin

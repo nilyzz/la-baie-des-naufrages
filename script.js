@@ -71,6 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const mineCountDisplay = document.getElementById('mineCountDisplay');
     const timerDisplay = document.getElementById('timerDisplay');
     const restartGameButton = document.getElementById('restartGameButton');
+    const minesweeperHelpText = document.getElementById('minesweeperHelpText');
+    const minesweeperTable = document.getElementById('minesweeperTable');
+    const minesweeperMenuOverlay = document.getElementById('minesweeperMenuOverlay');
+    const minesweeperMenuEyebrow = document.getElementById('minesweeperMenuEyebrow');
+    const minesweeperMenuTitle = document.getElementById('minesweeperMenuTitle');
+    const minesweeperMenuText = document.getElementById('minesweeperMenuText');
+    const minesweeperMenuActionButton = document.getElementById('minesweeperMenuActionButton');
+    const minesweeperMenuRulesButton = document.getElementById('minesweeperMenuRulesButton');
     const gameTabs = document.querySelectorAll('[data-game-tab]');
     const gamesSectionButtons = document.querySelectorAll('[data-games-section]');
     const gameHomeTiles = document.querySelectorAll('[data-open-game]');
@@ -156,6 +164,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const snakeScoreDisplay = document.getElementById('snakeScoreDisplay');
     const snakeBestScoreDisplay = document.getElementById('snakeBestScoreDisplay');
     const snakeStartButton = document.getElementById('snakeStartButton');
+    const snakeHelpText = document.getElementById('snakeHelpText');
+    const snakeTable = document.getElementById('snakeTable');
+    const snakeMenuOverlay = document.getElementById('snakeMenuOverlay');
+    const snakeMenuEyebrow = document.getElementById('snakeMenuEyebrow');
+    const snakeMenuTitle = document.getElementById('snakeMenuTitle');
+    const snakeMenuText = document.getElementById('snakeMenuText');
+    const snakeMenuActionButton = document.getElementById('snakeMenuActionButton');
+    const snakeMenuRulesButton = document.getElementById('snakeMenuRulesButton');
     const pongBoard = document.getElementById('pongBoard');
     const pongTable = document.getElementById('pongTable');
     const pongCountdown = document.getElementById('pongCountdown');
@@ -176,9 +192,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const pongMenuRulesButton = document.getElementById('pongMenuRulesButton');
     const sudokuBoard = document.getElementById('sudokuBoard');
     const sudokuFilledDisplay = document.getElementById('sudokuFilledDisplay');
-    const sudokuDifficultyDisplay = document.getElementById('sudokuDifficultyDisplay');
+    const sudokuMistakesDisplay = document.getElementById('sudokuMistakesDisplay');
+    const sudokuTimerDisplay = document.getElementById('sudokuTimerDisplay');
+    const sudokuDifficultyButton = document.getElementById('sudokuDifficultyButton');
     const sudokuRestartButton = document.getElementById('sudokuRestartButton');
     const sudokuHelpText = document.getElementById('sudokuHelpText');
+    const sudokuTable = document.getElementById('sudokuTable');
+    const sudokuMenuOverlay = document.getElementById('sudokuMenuOverlay');
+    const sudokuMenuEyebrow = document.getElementById('sudokuMenuEyebrow');
+    const sudokuMenuTitle = document.getElementById('sudokuMenuTitle');
+    const sudokuMenuText = document.getElementById('sudokuMenuText');
+    const sudokuMenuActionButton = document.getElementById('sudokuMenuActionButton');
+    const sudokuMenuRulesButton = document.getElementById('sudokuMenuRulesButton');
     const game2048Board = document.getElementById('game2048Board');
     const game2048Table = document.getElementById('game2048Table');
     const game2048ScoreDisplay = document.getElementById('game2048ScoreDisplay');
@@ -199,7 +224,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const memoryBoard = document.getElementById('memoryBoard');
     const memoryPairsDisplay = document.getElementById('memoryPairsDisplay');
     const memoryMovesDisplay = document.getElementById('memoryMovesDisplay');
-    const memoryRestartButton = document.getElementById('memoryRestartButton');
+    const memoryHelpText = document.getElementById('memoryHelpText');
+    const memoryTable = document.getElementById('memoryTable');
+    const memoryMenuOverlay = document.getElementById('memoryMenuOverlay');
+    const memoryMenuEyebrow = document.getElementById('memoryMenuEyebrow');
+    const memoryMenuTitle = document.getElementById('memoryMenuTitle');
+    const memoryMenuText = document.getElementById('memoryMenuText');
+    const memoryMenuActionButton = document.getElementById('memoryMenuActionButton');
+    const memoryMenuRulesButton = document.getElementById('memoryMenuRulesButton');
     const ticTacToeBoard = document.getElementById('ticTacToeBoard');
     const ticTacToeTable = document.getElementById('ticTacToeTable');
     const ticTacToeTurnDisplay = document.getElementById('ticTacToeTurnDisplay');
@@ -366,6 +398,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const airHockeyHelpText = document.getElementById('airHockeyHelpText');
     const airHockeyStartButton = document.getElementById('airHockeyStartButton');
     const airHockeyModeButtons = document.querySelectorAll('[data-airhockey-mode]');
+    const airHockeyMenuOverlay = document.getElementById('airHockeyMenuOverlay');
+    const airHockeyMenuEyebrow = document.getElementById('airHockeyMenuEyebrow');
+    const airHockeyMenuTitle = document.getElementById('airHockeyMenuTitle');
+    const airHockeyMenuText = document.getElementById('airHockeyMenuText');
+    const airHockeyMenuActionButton = document.getElementById('airHockeyMenuActionButton');
+    const airHockeyMenuRulesButton = document.getElementById('airHockeyMenuRulesButton');
     const reactionGame = document.getElementById('reactionGame');
     const reactionLastDisplay = document.getElementById('reactionLastDisplay');
     const reactionBestDisplay = document.getElementById('reactionBestDisplay');
@@ -425,6 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unoColorChoiceButtons = document.querySelectorAll('[data-uno-color]');
     const unoEventBanner = document.getElementById('unoEventBanner');
     const unoHand = document.getElementById('unoHand');
+    const unoTable = unoGame?.querySelector('.uno-table') || null;
     const unoMenuOverlay = document.getElementById('unoMenuOverlay');
     const unoMenuEyebrow = document.getElementById('unoMenuEyebrow');
     const unoMenuTitle = document.getElementById('unoMenuTitle');
@@ -504,6 +543,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const RHYTHM_DURATION_MS = 30000;
     const RHYTHM_MAX_MISSES = 10;
     const RHYTHM_BEST_KEY = 'baie-des-naufrages-rhythm-best';
+    const RHYTHM_NOTE_START_Y = 14;
+    const RHYTHM_HIT_Y = 348;
+    const RHYTHM_MISS_Y = 410;
+    const RHYTHM_BURST_Y = 324;
     const FLAPPY_BEST_KEY = 'baie-des-naufrages-flappy-best';
     const HARBOR_RUN_BEST_KEY = 'baie-des-naufrages-harbor-run-best';
     const STACKER_BEST_KEY = 'baie-des-naufrages-stacker-best';
@@ -520,7 +563,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const BREAKOUT_BALL_SPEED = 320;
     const BREAKOUT_MAX_STEP_DISTANCE = 4;
     const FLOW_FREE_SIZE = 7;
-    const FLOW_FREE_COLORS = ['#fb7185', '#38bdf8', '#facc15', '#34d399', '#c084fc', '#f97316', '#22d3ee', '#60a5fa', '#e879f9', '#84cc16'];
+    const FLOW_FREE_COLORS = [
+        '#ef4444',
+        '#2563eb',
+        '#f59e0b',
+        '#16a34a',
+        '#7c3aed',
+        '#ea580c',
+        '#db2777',
+        '#0891b2',
+        '#f8fafc',
+        '#65a30d'
+    ];
     const MAGIC_SORT_COLORS = {
         pink: '#f472b6',
         gold: '#facc15',
@@ -541,6 +595,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const CHESS_SIZE = 8;
     const CHECKERS_SIZE = 8;
     const AIR_HOCKEY_GOAL_SCORE = 5;
+    const AIR_HOCKEY_SPEED = 340;
+    const AIR_HOCKEY_CENTER_GAP = 8;
+    const AIR_HOCKEY_PADDLE_RADIUS = 34;
+    const AIR_HOCKEY_PUCK_RADIUS = 22;
+    const AIR_HOCKEY_PUCK_MAX_SPEED = 700;
     const CANDY_CRUSH_SIZE = 8;
     const CANDY_CRUSH_TARGET_SCORE = 4000;
     const CANDY_CRUSH_START_MOVES = 35;
@@ -617,9 +676,9 @@ document.addEventListener('DOMContentLoaded', () => {
         diamonds: '♦'
     };
     const SUDOKU_DIFFICULTIES = [
-        { difficulty: 'Calme', removals: 38 },
-        { difficulty: 'Brise', removals: 46 },
-        { difficulty: 'Cap', removals: 52 }
+        { difficulty: 'Moussaillon', removals: 38 },
+        { difficulty: 'Pirate', removals: 46 },
+        { difficulty: 'Capitaine', removals: 52 }
     ];
     const PIANO_NOTES = [
         { id: 'c4', key: 'a', keyLabel: 'A', note: 'C4', frequency: 261.63, type: 'white' },
@@ -734,6 +793,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval = null;
     let gameStarted = false;
     let gameFinished = false;
+    let minesweeperMenuVisible = true;
+    let minesweeperMenuShowingRules = false;
+    let minesweeperMenuClosing = false;
+    let minesweeperMenuEntering = false;
+    let minesweeperMenuResult = null;
     let sessionTimeout = null;
     let activeGameTab = 'home';
     let snake = [];
@@ -749,6 +813,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let snakeOverlayLayer = null;
     let snakeSegmentElements = [];
     let snakeFoodElements = new Map();
+    let snakeMenuVisible = true;
+    let snakeMenuShowingRules = false;
+    let snakeMenuClosing = false;
+    let snakeMenuEntering = false;
+    let snakeMenuResult = null;
     let pongRunning = false;
     let pongAnimationFrame = null;
     let pongLastFrame = 0;
@@ -776,8 +845,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongRenderMetrics = null;
     const PONG_SERVE_SPEED_X = 388;
     const PONG_SERVE_SPEED_Y = 228;
-    const PONG_FIRST_RETURN_SPEED_X = 620;
-    const PONG_FIRST_RETURN_Y_MULTIPLIER = 1.35;
+    const PONG_FIRST_RETURN_SPEED_X = 760;
+    const PONG_FIRST_RETURN_Y_MULTIPLIER = 1.6;
     const PONG_RALLY_SPEED_INCREMENT = 20;
     const PONG_MAX_STEP_SECONDS = 1 / 120;
     let sudokuPuzzle = null;
@@ -790,8 +859,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let sudokuCombo = 0;
     let sudokuElapsedSeconds = 0;
     let sudokuTimerInterval = null;
+    let sudokuTimerStarted = false;
     let sudokuFeedbackCell = null;
     let sudokuFeedbackTimeout = null;
+    let sudokuStatusTimeout = null;
+    let sudokuDifficultyIndex = 0;
+    let sudokuMenuVisible = true;
+    let sudokuMenuShowingRules = false;
+    let sudokuMenuClosing = false;
+    let sudokuMenuEntering = false;
+    let sudokuMenuResult = null;
     let game2048Grid = [];
     let game2048Tiles = [];
     let game2048Score = 0;
@@ -805,6 +882,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let game2048MenuVisible = true;
     let game2048MenuShowingRules = false;
     let game2048MenuClosing = false;
+    let game2048TouchStartX = null;
+    let game2048TouchStartY = null;
+    let snakeTouchStartX = null;
+    let snakeTouchStartY = null;
+    let pacmanTouchStartX = null;
+    let pacmanTouchStartY = null;
+    let tetrisTouchStartX = null;
+    let tetrisTouchStartY = null;
     let aimTargets = [];
     let aimScore = 0;
     let aimBestScore = Number(window.localStorage.getItem(AIM_BEST_KEY)) || 0;
@@ -823,6 +908,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let memoryMoves = 0;
     let memoryLockBoard = false;
     let memoryMismatchTimeout = null;
+    let memoryMenuVisible = true;
+    let memoryMenuShowingRules = false;
+    let memoryMenuClosing = false;
+    let memoryMenuEntering = false;
+    let memoryMenuResult = false;
     let ticTacToeBoardState = Array(9).fill('');
     let ticTacToeCurrentPlayer = 'anchor';
     let ticTacToeScores = { anchor: 0, skull: 0 };
@@ -1016,6 +1106,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let airHockeyLocalPredicted = null;
     let airHockeyCountdownTimer = null;
     let airHockeyCountdownCompleteTimer = null;
+    let airHockeyMenuVisible = true;
+    let airHockeyMenuShowingRules = false;
+    let airHockeyMenuClosing = false;
+    let airHockeyMenuEntering = false;
+    let airHockeyMenuResult = null;
     let reactionState = 'idle';
     let reactionBestTime = Number(window.localStorage.getItem(REACTION_BEST_KEY)) || null;
     let reactionStartTime = 0;
@@ -2181,7 +2276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         multiplayerCreateLeaveButton = document.createElement('button');
         multiplayerCreateLeaveButton.type = 'button';
         multiplayerCreateLeaveButton.id = 'multiplayerCreateLeaveButton';
-        multiplayerCreateLeaveButton.className = multiplayerCopyCodeButton.className;
+        multiplayerCreateLeaveButton.className = 'secondary-button multiplayer-button-danger';
         multiplayerCreateLeaveButton.textContent = 'Quitter le salon';
         multiplayerCreateLeaveButton.hidden = true;
         multiplayerCreateLeaveButton.addEventListener('click', () => {
@@ -2266,6 +2361,42 @@ document.addEventListener('DOMContentLoaded', () => {
         multiplayerGameTiles.forEach((tile) => {
             tile.classList.toggle('is-selected', tile.dataset.multiplayerGameSelect === getSelectedMultiplayerGame());
         });
+    }
+
+    function syncGameMenuOverlayBounds(overlayElement, hostElement) {
+        if (!overlayElement || !hostElement) {
+            return;
+        }
+
+        const cardElement = hostElement.closest('.games-panel');
+        if (!cardElement) {
+            return;
+        }
+
+        overlayElement.style.inset = 'auto';
+        overlayElement.style.top = `${-hostElement.offsetTop}px`;
+        overlayElement.style.left = `${-hostElement.offsetLeft}px`;
+        overlayElement.style.width = `${cardElement.clientWidth}px`;
+        overlayElement.style.height = `${cardElement.clientHeight}px`;
+    }
+
+    function syncAllGameMenuOverlayBounds() {
+        syncGameMenuOverlayBounds(minesweeperMenuOverlay, minesweeperTable);
+        syncGameMenuOverlayBounds(snakeMenuOverlay, snakeTable);
+        syncGameMenuOverlayBounds(pongMenuOverlay, pongTable);
+        syncGameMenuOverlayBounds(sudokuMenuOverlay, sudokuTable);
+        syncGameMenuOverlayBounds(game2048MenuOverlay, game2048Table);
+        syncGameMenuOverlayBounds(memoryMenuOverlay, memoryTable);
+        syncGameMenuOverlayBounds(ticTacToeMenuOverlay, ticTacToeTable);
+        syncGameMenuOverlayBounds(connect4MenuOverlay, connect4Table);
+        syncGameMenuOverlayBounds(flappyMenuOverlay, flappyTable);
+        syncGameMenuOverlayBounds(mentalMathMenuOverlay, mentalMathTable);
+        syncGameMenuOverlayBounds(chessMenuOverlay, chessTable);
+        syncGameMenuOverlayBounds(checkersMenuOverlay, checkersTable);
+        syncGameMenuOverlayBounds(airHockeyMenuOverlay, airHockeyBoard);
+        syncGameMenuOverlayBounds(baieBerryMenuOverlay, baieBerryGame);
+        syncGameMenuOverlayBounds(breakoutMenuOverlay, breakoutTable);
+        syncGameMenuOverlayBounds(unoMenuOverlay, unoTable);
     }
 
     function getBoardMoveAnimationMetadata(lastMove, row, col, flip = false) {
@@ -2584,6 +2715,8 @@ document.addEventListener('DOMContentLoaded', () => {
         multiplayerJoinRoomButton.textContent = hasActiveRoom
             ? 'Quitter le salon'
             : 'Rejoindre avec le code';
+        multiplayerJoinRoomButton.classList.toggle('multiplayer-button-success', !hasActiveRoom);
+        multiplayerJoinRoomButton.classList.toggle('multiplayer-button-danger', hasActiveRoom);
         multiplayerCopyCodeButton.disabled = !hasActiveRoom;
         updateMultiplayerGameTileSelection();
         renderMultiplayerPlayers();
@@ -3065,10 +3198,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const previousTab = activeGameTab;
 
         if (previousTab === 'minesweeper' && nextTab !== 'minesweeper') {
+            minesweeperMenuVisible = true;
             initializeGame();
         }
 
         if (previousTab === 'snake' && nextTab !== 'snake') {
+            snakeMenuVisible = true;
             stopSnake();
             initializeSnake();
         }
@@ -3079,7 +3214,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'sudoku' && nextTab !== 'sudoku') {
-            initializeSudoku();
+            sudokuMenuVisible = true;
+            initializeSudoku(false);
         }
 
         if (previousTab === '2048' && nextTab !== '2048') {
@@ -3163,7 +3299,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'airHockey' && nextTab !== 'airHockey') {
-            initializeAirHockey();
+            airHockeyMenuVisible = true;
+            if (isMultiplayerAirHockeyActive()) {
+                stopAirHockeyRuntime();
+            } else {
+                initializeAirHockey();
+            }
         }
 
         if (previousTab === 'reaction' && nextTab !== 'reaction') {
@@ -3171,10 +3312,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'baieBerry' && nextTab !== 'baieBerry') {
+            stopBaieBerry();
             initializeBaieBerry();
         }
 
         if (previousTab === 'breakout' && nextTab !== 'breakout') {
+            stopBreakout();
             initializeBreakout();
         }
     }
@@ -3411,6 +3554,82 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateMemoryHud() {
         memoryPairsDisplay.textContent = `${memoryMatchedPairs} / 8`;
         memoryMovesDisplay.textContent = String(memoryMoves);
+        if (memoryHelpText && !memoryMenuResult) {
+            memoryHelpText.textContent = 'Retourne les cartes du pont et retrouve toutes les paires marines.';
+        }
+    }
+
+    function getMemoryRulesText() {
+        return 'Retourne deux cartes a la fois pour retrouver chaque paire. Quand les deux symboles correspondent, ils restent visibles jusqu a vider tout le pont.';
+    }
+
+    function renderMemoryMenu() {
+        if (!memoryMenuOverlay || !memoryTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(memoryMenuOverlay, memoryTable);
+        memoryMenuOverlay.classList.toggle('hidden', !memoryMenuVisible);
+        memoryMenuOverlay.classList.toggle('is-closing', memoryMenuClosing);
+        memoryMenuOverlay.classList.toggle('is-entering', memoryMenuEntering);
+        memoryTable.classList.toggle('is-menu-open', memoryMenuVisible);
+
+        if (!memoryMenuVisible) {
+            return;
+        }
+
+        const hasResult = memoryMenuResult;
+        if (memoryMenuEyebrow) {
+            memoryMenuEyebrow.textContent = memoryMenuShowingRules ? 'Regles' : (hasResult ? 'Fin de recolte' : 'Pont des souvenirs');
+        }
+        if (memoryMenuTitle) {
+            memoryMenuTitle.textContent = memoryMenuShowingRules ? 'Rappel rapide' : (hasResult ? 'Memory termine' : 'Memory');
+        }
+        if (memoryMenuText) {
+            memoryMenuText.textContent = memoryMenuShowingRules
+                ? getMemoryRulesText()
+                : (hasResult
+                    ? `Toutes les paires ont ete retrouvees en ${memoryMoves} coups.`
+                    : 'Retourne les cartes du pont et retrouve toutes les paires marines.');
+        }
+        if (memoryMenuActionButton) {
+            memoryMenuActionButton.textContent = memoryMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
+        }
+        if (memoryMenuRulesButton) {
+            memoryMenuRulesButton.textContent = 'Regles';
+            memoryMenuRulesButton.hidden = memoryMenuShowingRules;
+        }
+    }
+
+    function startMemoryLaunchSequence() {
+        memoryMenuClosing = true;
+        renderMemoryMenu();
+        window.setTimeout(() => {
+            memoryMenuClosing = false;
+            memoryMenuVisible = false;
+            memoryMenuShowingRules = false;
+            memoryMenuEntering = false;
+            memoryMenuResult = false;
+            renderMemoryMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealMemoryOutcomeMenu() {
+        memoryMenuVisible = true;
+        memoryMenuResult = true;
+        memoryMenuShowingRules = false;
+        memoryMenuClosing = false;
+        memoryMenuEntering = true;
+        if (memoryHelpText) {
+            memoryHelpText.textContent = `Toutes les paires ont ete retrouvees en ${memoryMoves} coups.`;
+        }
+        renderMemoryMenu();
+        window.setTimeout(() => {
+            memoryMenuEntering = false;
+            renderMemoryMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function renderMemoryBoard() {
@@ -3431,6 +3650,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             `;
         }).join('');
+        renderMemoryMenu();
     }
 
     function initializeMemory() {
@@ -3453,16 +3673,21 @@ document.addEventListener('DOMContentLoaded', () => {
         memoryMatchedPairs = 0;
         memoryMoves = 0;
         memoryLockBoard = false;
+        memoryMenuVisible = true;
+        memoryMenuShowingRules = false;
+        memoryMenuClosing = false;
+        memoryMenuEntering = false;
+        memoryMenuResult = false;
         updateMemoryHud();
         renderMemoryBoard();
     }
 
     function finishMemory() {
-        openGameOverModal('Memory termine', `Toutes les paires ont ete retrouvees en ${memoryMoves} coups.`);
+        revealMemoryOutcomeMenu();
     }
 
     function handleMemoryCardFlip(index) {
-        if (memoryLockBoard) {
+        if (memoryLockBoard || memoryMenuVisible || memoryMenuClosing) {
             return;
         }
 
@@ -3572,6 +3797,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(ticTacToeMenuOverlay, ticTacToeTable);
         ticTacToeMenuOverlay.classList.toggle('hidden', !ticTacToeMenuVisible);
         ticTacToeMenuOverlay.classList.toggle('is-closing', ticTacToeMenuClosing);
         ticTacToeTable.classList.toggle('is-menu-open', ticTacToeMenuVisible);
@@ -3652,6 +3878,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 && ticTacToeBoardState[a] === ticTacToeBoardState[b]
                 && ticTacToeBoardState[a] === ticTacToeBoardState[c];
         }) || null;
+    }
+
+    function getTicTacToeWinnerForBoard(board) {
+        const lines = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        return lines.find(([a, b, c]) => (
+            board[a]
+            && board[a] === board[b]
+            && board[a] === board[c]
+        )) || null;
+    }
+
+    function getBestTicTacToeAiMove() {
+        const emptyCells = getTicTacToeEmptyCells();
+        if (!emptyCells.length) {
+            return null;
+        }
+
+        const aiPlayer = 'skull';
+        const humanPlayer = 'anchor';
+        const preferredOrder = [4, 0, 2, 6, 8, 1, 3, 5, 7];
+
+        const findFinishingMove = (player) => emptyCells.find((index) => {
+            const board = [...ticTacToeBoardState];
+            board[index] = player;
+            return Boolean(getTicTacToeWinnerForBoard(board));
+        });
+
+        const winningMove = findFinishingMove(aiPlayer);
+        if (winningMove !== undefined) {
+            return winningMove;
+        }
+
+        const blockingMove = findFinishingMove(humanPlayer);
+        if (blockingMove !== undefined) {
+            return blockingMove;
+        }
+
+        if (emptyCells.includes(4)) {
+            return 4;
+        }
+
+        const forkCandidates = emptyCells.filter((index) => {
+            const board = [...ticTacToeBoardState];
+            board[index] = aiPlayer;
+            const futureWins = emptyCells
+                .filter((candidate) => candidate !== index)
+                .filter((candidate) => {
+                    const nextBoard = [...board];
+                    nextBoard[candidate] = aiPlayer;
+                    return Boolean(getTicTacToeWinnerForBoard(nextBoard));
+                });
+            return futureWins.length >= 2;
+        });
+        if (forkCandidates.length) {
+            return preferredOrder.find((index) => forkCandidates.includes(index)) ?? forkCandidates[0];
+        }
+
+        return preferredOrder.find((index) => emptyCells.includes(index)) ?? emptyCells[0];
     }
 
     function isMultiplayerTicTacToeActive() {
@@ -3877,7 +4166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function initializeTicTacToe() {
+    function initializeTicTacToe(showMenu = true) {
         if (isMultiplayerTicTacToeActive()) {
             closeGameOverModal();
             ticTacToeMenuVisible = false;
@@ -3900,7 +4189,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ticTacToeMenuResult = null;
         updateTicTacToeHud();
         renderTicTacToeBoard();
-        showTicTacToeMenu();
+        if (showMenu) {
+            showTicTacToeMenu();
+        } else {
+            ticTacToeMenuVisible = false;
+            ticTacToeMenuShowingRules = false;
+            ticTacToeMenuClosing = false;
+            renderTicTacToeMenu();
+        }
     }
 
     function finishTicTacToeRound(winner) {
@@ -3960,13 +4256,15 @@ document.addEventListener('DOMContentLoaded', () => {
             ticTacToeHelpText.textContent = 'L IA pirate prepare sa riposte.';
             ticTacToeAiTimeout = window.setTimeout(() => {
                 ticTacToeAiTimeout = null;
-                const emptyCells = getTicTacToeEmptyCells();
-
-                if (!emptyCells.length || ticTacToeFinished) {
+                if (ticTacToeFinished) {
                     return;
                 }
 
-                const chosenIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                const chosenIndex = getBestTicTacToeAiMove();
+                if (chosenIndex === null) {
+                    return;
+                }
+
                 handleTicTacToeMove(chosenIndex, 'skull');
             }, 320);
         } else if (!ticTacToeFinished) {
@@ -4064,6 +4362,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(connect4MenuOverlay, connect4Table);
         connect4MenuOverlay.classList.toggle('hidden', !connect4MenuVisible);
         connect4MenuOverlay.classList.toggle('is-closing', connect4MenuClosing);
         connect4MenuOverlay.classList.toggle('is-entering', connect4MenuEntering);
@@ -5076,7 +5375,7 @@ document.addEventListener('DOMContentLoaded', () => {
             startPacmanCountdown(() => {
                 pacmanRunning = true;
                 updatePacmanHud();
-                pacmanInterval = window.setInterval(runPacmanTick, 190);
+                pacmanInterval = window.setInterval(runPacmanTick, 220);
             });
         }
     }
@@ -5187,7 +5486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startPacmanCountdown(() => {
             pacmanRunning = true;
             updatePacmanHud();
-            pacmanInterval = window.setInterval(runPacmanTick, 190);
+            pacmanInterval = window.setInterval(runPacmanTick, 220);
         });
     }
 
@@ -5898,19 +6197,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 rhythmNotes.push({
                     id: `${timestamp}-${Math.random()}`,
                     lane: Math.floor(Math.random() * RHYTHM_LANES.length),
-                    y: -34
+                    y: RHYTHM_NOTE_START_Y
                 });
             }
 
             rhythmNotes = rhythmNotes.filter((note) => {
                 note.y += (delta * 0.31) + Math.min(0.16, rhythmScore * 0.0006 * delta);
-                if (note.y > 392) {
+                if (note.y > RHYTHM_MISS_Y) {
                     rhythmStreak = 0;
                     rhythmMisses += 1;
                     rhythmBursts.push({
                         id: `${note.id}-miss`,
                         lane: note.lane,
-                        y: 320,
+                        y: RHYTHM_BURST_Y,
                         label: 'RATE',
                         type: 'is-miss'
                     });
@@ -5957,11 +6256,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const noteIndex = rhythmNotes.findIndex((note) => note.lane === lane && Math.abs(note.y - 330) <= 44);
+        const noteIndex = rhythmNotes.findIndex((note) => note.lane === lane && Math.abs(note.y - RHYTHM_HIT_Y) <= 44);
 
         if (noteIndex !== -1) {
             const note = rhythmNotes[noteIndex];
-            const distance = Math.abs(note.y - 330);
+            const distance = Math.abs(note.y - RHYTHM_HIT_Y);
             rhythmNotes.splice(noteIndex, 1);
             rhythmStreak += 1;
             const isPerfect = distance <= 16;
@@ -5971,7 +6270,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rhythmBursts.push({
                 id: `${note.id}-hit`,
                 lane,
-                y: 306,
+                y: RHYTHM_BURST_Y,
                 label: isPerfect ? 'PARFAIT' : 'BIEN',
                 type: isPerfect ? 'is-perfect' : 'is-good'
             });
@@ -5984,7 +6283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rhythmBursts.push({
                 id: `mistap-${performance.now()}`,
                 lane,
-                y: 306,
+                y: RHYTHM_BURST_Y,
                 label: 'RATE',
                 type: 'is-miss'
             });
@@ -6054,6 +6353,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(flappyMenuOverlay, flappyTable);
         flappyMenuOverlay.classList.toggle('hidden', !flappyMenuVisible);
         flappyMenuOverlay.classList.toggle('is-closing', flappyMenuClosing);
         flappyMenuOverlay.classList.toggle('is-entering', flappyMenuEntering);
@@ -6632,6 +6932,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(pongMenuOverlay, pongTable);
         const isOnline = multiplayerActiveRoom?.gameId === 'pong';
         const gameState = multiplayerActiveRoom?.gameState || null;
         const countdownActive = Boolean(gameState?.countdownEndsAt && Number(gameState.countdownEndsAt) > Date.now());
@@ -6754,8 +7055,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pongState = {
             boardWidth: Number(nextState.boardWidth || (pongBoard?.clientWidth || 700)),
             boardHeight: Number(nextState.boardHeight || (pongBoard?.clientHeight || 394)),
-            paddleHeight: Number(nextState.paddleHeight || 92),
-            paddleWidth: Number(nextState.paddleWidth || 14),
+            paddleHeight: Number(nextState.paddleHeight || 104),
+            paddleWidth: Number(nextState.paddleWidth || 24),
             paddleOffset: Number(nextState.paddleOffset || 22),
             ballSize: Number(nextState.ballSize || 16),
             playerY: Number(nextState.leftY || 0),
@@ -6867,7 +7168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const boardWidth = pongBoard.clientWidth || 700;
         const boardHeight = pongBoard.clientHeight || Math.round(boardWidth * 9 / 16);
         const paddleHeight = 104;
-        const paddleWidth = 16;
+        const paddleWidth = 24;
         const ballSize = 20;
         const paddleOffset = 22;
         const centerY = (boardHeight - paddleHeight) / 2;
@@ -6972,9 +7273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pongRenderLastFrame = timestamp;
             const role = getMultiplayerPongRole();
             const inputDirection = getMultiplayerPongInputDirection();
-            const paddleSmoothing = Math.min(1, delta * 14);
-            const ballCorrection = Math.min(1, delta * 10);
-            const shouldSimulateBall = pongRunning && !pongState.countdownActive && !multiplayerActiveRoom?.gameState?.finished;
+            const paddleSmoothing = Math.min(1, delta * 22);
             const ownServerY = role === 'right' ? pongState.aiY : pongState.playerY;
 
             if (pongLocalPredictedPaddleY === null) {
@@ -6983,35 +7282,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (role === 'left') {
                 pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
+                if (Math.abs(pongState.playerY - pongLocalPredictedPaddleY) > 6) {
+                    pongLocalPredictedPaddleY = pongState.playerY;
+                }
                 if (inputDirection === 0) {
                     const catchupGap = pongState.playerY - pongLocalPredictedPaddleY;
-                    if (Math.abs(catchupGap) <= 18) {
-                        pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 10);
-                    }
+                    pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 16);
                 }
                 pongDisplayState.playerY = pongLocalPredictedPaddleY;
-                pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * paddleSmoothing;
+                pongDisplayState.aiY = Math.abs(pongState.aiY - pongDisplayState.aiY) > 6
+                    ? pongState.aiY
+                    : (pongDisplayState.aiY + ((pongState.aiY - pongDisplayState.aiY) * paddleSmoothing));
             } else if (role === 'right') {
                 pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
+                if (Math.abs(pongState.aiY - pongLocalPredictedPaddleY) > 6) {
+                    pongLocalPredictedPaddleY = pongState.aiY;
+                }
                 if (inputDirection === 0) {
                     const catchupGap = pongState.aiY - pongLocalPredictedPaddleY;
-                    if (Math.abs(catchupGap) <= 18) {
-                        pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 10);
-                    }
+                    pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 16);
                 }
                 pongDisplayState.aiY = pongLocalPredictedPaddleY;
-                pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * paddleSmoothing;
+                pongDisplayState.playerY = Math.abs(pongState.playerY - pongDisplayState.playerY) > 6
+                    ? pongState.playerY
+                    : (pongDisplayState.playerY + ((pongState.playerY - pongDisplayState.playerY) * paddleSmoothing));
             } else {
-                pongDisplayState.playerY += (pongState.playerY - pongDisplayState.playerY) * paddleSmoothing;
-                pongDisplayState.aiY += (pongState.aiY - pongDisplayState.aiY) * paddleSmoothing;
+                pongDisplayState.playerY = Math.abs(pongState.playerY - pongDisplayState.playerY) > 6
+                    ? pongState.playerY
+                    : (pongDisplayState.playerY + ((pongState.playerY - pongDisplayState.playerY) * paddleSmoothing));
+                pongDisplayState.aiY = Math.abs(pongState.aiY - pongDisplayState.aiY) > 6
+                    ? pongState.aiY
+                    : (pongDisplayState.aiY + ((pongState.aiY - pongDisplayState.aiY) * paddleSmoothing));
             }
 
-            if (shouldSimulateBall) {
-                pongDisplayState.ballX += pongState.ballVelocityX * delta;
-                pongDisplayState.ballY += pongState.ballVelocityY * delta;
-            }
-            pongDisplayState.ballX += (pongState.ballX - pongDisplayState.ballX) * ballCorrection;
-            pongDisplayState.ballY += (pongState.ballY - pongDisplayState.ballY) * ballCorrection;
+            pongDisplayState.ballX = pongState.ballX;
+            pongDisplayState.ballY = pongState.ballY;
 
             const countdownLabel = getMultiplayerPongCountdownLabel();
             if (countdownLabel) {
@@ -7430,14 +7735,48 @@ document.addEventListener('DOMContentLoaded', () => {
             window.clearInterval(sudokuTimerInterval);
             sudokuTimerInterval = null;
         }
+
+        sudokuTimerStarted = false;
     }
 
     function startSudokuTimer() {
         stopSudokuTimer();
+        sudokuTimerStarted = true;
         sudokuTimerInterval = window.setInterval(() => {
             sudokuElapsedSeconds += 1;
             refreshSudokuHud();
         }, 1000);
+    }
+
+    function getSudokuDefaultHelpText() {
+        return 'Clique une case vide puis tape de 1 a 9. Suppr ou retour arriere pour effacer.';
+    }
+
+    function clearSudokuStatusMessage() {
+        if (sudokuStatusTimeout) {
+            window.clearTimeout(sudokuStatusTimeout);
+            sudokuStatusTimeout = null;
+        }
+    }
+
+    function setSudokuStatusMessage(message, durationMs = 1200) {
+        if (!sudokuHelpText) {
+            return;
+        }
+
+        clearSudokuStatusMessage();
+        sudokuHelpText.textContent = message;
+
+        if (durationMs <= 0 || sudokuSolved || sudokuFailed) {
+            return;
+        }
+
+        sudokuStatusTimeout = window.setTimeout(() => {
+            sudokuStatusTimeout = null;
+            if (!sudokuSolved && !sudokuFailed && sudokuHelpText) {
+                sudokuHelpText.textContent = getSudokuDefaultHelpText();
+            }
+        }, durationMs);
     }
 
     function clearSudokuFeedback(shouldRender = true) {
@@ -7468,12 +7807,96 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getSudokuDifficultyBaseScore() {
         const scoreByDifficulty = {
-            Calme: 80,
-            Brise: 120,
-            Cap: 165
+            Moussaillon: 10,
+            Pirate: 14,
+            Capitaine: 18
         };
 
-        return scoreByDifficulty[sudokuPuzzle?.difficulty] || 80;
+        return scoreByDifficulty[sudokuPuzzle?.difficulty] || 10;
+    }
+
+    function getSudokuRulesText() {
+        return 'Chaque ligne, chaque colonne et chaque carre de 3 par 3 doit contenir les chiffres de 1 a 9 une seule fois. Clique une case vide puis tape un chiffre. Trois erreurs et la traversee s arrete.';
+    }
+
+    function renderSudokuMenu() {
+        if (!sudokuMenuOverlay || !sudokuTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(sudokuMenuOverlay, sudokuTable);
+        sudokuMenuOverlay.classList.toggle('hidden', !sudokuMenuVisible);
+        sudokuMenuOverlay.classList.toggle('is-closing', sudokuMenuClosing);
+        sudokuMenuOverlay.classList.toggle('is-entering', sudokuMenuEntering);
+        sudokuTable.classList.toggle('is-menu-open', sudokuMenuVisible);
+
+        if (!sudokuMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(sudokuMenuResult);
+
+        if (sudokuMenuEyebrow) {
+            sudokuMenuEyebrow.textContent = sudokuMenuShowingRules
+                ? 'Regles'
+                : (hasResult ? sudokuMenuResult.eyebrow : 'Carte de navigation');
+        }
+
+        if (sudokuMenuTitle) {
+            sudokuMenuTitle.textContent = sudokuMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? sudokuMenuResult.title : 'Sudoku');
+        }
+
+        if (sudokuMenuText) {
+            sudokuMenuText.textContent = sudokuMenuShowingRules
+                ? getSudokuRulesText()
+                : (hasResult
+                    ? sudokuMenuResult.text
+                    : 'Complete la carte sans repeter de chiffre sur une ligne, une colonne ou un carre de 3 par 3.');
+        }
+
+        if (sudokuMenuActionButton) {
+            sudokuMenuActionButton.textContent = sudokuMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
+        }
+
+        if (sudokuMenuRulesButton) {
+            sudokuMenuRulesButton.textContent = 'Regles';
+            sudokuMenuRulesButton.hidden = sudokuMenuShowingRules;
+        }
+    }
+
+    function closeSudokuMenu() {
+        sudokuMenuClosing = true;
+        renderSudokuMenu();
+        window.setTimeout(() => {
+            sudokuMenuClosing = false;
+            sudokuMenuVisible = false;
+            sudokuMenuShowingRules = false;
+            sudokuMenuEntering = false;
+            sudokuMenuResult = null;
+            renderSudokuMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealSudokuOutcomeMenu(title, text, eyebrow) {
+        sudokuMenuVisible = true;
+        sudokuMenuResult = { title, text, eyebrow };
+        sudokuMenuShowingRules = false;
+        sudokuMenuClosing = false;
+        sudokuMenuEntering = true;
+
+        if (sudokuHelpText) {
+            sudokuHelpText.textContent = text;
+        }
+
+        renderSudokuMenu();
+        window.setTimeout(() => {
+            sudokuMenuEntering = false;
+            renderSudokuMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function calculateSudokuPoints() {
@@ -7634,7 +8057,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function generateSudokuPuzzle() {
-        const difficultyConfig = SUDOKU_DIFFICULTIES[Math.floor(Math.random() * SUDOKU_DIFFICULTIES.length)];
+        const difficultyConfig = SUDOKU_DIFFICULTIES[sudokuDifficultyIndex] || SUDOKU_DIFFICULTIES[0];
         const solutionBoard = createSudokuEmptyBoard();
         solveSudokuBoard(solutionBoard);
 
@@ -7727,17 +8150,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSudokuHud() {
         sudokuFilledDisplay.textContent = String(sudokuScore);
-        sudokuDifficultyDisplay.textContent = sudokuSolved ? 'Résolu' : (sudokuPuzzle?.difficulty || 'Calme');
+        sudokuMistakesDisplay.textContent = `${sudokuMistakes} / 3`;
+        sudokuTimerDisplay.textContent = `${sudokuElapsedSeconds}s`;
+        if (sudokuDifficultyButton) {
+            sudokuDifficultyButton.textContent = `Difficulte : ${sudokuPuzzle?.difficulty || SUDOKU_DIFFICULTIES[sudokuDifficultyIndex]?.difficulty || 'Moussaillon'}`;
+        }
         sudokuRestartButton.textContent = sudokuSolved ? 'Nouvelle grille' : 'Nouvelle grille';
     }
 
     function refreshSudokuHud() {
         sudokuFilledDisplay.textContent = String(sudokuScore);
-        sudokuDifficultyDisplay.textContent = `${sudokuMistakes} / 3`;
+        sudokuMistakesDisplay.textContent = `${sudokuMistakes} / 3`;
+        sudokuTimerDisplay.textContent = `${sudokuElapsedSeconds}s`;
+        if (sudokuDifficultyButton) {
+            sudokuDifficultyButton.textContent = `Difficulte : ${sudokuPuzzle?.difficulty || SUDOKU_DIFFICULTIES[sudokuDifficultyIndex]?.difficulty || 'Moussaillon'}`;
+        }
         sudokuRestartButton.textContent = 'Nouvelle grille';
-        sudokuHelpText.textContent = sudokuSolved
-            ? `Grille resolue. Cap ${sudokuPuzzle?.difficulty || 'Calme'} termine en ${sudokuElapsedSeconds}s.`
-            : `Cap ${sudokuPuzzle?.difficulty || 'Calme'} • Combo ${sudokuCombo} • ${countSudokuFilledCells()} / 81 cases • ${sudokuElapsedSeconds}s`;
     }
 
     function renderSudoku() {
@@ -7802,10 +8230,15 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshSudokuHud();
     }
 
-    function initializeSudoku() {
+    function initializeSudoku(startTimerImmediately = false) {
         closeGameOverModal();
         stopSudokuTimer();
         clearSudokuFeedback(false);
+        clearSudokuStatusMessage();
+        sudokuMenuResult = null;
+        sudokuMenuShowingRules = false;
+        sudokuMenuClosing = false;
+        sudokuMenuEntering = false;
         sudokuSolved = false;
         sudokuFailed = false;
         sudokuSelectedCell = null;
@@ -7820,8 +8253,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return rawValue === '.' ? 0 : Number(rawValue);
             })
         ));
+        if (sudokuHelpText) {
+            sudokuHelpText.textContent = getSudokuDefaultHelpText();
+        }
         renderSudoku();
-        startSudokuTimer();
+        renderSudokuMenu();
+        if (startTimerImmediately) {
+            startSudokuTimer();
+        }
     }
 
     function updateSudokuCell(row, col, nextValue) {
@@ -7842,12 +8281,17 @@ document.addEventListener('DOMContentLoaded', () => {
             sudokuMistakes += 1;
             sudokuCombo = 0;
             setSudokuFeedback(row, col, 'wrong');
+            setSudokuStatusMessage('Mauvais chiffre');
             renderSudoku();
 
             if (sudokuMistakes >= 3) {
                 sudokuFailed = true;
                 stopSudokuTimer();
-                openGameOverModal('C’est perdu', 'Trois erreurs. Le navire s’est perdu dans le brouillard.');
+                revealSudokuOutcomeMenu(
+                    'Carte egaree',
+                    'Trois erreurs. Le navire s est perdu dans le brouillard.',
+                    'Cap manque'
+                );
             }
 
             return;
@@ -7859,12 +8303,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sudokuBoardState[row][col] = nextValue;
         sudokuCombo += 1;
-        sudokuScore += calculateSudokuPoints();
+        const gainedPoints = calculateSudokuPoints();
+        sudokuScore += gainedPoints;
         sudokuSolved = isSudokuSolved();
         setSudokuFeedback(row, col, 'correct');
+        setSudokuStatusMessage(
+            sudokuCombo > 1 ? `+${gainedPoints} • x${sudokuCombo}` : `+${gainedPoints}`
+        );
 
         if (sudokuSolved) {
             stopSudokuTimer();
+            revealSudokuOutcomeMenu(
+                'Carte complete',
+                `Grille resolue. Cap ${sudokuPuzzle?.difficulty || 'Moussaillon'} termine en ${sudokuElapsedSeconds}s.`,
+                'Route tracee'
+            );
         }
 
         renderSudoku();
@@ -7888,6 +8341,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(game2048MenuOverlay, game2048Table);
         game2048MenuOverlay.classList.toggle('hidden', !game2048MenuVisible);
         game2048MenuOverlay.classList.toggle('is-closing', game2048MenuClosing);
         game2048Table.classList.toggle('is-menu-open', game2048MenuVisible);
@@ -8381,6 +8835,90 @@ document.addEventListener('DOMContentLoaded', () => {
         timerDisplay.textContent = String(timer);
     }
 
+    function getMinesweeperRulesText() {
+        return 'Clique sur une case pour reveler le recif. Les chiffres indiquent combien de mines touchent la case. Clique droit pour poser un drapeau et ouvre toutes les cases sures pour gagner.';
+    }
+
+    function renderMinesweeperMenu() {
+        if (!minesweeperMenuOverlay || !minesweeperTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(minesweeperMenuOverlay, minesweeperTable);
+        minesweeperMenuOverlay.classList.toggle('hidden', !minesweeperMenuVisible);
+        minesweeperMenuOverlay.classList.toggle('is-closing', minesweeperMenuClosing);
+        minesweeperMenuOverlay.classList.toggle('is-entering', minesweeperMenuEntering);
+        minesweeperTable.classList.toggle('is-menu-open', minesweeperMenuVisible);
+
+        if (!minesweeperMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(minesweeperMenuResult);
+
+        if (minesweeperMenuEyebrow) {
+            minesweeperMenuEyebrow.textContent = minesweeperMenuShowingRules
+                ? 'Regles'
+                : (hasResult ? minesweeperMenuResult.eyebrow : 'Champ de mines du recif');
+        }
+
+        if (minesweeperMenuTitle) {
+            minesweeperMenuTitle.textContent = minesweeperMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? minesweeperMenuResult.title : 'Demineur');
+        }
+
+        if (minesweeperMenuText) {
+            minesweeperMenuText.textContent = minesweeperMenuShowingRules
+                ? getMinesweeperRulesText()
+                : (hasResult
+                    ? minesweeperMenuResult.text
+                    : 'Repere les zones sures du recif, pose tes drapeaux et traverse sans toucher une mine.');
+        }
+
+        if (minesweeperMenuActionButton) {
+            minesweeperMenuActionButton.textContent = minesweeperMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
+        }
+
+        if (minesweeperMenuRulesButton) {
+            minesweeperMenuRulesButton.textContent = 'Regles';
+            minesweeperMenuRulesButton.hidden = minesweeperMenuShowingRules;
+        }
+    }
+
+    function closeMinesweeperMenu() {
+        minesweeperMenuClosing = true;
+        renderMinesweeperMenu();
+        window.setTimeout(() => {
+            minesweeperMenuClosing = false;
+            minesweeperMenuVisible = false;
+            minesweeperMenuShowingRules = false;
+            minesweeperMenuEntering = false;
+            minesweeperMenuResult = null;
+            renderMinesweeperMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealMinesweeperOutcomeMenu(title, text, eyebrow) {
+        minesweeperMenuVisible = true;
+        minesweeperMenuResult = { title, text, eyebrow };
+        minesweeperMenuShowingRules = false;
+        minesweeperMenuClosing = false;
+        minesweeperMenuEntering = true;
+
+        if (minesweeperHelpText) {
+            minesweeperHelpText.textContent = text;
+        }
+
+        renderMinesweeperMenu();
+        window.setTimeout(() => {
+            minesweeperMenuEntering = false;
+            renderMinesweeperMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function updateFace(label) {
         restartGameButton.textContent = label;
     }
@@ -8410,10 +8948,113 @@ document.addEventListener('DOMContentLoaded', () => {
         snakeRunning = false;
     }
 
+    function getSnakeRulesText() {
+        return 'Utilise les fleches ou ZQSD pour tourner. Chaque lanterne ramassee allonge le serpent. Evite les bords et ta propre queue pour garder le cap.';
+    }
+
+    function renderSnakeMenu() {
+        if (!snakeMenuOverlay || !snakeTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(snakeMenuOverlay, snakeTable);
+        snakeMenuOverlay.classList.toggle('hidden', !snakeMenuVisible);
+        snakeMenuOverlay.classList.toggle('is-closing', snakeMenuClosing);
+        snakeMenuOverlay.classList.toggle('is-entering', snakeMenuEntering);
+        snakeTable.classList.toggle('is-menu-open', snakeMenuVisible);
+
+        if (!snakeMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(snakeMenuResult);
+
+        if (snakeMenuEyebrow) {
+            snakeMenuEyebrow.textContent = snakeMenuShowingRules
+                ? 'Regles'
+                : (hasResult ? snakeMenuResult.eyebrow : 'Serpent de mer');
+        }
+
+        if (snakeMenuTitle) {
+            snakeMenuTitle.textContent = snakeMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? snakeMenuResult.title : 'Snake');
+        }
+
+        if (snakeMenuText) {
+            snakeMenuText.textContent = snakeMenuShowingRules
+                ? getSnakeRulesText()
+                : (hasResult
+                    ? snakeMenuResult.text
+                    : 'Glisse entre les courants, ramasse les lanternes et allonge ton serpent sans heurter la coque.');
+        }
+
+        if (snakeMenuActionButton) {
+            snakeMenuActionButton.textContent = snakeMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
+        }
+
+        if (snakeMenuRulesButton) {
+            snakeMenuRulesButton.textContent = 'Regles';
+            snakeMenuRulesButton.hidden = snakeMenuShowingRules;
+        }
+    }
+
+    function closeSnakeMenu() {
+        snakeMenuClosing = true;
+        renderSnakeMenu();
+        window.setTimeout(() => {
+            snakeMenuClosing = false;
+            snakeMenuVisible = false;
+            snakeMenuShowingRules = false;
+            snakeMenuEntering = false;
+            snakeMenuResult = null;
+            renderSnakeMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealSnakeOutcomeMenu(title, text, eyebrow) {
+        snakeMenuVisible = true;
+        snakeMenuResult = { title, text, eyebrow };
+        snakeMenuShowingRules = false;
+        snakeMenuClosing = false;
+        snakeMenuEntering = true;
+
+        if (snakeHelpText) {
+            snakeHelpText.textContent = text;
+        }
+
+        renderSnakeMenu();
+        window.setTimeout(() => {
+            snakeMenuEntering = false;
+            renderSnakeMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function updateSnakeHud() {
         snakeScoreDisplay.textContent = String(snakeScore);
         snakeBestScoreDisplay.textContent = String(snakeBestScore);
         snakeStartButton.textContent = snakeRunning ? 'Changer de cap' : 'Lancer la traversee';
+    }
+
+    function queueSnakeDirectionInput(nextDirection) {
+        if (!nextDirection) {
+            return;
+        }
+
+        const lastQueuedDirection = snakeDirectionQueue[snakeDirectionQueue.length - 1];
+        const referenceDirection = lastQueuedDirection || snakeNextDirection || snakeDirection;
+        const isOpposite = referenceDirection.x + nextDirection.x === 0
+            && referenceDirection.y + nextDirection.y === 0;
+        const isSameDirection = referenceDirection.x === nextDirection.x
+            && referenceDirection.y === nextDirection.y;
+
+        if (isOpposite || isSameDirection || snakeDirectionQueue.length >= 2) {
+            return;
+        }
+
+        snakeDirectionQueue.push(nextDirection);
     }
 
     function getRandomSnakeFood(existingFoods = []) {
@@ -8588,6 +9229,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const centerRow = Math.floor(SNAKE_SIZE / 2);
         const centerCol = Math.floor(SNAKE_SIZE / 2);
         stopSnake();
+        snakeMenuResult = null;
+        snakeMenuShowingRules = false;
+        snakeMenuClosing = false;
+        snakeMenuEntering = false;
         snakeFoodElements.forEach((element) => element.remove());
         snakeFoodElements.clear();
         snake = [
@@ -8602,8 +9247,12 @@ document.addEventListener('DOMContentLoaded', () => {
         refillSnakeFoods();
         snakeScore = 0;
         snakeJustAte = false;
+        if (snakeHelpText) {
+            snakeHelpText.textContent = 'Fleches ou ZQSD pour tourner. Attrape les lanternes sans percuter la coque.';
+        }
         updateSnakeHud();
         renderSnake();
+        renderSnakeMenu();
     }
 
     function finishSnakeRun() {
@@ -8615,7 +9264,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateSnakeHud();
-        openGameOverModal('C’est perdu', 'Le serpent s’est écrasé contre la coque.');
+        revealSnakeOutcomeMenu(
+            'Coque heurtee',
+            `Le serpent a percute la coque. Score final : ${snakeScore}.`,
+            'Fin de traversee'
+        );
     }
 
     function moveSnake() {
@@ -8669,6 +9322,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 stopSnake();
+                updateSnakeHud();
+                revealSnakeOutcomeMenu(
+                    'Mer nettoyee',
+                    `Toutes les lanternes ont ete ramassees. Score final : ${snakeScore}.`,
+                    'Traversee parfaite'
+                );
+                return;
             }
         } else {
             snake.pop();
@@ -8714,9 +9374,17 @@ document.addEventListener('DOMContentLoaded', () => {
         minesweeperBoard.classList.remove('is-shaking');
         minesweeperBoard.classList.remove('is-rumbling');
         closeGameOverModal();
+        minesweeperMenuResult = null;
+        minesweeperMenuShowingRules = false;
+        minesweeperMenuClosing = false;
+        minesweeperMenuEntering = false;
+        if (minesweeperHelpText) {
+            minesweeperHelpText.textContent = 'Clic gauche pour reveler. Clic droit pour poser un drapeau.';
+        }
         updateRestartButtonLabel();
         updateCounters();
         renderBoard();
+        renderMinesweeperMenu();
     }
 
     function revealAllMines(explodedCell = null) {
@@ -8786,6 +9454,11 @@ document.addEventListener('DOMContentLoaded', () => {
         flagsPlaced = TOTAL_MINES;
         updateCounters();
         renderBoard();
+        revealMinesweeperOutcomeMenu(
+            'Recif traverse',
+            `Toutes les zones sures ont ete degagees en ${timer} secondes.`,
+            'Traversee reussie'
+        );
     }
 
     function toggleFlag(row, col) {
@@ -8838,7 +9511,11 @@ document.addEventListener('DOMContentLoaded', () => {
             void minesweeperBoard.offsetWidth;
             minesweeperBoard.classList.add('is-shaking');
             renderBoard();
-            openGameOverModal('C’est perdu', 'Le joueur s’est noyé.');
+            revealMinesweeperOutcomeMenu(
+                'Mine declenchee',
+                `La traversee s arrete apres ${timer} secondes. Repars avec un nouveau trace.`,
+                'Recif en alerte'
+            );
             return;
         }
 
@@ -9360,8 +10037,160 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function flushFlowFreePendingTarget() {
+        if (!flowFreePointerDown || !flowFreeActiveColor || !flowFreePendingTarget) {
+            return;
+        }
+
+        while (flowFreePointerDown && flowFreeActiveColor && flowFreePendingTarget) {
+            const stepResult = processFlowFreePendingPathSync();
+            if (stepResult !== 'advanced') {
+                break;
+            }
+        }
+    }
+
+    function finalizeFlowFreePathIfComplete(color) {
+        if (!color) {
+            return false;
+        }
+
+        const pair = getFlowFreePairByColor(color);
+        const path = flowFreePaths.get(color) || [];
+        const startCell = path[0];
+        const endCell = path[path.length - 1];
+
+        if (!pair || !startCell || !endCell) {
+            return false;
+        }
+
+        const connectsAnchors = (
+            startCell.row === pair.start.row
+            && startCell.col === pair.start.col
+            && endCell.row === pair.end.row
+            && endCell.col === pair.end.col
+        ) || (
+            startCell.row === pair.end.row
+            && startCell.col === pair.end.col
+            && endCell.row === pair.start.row
+            && endCell.col === pair.start.col
+        );
+
+        if (!connectsAnchors) {
+            return false;
+        }
+
+        renderFlowFree();
+        animateFlowFreeCompletedPath(path, color);
+        flowFreeCompleted.add(color);
+
+        const allCellsFilled = flowFreeCells.every((rowCells) => rowCells.every((cell) => Boolean(cell.color)));
+        flowFreeHelpText.textContent = allCellsFilled
+            ? 'Toutes les cases sont remplies. Termine les dernieres liaisons.'
+            : 'Un courant est ferme. Les cases libres doivent aussi etre couvertes.';
+
+        if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
+            flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
+            renderFlowFree();
+            openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracés.`);
+        }
+
+        return true;
+    }
+
+    function snapFlowFreePathToMatchingAnchor(color) {
+        if (!color) {
+            return;
+        }
+
+        const pair = getFlowFreePairByColor(color);
+        const path = flowFreePaths.get(color) || [];
+        const startCell = path[0];
+        const endCell = path[path.length - 1];
+
+        if (!pair || !startCell || !endCell) {
+            return;
+        }
+
+        const targetAnchor = (startCell.row === pair.start.row && startCell.col === pair.start.col)
+            ? pair.end
+            : pair.start;
+
+        if (endCell.row === targetAnchor.row && endCell.col === targetAnchor.col) {
+            return;
+        }
+
+        const distance = Math.abs(endCell.row - targetAnchor.row) + Math.abs(endCell.col - targetAnchor.col);
+        if (distance !== 1) {
+            return;
+        }
+
+        setFlowFreePath(color, [...path, { row: targetAnchor.row, col: targetAnchor.col }]);
+    }
+
+    function processFlowFreePendingPathSync() {
+        if (!flowFreePointerDown || !flowFreeActiveColor || !flowFreePendingTarget) {
+            return 'inactive';
+        }
+
+        const path = flowFreePaths.get(flowFreeActiveColor) || [];
+        const lastCell = path[path.length - 1];
+
+        if (!lastCell) {
+            flowFreePendingTarget = null;
+            return 'inactive';
+        }
+
+        const rowDiff = flowFreePendingTarget.row - lastCell.row;
+        const colDiff = flowFreePendingTarget.col - lastCell.col;
+        const distance = Math.abs(rowDiff) + Math.abs(colDiff);
+
+        if (distance === 0) {
+            flowFreePendingTarget = null;
+            return 'inactive';
+        }
+
+        const nextRow = rowDiff !== 0 && Math.abs(rowDiff) >= Math.abs(colDiff)
+            ? lastCell.row + Math.sign(rowDiff)
+            : lastCell.row;
+        const nextCol = nextRow === lastCell.row
+            ? lastCell.col + Math.sign(colDiff)
+            : lastCell.col;
+
+        const stepResult = extendFlowFreePathStep(nextRow, nextCol, { deferRender: true });
+        scheduleFlowFreeRender();
+
+        if (stepResult === 'completed' || stepResult === 'inactive') {
+            flowFreePendingTarget = null;
+            return stepResult;
+        }
+
+        if (stepResult !== 'advanced') {
+            flowFreePendingTarget = null;
+            return stepResult;
+        }
+
+        const updatedPath = flowFreePaths.get(flowFreeActiveColor) || [];
+        const updatedLastCell = updatedPath[updatedPath.length - 1];
+        if (!updatedLastCell) {
+            flowFreePendingTarget = null;
+            return 'inactive';
+        }
+
+        const remainingDistance = Math.abs(flowFreePendingTarget.row - updatedLastCell.row)
+            + Math.abs(flowFreePendingTarget.col - updatedLastCell.col);
+
+        if (remainingDistance === 0) {
+            flowFreePendingTarget = null;
+        }
+
+        return 'advanced';
+    }
+
     function stopFlowFreePath() {
         const activeColor = flowFreeActiveColor;
+        snapFlowFreePathToMatchingAnchor(activeColor);
+        const completedOnRelease = finalizeFlowFreePathIfComplete(activeColor);
         flowFreePointerDown = false;
         flowFreeActiveColor = null;
         flowFreeLastHoverKey = null;
@@ -9370,7 +10199,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.cancelAnimationFrame(flowFreeCatchupFrame);
             flowFreeCatchupFrame = null;
         }
-        if (activeColor && !flowFreeCompleted.has(activeColor)) {
+        if (!completedOnRelease && activeColor && !flowFreeCompleted.has(activeColor)) {
             despawnFlowFreePath(activeColor);
             return;
         }
@@ -9414,13 +10243,16 @@ document.addEventListener('DOMContentLoaded', () => {
         flowFreeCompletionAnimationToken += 1;
         const animationToken = flowFreeCompletionAnimationToken;
 
-        const runAnimation = () => {
+        const getPathElements = () => path.map((cell) => (
+            flowFreeBoard?.querySelector(`[data-flow-row="${cell.row}"][data-flow-col="${cell.col}"]`)
+        ));
+
+        const runAnimation = (elements) => {
             if (animationToken !== flowFreeCompletionAnimationToken) {
                 return;
             }
 
-            path.forEach((cell, index) => {
-                const cellElement = flowFreeBoard?.querySelector(`[data-flow-row="${cell.row}"][data-flow-col="${cell.col}"]`);
+            elements.forEach((cellElement, index) => {
                 if (!cellElement || typeof cellElement.animate !== 'function') {
                     return;
                 }
@@ -9451,93 +10283,62 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        window.requestAnimationFrame(() => {
+        const startWhenReady = (attempt = 0) => {
             if (animationToken !== flowFreeCompletionAnimationToken) {
                 return;
             }
 
-            runAnimation();
             window.requestAnimationFrame(() => {
                 if (animationToken !== flowFreeCompletionAnimationToken) {
                     return;
                 }
 
-                runAnimation();
+                const elements = getPathElements();
+                if (elements.some((element) => !element)) {
+                    if (attempt < 5) {
+                        startWhenReady(attempt + 1);
+                    }
+                    return;
+                }
+
+                runAnimation(elements);
                 window.requestAnimationFrame(() => {
                     if (animationToken !== flowFreeCompletionAnimationToken) {
                         return;
                     }
 
-                    runAnimation();
+                    runAnimation(elements);
+                    window.requestAnimationFrame(() => {
+                        if (animationToken !== flowFreeCompletionAnimationToken) {
+                            return;
+                        }
+
+                        runAnimation(elements);
+                    });
                 });
             });
-        });
+        };
+
+        startWhenReady();
 
         window.setTimeout(() => {
             if (animationToken !== flowFreeCompletionAnimationToken) {
                 return;
             }
 
-            runAnimation();
+            const elements = getPathElements();
+            if (elements.some((element) => !element)) {
+                return;
+            }
+
+            runAnimation(elements);
         }, 48);
     }
 
     function processFlowFreePendingPath() {
         flowFreeCatchupFrame = null;
-
-        if (!flowFreePointerDown || !flowFreeActiveColor || !flowFreePendingTarget) {
-            return;
-        }
-
-        const path = flowFreePaths.get(flowFreeActiveColor) || [];
-        const lastCell = path[path.length - 1];
-
-        if (!lastCell) {
-            flowFreePendingTarget = null;
-            return;
-        }
-
-        const rowDiff = flowFreePendingTarget.row - lastCell.row;
-        const colDiff = flowFreePendingTarget.col - lastCell.col;
-        const distance = Math.abs(rowDiff) + Math.abs(colDiff);
-
-        if (distance === 0) {
-            flowFreePendingTarget = null;
-            return;
-        }
-
-        const nextRow = rowDiff !== 0 && Math.abs(rowDiff) >= Math.abs(colDiff)
-            ? lastCell.row + Math.sign(rowDiff)
-            : lastCell.row;
-        const nextCol = nextRow === lastCell.row
-            ? lastCell.col + Math.sign(colDiff)
-            : lastCell.col;
-
-        const stepResult = extendFlowFreePathStep(nextRow, nextCol, { deferRender: true });
-        scheduleFlowFreeRender();
-
-        if (stepResult === 'completed' || stepResult === 'inactive') {
-            flowFreePendingTarget = null;
-            return;
-        }
-
-        if (stepResult !== 'advanced') {
-            flowFreePendingTarget = null;
-            return;
-        }
-
-        const updatedPath = flowFreePaths.get(flowFreeActiveColor) || [];
-        const updatedLastCell = updatedPath[updatedPath.length - 1];
-        if (!updatedLastCell) {
-            flowFreePendingTarget = null;
-            return;
-        }
-
-        const remainingDistance = Math.abs(flowFreePendingTarget.row - updatedLastCell.row)
-            + Math.abs(flowFreePendingTarget.col - updatedLastCell.col);
-
-        if (remainingDistance === 0) {
-            flowFreePendingTarget = null;
+        const stepResult = processFlowFreePendingPathSync();
+        if (stepResult !== 'advanced' || !flowFreePendingTarget) {
             return;
         }
 
@@ -9783,6 +10584,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(mentalMathMenuOverlay, mentalMathTable);
         mentalMathMenuOverlay.classList.toggle('hidden', !mentalMathMenuVisible);
         mentalMathMenuOverlay.classList.toggle('is-closing', mentalMathMenuClosing);
         mentalMathMenuOverlay.classList.toggle('is-entering', mentalMathMenuEntering);
@@ -10296,6 +11098,32 @@ document.addEventListener('DOMContentLoaded', () => {
         harborRunStartButton.textContent = harborRunRunning ? 'En course' : 'Lancer la route';
     }
 
+    function isHarborRunCollision(obstacle) {
+        const boardHeight = harborRunBoard?.clientHeight || 540;
+        const playerCenterX = getHarborRunPlayerPosition();
+        const obstacleCenterX = HARBOR_RUN_LANES[obstacle.lane];
+        const playerWidthPercent = 22;
+        const obstacleWidthPercent = obstacle.type === 'rock' ? 18 : 20;
+        const horizontalGap = Math.abs(playerCenterX - obstacleCenterX);
+        const horizontalHitLimit = ((playerWidthPercent + obstacleWidthPercent) / 2) - 4.5;
+
+        if (horizontalGap > horizontalHitLimit) {
+            return false;
+        }
+
+        const playerHeightPercent = (82 / boardHeight) * 100;
+        const playerBottomPercent = 100 - ((18 / boardHeight) * 100);
+        const playerTopPercent = playerBottomPercent - playerHeightPercent + 2.2;
+        const playerBottomHitPercent = playerBottomPercent - 2.4;
+
+        const obstacleHeightPx = obstacle.type === 'rock' ? 66 : 78;
+        const obstacleHeightPercent = (obstacleHeightPx / boardHeight) * 100;
+        const obstacleTopPercent = obstacle.y + (obstacle.type === 'rock' ? 1.4 : 2.2);
+        const obstacleBottomPercent = obstacleTopPercent + obstacleHeightPercent - (obstacle.type === 'rock' ? 2.8 : 4.2);
+
+        return obstacleBottomPercent >= playerTopPercent && obstacleTopPercent <= playerBottomHitPercent;
+    }
+
     function getHarborRunPlayerPosition() {
         const safeLaneIndex = Math.max(0, Math.min(HARBOR_RUN_LANES.length - 1, harborRunVisualLane));
         const lowerLaneIndex = Math.floor(safeLaneIndex);
@@ -10436,11 +11264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         harborRunObstacles = harborRunObstacles.filter((obstacle) => obstacle.y < 118);
 
-        const collided = harborRunObstacles.some((obstacle) => (
-            obstacle.lane === harborRunLane
-            && obstacle.y > 78
-            && obstacle.y < 96
-        ));
+        const collided = harborRunObstacles.some((obstacle) => isHarborRunCollision(obstacle));
 
         if (collided) {
             stopHarborRun();
@@ -10964,6 +11788,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(chessMenuOverlay, chessTable);
         const isOnline = multiplayerActiveRoom?.gameId === 'chess';
         const roomStarted = Boolean(multiplayerActiveRoom?.chessStarted);
         const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
@@ -11134,6 +11959,25 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function getChessPieceGlyph(type) {
+        switch (type) {
+        case 'pawn':
+            return '\u265F';
+        case 'rook':
+            return '\u265C';
+        case 'knight':
+            return '\u265E';
+        case 'bishop':
+            return '\u265D';
+        case 'queen':
+            return '\u265B';
+        case 'king':
+            return '\u265A';
+        default:
+            return '';
+        }
+    }
+
     function getChessMoves(row, col) {
         const piece = chessState?.board[row][col];
 
@@ -11298,7 +12142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 >
                     ${rankLabel ? `<span class="chess-coordinate chess-coordinate-rank">${rankLabel}</span>` : ''}
                     ${fileLabel ? `<span class="chess-coordinate chess-coordinate-file">${fileLabel}</span>` : ''}
-                    ${piece ? `<span class="chess-piece ${pieceAnimation.className}" ${pieceAnimation.style}>${CHESS_PIECES[piece.type][piece.color]}</span>` : ''}
+                    ${piece ? `<span class="chess-piece chess-piece-${piece.color} chess-piece-${piece.type} ${pieceAnimation.className}" ${pieceAnimation.style}>${getChessPieceGlyph(piece.type)}</span>` : ''}
                 </button>
             `;
         }).join('')).join('');
@@ -11626,10 +12470,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const redCount = checkersState.board.flat().filter((piece) => piece?.color === 'red').length;
         const nextAnimationKey = getBoardMoveAnimationKey(checkersState.lastMove);
         const shouldAnimateLastMove = Boolean(checkersState.lastMove) && nextAnimationKey !== checkersLastMoveAnimationKey;
-        checkersTurnDisplay.textContent = isMultiplayerCheckersActive()
-            ? (checkersState.winner ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Victoire' : 'Defaite') : (checkersState.turn === getMultiplayerCheckersRole() ? 'Toi' : 'Adversaire'))
-            : (checkersState.winner
-                ? `${checkersState.winner === 'red' ? (checkersMode === 'solo' ? 'Toi' : 'Rouges') : (checkersMode === 'solo' ? 'IA' : 'Noirs')} gagnent`
+        checkersTurnDisplay.textContent = checkersState.winner
+            ? '-'
+            : (isMultiplayerCheckersActive()
+                ? (checkersState.turn === getMultiplayerCheckersRole() ? 'Toi' : 'Adversaire')
                 : (checkersState.turn === 'red' ? (checkersMode === 'solo' ? 'Toi' : 'Rouges') : (checkersMode === 'solo' ? 'IA' : 'Noirs')));
         checkersCountDisplay.textContent = `${blackCount}/${redCount}`;
         checkersHelpText.textContent = isMultiplayerCheckersActive()
@@ -11674,6 +12518,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(checkersMenuOverlay, checkersTable);
         checkersMenuOverlay.classList.toggle('hidden', !checkersMenuVisible);
         checkersMenuOverlay.classList.toggle('is-closing', checkersMenuClosing);
         checkersMenuOverlay.classList.toggle('is-entering', checkersMenuEntering);
@@ -12206,7 +13051,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 airHockeyLocalPredicted.x += input.x * AIR_HOCKEY_SPEED * delta;
                 airHockeyLocalPredicted.y += input.y * AIR_HOCKEY_SPEED * delta;
-                airHockeyLocalPredicted.x = Math.max(airHockeyState.left.radius, Math.min((airHockeyState.width * 0.5) - 30 - airHockeyState.left.radius, airHockeyLocalPredicted.x));
+                airHockeyLocalPredicted.x = Math.max(airHockeyState.left.radius, Math.min((airHockeyState.width * 0.5) - AIR_HOCKEY_CENTER_GAP - airHockeyState.left.radius, airHockeyLocalPredicted.x));
                 airHockeyLocalPredicted.y = Math.max(airHockeyState.left.radius, Math.min(airHockeyState.height - airHockeyState.left.radius, airHockeyLocalPredicted.y));
                 if (input.x === 0 && input.y === 0) {
                     const gapX = airHockeyState.left.x - airHockeyLocalPredicted.x;
@@ -12228,7 +13073,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 airHockeyLocalPredicted.x += input.x * AIR_HOCKEY_SPEED * delta;
                 airHockeyLocalPredicted.y += input.y * AIR_HOCKEY_SPEED * delta;
-                airHockeyLocalPredicted.x = Math.max((airHockeyState.width * 0.5) + 30 + airHockeyState.right.radius, Math.min(airHockeyState.width - airHockeyState.right.radius, airHockeyLocalPredicted.x));
+                airHockeyLocalPredicted.x = Math.max((airHockeyState.width * 0.5) + AIR_HOCKEY_CENTER_GAP + airHockeyState.right.radius, Math.min(airHockeyState.width - airHockeyState.right.radius, airHockeyLocalPredicted.x));
                 airHockeyLocalPredicted.y = Math.max(airHockeyState.right.radius, Math.min(airHockeyState.height - airHockeyState.right.radius, airHockeyLocalPredicted.y));
                 if (input.x === 0 && input.y === 0) {
                     const gapX = airHockeyState.right.x - airHockeyLocalPredicted.x;
@@ -12374,6 +13219,20 @@ document.addEventListener('DOMContentLoaded', () => {
         airHockeyPuck.style.transform = `translate(${currentAirHockeyState.puck.x - currentAirHockeyState.puck.radius}px, ${currentAirHockeyState.puck.y - currentAirHockeyState.puck.radius}px)`;
     }
 
+    function stopAirHockeyRuntime() {
+        if (airHockeyAnimationFrame) {
+            window.cancelAnimationFrame(airHockeyAnimationFrame);
+            airHockeyAnimationFrame = null;
+        }
+        if (airHockeyRenderAnimationFrame) {
+            window.cancelAnimationFrame(airHockeyRenderAnimationFrame);
+            airHockeyRenderAnimationFrame = null;
+        }
+        airHockeyLastFrame = 0;
+        airHockeyRenderLastFrame = 0;
+        hideAirHockeyCountdown();
+    }
+
     function getAirHockeyDimensions() {
         return {
             width: airHockeyBoard?.clientWidth || 720,
@@ -12400,7 +13259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const speed = Math.hypot(puck.vx, puck.vy);
-        const maxSpeed = 520;
+        const maxSpeed = AIR_HOCKEY_PUCK_MAX_SPEED;
 
         if (speed <= maxSpeed || !speed) {
             return;
@@ -12431,6 +13290,81 @@ document.addEventListener('DOMContentLoaded', () => {
         airHockeyCountdown.textContent = '';
         airHockeyCountdown.classList.add('hidden');
         airHockeyCountdown.setAttribute('aria-hidden', 'true');
+    }
+
+    function getAirHockeyRulesText() {
+        return 'Le joueur gauche se deplace avec ZQSD. En solo, la droite est pilotee par l IA. En duo local, la droite se joue aux fleches. Premier a 5 buts.';
+    }
+
+    function renderAirHockeyMenu() {
+        if (!airHockeyMenuOverlay || !airHockeyBoard) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(airHockeyMenuOverlay, airHockeyBoard);
+        airHockeyMenuOverlay.classList.toggle('hidden', !airHockeyMenuVisible);
+        airHockeyMenuOverlay.classList.toggle('is-closing', airHockeyMenuClosing);
+        airHockeyMenuOverlay.classList.toggle('is-entering', airHockeyMenuEntering);
+        airHockeyBoard.classList.toggle('is-menu-open', airHockeyMenuVisible);
+
+        if (!airHockeyMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(airHockeyMenuResult);
+        if (airHockeyMenuEyebrow) {
+            airHockeyMenuEyebrow.textContent = airHockeyMenuShowingRules
+                ? 'Regles'
+                : (hasResult ? airHockeyMenuResult.eyebrow : 'Duel de pont');
+        }
+        if (airHockeyMenuTitle) {
+            airHockeyMenuTitle.textContent = airHockeyMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? airHockeyMenuResult.title : 'Sea Hockey');
+        }
+        if (airHockeyMenuText) {
+            airHockeyMenuText.textContent = airHockeyMenuShowingRules
+                ? getAirHockeyRulesText()
+                : (hasResult
+                    ? airHockeyMenuResult.text
+                    : 'Choisis ton mode puis engage le palet sur le pont glissant de la baie.');
+        }
+        if (airHockeyMenuActionButton) {
+            airHockeyMenuActionButton.textContent = airHockeyMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer le duel' : 'Lancer le duel');
+        }
+        if (airHockeyMenuRulesButton) {
+            airHockeyMenuRulesButton.textContent = 'Regles';
+            airHockeyMenuRulesButton.hidden = airHockeyMenuShowingRules;
+        }
+    }
+
+    function closeAirHockeyMenu() {
+        airHockeyMenuClosing = true;
+        renderAirHockeyMenu();
+        window.setTimeout(() => {
+            airHockeyMenuClosing = false;
+            airHockeyMenuVisible = false;
+            airHockeyMenuShowingRules = false;
+            airHockeyMenuEntering = false;
+            airHockeyMenuResult = null;
+            renderAirHockeyMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealAirHockeyOutcomeMenu(title, text, eyebrow) {
+        airHockeyMenuVisible = true;
+        airHockeyMenuResult = { title, text, eyebrow };
+        airHockeyMenuShowingRules = false;
+        airHockeyMenuClosing = false;
+        airHockeyMenuEntering = true;
+        airHockeyHelpText.textContent = text;
+        renderAirHockeyMenu();
+        window.setTimeout(() => {
+            airHockeyMenuEntering = false;
+            renderAirHockeyMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function showAirHockeyCountdown(label) {
@@ -12482,13 +13416,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeAirHockey(resetScores = true) {
-        if (airHockeyRenderAnimationFrame) {
-            window.cancelAnimationFrame(airHockeyRenderAnimationFrame);
-            airHockeyRenderAnimationFrame = null;
-        }
+        stopAirHockeyRuntime();
         airHockeyRenderLastFrame = 0;
         airHockeyDisplayState = null;
         airHockeyLocalPredicted = null;
+        airHockeyMenuResult = null;
+        airHockeyMenuShowingRules = false;
+        airHockeyMenuClosing = false;
+        airHockeyMenuEntering = false;
 
         if (isMultiplayerAirHockeyActive()) {
             syncMultiplayerAirHockeyState();
@@ -12500,19 +13435,16 @@ document.addEventListener('DOMContentLoaded', () => {
             leftScore: resetScores ? 0 : airHockeyState?.leftScore || 0,
             rightScore: resetScores ? 0 : airHockeyState?.rightScore || 0,
             running: false,
-            left: { x: width * 0.16, y: height * 0.5, radius: 27, vx: 0, vy: 0 },
-            right: { x: width * 0.84, y: height * 0.5, radius: 27, vx: 0, vy: 0 },
-            puck: { x: width * 0.5, y: height * 0.5, vx: 0, vy: 0, radius: 22 },
+            left: { x: width * 0.16, y: height * 0.5, radius: AIR_HOCKEY_PADDLE_RADIUS, vx: 0, vy: 0 },
+            right: { x: width * 0.84, y: height * 0.5, radius: AIR_HOCKEY_PADDLE_RADIUS, vx: 0, vy: 0 },
+            puck: { x: width * 0.5, y: height * 0.5, vx: 0, vy: 0, radius: AIR_HOCKEY_PUCK_RADIUS },
             servingSide: 'left'
         };
         hideAirHockeyCountdown();
         positionAirHockeyPuck();
         airHockeyHelpText.textContent = 'La balle attend dans un camp. Clique sur Lancer pour engager la partie de Sea Hockey.';
         renderAirHockey();
-
-        if (!airHockeyAnimationFrame) {
-            airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
-        }
+        renderAirHockeyMenu();
     }
 
     function launchAirHockeyPuck() {
@@ -12545,14 +13477,22 @@ document.addEventListener('DOMContentLoaded', () => {
             airHockeyHelpText.textContent = airHockeyState.servingSide === 'left'
                 ? 'Engagement a gauche. Va toucher la balle pour lancer l action.'
                 : 'Engagement a droite. Va toucher la balle pour lancer l action.';
+            if (!airHockeyAnimationFrame) {
+                airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
+            }
         });
     }
 
     function handleAirHockeyPoint(side) {
         airHockeyState[side === 'left' ? 'leftScore' : 'rightScore'] += 1;
         if (airHockeyState.leftScore >= AIR_HOCKEY_GOAL_SCORE || airHockeyState.rightScore >= AIR_HOCKEY_GOAL_SCORE) {
-            airHockeyHelpText.textContent = `${airHockeyState.leftScore > airHockeyState.rightScore ? 'Le joueur gauche' : 'Le joueur droit'} gagne.`;
-            initializeAirHockey(false);
+            stopAirHockeyRuntime();
+            const winnerLabel = airHockeyState.leftScore > airHockeyState.rightScore ? 'Le joueur gauche' : 'Le joueur droit';
+            revealAirHockeyOutcomeMenu(
+                'Duel termine',
+                `${winnerLabel} gagne ${airHockeyState.leftScore} a ${airHockeyState.rightScore}.`,
+                'Pont en liesse'
+            );
             return;
         }
 
@@ -12564,6 +13504,9 @@ document.addEventListener('DOMContentLoaded', () => {
             airHockeyHelpText.textContent = airHockeyState.servingSide === 'left'
                 ? 'Engagement a gauche. Va toucher la balle pour lancer l action.'
                 : 'Engagement a droite. Va toucher la balle pour lancer l action.';
+            if (!airHockeyAnimationFrame) {
+                airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
+            }
         });
     }
 
@@ -12608,7 +13551,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         movePaddle(airHockeyState.left, 'z', 's', 'q', 'd');
-        airHockeyState.left.x = Math.max(airHockeyState.left.radius, Math.min((width * 0.5) - 30 - airHockeyState.left.radius, airHockeyState.left.x));
+        airHockeyState.left.x = Math.max(airHockeyState.left.radius, Math.min((width * 0.5) - AIR_HOCKEY_CENTER_GAP - airHockeyState.left.radius, airHockeyState.left.x));
         airHockeyState.left.vx = delta ? Math.max(-280, Math.min(280, airHockeyState.left.vx)) : 0;
         airHockeyState.left.vy = delta ? Math.max(-280, Math.min(280, airHockeyState.left.vy)) : 0;
 
@@ -12627,15 +13570,15 @@ document.addEventListener('DOMContentLoaded', () => {
             airHockeyState.right.vx = 0;
             airHockeyState.right.vy = 0;
         }
-        airHockeyState.right.x = Math.max((width * 0.5) + 30 + airHockeyState.right.radius, Math.min(width - airHockeyState.right.radius, airHockeyState.right.x));
+        airHockeyState.right.x = Math.max((width * 0.5) + AIR_HOCKEY_CENTER_GAP + airHockeyState.right.radius, Math.min(width - airHockeyState.right.radius, airHockeyState.right.x));
 
         if (airHockeyState.running && !airHockeyCountdownActive) {
 
             const puck = airHockeyState.puck;
             puck.x += puck.vx * delta;
             puck.y += puck.vy * delta;
-            puck.vx *= 0.996;
-            puck.vy *= 0.996;
+            puck.vx *= 0.9975;
+            puck.vy *= 0.9975;
             const goalBounds = getAirHockeyGoalBounds();
 
             if (puck.y <= puck.radius || puck.y >= height - puck.radius) {
@@ -12706,8 +13649,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         puck.vx += (bounce + carry) * nx + (paddle.vx * 0.32);
                         puck.vy += (bounce + carry) * ny + (paddle.vy * 0.32);
                     } else {
-                        puck.vx += nx * (28 + paddleSpeed * 0.08);
-                        puck.vy += ny * (28 + paddleSpeed * 0.08);
+                        puck.vx += nx * (44 + paddleSpeed * 0.1);
+                        puck.vy += ny * (44 + paddleSpeed * 0.1);
                     }
 
                     clampAirHockeySpeed();
@@ -13173,10 +14116,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(baieBerryMenuOverlay, baieBerryGame);
         baieBerryMenuOverlay.classList.toggle('hidden', !baieBerryMenuVisible);
         baieBerryMenuOverlay.classList.toggle('is-closing', baieBerryMenuClosing);
         baieBerryMenuOverlay.classList.toggle('is-entering', baieBerryMenuEntering);
-        baieBerryTable.classList.toggle('is-menu-open', baieBerryMenuVisible);
+        baieBerryGame.classList.toggle('is-menu-open', baieBerryMenuVisible);
         if (baieBerryNextDisplay) {
             baieBerryNextDisplay.style.opacity = baieBerryMenuVisible ? '0' : '1';
         }
@@ -13232,6 +14176,9 @@ document.addEventListener('DOMContentLoaded', () => {
             baieBerryMenuResult = false;
             refreshBaieBerryHud();
             updateBaieBerryDropGuide(baieBerryLastPointerX ?? (baieBerryCanvas.width / 2));
+            if (!baieBerryAnimationFrame) {
+                baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
+            }
             renderBaieBerryMenu();
         }, UNO_MENU_CLOSE_DURATION_MS);
     }
@@ -13251,6 +14198,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initializeBaieBerry() {
         closeGameOverModal();
+        stopBaieBerry();
         if (baieBerryDropLineTimer) {
             window.clearTimeout(baieBerryDropLineTimer);
             baieBerryDropLineTimer = null;
@@ -13283,8 +14231,20 @@ document.addEventListener('DOMContentLoaded', () => {
         drawBaieBerry();
         renderBaieBerryMenu();
 
-        if (!baieBerryAnimationFrame) {
-            baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
+    }
+
+    function stopBaieBerry() {
+        if (baieBerryAnimationFrame) {
+            window.cancelAnimationFrame(baieBerryAnimationFrame);
+            baieBerryAnimationFrame = null;
+        }
+        if (baieBerryDropLineTimer) {
+            window.clearTimeout(baieBerryDropLineTimer);
+            baieBerryDropLineTimer = null;
+        }
+        baieBerryLastFrame = 0;
+        if (baieBerryStage) {
+            baieBerryStage.style.transform = 'translate(0, 0)';
         }
     }
 
@@ -13298,6 +14258,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         baieBerryLastDropAt = now;
+        if (!baieBerryAnimationFrame) {
+            baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
+        }
 
         baieBerryLastPointerX = x;
         if (baieBerryDropLine) {
@@ -13679,6 +14642,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        syncGameMenuOverlayBounds(breakoutMenuOverlay, breakoutTable);
         breakoutMenuOverlay.classList.toggle('hidden', !breakoutMenuVisible);
         breakoutMenuOverlay.classList.toggle('is-closing', breakoutMenuClosing);
         breakoutTable.classList.toggle('is-menu-open', breakoutMenuVisible);
@@ -13717,6 +14681,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (breakoutState) {
                 breakoutState.running = true;
             }
+            if (!breakoutAnimationFrame) {
+                breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
+            }
             renderBreakoutMenu();
             drawBreakout();
         }, UNO_MENU_CLOSE_DURATION_MS);
@@ -13726,6 +14693,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const paddleWidth = 92;
         const paddleHeight = 11;
         closeGameOverModal();
+        stopBreakout();
         breakoutState = {
             score: 0,
             lives: 3,
@@ -13756,9 +14724,14 @@ document.addEventListener('DOMContentLoaded', () => {
         renderBreakoutMenu();
         drawBreakout();
 
-        if (!breakoutAnimationFrame) {
-            breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
+    }
+
+    function stopBreakout() {
+        if (breakoutAnimationFrame) {
+            window.cancelAnimationFrame(breakoutAnimationFrame);
+            breakoutAnimationFrame = null;
         }
+        breakoutLastFrame = 0;
     }
 
     function updateBreakout(timestamp) {
@@ -14459,10 +15432,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderUnoMenu() {
-        if (!unoMenuOverlay || !unoGame) {
+        if (!unoMenuOverlay || !unoGame || !unoTable) {
             return;
         }
 
+        syncGameMenuOverlayBounds(unoMenuOverlay, unoTable);
         const isOnline = isMultiplayerUnoActive();
         const roomStarted = Boolean(multiplayerActiveRoom?.unoStarted);
         const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
@@ -14475,7 +15449,7 @@ document.addEventListener('DOMContentLoaded', () => {
         unoMenuVisible = isOnline ? !roomStarted : unoMenuVisible;
         unoMenuOverlay.classList.toggle('hidden', !unoMenuVisible);
         unoMenuOverlay.classList.toggle('is-closing', unoMenuClosing);
-        unoGame.querySelector('.uno-table')?.classList.toggle('is-menu-open', unoMenuVisible);
+        unoTable.classList.toggle('is-menu-open', unoMenuVisible);
 
         if (!unoMenuVisible) {
             return;
@@ -15206,6 +16180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showGamePanel(nextTab);
 
         if (nextTab === 'snake') {
+            snakeMenuVisible = true;
             initializeSnake();
             closeGameOverModal();
             return;
@@ -15223,7 +16198,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'sudoku') {
-            initializeSudoku();
+            sudokuMenuVisible = true;
+            initializeSudoku(false);
             return;
         }
 
@@ -15238,7 +16214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'ticTacToe') {
-            initializeTicTacToe();
+            initializeTicTacToe(false);
             return;
         }
 
@@ -15323,6 +16299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'airHockey') {
+            airHockeyMenuVisible = true;
             initializeAirHockey();
             return;
         }
@@ -15512,8 +16489,40 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeGame();
     });
 
+    minesweeperMenuActionButton?.addEventListener('click', () => {
+        if (minesweeperMenuShowingRules) {
+            minesweeperMenuShowingRules = false;
+            renderMinesweeperMenu();
+            return;
+        }
+
+        initializeGame();
+        closeMinesweeperMenu();
+    });
+
+    minesweeperMenuRulesButton?.addEventListener('click', () => {
+        minesweeperMenuShowingRules = true;
+        renderMinesweeperMenu();
+    });
+
     snakeStartButton.addEventListener('click', () => {
         startSnake();
+    });
+
+    snakeMenuActionButton?.addEventListener('click', () => {
+        if (snakeMenuShowingRules) {
+            snakeMenuShowingRules = false;
+            renderSnakeMenu();
+            return;
+        }
+
+        startSnake();
+        closeSnakeMenu();
+    });
+
+    snakeMenuRulesButton?.addEventListener('click', () => {
+        snakeMenuShowingRules = true;
+        renderSnakeMenu();
     });
 
     pongMenuActionButton?.addEventListener('click', () => {
@@ -15560,7 +16569,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sudokuRestartButton.addEventListener('click', () => {
-        initializeSudoku();
+        initializeSudoku(!sudokuMenuVisible);
+    });
+
+    sudokuDifficultyButton?.addEventListener('click', () => {
+        sudokuDifficultyIndex = (sudokuDifficultyIndex + 1) % SUDOKU_DIFFICULTIES.length;
+        initializeSudoku(!sudokuMenuVisible);
+    });
+
+    sudokuMenuActionButton?.addEventListener('click', () => {
+        if (sudokuMenuShowingRules) {
+            sudokuMenuShowingRules = false;
+            renderSudokuMenu();
+            return;
+        }
+
+        initializeSudoku(true);
+        closeSudokuMenu();
+    });
+
+    sudokuMenuRulesButton?.addEventListener('click', () => {
+        sudokuMenuShowingRules = true;
+        renderSudokuMenu();
     });
 
     game2048RestartButton.addEventListener('click', () => {
@@ -15582,6 +16612,206 @@ document.addEventListener('DOMContentLoaded', () => {
         game2048MenuShowingRules = !game2048MenuShowingRules;
         render2048Menu();
     });
+
+    game2048Board?.addEventListener('touchstart', (event) => {
+        if (game2048MenuVisible || activeGameTab !== '2048') {
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        if (!touch) {
+            return;
+        }
+
+        game2048TouchStartX = touch.clientX;
+        game2048TouchStartY = touch.clientY;
+    }, { passive: true });
+
+    game2048Board?.addEventListener('touchend', (event) => {
+        if (game2048MenuVisible || activeGameTab !== '2048') {
+            game2048TouchStartX = null;
+            game2048TouchStartY = null;
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        if (!touch || game2048TouchStartX === null || game2048TouchStartY === null) {
+            game2048TouchStartX = null;
+            game2048TouchStartY = null;
+            return;
+        }
+
+        const deltaX = touch.clientX - game2048TouchStartX;
+        const deltaY = touch.clientY - game2048TouchStartY;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+        const minSwipeDistance = 24;
+        let direction = null;
+
+        if (Math.max(absX, absY) >= minSwipeDistance) {
+            direction = absX > absY
+                ? (deltaX > 0 ? 'right' : 'left')
+                : (deltaY > 0 ? 'down' : 'up');
+        }
+
+        game2048TouchStartX = null;
+        game2048TouchStartY = null;
+
+        if (direction) {
+            event.preventDefault();
+            move2048(direction);
+        }
+    }, { passive: false });
+
+    snakeBoard?.addEventListener('touchstart', (event) => {
+        if (activeGameTab !== 'snake') {
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        if (!touch) {
+            return;
+        }
+
+        snakeTouchStartX = touch.clientX;
+        snakeTouchStartY = touch.clientY;
+    }, { passive: true });
+
+    snakeBoard?.addEventListener('touchend', (event) => {
+        if (activeGameTab !== 'snake') {
+            snakeTouchStartX = null;
+            snakeTouchStartY = null;
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        if (!touch || snakeTouchStartX === null || snakeTouchStartY === null) {
+            snakeTouchStartX = null;
+            snakeTouchStartY = null;
+            return;
+        }
+
+        const deltaX = touch.clientX - snakeTouchStartX;
+        const deltaY = touch.clientY - snakeTouchStartY;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+        const minSwipeDistance = 20;
+
+        snakeTouchStartX = null;
+        snakeTouchStartY = null;
+
+        if (Math.max(absX, absY) < minSwipeDistance) {
+            return;
+        }
+
+        queueSnakeDirectionInput(
+            absX > absY
+                ? (deltaX > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 })
+                : (deltaY > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 })
+        );
+        event.preventDefault();
+    }, { passive: false });
+
+    pacmanBoard?.addEventListener('touchstart', (event) => {
+        if (activeGameTab !== 'pacman') {
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        if (!touch) {
+            return;
+        }
+
+        pacmanTouchStartX = touch.clientX;
+        pacmanTouchStartY = touch.clientY;
+    }, { passive: true });
+
+    pacmanBoard?.addEventListener('touchend', (event) => {
+        if (activeGameTab !== 'pacman') {
+            pacmanTouchStartX = null;
+            pacmanTouchStartY = null;
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        if (!touch || pacmanTouchStartX === null || pacmanTouchStartY === null) {
+            pacmanTouchStartX = null;
+            pacmanTouchStartY = null;
+            return;
+        }
+
+        const deltaX = touch.clientX - pacmanTouchStartX;
+        const deltaY = touch.clientY - pacmanTouchStartY;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+        const minSwipeDistance = 20;
+
+        pacmanTouchStartX = null;
+        pacmanTouchStartY = null;
+
+        if (Math.max(absX, absY) < minSwipeDistance) {
+            return;
+        }
+
+        pacmanNextDirection = absX > absY
+            ? (deltaX > 0 ? { row: 0, col: 1 } : { row: 0, col: -1 })
+            : (deltaY > 0 ? { row: 1, col: 0 } : { row: -1, col: 0 });
+        event.preventDefault();
+    }, { passive: false });
+
+    tetrisBoard?.addEventListener('touchstart', (event) => {
+        if (activeGameTab !== 'tetris') {
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        if (!touch) {
+            return;
+        }
+
+        tetrisTouchStartX = touch.clientX;
+        tetrisTouchStartY = touch.clientY;
+    }, { passive: true });
+
+    tetrisBoard?.addEventListener('touchend', (event) => {
+        if (activeGameTab !== 'tetris') {
+            tetrisTouchStartX = null;
+            tetrisTouchStartY = null;
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        if (!touch || tetrisTouchStartX === null || tetrisTouchStartY === null) {
+            tetrisTouchStartX = null;
+            tetrisTouchStartY = null;
+            return;
+        }
+
+        const deltaX = touch.clientX - tetrisTouchStartX;
+        const deltaY = touch.clientY - tetrisTouchStartY;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+        const minSwipeDistance = 20;
+
+        tetrisTouchStartX = null;
+        tetrisTouchStartY = null;
+
+        if (Math.max(absX, absY) < minSwipeDistance) {
+            rotateTetrisPiece();
+            event.preventDefault();
+            return;
+        }
+
+        if (absX > absY) {
+            moveTetrisHorizontally(deltaX > 0 ? 1 : -1);
+        } else if (deltaY > 0) {
+            dropTetrisStep();
+        } else {
+            rotateTetrisPiece();
+        }
+
+        event.preventDefault();
+    }, { passive: false });
 
     aimStartButton.addEventListener('click', () => {
         closeGameOverModal();
@@ -15614,9 +16844,21 @@ document.addEventListener('DOMContentLoaded', () => {
         handleAimMiss();
     });
 
-    memoryRestartButton.addEventListener('click', () => {
+    memoryMenuActionButton?.addEventListener('click', () => {
+        if (memoryMenuShowingRules) {
+            memoryMenuShowingRules = false;
+            renderMemoryMenu();
+            return;
+        }
+
         closeGameOverModal();
         initializeMemory();
+        startMemoryLaunchSequence();
+    });
+
+    memoryMenuRulesButton?.addEventListener('click', () => {
+        memoryMenuShowingRules = !memoryMenuShowingRules;
+        renderMemoryMenu();
     });
 
     memoryBoard.addEventListener('click', (event) => {
@@ -15647,6 +16889,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ticTacToeMenuShowingRules) {
             ticTacToeMenuShowingRules = false;
             renderTicTacToeMenu();
+            return;
+        }
+
+        if (ticTacToeMenuResult) {
+            if (isMultiplayerTicTacToeActive()) {
+                multiplayerSocket?.emit('tictactoe:restart');
+                ticTacToeMenuVisible = false;
+                ticTacToeMenuResult = null;
+                renderTicTacToeMenu();
+                return;
+            }
+
+            initializeTicTacToe(false);
             return;
         }
 
@@ -16015,6 +17270,25 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeAirHockey(false);
         }
         launchAirHockeyPuck();
+    });
+
+    airHockeyMenuActionButton?.addEventListener('click', () => {
+        if (airHockeyMenuShowingRules) {
+            airHockeyMenuShowingRules = false;
+            renderAirHockeyMenu();
+            return;
+        }
+
+        if (!isMultiplayerAirHockeyActive()) {
+            initializeAirHockey(false);
+        }
+        launchAirHockeyPuck();
+        closeAirHockeyMenu();
+    });
+
+    airHockeyMenuRulesButton?.addEventListener('click', () => {
+        airHockeyMenuShowingRules = true;
+        renderAirHockeyMenu();
     });
 
     reactionStartButton?.addEventListener('click', () => {
@@ -16490,8 +17764,17 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     });
 
-    document.addEventListener('pointerup', () => {
+    document.addEventListener('pointerup', (event) => {
         if (flowFreePointerDown) {
+            const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+            const cellButton = hoveredElement?.closest('.flowfree-cell');
+            if (cellButton) {
+                extendFlowFreePath(
+                    Number(cellButton.dataset.flowRow),
+                    Number(cellButton.dataset.flowCol)
+                );
+            }
+            flushFlowFreePendingTarget();
             stopFlowFreePath();
         }
     });
@@ -16507,6 +17790,7 @@ document.addEventListener('DOMContentLoaded', () => {
             flowFreeBoard.releasePointerCapture(event.pointerId);
         }
         if (flowFreePointerDown) {
+            flushFlowFreePendingTarget();
             stopFlowFreePath();
         }
     });
@@ -16723,23 +18007,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (activeGameTab === 'snake' && nextDirection) {
             event.preventDefault();
-
-            const lastQueuedDirection = snakeDirectionQueue[snakeDirectionQueue.length - 1];
-            const referenceDirection = lastQueuedDirection || snakeNextDirection || snakeDirection;
-            const isOpposite = referenceDirection.x + nextDirection.x === 0
-                && referenceDirection.y + nextDirection.y === 0;
-            const isSameDirection = referenceDirection.x === nextDirection.x
-                && referenceDirection.y === nextDirection.y;
-
-            if (isOpposite || isSameDirection) {
-                return;
-            }
-
-            if (snakeDirectionQueue.length >= 2) {
-                return;
-            }
-
-            snakeDirectionQueue.push(nextDirection);
+            queueSnakeDirectionInput(nextDirection);
             return;
         }
 
@@ -16997,6 +18265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         resizeFrame = window.requestAnimationFrame(() => {
             resizeFrame = null;
+            syncAllGameMenuOverlayBounds();
 
         if (activeGameTab === 'snake') {
             renderSnake();
@@ -17085,6 +18354,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showGamePanel('home');
     updateMultiplayerLobby();
     initializeGame();
+    renderMinesweeperMenu();
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     startCoinClickerAutoLoop();
@@ -17092,6 +18362,7 @@ document.addEventListener('DOMContentLoaded', () => {
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');
     renderPiano();
+    syncAllGameMenuOverlayBounds();
 
     const activeSession = loadSession();
 
