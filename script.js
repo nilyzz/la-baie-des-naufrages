@@ -409,6 +409,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const reactionBestDisplay = document.getElementById('reactionBestDisplay');
     const reactionHelpText = document.getElementById('reactionHelpText');
     const reactionStartButton = document.getElementById('reactionStartButton');
+    const reactionTable = document.getElementById('reactionTable');
+    const reactionMenuOverlay = document.getElementById('reactionMenuOverlay');
+    const reactionMenuEyebrow = document.getElementById('reactionMenuEyebrow');
+    const reactionMenuTitle = document.getElementById('reactionMenuTitle');
+    const reactionMenuText = document.getElementById('reactionMenuText');
+    const reactionMenuActionButton = document.getElementById('reactionMenuActionButton');
+    const reactionMenuRulesButton = document.getElementById('reactionMenuRulesButton');
     const reactionLantern = document.getElementById('reactionLantern');
     const baieBerryGame = document.getElementById('baieBerryGame');
     const baieBerryCanvas = document.getElementById('baieBerryCanvas');
@@ -1115,6 +1122,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let reactionBestTime = Number(window.localStorage.getItem(REACTION_BEST_KEY)) || null;
     let reactionStartTime = 0;
     let reactionTimeout = null;
+    let reactionMenuVisible = true;
+    let reactionMenuShowingRules = false;
+    let reactionMenuClosing = false;
+    let reactionMenuEntering = false;
+    let reactionMenuResult = null;
     let baieBerryState = null;
     let baieBerryAnimationFrame = null;
     let baieBerryLastFrame = 0;
@@ -2394,6 +2406,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncGameMenuOverlayBounds(chessMenuOverlay, chessTable);
         syncGameMenuOverlayBounds(checkersMenuOverlay, checkersTable);
         syncGameMenuOverlayBounds(airHockeyMenuOverlay, airHockeyBoard);
+        syncGameMenuOverlayBounds(reactionMenuOverlay, reactionTable);
         syncGameMenuOverlayBounds(baieBerryMenuOverlay, baieBerryGame);
         syncGameMenuOverlayBounds(breakoutMenuOverlay, breakoutTable);
         syncGameMenuOverlayBounds(unoMenuOverlay, unoTable);
@@ -2809,9 +2822,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     multiplayerSelectedGameId = room.gameId;
                 }
                 multiplayerEntryMode = getCurrentMultiplayerPlayer()?.isHost ? 'create' : 'join';
-                if (multiplayerJoinRoomCodeInput) {
-                    multiplayerJoinRoomCodeInput.value = room.code || '';
-                }
                 syncMultiplayerAirHockeyState();
                 syncMultiplayerBattleshipState();
                 syncMultiplayerPongState();
@@ -2871,6 +2881,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 unoLastWinnerKey = '';
                 multiplayerCurrentRoomCode.textContent = '-';
                 multiplayerLobbyPlayersBlock?.classList.add('hidden');
+                if (multiplayerJoinRoomCodeInput) {
+                    multiplayerJoinRoomCodeInput.value = '';
+                }
                 closeGameOverModal();
                 if (activeGameTab === 'battleship') {
                     initializeBattleship();
@@ -2949,9 +2962,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const room = await response.json();
-            if (multiplayerJoinRoomCodeInput) {
-                multiplayerJoinRoomCodeInput.value = room.code || '';
-            }
             syncMultiplayerPlayerNames('create');
             const socket = await ensureMultiplayerConnection();
             socket.emit('room:create', {
@@ -3308,6 +3318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'reaction' && nextTab !== 'reaction') {
+            reactionMenuVisible = true;
             initializeReaction();
         }
 
@@ -13668,21 +13679,137 @@ document.addEventListener('DOMContentLoaded', () => {
         reactionStartTime = 0;
         window.clearTimeout(reactionTimeout);
         reactionLantern.classList.remove('is-armed', 'is-lit');
-        reactionLastDisplay.textContent = '-';
+        reactionTable?.classList.remove('is-armed', 'is-lit', 'is-extinguishing');
         reactionBestDisplay.textContent = reactionBestTime ? `${reactionBestTime} ms` : '-';
         reactionHelpText.textContent = 'Attends que la lanterne s allume, puis clique le plus vite possible.';
+        reactionMenuResult = null;
+        reactionMenuShowingRules = false;
+        reactionMenuClosing = false;
+        reactionMenuEntering = false;
+        renderReactionMenu();
+    }
+
+    function getReactionRulesText() {
+        return 'Lance une veille puis attends que la lanterne s allume. Clique uniquement au bon moment. Un clic trop tot annule la manche.';
+    }
+
+    function getReactionPerformanceCopy(reactionTime, isRecord) {
+        if (isRecord || reactionTime <= 220) {
+            return {
+                eyebrow: isRecord ? 'Meilleur temps' : 'Reflexe legendaire',
+                title: isRecord ? 'Nouveau record' : 'Reflexe legendaire',
+                text: `Reflexe eclair en ${reactionTime} ms. Le phare n a meme pas eu le temps de trembler.`
+            };
+        }
+
+        if (reactionTime <= 300) {
+            return {
+                eyebrow: 'Tres bon temps',
+                title: 'Veille terminee',
+                text: `Belle reponse en ${reactionTime} ms. Tu tiens bien la veille du pont.`
+            };
+        }
+
+        if (reactionTime <= 420) {
+            return {
+                eyebrow: 'Reflexe valide',
+                title: 'Veille terminee',
+                text: `Reflexe enregistre en ${reactionTime} ms. Relance pour aller chercher un meilleur temps.`
+            };
+        }
+
+        return {
+            eyebrow: 'Peut mieux faire',
+            title: 'Veille terminee',
+            text: `Temps releve a ${reactionTime} ms. La prochaine lanterne peut tomber plus vite.`
+        };
+    }
+
+    function renderReactionMenu() {
+        if (!reactionMenuOverlay || !reactionTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(reactionMenuOverlay, reactionTable);
+        reactionMenuOverlay.classList.toggle('hidden', !reactionMenuVisible);
+        reactionMenuOverlay.classList.toggle('is-closing', reactionMenuClosing);
+        reactionMenuOverlay.classList.toggle('is-entering', reactionMenuEntering);
+        reactionTable.classList.toggle('is-menu-open', reactionMenuVisible);
+
+        if (!reactionMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(reactionMenuResult);
+        if (reactionMenuEyebrow) {
+            reactionMenuEyebrow.textContent = reactionMenuShowingRules
+                ? 'Regles'
+                : (hasResult ? reactionMenuResult.eyebrow : 'Veille au phare');
+        }
+        if (reactionMenuTitle) {
+            reactionMenuTitle.textContent = reactionMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? reactionMenuResult.title : 'Reaction');
+        }
+        if (reactionMenuText) {
+            reactionMenuText.textContent = reactionMenuShowingRules
+                ? getReactionRulesText()
+                : (hasResult
+                    ? reactionMenuResult.text
+                    : 'Reste calme sur le pont et clique des que la lanterne s allume pour signer le meilleur reflexe.');
+        }
+        if (reactionMenuActionButton) {
+            reactionMenuActionButton.textContent = reactionMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la veille' : 'Lancer la veille');
+        }
+        if (reactionMenuRulesButton) {
+            reactionMenuRulesButton.textContent = 'Regles';
+            reactionMenuRulesButton.hidden = reactionMenuShowingRules;
+        }
+    }
+
+    function closeReactionMenu() {
+        reactionMenuClosing = true;
+        renderReactionMenu();
+        window.setTimeout(() => {
+            reactionMenuClosing = false;
+            reactionMenuVisible = false;
+            reactionMenuShowingRules = false;
+            reactionMenuEntering = false;
+            reactionMenuResult = null;
+            renderReactionMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealReactionOutcomeMenu(title, text, eyebrow) {
+        reactionMenuVisible = true;
+        reactionMenuResult = { title, text, eyebrow };
+        reactionMenuShowingRules = false;
+        reactionMenuClosing = false;
+        reactionMenuEntering = true;
+        reactionHelpText.textContent = text;
+        renderReactionMenu();
+        window.setTimeout(() => {
+            reactionMenuEntering = false;
+            renderReactionMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function startReactionRound() {
         initializeReaction();
         reactionState = 'armed';
         reactionLantern.classList.add('is-armed');
+        reactionTable?.classList.add('is-armed');
         reactionHelpText.textContent = 'Patiente... la lanterne va s allumer.';
         reactionTimeout = window.setTimeout(() => {
             reactionState = 'lit';
             reactionLantern.classList.remove('is-armed');
             reactionLantern.classList.add('is-lit');
+            reactionTable?.classList.remove('is-armed');
+            reactionTable?.classList.add('is-lit');
             reactionStartTime = performance.now();
+            reactionHelpText.textContent = 'Clique vite, la lanterne est allumee.';
         }, 1200 + Math.random() * 2400);
     }
 
@@ -16305,6 +16432,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'reaction') {
+            reactionMenuVisible = true;
             initializeReaction();
             return;
         }
@@ -17104,7 +17232,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     stackerStartButton.addEventListener('click', () => {
-        closeGameOverModal();
         dropStackerLayer();
     });
 
@@ -17293,13 +17420,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     reactionStartButton?.addEventListener('click', () => {
         startReactionRound();
+        if (reactionMenuVisible) {
+            closeReactionMenu();
+        }
     });
 
-    reactionLantern?.addEventListener('click', () => {
+    reactionMenuActionButton?.addEventListener('click', () => {
+        if (reactionMenuShowingRules) {
+            reactionMenuShowingRules = false;
+            renderReactionMenu();
+            return;
+        }
+
+        startReactionRound();
+        closeReactionMenu();
+    });
+
+    reactionMenuRulesButton?.addEventListener('click', () => {
+        reactionMenuShowingRules = true;
+        renderReactionMenu();
+    });
+
+    function handleReactionAttempt() {
         if (reactionState === 'armed') {
             window.clearTimeout(reactionTimeout);
             initializeReaction();
-            reactionHelpText.textContent = 'Trop tot. Attends vraiment l allumage.';
+            revealReactionOutcomeMenu(
+                'Faux depart',
+                'Trop tot. Attends vraiment l allumage de la lanterne avant de cliquer.',
+                'Veille annulee'
+            );
             return;
         }
 
@@ -17310,13 +17460,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const reactionTime = Math.round(performance.now() - reactionStartTime);
         reactionState = 'done';
         reactionLantern.classList.remove('is-lit');
+        reactionTable?.classList.remove('is-lit');
+        reactionTable?.classList.add('is-extinguishing');
+        window.setTimeout(() => {
+            reactionTable?.classList.remove('is-extinguishing');
+        }, 430);
         reactionLastDisplay.textContent = `${reactionTime} ms`;
+        const isRecord = !reactionBestTime || reactionTime < reactionBestTime;
         if (!reactionBestTime || reactionTime < reactionBestTime) {
             reactionBestTime = reactionTime;
             window.localStorage.setItem(REACTION_BEST_KEY, String(reactionBestTime));
         }
         reactionBestDisplay.textContent = reactionBestTime ? `${reactionBestTime} ms` : '-';
-        reactionHelpText.textContent = 'Bien joue. Relance pour tenter un meilleur reflexe.';
+        const reactionCopy = getReactionPerformanceCopy(reactionTime, isRecord);
+        revealReactionOutcomeMenu(reactionCopy.title, reactionCopy.text, reactionCopy.eyebrow);
+    }
+
+    reactionLantern?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        handleReactionAttempt();
+    });
+
+    reactionTable?.addEventListener('click', (event) => {
+        if (reactionMenuVisible || reactionMenuClosing) {
+            return;
+        }
+
+        if (event.target === reactionMenuOverlay) {
+            return;
+        }
+
+        handleReactionAttempt();
     });
 
     baieBerryMenuActionButton?.addEventListener('click', () => {

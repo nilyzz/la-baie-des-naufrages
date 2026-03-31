@@ -1376,24 +1376,42 @@
                             <span class="reaction-counter-label">Dernier</span>
                             <strong id="reactionLastDisplay" class="reaction-counter-value">-</strong>
                         </div>
-                        <button id="reactionStartButton" type="button" class="reaction-face">Nouvelle veille</button>
                         <div class="reaction-counter-block">
                             <span class="reaction-counter-label">Record</span>
                             <strong id="reactionBestDisplay" class="reaction-counter-value">-</strong>
                         </div>
                     </div>
                     <p id="reactionHelpText" class="reaction-help">Attends que la lanterne s allume, puis clique le plus vite possible.</p>
-                    <button id="reactionLantern" type="button" class="reaction-lantern" aria-label="Lanterne de reaction">
-                        <span class="reaction-lantern-handle" aria-hidden="true"></span>
-                        <span class="reaction-lantern-cap" aria-hidden="true"></span>
-                        <span class="reaction-lantern-frame" aria-hidden="true">
-                            <span class="reaction-lantern-pane reaction-lantern-pane-left"></span>
-                            <span class="reaction-lantern-pane reaction-lantern-pane-right"></span>
-                            <span class="reaction-lantern-core"></span>
-                            <span class="reaction-lantern-flame" aria-hidden="true"></span>
-                        </span>
-                        <span class="reaction-lantern-base" aria-hidden="true"></span>
-                    </button>
+                    <div id="reactionTable" class="reaction-table">
+                        <div id="reactionMenuOverlay" class="reaction-menu-overlay">
+                            <div class="reaction-menu-card">
+                                <span id="reactionMenuEyebrow" class="reaction-menu-eyebrow">Veille au phare</span>
+                                <h3 id="reactionMenuTitle" class="reaction-menu-title">Reaction</h3>
+                                <p id="reactionMenuText" class="reaction-menu-text">Reste calme sur le pont et clique des que la lanterne s allume pour signer le meilleur reflexe.</p>
+                                <div class="reaction-menu-actions">
+                                    <button id="reactionMenuActionButton" type="button" class="game-menu-primary-button">Lancer la veille</button>
+                                    <button id="reactionMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="reactionLantern" type="button" class="reaction-lantern" aria-label="Lanterne de reaction">
+                            <span class="reaction-lantern-handle" aria-hidden="true"></span>
+                            <span class="reaction-lantern-chain" aria-hidden="true"></span>
+                            <span class="reaction-lantern-cap" aria-hidden="true"></span>
+                            <span class="reaction-lantern-vent" aria-hidden="true"></span>
+                            <span class="reaction-lantern-frame" aria-hidden="true">
+                                <span class="reaction-lantern-crossbar reaction-lantern-crossbar-top"></span>
+                                <span class="reaction-lantern-crossbar reaction-lantern-crossbar-bottom"></span>
+                                <span class="reaction-lantern-pane reaction-lantern-pane-left"></span>
+                                <span class="reaction-lantern-pane reaction-lantern-pane-right"></span>
+                                <span class="reaction-lantern-core"></span>
+                                <span class="reaction-lantern-flame" aria-hidden="true"></span>
+                            </span>
+                            <span class="reaction-lantern-rivet reaction-lantern-rivet-left" aria-hidden="true"></span>
+                            <span class="reaction-lantern-rivet reaction-lantern-rivet-right" aria-hidden="true"></span>
+                            <span class="reaction-lantern-base" aria-hidden="true"></span>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="baieBerryGame" class="card baieberry-card games-panel">
