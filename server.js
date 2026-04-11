@@ -35,6 +35,7 @@ const AIR_HOCKEY_PUCK_RADIUS = 22;
 const AIR_HOCKEY_SPEED = 280;
 const AIR_HOCKEY_COUNTDOWN_MS = 2120;
 const AIR_HOCKEY_TICK_MS = 1000 / 60;
+const ROOM_CHAT_LIMIT = 40;
 const CHECKERS_DIRECTIONS = {
   red: [[-1, -1], [-1, 1]],
   black: [[1, -1], [1, 1]]
@@ -106,13 +107,51 @@ function createUniqueRoomCode() {
 }
 
 function sanitizePlayerName(name, fallback = 'Pirate') {
-  const nextName = String(name || '').trim().slice(0, 24);
+  const nextName = String(name || '')
+    .normalize('NFKC')
+    .replace(/[<>&"'`]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 24);
+
   return nextName || fallback;
 }
 
 function getNextPirateFallback(room) {
   const pirateCount = room.players.filter((player) => player.id !== room.hostId).length;
   return `Pirate ${pirateCount + 1}`;
+}
+
+function sanitizeChatMessage(message) {
+  return String(message || '')
+    .normalize('NFKC')
+    .replace(/[<>&"'`]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 220);
+}
+
+function createRoomChatMessage(player, message) {
+  return {
+    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+    playerId: player.id,
+    playerName: player.name,
+    text: sanitizeChatMessage(message),
+    createdAt: Date.now()
+  };
+}
+
+function appendRoomChatMessage(room, player, message) {
+  const nextMessage = createRoomChatMessage(player, message);
+  if (!nextMessage.text) {
+    return false;
+  }
+
+  room.chatMessages.push(nextMessage);
+  if (room.chatMessages.length > ROOM_CHAT_LIMIT) {
+    room.chatMessages = room.chatMessages.slice(-ROOM_CHAT_LIMIT);
+  }
+  return true;
 }
 
 function createTicTacToeState() {
@@ -738,6 +777,8 @@ function resetChessReadyState(room) {
 }
 
 function resetRoomGame(room, keepScores = false) {
+  room.gameLaunched = false;
+
   if (room.gameId === 'uno') {
     resetUnoReadyState(room);
     resetUnoRound(room);
@@ -1084,6 +1125,14 @@ function handleAirHockeyScore(room, scoringSide) {
     room.gameState.countdownEndsAt = 0;
     room.gameState.finished = true;
     room.gameState.winner = room.gameState.leftScore >= AIR_HOCKEY_GOAL_SCORE ? 'left' : 'right';
+    room.gameState.leftInput = { x: 0, y: 0 };
+    room.gameState.rightInput = { x: 0, y: 0 };
+    room.gameState.left.vx = 0;
+    room.gameState.left.vy = 0;
+    room.gameState.right.vx = 0;
+    room.gameState.right.vy = 0;
+    room.gameState.puck.vx = 0;
+    room.gameState.puck.vy = 0;
     return;
   }
 
@@ -1711,7 +1760,14 @@ function buildRoomPayload(room, socketId = null) {
     unoStarted: room.gameId === 'uno' ? Boolean(room.unoStarted) : false,
     chessReadyCount: room.gameId === 'chess' ? Number(room.chessReadyPlayerIds?.length || 0) : 0,
     chessReadyTotal: room.gameId === 'chess' ? Number(room.players.length || 0) : 0,
-    chessStarted: room.gameId === 'chess' ? Boolean(room.chessStarted) : false
+    chessStarted: room.gameId === 'chess' ? Boolean(room.chessStarted) : false,
+    gameLaunched: Boolean(room.gameLaunched),
+    chatMessages: Array.isArray(room.chatMessages)
+      ? room.chatMessages.map((message) => ({
+        ...message,
+        isYou: message.playerId === socketId
+      }))
+      : []
   };
 }
 
@@ -1758,6 +1814,8 @@ app.post('/api/rooms', (request, response) => {
       unoStarted: false,
       chessReadyPlayerIds: [],
       chessStarted: false,
+      gameLaunched: false,
+      chatMessages: [],
       gameState: createGameState(String(request.body?.gameId || 'lobby').trim() || 'lobby')
     };
 
@@ -2601,10 +2659,38 @@ io.on('connection', (socket) => {
       emitRoomUpdate(room);
     }
 
+    room.gameLaunched = true;
+    emitRoomUpdate(room);
+
     io.to(room.code).emit('room:game:start', {
       code: room.code,
       gameId: room.gameId
     });
+  });
+
+  socket.on('room:chat:send', ({ message }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room) {
+      socket.emit('room:error', { message: 'Aucun salon actif pour envoyer un message.' });
+      return;
+    }
+
+    if (!room.gameLaunched) {
+      socket.emit('room:error', { message: 'Le chat sera disponible quand l hote lancera la partie.' });
+      return;
+    }
+
+    const player = room.players.find((entry) => entry.id === socket.id);
+    if (!player) {
+      return;
+    }
+
+    if (!appendRoomChatMessage(room, player, message)) {
+      return;
+    }
+
+    emitRoomUpdate(room);
   });
 
   socket.on('room:leave', () => {

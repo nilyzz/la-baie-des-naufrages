@@ -7,7 +7,7 @@
   "theme_color": "#0E3056",
   "icons": [
     {
-      "src": "/assets/logo-baie-cartoon.svg",
+      "src": "/assets/branding/logo-baie-cartoon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

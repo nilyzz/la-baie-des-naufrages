@@ -278,6 +278,26 @@
                     </div>
                 </aside>
 
+                <aside id="multiplayerChatCard" class="card games-filters-card multiplayer-chat-card hidden" aria-labelledby="multiplayerChatTitle">
+                    <div class="games-filters-copy multiplayer-chat-copy">
+                        <p class="section-tag">Chat</p>
+                        <h3 id="multiplayerChatTitle">Discussion de bord</h3>
+                        <p id="multiplayerChatSubtitle">Le chat apparait quand l hote lance la partie en ligne.</p>
+                    </div>
+
+                    <div id="multiplayerChatMessages" class="multiplayer-chat-messages" aria-live="polite">
+                        <p class="multiplayer-chat-empty">Le salon attend encore le lancement de la partie.</p>
+                    </div>
+
+                    <form id="multiplayerChatForm" class="multiplayer-chat-form">
+                        <label class="games-filter-search" for="multiplayerChatInput">
+                            <span class="games-filter-search-label">Message</span>
+                            <input id="multiplayerChatInput" type="text" maxlength="220" placeholder="Parle a ton equipage..." autocomplete="off">
+                        </label>
+                        <button id="multiplayerChatSendButton" type="submit" class="primary-button">Envoyer</button>
+                    </form>
+                </aside>
+
                 <div id="gamesHomePanel" class="card games-home-card games-panel games-panel-active">
                     <div class="games-home-copy">
                         <p class="section-tag">Jeux</p>
@@ -866,9 +886,9 @@
 
                         <button id="ticTacToeRestartButton" type="button" class="tictactoe-face">Nouveau duel</button>
 
-                        <div class="tictactoe-counter-block">
+                        <div class="tictactoe-counter-block game-score-counter-block">
                             <span class="tictactoe-counter-label">Score</span>
-                            <strong id="ticTacToeScoreDisplay" class="tictactoe-counter-value">Toi 0 - 0 IA</strong>
+                            <strong id="ticTacToeScoreDisplay" class="tictactoe-counter-value game-score-counter-value">Toi 0 - 0 IA</strong>
                         </div>
                     </div>
 
@@ -998,9 +1018,9 @@
                             <span class="connect4-counter-label">Tour</span>
                             <strong id="connect4TurnDisplay" class="connect4-counter-value">Toi</strong>
                         </div>
-                        <div class="connect4-counter-block">
+                        <div class="connect4-counter-block game-score-counter-block">
                             <span class="connect4-counter-label">Score</span>
-                            <strong id="connect4ScoreDisplay" class="connect4-counter-value">Toi 0 - 0 IA</strong>
+                            <strong id="connect4ScoreDisplay" class="connect4-counter-value game-score-counter-value">Toi 0 - 0 IA</strong>
                         </div>
                     </div>
 

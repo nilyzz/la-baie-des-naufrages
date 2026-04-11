@@ -88,6 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamesFilterButtons = document.querySelectorAll('[data-games-filter]');
     const gamesFilterCount = document.getElementById('gamesFilterCount');
     const gamesFilterHint = document.getElementById('gamesFilterHint');
+    const multiplayerChatCard = document.getElementById('multiplayerChatCard');
+    const multiplayerChatSubtitle = document.getElementById('multiplayerChatSubtitle');
+    const multiplayerChatMessages = document.getElementById('multiplayerChatMessages');
+    const multiplayerChatForm = document.getElementById('multiplayerChatForm');
+    const multiplayerChatInput = document.getElementById('multiplayerChatInput');
+    const multiplayerChatSendButton = document.getElementById('multiplayerChatSendButton');
     const gameOverModal = document.getElementById('gameOverModal');
     const gameOverTitle = document.getElementById('gameOverTitle');
     const gameOverText = document.getElementById('gameOverText');
@@ -777,6 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerBusy = false;
     let multiplayerSelectedGameId = null;
     let multiplayerEntryMode = 'create';
+    let multiplayerChatSignature = '';
     let ticTacToeLastFinishedStateKey = '';
     let battleshipLastFinishedStateKey = '';
     let pongLastFinishedStateKey = '';
@@ -889,6 +896,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let game2048MenuVisible = true;
     let game2048MenuShowingRules = false;
     let game2048MenuClosing = false;
+    let game2048MenuResult = false;
     let game2048TouchStartX = null;
     let game2048TouchStartY = null;
     let snakeTouchStartX = null;
@@ -1149,6 +1157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let breakoutMenuVisible = true;
     let breakoutMenuShowingRules = false;
     let breakoutMenuClosing = false;
+    let breakoutMenuResult = null;
     let blockBlastState = null;
     let blockBlastBestScore = Number(window.localStorage.getItem(BLOCK_BLAST_BEST_KEY)) || 0;
     let blockBlastSelectedPieceIndex = null;
@@ -2125,6 +2134,34 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${hours}h${String(remainingMinutes).padStart(2, '0')}`;
     }
 
+    function sanitizeImageUrl(url) {
+        const value = String(url || '').trim();
+
+        if (!value) {
+            return defaultPoster;
+        }
+
+        try {
+            const parsedUrl = new URL(value, window.location.href);
+            if (['http:', 'https:'].includes(parsedUrl.protocol)) {
+                return parsedUrl.href;
+            }
+        } catch (_error) {
+            return defaultPoster;
+        }
+
+        return defaultPoster;
+    }
+
+    function createMovieMetaLine(label, value) {
+        const paragraph = document.createElement('p');
+        const strong = document.createElement('strong');
+        strong.textContent = `${label} :`;
+        paragraph.appendChild(strong);
+        paragraph.append(` ${value}`);
+        return paragraph;
+    }
+
     function getFilteredMovies() {
         if (!searchTerm) {
             return movies;
@@ -2150,32 +2187,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCatalog() {
         const filteredMovies = getFilteredMovies();
+        catalogGrid.textContent = '';
+        const fragment = document.createDocumentFragment();
 
-        catalogGrid.innerHTML = filteredMovies.map((movie) => `
-            <article class="movie-card">
-                <div class="movie-poster-shell">
-                    <span class="rating-badge rating-badge-floating">${formatRating(movie.rating)}</span>
-                    <img
-                        class="movie-poster"
-                        src="${movie.posterUrl || defaultPoster}"
-                        alt="Affiche de ${movie.title}"
-                        loading="lazy"
-                        onerror="this.onerror=null;this.src='${defaultPoster}';"
-                    >
-                </div>
+        filteredMovies.forEach((movie) => {
+            const article = document.createElement('article');
+            article.className = 'movie-card';
 
-                <div class="card movie-card-body">
-                    <h4>${movie.title}</h4>
-                    <div class="movie-meta">
-                        <p><strong>Sortie :</strong> ${formatDate(movie.releaseDate)}</p>
-                        <p><strong>Genre :</strong> ${movie.genre || 'Inconnu'}</p>
-                        <p><strong>Realisateur :</strong> ${movie.director || 'Inconnu'}</p>
-                        <p><strong>Duree :</strong> ${formatDuration(movie.duration)}</p>
-                    </div>
-                    <p class="movie-comment">${movie.comment || 'Aucun commentaire pour le moment.'}</p>
-                </div>
-            </article>
-        `).join('');
+            const posterShell = document.createElement('div');
+            posterShell.className = 'movie-poster-shell';
+
+            const ratingBadge = document.createElement('span');
+            ratingBadge.className = 'rating-badge rating-badge-floating';
+            ratingBadge.textContent = formatRating(movie.rating);
+
+            const poster = document.createElement('img');
+            poster.className = 'movie-poster';
+            poster.src = sanitizeImageUrl(movie.posterUrl);
+            poster.alt = `Affiche de ${movie.title}`;
+            poster.loading = 'lazy';
+            poster.addEventListener('error', () => {
+                poster.src = defaultPoster;
+            }, { once: true });
+
+            posterShell.append(ratingBadge, poster);
+
+            const body = document.createElement('div');
+            body.className = 'card movie-card-body';
+
+            const title = document.createElement('h4');
+            title.textContent = movie.title;
+
+            const meta = document.createElement('div');
+            meta.className = 'movie-meta';
+
+            const release = createMovieMetaLine('Sortie', formatDate(movie.releaseDate));
+            const genre = createMovieMetaLine('Genre', movie.genre || 'Inconnu');
+            const director = createMovieMetaLine('Realisateur', movie.director || 'Inconnu');
+            const duration = createMovieMetaLine('Duree', formatDuration(movie.duration));
+
+            meta.append(release, genre, director, duration);
+
+            const comment = document.createElement('p');
+            comment.className = 'movie-comment';
+            comment.textContent = movie.comment || 'Aucun commentaire pour le moment.';
+
+            body.append(title, meta, comment);
+            article.append(posterShell, body);
+            fragment.appendChild(article);
+        });
+
+        catalogGrid.appendChild(fragment);
 
         emptyCatalogMessage.classList.toggle('hidden', filteredMovies.length > 0);
     }
@@ -2186,14 +2248,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        manageList.innerHTML = movies.map((movie) => `
-            <article class="manage-item">
-                <div class="manage-item-copy">
-                    <h4>${movie.title}</h4>
-                    <p>${movie.genre || 'Genre inconnu'} | ${movie.director || 'Realisateur inconnu'} | ${formatDuration(movie.duration)} | ${formatRating(movie.rating)}</p>
-                </div>
-            </article>
-        `).join('');
+        manageList.textContent = '';
+        const fragment = document.createDocumentFragment();
+
+        movies.forEach((movie) => {
+            const article = document.createElement('article');
+            article.className = 'manage-item';
+
+            const copy = document.createElement('div');
+            copy.className = 'manage-item-copy';
+
+            const title = document.createElement('h4');
+            title.textContent = movie.title;
+
+            const details = document.createElement('p');
+            details.textContent = `${movie.genre || 'Genre inconnu'} | ${movie.director || 'Realisateur inconnu'} | ${formatDuration(movie.duration)} | ${formatRating(movie.rating)}`;
+
+            copy.append(title, details);
+            article.appendChild(copy);
+            fragment.appendChild(article);
+        });
+
+        manageList.appendChild(fragment);
     }
 
     function renderAll() {
@@ -2355,18 +2431,154 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        multiplayerRoomPlayers.innerHTML = multiplayerActiveRoom.players.map((player) => {
-            const classes = ['multiplayer-lobby-player-pill'];
+        multiplayerRoomPlayers.textContent = '';
+        const fragment = document.createDocumentFragment();
+
+        multiplayerActiveRoom.players.forEach((player) => {
+            const pill = document.createElement('span');
+            pill.className = 'multiplayer-lobby-player-pill';
+
             if (player.isYou) {
-                classes.push('is-you');
+                pill.classList.add('is-you');
             }
             if (player.isHost) {
-                classes.push('is-host');
+                pill.classList.add('is-host');
             }
 
             const suffix = [player.isHost ? 'hote' : '', player.isYou ? 'toi' : ''].filter(Boolean).join(' - ');
-            return `<span class="${classes.join(' ')}">${player.name}${suffix ? ` (${suffix})` : ''}</span>`;
-        }).join('');
+            pill.textContent = `${player.name}${suffix ? ` (${suffix})` : ''}`;
+            fragment.appendChild(pill);
+        });
+
+        multiplayerRoomPlayers.appendChild(fragment);
+    }
+
+    function isMultiplayerChatVisible() {
+        return Boolean(
+            multiplayerActiveRoom?.code
+            && multiplayerActiveRoom?.gameLaunched
+            && MULTIPLAYER_SUPPORTED_GAMES[activeGameTab]
+            && multiplayerActiveRoom.gameId === activeGameTab
+        );
+    }
+
+    function formatMultiplayerChatTime(timestamp) {
+        if (!timestamp) {
+            return '';
+        }
+
+        return new Intl.DateTimeFormat('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(new Date(timestamp));
+    }
+
+    function renderMultiplayerChatMessages() {
+        if (!multiplayerChatMessages) {
+            return;
+        }
+
+        const messages = Array.isArray(multiplayerActiveRoom?.chatMessages) ? multiplayerActiveRoom.chatMessages : [];
+        multiplayerChatMessages.textContent = '';
+
+        if (!messages.length) {
+            const emptyState = document.createElement('p');
+            emptyState.className = 'multiplayer-chat-empty';
+            emptyState.textContent = 'La partie est lancee. Ecris le premier message a ton equipage.';
+            multiplayerChatMessages.appendChild(emptyState);
+            multiplayerChatSignature = '';
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        messages.forEach((message) => {
+            const item = document.createElement('article');
+            item.className = 'multiplayer-chat-message';
+            if (message.isYou) {
+                item.classList.add('is-you');
+            }
+
+            const meta = document.createElement('div');
+            meta.className = 'multiplayer-chat-message-meta';
+
+            const author = document.createElement('strong');
+            author.className = 'multiplayer-chat-message-author';
+            author.textContent = message.playerName || 'Equipage';
+
+            const time = document.createElement('span');
+            time.textContent = formatMultiplayerChatTime(message.createdAt);
+
+            const text = document.createElement('p');
+            text.className = 'multiplayer-chat-message-text';
+            text.textContent = message.text || '';
+
+            meta.append(author, time);
+            item.append(meta, text);
+            fragment.appendChild(item);
+        });
+
+        multiplayerChatMessages.appendChild(fragment);
+        const nextSignature = messages.map((message) => message.id).join('|');
+        if (nextSignature !== multiplayerChatSignature) {
+            multiplayerChatMessages.scrollTop = multiplayerChatMessages.scrollHeight;
+            multiplayerChatSignature = nextSignature;
+        }
+    }
+
+    function updateMultiplayerChatPanel() {
+        if (!multiplayerChatCard || !multiplayerChatInput || !multiplayerChatSendButton) {
+            return;
+        }
+
+        const chatVisible = isMultiplayerChatVisible();
+        multiplayerChatCard.classList.toggle('hidden', !chatVisible);
+        multiplayerChatCard.classList.toggle('is-visible', chatVisible);
+
+        const canSend = Boolean(chatVisible && multiplayerSocket?.connected);
+        multiplayerChatInput.disabled = !canSend;
+        multiplayerChatSendButton.disabled = !canSend;
+
+        if (multiplayerChatSubtitle) {
+            multiplayerChatSubtitle.textContent = chatVisible
+                ? `Salon ${multiplayerActiveRoom.code} sur ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}.`
+                : 'Le chat apparait quand l hote lance la partie en ligne.';
+        }
+
+        if (!chatVisible) {
+            multiplayerChatMessages.textContent = '';
+            const emptyState = document.createElement('p');
+            emptyState.className = 'multiplayer-chat-empty';
+            emptyState.textContent = multiplayerActiveRoom?.code
+                ? 'Le salon attend encore le lancement de la partie.'
+                : 'Rejoins un salon multijoueur pour ouvrir le chat de bord.';
+            multiplayerChatMessages.appendChild(emptyState);
+            multiplayerChatSignature = '';
+            multiplayerChatInput.value = '';
+            return;
+        }
+
+        renderMultiplayerChatMessages();
+    }
+
+    async function sendMultiplayerChatMessage() {
+        const message = multiplayerChatInput?.value.trim() || '';
+        if (!message) {
+            return;
+        }
+
+        if (!isMultiplayerChatVisible()) {
+            setMultiplayerStatus('Le chat sera disponible une fois la partie lancee.');
+            return;
+        }
+
+        try {
+            const socket = await ensureMultiplayerConnection();
+            socket.emit('room:chat:send', { message });
+            multiplayerChatInput.value = '';
+            multiplayerChatInput.focus();
+        } catch (error) {
+            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+        }
     }
 
     function updateMultiplayerGameTileSelection() {
@@ -2665,21 +2877,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         chessLastFinishedStateKey = finishedKey;
         revealChessOutcomeMenuWithDelay();
-        return;
-        if (chessMode === 'solo') {
-            openGameOverModal(
-                chessState.winner === 'white' ? 'Victoire' : 'Échec et mat',
-                chessState.winner === 'white'
-                    ? 'Le roi adverse tombe. Tu remportes la partie d échecs.'
-                    : 'Ton roi est mat. L IA remporte la partie.'
-            );
-            return;
-        }
-
-        openGameOverModal(
-            chessState.winner === 'white' ? 'Blancs gagnent' : 'Noirs gagnent',
-            `Échec et mat. ${chessState.winner === 'white' ? 'Les Blancs' : 'Les Noirs'} remportent la partie.`
-        );
     }
 
     function maybeOpenCheckersOutcomeModal() {
@@ -2733,6 +2930,7 @@ document.addEventListener('DOMContentLoaded', () => {
         multiplayerCopyCodeButton.disabled = !hasActiveRoom;
         updateMultiplayerGameTileSelection();
         renderMultiplayerPlayers();
+        updateMultiplayerChatPanel();
 
         if (hasActiveRoom && isHost && !canLaunchGame) {
             multiplayerCreateRoomButton.disabled = true;
@@ -2832,6 +3030,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 syncMultiplayerUnoState();
                 syncMultiplayerEntryModeAccess();
                 updateMultiplayerLobby();
+                updateMultiplayerChatPanel();
             });
 
             multiplayerSocket.on('room:updated', (room) => {
@@ -2854,6 +3053,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     syncMultiplayerEntryModeAccess();
                     updateMultiplayerLobby();
                 }
+                updateMultiplayerChatPanel();
             });
 
             multiplayerSocket.on('room:error', ({ message }) => {
@@ -2899,6 +3099,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 syncMultiplayerEntryModeAccess();
                 updateMultiplayerLobby();
+                updateMultiplayerChatPanel();
             });
 
             multiplayerSocket.on('room:game:start', ({ gameId }) => {
@@ -2909,6 +3110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     unoMenuClosing = false;
                 }
                 openSelectedGame(gameId);
+                updateMultiplayerChatPanel();
             });
 
             multiplayerSocket.on('disconnect', () => {
@@ -3103,6 +3305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         breakoutGame.classList.toggle('games-panel-active', tabId === 'breakout');
         blockBlastGame.classList.toggle('games-panel-active', tabId === 'blockBlast');
         unoGame.classList.toggle('games-panel-active', tabId === 'uno');
+        updateMultiplayerChatPanel();
 
         if (tabId !== 'snake') {
             closeGameOverModal();
@@ -3983,10 +4186,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentRole = getMultiplayerTicTacToeRole();
 
         if (currentRole === 'skull') {
-            return `Toi ${ticTacToeScores.skull} - ${ticTacToeScores.anchor} Adversaire`;
+            return `Toi ${ticTacToeScores.skull} - ${ticTacToeScores.anchor} Adv.`;
         }
 
-        return `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} Adversaire`;
+        return `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} Adv.`;
     }
 
     function getMultiplayerTicTacToeHelpText() {
@@ -4088,66 +4291,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .map((value, index) => value ? null : index)
             .filter((value) => value !== null);
     }
-
-    function finishTicTacToeRound(winner) {
-        ticTacToeFinished = true;
-
-        if (winner === 'anchor') {
-            ticTacToeScores.anchor += 1;
-            ticTacToeHelpText.textContent = 'Victoire. Ton équipage tient le pont.';
-            openGameOverModal('Victoire', 'Tu as battu l’IA pirate au morpion.');
-        } else if (winner === 'skull') {
-            ticTacToeScores.skull += 1;
-            ticTacToeHelpText.textContent = 'Défaite. L’IA pirate prend le pont.';
-            openGameOverModal('C’est perdu', 'L’IA pirate remporte le duel.');
-        } else {
-            ticTacToeHelpText.textContent = 'Match nul. Personne ne prend l’avantage.';
-            openGameOverModal('Match nul', 'La manche se termine sans vainqueur.');
-        }
-
-        updateTicTacToeHud();
-        renderTicTacToeBoard();
-    }
-
-    function handleTicTacToeMove(index, player = 'anchor') {
-        if (ticTacToeFinished || ticTacToeBoardState[index] || ticTacToeCurrentPlayer !== player) {
-            return;
-        }
-
-        ticTacToeBoardState[index] = player;
-        const winningLine = getTicTacToeWinner();
-
-        if (winningLine) {
-            finishTicTacToeRound(player);
-            return;
-        }
-
-        if (ticTacToeBoardState.every(Boolean)) {
-            finishTicTacToeRound('draw');
-            return;
-        }
-
-        ticTacToeCurrentPlayer = player === 'anchor' ? 'skull' : 'anchor';
-        ticTacToeHelpText.textContent = ticTacToeCurrentPlayer === 'anchor'
-            ? 'À toi de jouer.'
-            : 'L’IA pirate prépare sa riposte.';
-        updateTicTacToeHud();
-        renderTicTacToeBoard();
-
-        if (ticTacToeCurrentPlayer === 'skull') {
-            window.setTimeout(() => {
-                const emptyCells = getTicTacToeEmptyCells();
-
-                if (!emptyCells.length || ticTacToeFinished) {
-                    return;
-                }
-
-                const chosenIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                handleTicTacToeMove(chosenIndex, 'skull');
-            }, 320);
-        }
-    }
-
     function updateTicTacToeHud() {
         if (isMultiplayerTicTacToeActive()) {
             ticTacToeTurnDisplay.textContent = getMultiplayerTicTacToeTurnLabel();
@@ -4329,10 +4472,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentRole = getMultiplayerConnect4Role();
 
         if (currentRole === 'ai') {
-            return `Toi ${connect4Scores.ai} - ${connect4Scores.player} Adversaire`;
+            return `Toi ${connect4Scores.ai} - ${connect4Scores.player} Adv.`;
         }
 
-        return `Toi ${connect4Scores.player} - ${connect4Scores.ai} Adversaire`;
+        return `Toi ${connect4Scores.player} - ${connect4Scores.ai} Adv.`;
     }
 
     function getMultiplayerConnect4HelpText() {
@@ -8361,22 +8504,32 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const hasResult = Boolean(game2048MenuResult);
+
         if (game2048MenuEyebrow) {
-            game2048MenuEyebrow.textContent = game2048MenuShowingRules ? 'Regles' : 'Baie d arcade';
+            game2048MenuEyebrow.textContent = game2048MenuShowingRules
+                ? 'Regles'
+                : (hasResult ? 'Maree bloquee' : 'Baie d arcade');
         }
 
         if (game2048MenuTitle) {
-            game2048MenuTitle.textContent = game2048MenuShowingRules ? 'Rappel rapide' : '2048';
+            game2048MenuTitle.textContent = game2048MenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? 'C est perdu' : '2048');
         }
 
         if (game2048MenuText) {
             game2048MenuText.textContent = game2048MenuShowingRules
                 ? get2048RulesText()
-                : 'Fais glisser les tuiles pour fusionner les valeurs et atteindre 2048 sans bloquer la grille.';
+                : (hasResult
+                    ? `La maree t a bloque. Score ${game2048Score}. Record ${game2048BestScore}. Relance une nouvelle maree.`
+                    : 'Fais glisser les tuiles pour fusionner les valeurs et atteindre 2048 sans bloquer la grille.');
         }
 
         if (game2048MenuActionButton) {
-            game2048MenuActionButton.textContent = game2048MenuShowingRules ? 'Retour' : 'Lancer la partie';
+            game2048MenuActionButton.textContent = game2048MenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
         }
 
         if (game2048MenuRulesButton) {
@@ -8392,8 +8545,17 @@ document.addEventListener('DOMContentLoaded', () => {
             game2048MenuClosing = false;
             game2048MenuVisible = false;
             game2048MenuShowingRules = false;
+            game2048MenuResult = false;
             render2048Menu();
         }, 220);
+    }
+
+    function reveal2048OutcomeMenu() {
+        game2048MenuVisible = true;
+        game2048MenuResult = true;
+        game2048MenuShowingRules = false;
+        game2048MenuClosing = false;
+        render2048Menu();
     }
 
     function ensure2048Board() {
@@ -8550,6 +8712,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initialize2048() {
+        closeGameOverModal();
         if (game2048AnimationTimeout) {
             window.clearTimeout(game2048AnimationTimeout);
             game2048AnimationTimeout = null;
@@ -8569,6 +8732,7 @@ document.addEventListener('DOMContentLoaded', () => {
         game2048MenuVisible = true;
         game2048MenuShowingRules = false;
         game2048MenuClosing = false;
+        game2048MenuResult = false;
         render2048Menu();
     }
 
@@ -8620,6 +8784,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function move2048(direction) {
+        if (game2048MenuVisible || activeGameTab !== '2048') {
+            return;
+        }
+
         if (game2048Animating) {
             game2048QueuedMove = direction;
             return;
@@ -8939,6 +9107,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openGameOverModal(title = 'C’est perdu', text = 'Le joueur s’est noyé.') {
+        if (activeGameTab === '2048') {
+            reveal2048OutcomeMenu();
+            return;
+        }
+
         gameOverTitle.textContent = title;
         gameOverText.textContent = text;
         gameOverModal.classList.remove('hidden');
@@ -13031,6 +13204,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ensureMultiplayerAirHockeyRenderLoop();
     }
 
+    function resetMultiplayerAirHockeyInput() {
+        airHockeyKeys.clear();
+        airHockeyLocalPredicted = null;
+        if (!isMultiplayerAirHockeyActive() || !multiplayerSocket?.connected) {
+            airHockeyMultiplayerInput = { x: 0, y: 0 };
+            return;
+        }
+
+        airHockeyMultiplayerInput = { x: 0, y: 0 };
+        multiplayerSocket.emit('airhockey:input', { x: 0, y: 0 });
+    }
+
     function ensureMultiplayerAirHockeyRenderLoop() {
         if (airHockeyRenderAnimationFrame || !isMultiplayerAirHockeyActive()) {
             return;
@@ -13041,6 +13226,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!isMultiplayerAirHockeyActive() || !airHockeyState || !airHockeyDisplayState) {
                 airHockeyRenderLastFrame = 0;
+                return;
+            }
+
+            if (airHockeyState.finished || airHockeyMenuVisible) {
+                airHockeyRenderLastFrame = 0;
+                renderAirHockey();
                 return;
             }
 
@@ -13130,6 +13321,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function syncMultiplayerAirHockeyState() {
         if (!isMultiplayerAirHockeyActive()) {
+            stopAirHockeyRuntime();
             airHockeyDisplayState = null;
             airHockeyLocalPredicted = null;
             airHockeyCountdownEndsAt = 0;
@@ -13194,9 +13386,16 @@ document.addEventListener('DOMContentLoaded', () => {
             ? (airHockeyState.winner === getMultiplayerAirHockeyRole() ? 'Victoire. Le palet finit dans les filets adverses.' : 'Defaite. L adversaire remporte le duel.')
             : (airHockeyState.running ? 'Deplace ton palet avec fluidite. Premier a 5.' : 'Attends que l hote lance le duel.');
 
+        if (airHockeyState.finished) {
+            stopAirHockeyRuntime();
+            resetMultiplayerAirHockeyInput();
+        }
+
         renderAirHockey();
-        ensureMultiplayerAirHockeyRenderLoop();
-        pushMultiplayerAirHockeyInput();
+        if (!airHockeyState.finished) {
+            ensureMultiplayerAirHockeyRenderLoop();
+            pushMultiplayerAirHockeyInput();
+        }
 
         if (!airHockeyState.finished) {
             airHockeyLastFinishedStateKey = '';
@@ -13210,9 +13409,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         airHockeyLastFinishedStateKey = finishedKey;
         if (airHockeyState.winner === getMultiplayerAirHockeyRole()) {
-            openGameOverModal('Victoire', 'Tu remportes ce duel de Sea Hockey en ligne.');
+            revealAirHockeyOutcomeMenu(
+                'Victoire',
+                'Tu remportes ce duel de Sea Hockey en ligne.',
+                'Pont en liesse'
+            );
         } else {
-            openGameOverModal('C est perdu', 'L adversaire remporte ce duel de Sea Hockey.');
+            revealAirHockeyOutcomeMenu(
+                'C est perdu',
+                'L adversaire remporte ce duel de Sea Hockey.',
+                'Duel termine'
+            );
         }
     }
 
@@ -13497,6 +13704,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleAirHockeyPoint(side) {
         airHockeyState[side === 'left' ? 'leftScore' : 'rightScore'] += 1;
         if (airHockeyState.leftScore >= AIR_HOCKEY_GOAL_SCORE || airHockeyState.rightScore >= AIR_HOCKEY_GOAL_SCORE) {
+            airHockeyState.running = false;
+            airHockeyState.puck.vx = 0;
+            airHockeyState.puck.vy = 0;
+            airHockeyKeys.clear();
             stopAirHockeyRuntime();
             const winnerLabel = airHockeyState.leftScore > airHockeyState.rightScore ? 'Le joueur gauche' : 'Le joueur droit';
             revealAirHockeyOutcomeMenu(
@@ -13603,7 +13814,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (puckInGoalOpening) {
                     handleAirHockeyPoint('right');
                     renderAirHockey();
-                    airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
+                    if (!airHockeyMenuVisible) {
+                        airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
+                    }
                     return;
                 }
 
@@ -13615,7 +13828,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (puckInGoalOpening) {
                     handleAirHockeyPoint('left');
                     renderAirHockey();
-                    airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
+                    if (!airHockeyMenuVisible) {
+                        airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
+                    }
                     return;
                 }
 
@@ -14778,19 +14993,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const hasResult = Boolean(breakoutMenuResult);
+
         if (breakoutMenuEyebrow) {
-            breakoutMenuEyebrow.textContent = breakoutMenuShowingRules ? 'Regles' : 'Baie d arcade';
+            breakoutMenuEyebrow.textContent = breakoutMenuShowingRules
+                ? 'Regles'
+                : (hasResult ? breakoutMenuResult.eyebrow : 'Baie d arcade');
         }
         if (breakoutMenuTitle) {
-            breakoutMenuTitle.textContent = breakoutMenuShowingRules ? 'Rappel rapide' : 'Break It';
+            breakoutMenuTitle.textContent = breakoutMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? breakoutMenuResult.title : 'Break It');
         }
         if (breakoutMenuText) {
             breakoutMenuText.textContent = breakoutMenuShowingRules
                 ? getBreakoutRulesText()
-                : 'Prepare ta traversee avant d envoyer la balle sur les briques.';
+                : (hasResult
+                    ? breakoutMenuResult.text
+                    : 'Prepare ta traversee avant d envoyer la balle sur les briques.');
         }
         if (breakoutMenuActionButton) {
-            breakoutMenuActionButton.textContent = breakoutMenuShowingRules ? 'Retour' : 'Lancer la partie';
+            breakoutMenuActionButton.textContent = breakoutMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
         }
         if (breakoutMenuRulesButton) {
             breakoutMenuRulesButton.textContent = 'Regles';
@@ -14805,6 +15030,7 @@ document.addEventListener('DOMContentLoaded', () => {
             breakoutMenuClosing = false;
             breakoutMenuVisible = false;
             breakoutMenuShowingRules = false;
+            breakoutMenuResult = null;
             if (breakoutState) {
                 breakoutState.running = true;
             }
@@ -14848,9 +15074,18 @@ document.addEventListener('DOMContentLoaded', () => {
         breakoutMenuVisible = true;
         breakoutMenuShowingRules = false;
         breakoutMenuClosing = false;
+        breakoutMenuResult = null;
         renderBreakoutMenu();
         drawBreakout();
 
+    }
+
+    function revealBreakoutOutcomeMenu(title, text, eyebrow) {
+        breakoutMenuVisible = true;
+        breakoutMenuShowingRules = false;
+        breakoutMenuClosing = false;
+        breakoutMenuResult = { title, text, eyebrow };
+        renderBreakoutMenu();
     }
 
     function stopBreakout() {
@@ -14949,19 +15184,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     breakoutState.running = false;
                     resetBreakoutBall();
                     breakoutHelpText.textContent = breakoutState.lives > 0 ? 'Balle perdue. Clique relancer.' : `Partie terminee. Score ${breakoutState.score}.`;
+                    if (breakoutState.lives <= 0) {
+                        revealBreakoutOutcomeMenu(
+                            'Partie terminee',
+                            `Score ${breakoutState.score}. Record ${breakoutBestScore}.`,
+                            'Pont en cale seche'
+                        );
+                    }
+                    stopBreakout();
+                    drawBreakout();
                     break;
                 }
 
                 if (breakoutRemainingBricks === 0) {
                     breakoutState.running = false;
                     breakoutHelpText.textContent = `Victoire ! Score ${breakoutState.score}.`;
+                    revealBreakoutOutcomeMenu(
+                        'Victoire',
+                        `Toutes les briques sont tombees. Score ${breakoutState.score}. Record ${breakoutBestScore}.`,
+                        'Pont en liesse'
+                    );
+                    stopBreakout();
+                    drawBreakout();
                     break;
                 }
             }
         }
 
         drawBreakout();
-        breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
+        if (breakoutState.running) {
+            breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
+        } else {
+            breakoutAnimationFrame = null;
+        }
     }
 
     function createBlockBlastPiece(template) {
@@ -16733,6 +16988,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (game2048MenuResult) {
+            initialize2048();
+            close2048Menu();
+            return;
+        }
+
         close2048Menu();
     });
 
@@ -17536,6 +17797,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (breakoutMenuResult) {
+            initializeBreakout();
+            startBreakoutLaunchSequence();
+            return;
+        }
+
         initializeBreakout();
         startBreakoutLaunchSequence();
     });
@@ -18335,6 +18602,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     initializeBreakout();
                 }
                 breakoutState.running = true;
+                if (!breakoutAnimationFrame) {
+                    breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
+                }
                 return;
             }
         }
@@ -18514,6 +18784,10 @@ document.addEventListener('DOMContentLoaded', () => {
     multiplayerJoinRoomCodeInput?.addEventListener('input', () => {
         multiplayerJoinRoomCodeInput.value = multiplayerJoinRoomCodeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
     });
+    multiplayerChatForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        sendMultiplayerChatMessage();
+    });
 
     multiplayerCreatePlayerNameInput?.addEventListener('input', () => {
         syncMultiplayerPlayerNames('create');
@@ -18574,5 +18848,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleSessionTimeout();
     }
 });
+
+
 
 
