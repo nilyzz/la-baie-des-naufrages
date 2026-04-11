@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const AIM_BEST_KEY = 'baie-des-naufrages-aim-best';
     const CONNECT4_ROWS = 6;
     const CONNECT4_COLS = 7;
-    const MEMORY_ICONS = ['⚓', '🦀', '🐚', '🦑', '🪸', '🦞', '🐠', '🧭'];
+    const MEMORY_ICONS = ['âš“', 'ðŸ¦€', 'ðŸš', 'ðŸ¦‘', 'ðŸª¸', 'ðŸ¦ž', 'ðŸ ', 'ðŸ§­'];
     const BATTLESHIP_SIZE = 8;
     const BLOCK_BLAST_SIZE = 8;
     const BLOCK_BLAST_BEST_KEY = 'baie-des-naufrages-block-blast-best';
@@ -635,12 +635,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'treasury', label: 'Tresor royal', baseCost: 760, effectType: 'multiplier', bonus: 0.5, description: '+0,50 multiplicateur' }
     ];
     const CHESS_PIECES = {
-        pawn: { white: '♙', black: '♟' },
-        rook: { white: '♖', black: '♜' },
-        knight: { white: '♘', black: '♞' },
-        bishop: { white: '♗', black: '♝' },
-        queen: { white: '♕', black: '♛' },
-        king: { white: '♔', black: '♚' }
+        pawn: { white: 'â™™', black: 'â™Ÿ' },
+        rook: { white: 'â™–', black: 'â™œ' },
+        knight: { white: 'â™˜', black: 'â™ž' },
+        bishop: { white: 'â™—', black: 'â™' },
+        queen: { white: 'â™•', black: 'â™›' },
+        king: { white: 'â™”', black: 'â™š' }
     };
     const CHECKERS_DIRECTIONS = {
         red: [[-1, -1], [-1, 1]],
@@ -683,10 +683,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const SOLITAIRE_SUITS = ['spades', 'hearts', 'clubs', 'diamonds'];
     const SOLITAIRE_SUIT_SYMBOLS = {
-        spades: '♠',
-        hearts: '♥',
-        clubs: '♣',
-        diamonds: '♦'
+        spades: 'â™ ',
+        hearts: 'â™¥',
+        clubs: 'â™£',
+        diamonds: 'â™¦'
     };
     const SUDOKU_DIFFICULTIES = [
         { difficulty: 'Moussaillon', removals: 38 },
@@ -1691,8 +1691,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function normalizeCalculatorExpression(expression) {
         return expression
             .replace(/,/g, '.')
-            .replace(/[x×]/gi, '*')
-            .replace(/[÷]/g, '/')
+            .replace(/[xÃ—]/gi, '*')
+            .replace(/[Ã·]/g, '/')
             .replace(/\bpi\b/gi, 'Math.PI')
             .replace(/\bsqrt\(/gi, 'Math.sqrt(')
             .replace(/\^/g, '**');
@@ -2333,6 +2333,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
     }
 
+
+    function getMultiplayerReadySummary() {
+        const readyCount = Number(multiplayerActiveRoom?.readyCount || 0);
+        const readyTotal = Number(multiplayerActiveRoom?.readyTotal || multiplayerActiveRoom?.playerCount || 0);
+        return `${readyCount}/${readyTotal || 0}`;
+    }
+
+    function isCurrentPlayerMultiplayerReady() {
+        return Boolean(getCurrentMultiplayerPlayer()?.roomReady);
+    }
+
+    function isMultiplayerLaunchPending(gameId = multiplayerActiveRoom?.gameId) {
+        return multiplayerActiveRoom?.gameId === gameId && !multiplayerActiveRoom?.gameLaunched;
+    }
+
     function syncMultiplayerEntryModeAccess() {
         const currentPlayer = getCurrentMultiplayerPlayer();
         const hasActiveRoom = Boolean(multiplayerActiveRoom?.code && currentPlayer);
@@ -2390,7 +2405,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const playersSignature = Array.isArray(room.players)
-            ? room.players.map((player) => `${player.id}:${player.name}:${player.isHost ? 'h' : '-'}:${player.isYou ? 'y' : '-'}`).join('|')
+            ? room.players.map((player) => `${player.id}:${player.name}:${player.isHost ? 'h' : '-'}:${player.isYou ? 'y' : '-'}:${player.roomReady ? 'r' : '-'}`).join('|')
             : '';
 
         return [
@@ -2399,6 +2414,8 @@ document.addEventListener('DOMContentLoaded', () => {
             room.hostId || '',
             Number(room.playerCount || 0),
             Number(room.maxPlayers || 0),
+            Number(room.readyCount || 0),
+            Boolean(room.gameLaunched),
             playersSignature
         ].join('::');
     }
@@ -2519,10 +2536,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         multiplayerChatMessages.appendChild(fragment);
         const nextSignature = messages.map((message) => message.id).join('|');
-        if (nextSignature !== multiplayerChatSignature) {
-            multiplayerChatMessages.scrollTop = multiplayerChatMessages.scrollHeight;
-            multiplayerChatSignature = nextSignature;
-        }
+        multiplayerChatMessages.scrollTop = multiplayerChatMessages.scrollHeight;
+        multiplayerChatSignature = nextSignature;
     }
 
     function updateMultiplayerChatPanel() {
@@ -2910,17 +2925,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
         const hasActiveRoom = Boolean(multiplayerActiveRoom?.code);
         const isHost = Boolean(currentPlayer?.isHost);
-        const canLaunchGame = Boolean(hasActiveRoom && isHost && multiplayerActiveRoom.playerCount >= 2);
+        const readySummary = getMultiplayerReadySummary();
+        const readyLabel = isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret';
 
         multiplayerCurrentRoomCode.textContent = multiplayerActiveRoom?.code || '-';
         multiplayerLobbyPlayersBlock?.classList.toggle('hidden', !hasActiveRoom);
         multiplayerCreatePlayerField?.classList.toggle('hidden', hasActiveRoom);
         multiplayerJoinPlayerField?.classList.toggle('hidden', hasActiveRoom);
         multiplayerJoinCodeField?.classList.toggle('hidden', hasActiveRoom);
-        multiplayerCreateRoomButton.disabled = multiplayerBusy || !canUseMultiplayer || (hasActiveRoom && !isHost);
+        multiplayerCreateRoomButton.disabled = multiplayerBusy || !canUseMultiplayer;
         multiplayerJoinRoomButton.disabled = multiplayerBusy;
-        multiplayerCreateRoomButton.textContent = hasActiveRoom && isHost
-            ? `Lancer ${activeRoomGameLabel}`
+        multiplayerCreateRoomButton.textContent = hasActiveRoom
+            ? `${readyLabel} (${readySummary})`
             : 'Creer le salon';
         multiplayerJoinRoomButton.textContent = hasActiveRoom
             ? 'Quitter le salon'
@@ -2932,26 +2948,22 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMultiplayerPlayers();
         updateMultiplayerChatPanel();
 
-        if (hasActiveRoom && isHost && !canLaunchGame) {
-            multiplayerCreateRoomButton.disabled = true;
-        }
-
         if (preserveStatus) {
             return;
         }
 
         if (hasActiveRoom) {
-            if (isHost && multiplayerActiveRoom.playerCount < 2) {
-            setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} cree. Attends un autre joueur avant de lancer ${activeRoomGameLabel}.`);
+            if (multiplayerActiveRoom.playerCount < 2) {
+                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} cree. Attends un autre joueur avant de preparer ${activeRoomGameLabel}.`);
                 return;
             }
 
-            if (!isHost && multiplayerActiveRoom.playerCount < 2) {
-                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} pret. En attente du lancement par l hote.`);
+            if (!multiplayerActiveRoom.gameLaunched) {
+                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} pret sur ${activeRoomGameLabel}. ${readySummary} joueurs prets. La partie demarre quand tout le monde est pret.`);
                 return;
             }
 
-            setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} pret sur ${activeRoomGameLabel}.`);
+            setMultiplayerStatus(`${activeRoomGameLabel} est en cours dans le salon ${multiplayerActiveRoom.code}.`);
             return;
         }
 
@@ -3132,10 +3144,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function createMultiplayerRoom() {
         const selectedGame = getSelectedMultiplayerGame();
-        const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
 
-        if (multiplayerActiveRoom?.code && currentPlayer?.isHost) {
-            await launchMultiplayerGame();
+        if (multiplayerActiveRoom?.code) {
+            await toggleMultiplayerReady();
             return;
         }
 
@@ -3237,30 +3248,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function launchMultiplayerGame() {
+    async function toggleMultiplayerReady() {
         if (!multiplayerActiveRoom?.code) {
-            setMultiplayerStatus('Aucune room active a lancer.');
-            return;
-        }
-
-        const currentPlayer = multiplayerActiveRoom.players?.find((player) => player.isYou);
-        if (!currentPlayer?.isHost) {
-            setMultiplayerStatus('Seul l hote peut lancer la partie.');
-            return;
-        }
-
-        if (multiplayerActiveRoom.playerCount < 2) {
-            setMultiplayerStatus('Attends au moins un autre joueur avant de lancer la partie.');
+            setMultiplayerStatus('Aucune room active a preparer.');
             return;
         }
 
         try {
             const socket = await ensureMultiplayerConnection();
-            socket.emit('room:launch-game');
-            setMultiplayerStatus(`Lancement de ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}...`);
+            socket.emit('room:toggle-ready');
+            setMultiplayerStatus(`${isCurrentPlayerMultiplayerReady() ? 'Retrait du statut pret' : 'Preparation'} pour ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}...`);
         } catch (error) {
             setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
         }
+    }
+
+    async function launchMultiplayerGame() {
+        await toggleMultiplayerReady();
     }
 
     function showGamePanel(tabId) {
@@ -3997,7 +4001,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 data-index="${index}"
                 aria-label="${cell ? (cell === 'anchor' ? 'Case ancre' : 'Case pirate') : 'Case vide'}"
             >
-                <span aria-hidden="true">${cell === 'anchor' ? '⚓' : cell === 'skull' ? '☠' : ''}</span>
+                <span aria-hidden="true">${cell === 'anchor' ? 'âš“' : cell === 'skull' ? 'â˜ ' : ''}</span>
             </button>
         `).join('');
     }
@@ -4047,13 +4051,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? (ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont. Relancez une nouvelle manche.' : 'L IA pirate prend le pont. Relance une nouvelle manche.')
                         : (ticTacToeMenuResult === 'draw'
                             ? 'Personne ne prend l avantage. Relance une nouvelle manche.'
-                            : 'Aligne trois symboles avant l equipage adverse pour prendre le pont.')));
+                            : ((isMultiplayerTicTacToeActive() && !multiplayerActiveRoom?.gameLaunched)
+                                ? 'Quand tous les joueurs sont prets, la manche de morpion commence automatiquement.'
+                                : 'Aligne trois symboles avant l equipage adverse pour prendre le pont.'))));
         }
 
         if (ticTacToeMenuActionButton) {
             ticTacToeMenuActionButton.textContent = ticTacToeMenuShowingRules
                 ? 'Retour'
-                : (isOutcome ? 'Relancer la partie' : 'Lancer la partie');
+                : ((isMultiplayerTicTacToeActive() && !multiplayerActiveRoom?.gameLaunched)
+                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+                    : (isOutcome ? 'Relancer la partie' : 'Lancer la partie'));
         }
 
         if (ticTacToeMenuRulesButton) {
@@ -4281,7 +4289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ticTacToeBoardState = Array(9).fill('');
         ticTacToeCurrentPlayer = 'anchor';
         ticTacToeFinished = false;
-        ticTacToeHelpText.textContent = 'Place tes ancres contre l’IA pirate pour aligner trois symboles.';
+        ticTacToeHelpText.textContent = 'Place tes ancres contre lâ€™IA pirate pour aligner trois symboles.';
         updateTicTacToeHud();
         renderTicTacToeBoard();
     }
@@ -4562,12 +4570,16 @@ document.addEventListener('DOMContentLoaded', () => {
                                 : (winner === 'player'
                                     ? 'Tu remportes cette manche de Coin 4.'
                                     : 'L IA remporte cette manche de Coin 4.'))))
-                    : 'Choisis ton mode puis prends possession du pont en alignant quatre jetons avant ton rival.');
+                    : ((multiplayerConnect4 && !multiplayerActiveRoom?.gameLaunched)
+                        ? 'Quand tous les joueurs sont prets, la manche de Coin 4 se lance automatiquement.'
+                        : 'Choisis ton mode puis prends possession du pont en alignant quatre jetons avant ton rival.'));
         }
         if (connect4MenuActionButton) {
             connect4MenuActionButton.textContent = connect4MenuShowingRules
                 ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
+                : ((multiplayerConnect4 && !multiplayerActiveRoom?.gameLaunched)
+                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+                    : (hasResult ? 'Relancer la partie' : 'Lancer la partie'));
         }
         if (connect4MenuRulesButton) {
             connect4MenuRulesButton.textContent = 'Regles';
@@ -4849,10 +4861,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (cell.hit && cell.hasShip) {
                 classes.push('is-hit');
-                label = '✕';
+                label = 'âœ•';
             } else if (cell.hit) {
                 classes.push('is-miss');
-                label = '•';
+                label = 'â€¢';
             }
 
             return `
@@ -4916,10 +4928,10 @@ document.addEventListener('DOMContentLoaded', () => {
         battleshipFinished = true;
         battleshipStatusText.textContent = playerWon
             ? 'Victoire. La flotte adverse sombre dans la baie.'
-            : 'Défaite. Ta flotte a été coulée.';
+            : 'DÃ©faite. Ta flotte a Ã©tÃ© coulÃ©e.';
         openGameOverModal(
-            playerWon ? 'Victoire' : 'C’est perdu',
-            playerWon ? 'La bataille navale est remportée.' : 'La flotte ennemie gagne la bataille.'
+            playerWon ? 'Victoire' : 'Câ€™est perdu',
+            playerWon ? 'La bataille navale est remportÃ©e.' : 'La flotte ennemie gagne la bataille.'
         );
     }
 
@@ -5139,8 +5151,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tetrisLines += cleared;
             tetrisScore += [0, 100, 260, 460, 700][cleared] || (cleared * 200);
             tetrisHelpText.textContent = cleared > 1
-                ? `Belle manœuvre. ${cleared} lignes nettoyées dans la cale.`
-                : 'Une ligne libérée dans la cale.';
+                ? `Belle manÅ“uvre. ${cleared} lignes nettoyÃ©es dans la cale.`
+                : 'Une ligne libÃ©rÃ©e dans la cale.';
         }
     }
 
@@ -5150,8 +5162,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!canPlaceTetrisPiece(tetrisPiece)) {
             stopTetris();
             tetrisPiece = null;
-            tetrisHelpText.textContent = 'La cale est pleine. Relance une traversée.';
-            openGameOverModal('C’est perdu', `La cargaison s’est empilée. Score : ${tetrisScore}.`);
+            tetrisHelpText.textContent = 'La cale est pleine. Relance une traversÃ©e.';
+            openGameOverModal('Câ€™est perdu', `La cargaison sâ€™est empilÃ©e. Score : ${tetrisScore}.`);
             renderTetris();
         }
     }
@@ -5250,7 +5262,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tetrisPiece = createRandomTetrisPiece();
         tetrisScore = 0;
         tetrisLines = 0;
-        tetrisHelpText.textContent = 'Empile les caisses. Flèches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.';
+        tetrisHelpText.textContent = 'Empile les caisses. FlÃ¨ches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.';
         renderTetris();
     }
 
@@ -5521,8 +5533,8 @@ document.addEventListener('DOMContentLoaded', () => {
         stopPacman();
         resetPacmanActors();
         pacmanHelpText.textContent = pacmanLives > 0
-            ? 'Un esprit t’a touché. Relance la chasse pour reprendre la baie.'
-            : 'Les esprits du brouillard t’ont rattrapé.';
+            ? 'Un esprit tâ€™a touchÃ©. Relance la chasse pour reprendre la baie.'
+            : 'Les esprits du brouillard tâ€™ont rattrapÃ©.';
         renderPacman();
 
         if (pacmanLives > 0) {
@@ -5554,7 +5566,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (pacmanLives <= 0) {
             resetPacmanAfterHit();
-            openGameOverModal('C’est perdu', `Les esprits du brouillard t’ont capturé. Score : ${pacmanScore}.`);
+            openGameOverModal('Câ€™est perdu', `Les esprits du brouillard tâ€™ont capturÃ©. Score : ${pacmanScore}.`);
             return true;
         }
 
@@ -5603,8 +5615,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (pacmanPellets === 0) {
             stopPacman();
-            pacmanHelpText.textContent = 'La baie est nettoyée. Plus aucune perle à ramasser.';
-            openGameOverModal('Victoire', `Tu as vidé la baie de ses perles. Score : ${pacmanScore}.`);
+            pacmanHelpText.textContent = 'La baie est nettoyÃ©e. Plus aucune perle Ã  ramasser.';
+            openGameOverModal('Victoire', `Tu as vidÃ© la baie de ses perles. Score : ${pacmanScore}.`);
         }
 
         renderPacman();
@@ -5763,8 +5775,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const foundationCount = SOLITAIRE_SUITS.reduce((total, suit) => total + solitaireFoundationsState[suit].length, 0);
 
         if (foundationCount === 52) {
-            solitaireHelpText.textContent = 'Le pont est rangé. Toutes les fondations sont complètes.';
-            openGameOverModal('Victoire', 'Tu as réussi le solitaire du navire.');
+            solitaireHelpText.textContent = 'Le pont est rangÃ©. Toutes les fondations sont complÃ¨tes.';
+            openGameOverModal('Victoire', 'Tu as rÃ©ussi le solitaire du navire.');
         }
     }
 
@@ -5773,12 +5785,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         solitaireStock.innerHTML = solitaireStockCards.length
             ? '<button type="button" class="solitaire-playing-card-back" data-solitaire-action="draw"><span class="card-back-emblem"></span></button>'
-            : '<button type="button" class="solitaire-playing-card-placeholder" data-solitaire-action="recycle">↺</button>';
+            : '<button type="button" class="solitaire-playing-card-placeholder" data-solitaire-action="recycle">â†º</button>';
 
         const wasteTopCard = solitaireWasteCards[solitaireWasteCards.length - 1];
         solitaireWaste.innerHTML = wasteTopCard
             ? `<button type="button" class="solitaire-playing-card${solitaireSelectedSource?.type === 'waste' ? ' is-selected' : ''} ${getSolitaireCardColor(wasteTopCard.suit)}" data-solitaire-source="waste">${getSolitaireCardLabel(wasteTopCard)}</button>`
-            : '<div class="solitaire-playing-card-placeholder">Défausse</div>';
+            : '<div class="solitaire-playing-card-placeholder">DÃ©fausse</div>';
 
         solitaireFoundations.innerHTML = SOLITAIRE_SUITS.map((suit) => {
             const topCard = solitaireFoundationsState[suit][solitaireFoundationsState[suit].length - 1];
@@ -5852,7 +5864,7 @@ document.addEventListener('DOMContentLoaded', () => {
         removeSolitaireSourceCards(solitaireSelectedSource, 1);
         solitaireFoundationsState[suit].push(movableCards[0]);
         clearSolitaireSelection();
-        solitaireHelpText.textContent = 'Carte placée sur une fondation.';
+        solitaireHelpText.textContent = 'Carte placÃ©e sur une fondation.';
         renderSolitaire();
         checkSolitaireWin();
         return true;
@@ -5868,7 +5880,7 @@ document.addEventListener('DOMContentLoaded', () => {
         removeSolitaireSourceCards(solitaireSelectedSource, movableCards.length);
         solitaireTableauColumns[col].push(...movableCards);
         clearSolitaireSelection();
-        solitaireHelpText.textContent = 'Pile déplacée sur une colonne du pont.';
+        solitaireHelpText.textContent = 'Pile dÃ©placÃ©e sur une colonne du pont.';
         renderSolitaire();
         checkSolitaireWin();
         return true;
@@ -5892,7 +5904,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         solitaireStockCards = deck.map((card) => ({ ...card, faceUp: false }));
-        solitaireHelpText.textContent = 'Clique une carte pour la sélectionner puis clique sa destination. La pioche se recycle quand elle est vide.';
+        solitaireHelpText.textContent = 'Clique une carte pour la sÃ©lectionner puis clique sa destination. La pioche se recycle quand elle est vide.';
         renderSolitaire();
     }
 
@@ -5940,7 +5952,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 class="connect4-drop-piece ${connect4DropAnimationState.token === 'player' ? 'is-player' : 'is-ai'}"
                 style="left: ${connect4DropAnimationState.left}px; top: ${connect4DropAnimationState.top}px; width: ${connect4DropAnimationState.size}px; height: ${connect4DropAnimationState.size}px; --connect4-drop-distance: ${connect4DropAnimationState.distance}px;"
                 aria-hidden="true"
-            ><span class="connect4-drop-piece-skull">☠</span></div>
+            ><span class="connect4-drop-piece-skull">&#9760;</span></div>
         ` : ''}`;
         renderConnect4Menu();
     }
@@ -6025,6 +6037,194 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
+
+    function getConnect4DropRowForBoard(board, col) {
+        for (let row = CONNECT4_ROWS - 1; row >= 0; row -= 1) {
+            if (!board[row][col]) {
+                return row;
+            }
+        }
+
+        return -1;
+    }
+
+    function cloneConnect4Board(board) {
+        return board.map((row) => [...row]);
+    }
+
+    function getConnect4AvailableColumns(board) {
+        return Array.from({ length: CONNECT4_COLS }, (_, index) => index)
+            .filter((col) => getConnect4DropRowForBoard(board, col) !== -1);
+    }
+
+    function dropConnect4TokenOnBoard(board, col, token) {
+        const row = getConnect4DropRowForBoard(board, col);
+        if (row === -1) {
+            return null;
+        }
+
+        const nextBoard = cloneConnect4Board(board);
+        nextBoard[row][col] = token;
+        return { board: nextBoard, row };
+    }
+
+    function evaluateConnect4Window(windowCells) {
+        const aiCount = windowCells.filter((cell) => cell === 'ai').length;
+        const playerCount = windowCells.filter((cell) => cell === 'player').length;
+        const emptyCount = windowCells.filter((cell) => !cell).length;
+
+        if (aiCount && playerCount) {
+            return 0;
+        }
+
+        if (aiCount === 4) {
+            return 100000;
+        }
+
+        if (playerCount === 4) {
+            return -100000;
+        }
+
+        if (aiCount === 3 && emptyCount === 1) {
+            return 120;
+        }
+
+        if (aiCount === 2 && emptyCount === 2) {
+            return 18;
+        }
+
+        if (playerCount === 3 && emptyCount === 1) {
+            return -135;
+        }
+
+        if (playerCount === 2 && emptyCount === 2) {
+            return -20;
+        }
+
+        if (aiCount === 1 && emptyCount === 3) {
+            return 4;
+        }
+
+        if (playerCount === 1 && emptyCount === 3) {
+            return -4;
+        }
+
+        return 0;
+    }
+
+    function evaluateConnect4Board(board) {
+        let score = 0;
+        const centerCol = Math.floor(CONNECT4_COLS / 2);
+        const centerCells = board.map((row) => row[centerCol]);
+        score += centerCells.filter((cell) => cell === 'ai').length * 9;
+        score -= centerCells.filter((cell) => cell === 'player').length * 9;
+
+        for (let row = 0; row < CONNECT4_ROWS; row += 1) {
+            for (let col = 0; col <= CONNECT4_COLS - 4; col += 1) {
+                score += evaluateConnect4Window([
+                    board[row][col],
+                    board[row][col + 1],
+                    board[row][col + 2],
+                    board[row][col + 3]
+                ]);
+            }
+        }
+
+        for (let row = 0; row <= CONNECT4_ROWS - 4; row += 1) {
+            for (let col = 0; col < CONNECT4_COLS; col += 1) {
+                score += evaluateConnect4Window([
+                    board[row][col],
+                    board[row + 1][col],
+                    board[row + 2][col],
+                    board[row + 3][col]
+                ]);
+            }
+        }
+
+        for (let row = 0; row <= CONNECT4_ROWS - 4; row += 1) {
+            for (let col = 0; col <= CONNECT4_COLS - 4; col += 1) {
+                score += evaluateConnect4Window([
+                    board[row][col],
+                    board[row + 1][col + 1],
+                    board[row + 2][col + 2],
+                    board[row + 3][col + 3]
+                ]);
+            }
+        }
+
+        for (let row = 0; row <= CONNECT4_ROWS - 4; row += 1) {
+            for (let col = 3; col < CONNECT4_COLS; col += 1) {
+                score += evaluateConnect4Window([
+                    board[row][col],
+                    board[row + 1][col - 1],
+                    board[row + 2][col - 2],
+                    board[row + 3][col - 3]
+                ]);
+            }
+        }
+
+        return score;
+    }
+
+    function minimaxConnect4(board, depth, maximizingPlayer, alpha, beta) {
+        if (getConnect4Winner(board, 'ai')) {
+            return 1000000 + depth;
+        }
+
+        if (getConnect4Winner(board, 'player')) {
+            return -1000000 - depth;
+        }
+
+        const availableCols = getConnect4AvailableColumns(board);
+        if (!availableCols.length) {
+            return 0;
+        }
+
+        if (depth === 0) {
+            return evaluateConnect4Board(board);
+        }
+
+        if (maximizingPlayer) {
+            let bestScore = -Infinity;
+
+            for (const col of availableCols) {
+                const nextMove = dropConnect4TokenOnBoard(board, col, 'ai');
+                if (!nextMove) {
+                    continue;
+                }
+
+                const score = minimaxConnect4(nextMove.board, depth - 1, false, alpha, beta);
+                bestScore = Math.max(bestScore, score);
+                alpha = Math.max(alpha, score);
+
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+
+            return bestScore;
+        }
+
+        let bestScore = Infinity;
+
+        for (const col of availableCols) {
+            const nextMove = dropConnect4TokenOnBoard(board, col, 'player');
+            if (!nextMove) {
+                continue;
+            }
+
+            const score = minimaxConnect4(nextMove.board, depth - 1, true, alpha, beta);
+            bestScore = Math.min(bestScore, score);
+            beta = Math.min(beta, score);
+
+            if (beta <= alpha) {
+                break;
+            }
+        }
+
+        return bestScore;
+    }
+
     function highlightConnect4Line(line) {
         line.forEach(([row, col]) => {
             connect4Board.querySelector(`[data-row="${row}"][data-col="${col}"]`)?.classList.add('is-winning');
@@ -6067,28 +6267,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function chooseConnect4AiColumn() {
-        const availableCols = Array.from({ length: CONNECT4_COLS }, (_, index) => index).filter((col) => getConnect4DropRow(col) !== -1);
+        const availableCols = getConnect4AvailableColumns(connect4BoardState);
 
         for (const col of availableCols) {
-            const row = getConnect4DropRow(col);
-            const preview = connect4BoardState.map((line) => [...line]);
-            preview[row][col] = 'ai';
-            if (getConnect4Winner(preview, 'ai')) {
+            const preview = dropConnect4TokenOnBoard(connect4BoardState, col, 'ai');
+            if (preview && getConnect4Winner(preview.board, 'ai')) {
                 return col;
             }
         }
 
         for (const col of availableCols) {
-            const row = getConnect4DropRow(col);
-            const preview = connect4BoardState.map((line) => [...line]);
-            preview[row][col] = 'player';
-            if (getConnect4Winner(preview, 'player')) {
+            const preview = dropConnect4TokenOnBoard(connect4BoardState, col, 'player');
+            if (preview && getConnect4Winner(preview.board, 'player')) {
                 return col;
             }
         }
+
+        let bestScore = -Infinity;
+        let bestColumns = [];
+
+        availableCols.forEach((col) => {
+            const preview = dropConnect4TokenOnBoard(connect4BoardState, col, 'ai');
+            if (!preview) {
+                return;
+            }
+
+            let score = minimaxConnect4(preview.board, 4, false, -Infinity, Infinity);
+            score += (3 - Math.abs(3 - col)) * 4;
+            score += Math.random() * 0.18;
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestColumns = [col];
+            } else if (Math.abs(score - bestScore) < 0.001) {
+                bestColumns.push(col);
+            }
+        });
 
         const preferred = [3, 2, 4, 1, 5, 0, 6];
-        return preferred.find((col) => availableCols.includes(col)) ?? availableCols[0];
+        return preferred.find((col) => bestColumns.includes(col))
+            ?? bestColumns[Math.floor(Math.random() * bestColumns.length)]
+            ?? availableCols[0];
     }
 
     function finishConnect4(winner, line = null) {
@@ -6752,7 +6971,7 @@ document.addEventListener('DOMContentLoaded', () => {
         aimScoreDisplay.textContent = String(aimScore);
         aimTimerDisplay.textContent = String(aimTimeRemaining);
         aimBestScoreDisplay.textContent = String(aimBestScore);
-        aimStartButton.textContent = aimRoundRunning ? 'Bordée en cours' : 'Nouvelle bordée';
+        aimStartButton.textContent = aimRoundRunning ? 'BordÃ©e en cours' : 'Nouvelle bordÃ©e';
     }
 
     function getAimFreeCells(excludedKey = null) {
@@ -6883,8 +7102,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateAimHud();
         openGameOverModal(
-            'Fin de la bordée',
-            `Tu as inscrit ${aimScore} touches avant la fin de la marée.`
+            'Fin de la bordÃ©e',
+            `Tu as inscrit ${aimScore} touches avant la fin de la marÃ©e.`
         );
     }
 
@@ -6967,7 +7186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         aimScoreDisplay.textContent = String(aimScore);
         aimTimerDisplay.textContent = String(aimTimeRemaining);
         aimBestScoreDisplay.textContent = String(aimBestScore);
-        aimStartButton.textContent = aimRoundRunning ? 'Bordée en cours' : 'Nouvelle bordée';
+        aimStartButton.textContent = aimRoundRunning ? 'BordÃ©e en cours' : 'Nouvelle bordÃ©e';
         aimDurationButtons.forEach((button) => {
             button.classList.toggle('is-active', Number(button.dataset.aimDuration) === aimRoundSeconds);
         });
@@ -7092,16 +7311,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const countdownActive = Boolean(gameState?.countdownEndsAt && Number(gameState.countdownEndsAt) > Date.now());
         const roomStarted = Boolean(gameState?.running || countdownActive);
         const roomFinished = Boolean(gameState?.finished);
-        const isHost = Boolean(getCurrentMultiplayerPlayer()?.isHost);
+        const waitingForReady = isOnline && !multiplayerActiveRoom?.gameLaunched;
         const hasEnoughPlayers = Number(multiplayerActiveRoom?.playerCount || 0) >= 2;
         const outcomeContent = getPongMenuOutcomeContent();
         const hasResult = Boolean(outcomeContent);
-        const actionLabel = isOnline
-            ? ((roomFinished ? 'Relancer le duel' : 'Lancer le duel'))
-            : (hasResult ? 'Relancer le duel' : 'Lancer le duel');
-        const baseText = isOnline
-            ? 'Quand l hote lance le duel, toute la room bascule sur le terrain.'
-            : 'Choisis ton mode, puis lance le duel dans la baie.';
+        const actionLabel = waitingForReady
+            ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+            : (isOnline
+                ? (roomFinished ? 'Relancer le duel' : 'Lancer le duel')
+                : (hasResult ? 'Relancer le duel' : 'Lancer le duel'));
+        const baseText = waitingForReady
+            ? 'Quand tous les joueurs sont prets, toute la room bascule automatiquement sur le terrain.'
+            : (isOnline
+                ? 'Quand le duel se lance, toute la room bascule sur le terrain.'
+                : 'Choisis ton mode, puis lance le duel dans la baie.');
 
         pongMenuVisible = isOnline ? (!roomStarted || roomFinished) : pongMenuVisible;
 
@@ -7127,7 +7350,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pongMenuActionButton.textContent = pongMenuShowingRules ? 'Retour' : actionLabel;
             pongMenuActionButton.disabled = pongMenuShowingRules
                 ? false
-                : (isOnline ? (!isHost || !hasEnoughPlayers) : false);
+                : (waitingForReady ? false : (isOnline ? !hasEnoughPlayers : false));
         }
         if (pongMenuRulesButton) {
             pongMenuRulesButton.textContent = 'Regles';
@@ -7752,8 +7975,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function finishPongMatch(playerWon) {
         stopPong();
         openGameOverModal(
-            playerWon ? 'Victoire' : 'C’est perdu',
-            playerWon ? 'Le duel est gagné. La baie t’acclame.' : 'L’IA remporte la manche. Le courant t’échappe.'
+            playerWon ? 'Victoire' : 'Câ€™est perdu',
+            playerWon ? 'Le duel est gagnÃ©. La baie tâ€™acclame.' : 'Lâ€™IA remporte la manche. Le courant tâ€™Ã©chappe.'
         );
     }
 
@@ -8462,7 +8685,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sudokuSolved = isSudokuSolved();
         setSudokuFeedback(row, col, 'correct');
         setSudokuStatusMessage(
-            sudokuCombo > 1 ? `+${gainedPoints} • x${sudokuCombo}` : `+${gainedPoints}`
+            sudokuCombo > 1 ? `+${gainedPoints} â€¢ x${sudokuCombo}` : `+${gainedPoints}`
         );
 
         if (sudokuSolved) {
@@ -8900,7 +9123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ));
 
             if (!hasMovesLeft) {
-                openGameOverModal('C’est perdu', 'La marée t’a bloqué. Plus aucun coup possible.');
+                openGameOverModal('Câ€™est perdu', 'La marÃ©e tâ€™a bloquÃ©. Plus aucun coup possible.');
                 game2048QueuedMove = null;
                 return;
             }
@@ -9106,7 +9329,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateFace(gameStarted ? 'Changer de cap' : 'Aller en mer');
     }
 
-    function openGameOverModal(title = 'C’est perdu', text = 'Le joueur s’est noyé.') {
+    function openGameOverModal(title = 'Câ€™est perdu', text = 'Le joueur sâ€™est noyÃ©.') {
         if (activeGameTab === '2048') {
             reveal2048OutcomeMenu();
             return;
@@ -10184,7 +10407,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
                 flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
                 renderFlowFree();
-                openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracés.`);
+                openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracÃ©s.`);
                 flowFreePointerDown = false;
                 flowFreeActiveColor = null;
                 flowFreeLastHoverKey = null;
@@ -10276,7 +10499,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
             flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
             renderFlowFree();
-            openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracés.`);
+            openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracÃ©s.`);
         }
 
         return true;
@@ -11781,7 +12004,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button type="button" class="coinclicker-upgrade ${coinClickerState.coins < cost ? 'is-disabled' : ''}" data-coin-upgrade="${upgrade.id}">
                     <span class="coinclicker-upgrade-title">${upgrade.label}</span>
                     <strong class="coinclicker-upgrade-bonus">${upgrade.description}</strong>
-                    <span class="coinclicker-upgrade-meta">Niveau ${level} · ${cost} pieces</span>
+                    <span class="coinclicker-upgrade-meta">Niveau ${level} Â· ${cost} pieces</span>
                 </button>
             `;
         }).join('');
@@ -12143,6 +12366,62 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+
+    function cloneChessStateSnapshot(state) {
+        return {
+            ...state,
+            board: state.board.map((row) => row.map((piece) => (piece ? { ...piece } : null))),
+            lastMove: state.lastMove
+                ? {
+                    ...state.lastMove,
+                    capture: state.lastMove.capture ? { ...state.lastMove.capture } : null
+                }
+                : null
+        };
+    }
+
+    function applyChessMoveToState(state, fromRow, fromCol, toRow, toCol) {
+        const movingPiece = state.board[fromRow][fromCol];
+        if (!movingPiece) {
+            return state;
+        }
+
+        const nextState = cloneChessStateSnapshot(state);
+        const nextPiece = { ...movingPiece, hasMoved: true };
+        const capturedPiece = nextState.board[toRow][toCol];
+        nextState.board[toRow][toCol] = nextPiece;
+        nextState.board[fromRow][fromCol] = null;
+
+        if (nextPiece.type === 'king' && Math.abs(toCol - fromCol) === 2) {
+            const rookFromCol = toCol > fromCol ? CHESS_SIZE - 1 : 0;
+            const rookToCol = toCol > fromCol ? toCol - 1 : toCol + 1;
+            const rookPiece = nextState.board[toRow][rookFromCol];
+            if (rookPiece) {
+                nextState.board[toRow][rookToCol] = { ...rookPiece, hasMoved: true };
+                nextState.board[toRow][rookFromCol] = null;
+            }
+        }
+
+        if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
+            nextState.board[toRow][toCol] = createChessPiece('queen', nextPiece.color);
+            nextState.board[toRow][toCol].hasMoved = true;
+        }
+
+        nextState.lastMove = {
+            fromRow,
+            fromCol,
+            toRow,
+            toCol,
+            pieceType: movingPiece.type,
+            capture: capturedPiece ? { row: toRow, col: toCol } : null,
+            captureColor: capturedPiece?.color || null
+        };
+        nextState.turn = movingPiece.color === 'white' ? 'black' : 'white';
+        nextState.winner = capturedPiece?.type === 'king' ? movingPiece.color : null;
+
+        return nextState;
+    }
+
     function getChessPieceGlyph(type) {
         switch (type) {
         case 'pawn':
@@ -12162,10 +12441,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function getChessMoves(row, col) {
-        const piece = chessState?.board[row][col];
+    function getChessMovesForState(state, row, col) {
+        const piece = state?.board?.[row]?.[col];
 
-        if (!piece || piece.color !== chessState.turn || chessState.winner) {
+        if (!piece || piece.color !== state.turn || state.winner) {
             return [];
         }
 
@@ -12175,7 +12454,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const target = chessState.board[nextRow][nextCol];
+            const target = state.board[nextRow][nextCol];
             if (!target || target.color !== piece.color) {
                 moves.push({ row: nextRow, col: nextCol });
             }
@@ -12186,7 +12465,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let nextCol = col + colStep;
 
                 while (isInsideGameGrid(nextRow, nextCol, CHESS_SIZE)) {
-                    const target = chessState.board[nextRow][nextCol];
+                    const target = state.board[nextRow][nextCol];
 
                     if (!target) {
                         moves.push({ row: nextRow, col: nextCol });
@@ -12205,11 +12484,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (piece.type === 'pawn') {
             const direction = piece.color === 'white' ? -1 : 1;
-            if (isInsideGameGrid(row + direction, col, CHESS_SIZE) && !chessState.board[row + direction][col]) {
+            if (isInsideGameGrid(row + direction, col, CHESS_SIZE) && !state.board[row + direction][col]) {
                 moves.push({ row: row + direction, col });
                 const doubleRow = row + direction * 2;
                 const startRow = piece.color === 'white' ? 6 : 1;
-                if (row === startRow && !chessState.board[doubleRow][col]) {
+                if (row === startRow && !state.board[doubleRow][col]) {
                     moves.push({ row: doubleRow, col });
                 }
             }
@@ -12220,7 +12499,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isInsideGameGrid(attackRow, attackCol, CHESS_SIZE)) {
                     return;
                 }
-                const target = chessState.board[attackRow][attackCol];
+                const target = state.board[attackRow][attackCol];
                 if (target && target.color !== piece.color) {
                     moves.push({ row: attackRow, col: attackCol });
                 }
@@ -12249,8 +12528,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const kingPiece = piece.type === 'king' ? piece : null;
         if (kingPiece) {
-            const kingSideCastle = canChessCastle(chessState, row, col, 'king');
-            const queenSideCastle = canChessCastle(chessState, row, col, 'queen');
+            const kingSideCastle = canChessCastle(state, row, col, 'king');
+            const queenSideCastle = canChessCastle(state, row, col, 'queen');
             if (kingSideCastle) {
                 moves.push(kingSideCastle);
             }
@@ -12259,7 +12538,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        return moves;
+        return moves.filter((move) => {
+            const previewState = applyChessMoveToState(state, row, col, move.row, move.col);
+            return !isChessKingInCheckForState(previewState, piece.color);
+        });
+    }
+
+    function getChessMoves(row, col) {
+        return getChessMovesForState(chessState, row, col);
     }
 
     function renderChess() {
@@ -12279,7 +12565,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? (chessState.winner === currentRole ? 'Victoire' : 'Defaite')
                 : (checkedColor === currentRole ? 'Echec' : (checkedColor ? 'Tu mets echec' : 'En cours'));
             chessHelpText.textContent = chessState.winner
-                ? (chessState.winner === currentRole ? 'Échec et mat. Tu controles l echiquier.' : 'Échec et mat. L adversaire controle l echiquier.')
+                ? (chessState.winner === currentRole ? 'Ã‰chec et mat. Tu controles l echiquier.' : 'Ã‰chec et mat. L adversaire controle l echiquier.')
                 : (chessState.turn === currentRole
                     ? (checkedColor === currentRole ? 'Ton roi est en echec.' : 'A toi de jouer.')
                     : (checkedColor ? 'Le roi est en echec.' : 'Au tour de l adversaire.'));
@@ -12293,7 +12579,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ? `Echec ${checkedColor === 'white' ? 'blanc' : 'noir'}`
                     : 'En cours');
             chessHelpText.textContent = chessState.winner
-                ? `Échec et mat. ${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Tu remportes' : 'Les Blancs remportent') : (chessMode === 'solo' ? 'L IA remporte' : 'Les Noirs remportent')} la partie.`
+                ? `Ã‰chec et mat. ${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Tu remportes' : 'Les Blancs remportent') : (chessMode === 'solo' ? 'L IA remporte' : 'Les Noirs remportent')} la partie.`
                 : (chessMode === 'solo'
                     ? (checkedColor === 'white' ? 'Ton roi est en echec.' : (checkedColor === 'black' ? 'Le roi adverse est en echec.' : 'Mode 1 joueur: blancs contre IA. Promotion en reine, avec roque.'))
                     : (checkedColor ? `Le roi ${checkedColor === 'white' ? 'blanc' : 'noir'} est en echec.` : 'Mode 2 joueurs: blancs et noirs en tour par tour. Promotion en reine, avec roque.'));
@@ -12452,17 +12738,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     }
 
-    function getChessAllMoves(color) {
+    function getChessAllMovesForState(state, color) {
         const moves = [];
 
         for (let row = 0; row < CHESS_SIZE; row += 1) {
             for (let col = 0; col < CHESS_SIZE; col += 1) {
-                const piece = chessState.board[row][col];
+                const piece = state.board[row][col];
                 if (!piece || piece.color !== color) {
                     continue;
                 }
 
-                const legalMoves = getChessMoves(row, col);
+                const legalMoves = getChessMovesForState(state, row, col);
                 legalMoves.forEach((move) => {
                     moves.push({
                         fromRow: row,
@@ -12470,13 +12756,125 @@ document.addEventListener('DOMContentLoaded', () => {
                         toRow: move.row,
                         toCol: move.col,
                         piece,
-                        target: chessState.board[move.row][move.col]
+                        target: state.board[move.row][move.col]
                     });
                 });
             }
         }
 
         return moves;
+    }
+
+    function getChessAllMoves(color) {
+        return getChessAllMovesForState(chessState, color);
+    }
+
+    function evaluateChessBoard(state) {
+        const pieceValues = {
+            pawn: 100,
+            knight: 320,
+            bishop: 335,
+            rook: 500,
+            queen: 900,
+            king: 20000
+        };
+        const centerBonusByType = {
+            pawn: 8,
+            knight: 18,
+            bishop: 14,
+            rook: 6,
+            queen: 8,
+            king: 4
+        };
+
+        let score = 0;
+
+        for (let row = 0; row < CHESS_SIZE; row += 1) {
+            for (let col = 0; col < CHESS_SIZE; col += 1) {
+                const piece = state.board[row][col];
+                if (!piece) {
+                    continue;
+                }
+
+                const baseValue = pieceValues[piece.type] || 0;
+                const centerDistance = Math.abs(3.5 - row) + Math.abs(3.5 - col);
+                const centerBonus = Math.max(0, 4 - centerDistance) * (centerBonusByType[piece.type] || 0);
+                const developmentBonus = piece.type === 'pawn'
+                    ? (piece.color === 'black' ? row * 5 : (7 - row) * 5)
+                    : 0;
+                const movedBonus = piece.hasMoved && piece.type !== 'pawn' ? 6 : 0;
+                const contribution = baseValue + centerBonus + developmentBonus + movedBonus;
+
+                score += piece.color === 'black' ? contribution : -contribution;
+            }
+        }
+
+        const blackMoves = getChessAllMovesForState(state, 'black').length;
+        const whiteMoves = getChessAllMovesForState(state, 'white').length;
+        score += (blackMoves - whiteMoves) * 3;
+
+        if (isChessKingInCheckForState(state, 'white')) {
+            score += 28;
+        }
+
+        if (isChessKingInCheckForState(state, 'black')) {
+            score -= 28;
+        }
+
+        return score;
+    }
+
+    function minimaxChess(state, depth, maximizingPlayer, alpha, beta) {
+        if (state.winner === 'black') {
+            return 1000000 + depth;
+        }
+
+        if (state.winner === 'white') {
+            return -1000000 - depth;
+        }
+
+        if (depth === 0) {
+            return evaluateChessBoard(state);
+        }
+
+        const color = maximizingPlayer ? 'black' : 'white';
+        const moves = getChessAllMovesForState(state, color);
+
+        if (!moves.length) {
+            return maximizingPlayer ? -1000000 - depth : 1000000 + depth;
+        }
+
+        if (maximizingPlayer) {
+            let bestScore = -Infinity;
+
+            for (const move of moves) {
+                const nextState = applyChessMoveToState(state, move.fromRow, move.fromCol, move.toRow, move.toCol);
+                const score = minimaxChess(nextState, depth - 1, false, alpha, beta);
+                bestScore = Math.max(bestScore, score);
+                alpha = Math.max(alpha, score);
+
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+
+            return bestScore;
+        }
+
+        let bestScore = Infinity;
+
+        for (const move of moves) {
+            const nextState = applyChessMoveToState(state, move.fromRow, move.fromCol, move.toRow, move.toCol);
+            const score = minimaxChess(nextState, depth - 1, true, alpha, beta);
+            bestScore = Math.min(bestScore, score);
+            beta = Math.min(beta, score);
+
+            if (beta <= alpha) {
+                break;
+            }
+        }
+
+        return bestScore;
     }
 
     function maybePlayChessAi() {
@@ -12495,15 +12893,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const pieceValues = {
-                pawn: 1,
-                knight: 3,
-                bishop: 3,
-                rook: 5,
-                queen: 9,
-                king: 100
-            };
-
             const moves = getChessAllMoves('black');
             if (!moves.length) {
                 chessState.winner = 'white';
@@ -12513,21 +12902,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let bestScore = -Infinity;
             let bestMoves = [];
+            const searchDepth = moves.length <= 10 ? 3 : 2;
 
             moves.forEach((move) => {
-                let score = Math.random() * 0.3;
+                const previewState = applyChessMoveToState(chessState, move.fromRow, move.fromCol, move.toRow, move.toCol);
+                let score = minimaxChess(previewState, searchDepth - 1, false, -Infinity, Infinity);
+                score += Math.random() * 0.12;
 
                 if (move.target) {
-                    score += (pieceValues[move.target.type] || 0) * 10;
+                    score += 14;
                 }
-                if (move.toRow === CHESS_SIZE - 1 || move.toRow === 0) {
-                    score += move.piece.type === 'pawn' ? 4 : 0;
-                }
-                if (move.piece.type === 'pawn') {
-                    score += move.toRow * 0.35;
-                }
-                if (move.toCol >= 2 && move.toCol <= 5 && move.toRow >= 2 && move.toRow <= 5) {
-                    score += 1.5;
+
+                if (move.piece.type === 'king' && Math.abs(move.toCol - move.fromCol) === 2) {
+                    score += 20;
                 }
 
                 if (score > bestScore) {
@@ -12737,12 +13124,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         : (checkersMode === 'solo'
                             ? (checkersState.winner === 'red' ? 'Tu remportes la partie de dames.' : 'L IA remporte la partie de dames.')
                             : `${checkersState.winner === 'red' ? 'Les Rouges' : 'Les Noirs'} remportent la partie de dames.`))
-                    : 'Installe les pions et choisis ton mode avant d engager la partie.');
+                    : ((multiplayerCheckers && !multiplayerActiveRoom?.gameLaunched)
+                        ? 'Quand tous les joueurs sont prets, la partie de dames commence automatiquement.'
+                        : 'Installe les pions et choisis ton mode avant d engager la partie.'));
         }
         if (checkersMenuActionButton) {
             checkersMenuActionButton.textContent = checkersMenuShowingRules
                 ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
+                : ((multiplayerCheckers && !multiplayerActiveRoom?.gameLaunched)
+                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+                    : (hasResult ? 'Relancer la partie' : 'Lancer la partie'));
         }
         if (checkersMenuRulesButton) {
             checkersMenuRulesButton.textContent = 'Regles';
@@ -13545,12 +13936,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? getAirHockeyRulesText()
                 : (hasResult
                     ? airHockeyMenuResult.text
-                    : 'Choisis ton mode puis engage le palet sur le pont glissant de la baie.');
+                    : ((isMultiplayerAirHockeyActive() && !multiplayerActiveRoom?.gameLaunched)
+                        ? 'Quand tous les joueurs sont prets, le duel de Sea Hockey commence automatiquement.'
+                        : 'Choisis ton mode puis engage le palet sur le pont glissant de la baie.'));
         }
         if (airHockeyMenuActionButton) {
             airHockeyMenuActionButton.textContent = airHockeyMenuShowingRules
                 ? 'Retour'
-                : (hasResult ? 'Relancer le duel' : 'Lancer le duel');
+                : ((isMultiplayerAirHockeyActive() && !multiplayerActiveRoom?.gameLaunched)
+                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+                    : (hasResult ? 'Relancer le duel' : 'Lancer le duel'));
         }
         if (airHockeyMenuRulesButton) {
             airHockeyMenuRulesButton.textContent = 'Regles';
@@ -14053,7 +14448,7 @@ document.addEventListener('DOMContentLoaded', () => {
         baieBerryNextDisplay.style.setProperty('--baieberry-preview-color', nextFruit.color);
         baieBerryNextDisplay.setAttribute('aria-label', `Fruit suivant: ${nextFruit.name}`);
         baieBerryObjectiveDisplay.textContent = baieBerryState.objective.completed
-            ? `${baieBerryState.objective.label} ✓`
+            ? `${baieBerryState.objective.label} âœ“`
             : baieBerryState.objective.label;
     }
 
@@ -15964,9 +16359,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     ? '+2'
                     : (card.type === 'wildDraw4' ? '+4' : (card.type === 'wild' ? 'Couleur' : card.value))));
         const visualLabel = card.type === 'skip'
-            ? '⊘'
+            ? 'âŠ˜'
             : (card.type === 'reverse'
-                ? '⟲'
+                ? 'âŸ²'
                 : (card.type === 'wild' ? '' : label));
         const isWildFamily = card.type === 'wild' || card.type === 'wildDraw4';
         const wildIcon = `
@@ -16916,6 +17311,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isMultiplayerPongActive()) {
+            if (isMultiplayerLaunchPending('pong')) {
+                toggleMultiplayerReady();
+                return;
+            }
+
             startPong();
             return;
         }
@@ -17294,6 +17694,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (isMultiplayerTicTacToeActive() && isMultiplayerLaunchPending('ticTacToe')) {
+            toggleMultiplayerReady();
+            return;
+        }
+
         ticTacToeMenuResult = null;
         closeTicTacToeMenu();
     });
@@ -17353,6 +17758,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isMultiplayerConnect4Active()) {
             if (!multiplayerSocket?.connected) {
                 setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+                return;
+            }
+
+            if (isMultiplayerLaunchPending('connect4')) {
+                toggleMultiplayerReady();
                 return;
             }
 
@@ -17561,7 +17971,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (multiplayerActiveRoom?.gameId === 'chess') {
-            multiplayerSocket?.emit('chess:toggle-ready');
+            toggleMultiplayerReady();
             return;
         }
 
@@ -17601,6 +18011,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isMultiplayerCheckersActive()) {
             if (!multiplayerSocket?.connected) {
                 setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
+                return;
+            }
+
+            if (isMultiplayerLaunchPending('checkers')) {
+                toggleMultiplayerReady();
                 return;
             }
 
@@ -17664,6 +18079,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (airHockeyMenuShowingRules) {
             airHockeyMenuShowingRules = false;
             renderAirHockeyMenu();
+            return;
+        }
+
+        if (isMultiplayerAirHockeyActive() && isMultiplayerLaunchPending('airHockey')) {
+            toggleMultiplayerReady();
             return;
         }
 
@@ -17973,7 +18393,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isMultiplayerUnoActive()) {
-            multiplayerSocket?.emit('uno:toggle-ready');
+            toggleMultiplayerReady();
             return;
         }
 
@@ -18848,6 +19268,9 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleSessionTimeout();
     }
 });
+
+
+
 
 
 
