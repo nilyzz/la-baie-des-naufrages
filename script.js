@@ -3240,18 +3240,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
         const hasActiveRoom = Boolean(multiplayerActiveRoom?.code);
         const isHost = Boolean(currentPlayer?.isHost);
-        const readySummary = getMultiplayerReadySummary();
-        const readyLabel = isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat';
-
         multiplayerCurrentRoomCode.textContent = multiplayerActiveRoom?.code || '-';
         multiplayerLobbyPlayersBlock?.classList.toggle('hidden', !hasActiveRoom);
         multiplayerCreatePlayerField?.classList.toggle('hidden', hasActiveRoom);
         multiplayerJoinPlayerField?.classList.toggle('hidden', hasActiveRoom);
         multiplayerJoinCodeField?.classList.toggle('hidden', hasActiveRoom);
-        multiplayerCreateRoomButton.disabled = multiplayerBusy || !canUseMultiplayer;
+        multiplayerCreateRoomButton.disabled = multiplayerBusy || (!hasActiveRoom && !canUseMultiplayer) || (hasActiveRoom && (!isHost || (multiplayerActiveRoom?.playerCount || 0) < 2 || Boolean(multiplayerActiveRoom?.gameLaunched)));
         multiplayerJoinRoomButton.disabled = multiplayerBusy;
         multiplayerCreateRoomButton.textContent = hasActiveRoom
-            ? `${readyLabel} (${readySummary})`
+            ? 'Lancer le jeu'
             : 'Creer le salon';
         multiplayerJoinRoomButton.textContent = hasActiveRoom
             ? 'Quitter le salon'
@@ -3269,12 +3266,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (hasActiveRoom) {
             if (multiplayerActiveRoom.playerCount < 2) {
-                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} cree. Attends un autre joueur avant de preparer ${activeRoomGameLabel}.`);
+                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} cree. Attends un autre joueur avant de lancer ${activeRoomGameLabel}.`);
                 return;
             }
 
             if (!multiplayerActiveRoom.gameLaunched) {
-                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} pr\u00eat sur ${activeRoomGameLabel}. ${readySummary} joueurs pr\u00eats. La partie d\u00e9marre quand tout le monde est pr\u00eat.`);
+                setMultiplayerStatus(isHost
+                    ? `Salon ${multiplayerActiveRoom.code} pret. Tu peux lancer ${activeRoomGameLabel} quand tout le monde est la.`
+                    : `Salon ${multiplayerActiveRoom.code} pret. Attends que l'hote lance ${activeRoomGameLabel}.`);
                 return;
             }
 
@@ -3469,7 +3468,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedGame = getSelectedMultiplayerGame();
 
         if (multiplayerActiveRoom?.code) {
-            await toggleMultiplayerReady();
+            await launchMultiplayerGame();
             return;
         }
 
@@ -3587,7 +3586,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function launchMultiplayerGame() {
-        await toggleMultiplayerReady();
+        if (!multiplayerActiveRoom?.code) {
+            return;
+        }
+
+        if (!getCurrentMultiplayerPlayer()?.isHost) {
+            setMultiplayerStatus('Seul l hote peut lancer le jeu.');
+            return;
+        }
+
+        try {
+            const socket = await ensureMultiplayerConnection();
+            socket.emit('room:launch-game');
+            setMultiplayerStatus(`Lancement de ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}...`);
+        } catch (error) {
+            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+        }
     }
 
     function showGamePanel(tabId) {

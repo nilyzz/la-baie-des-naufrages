@@ -1009,6 +1009,13 @@ function syncRoomReadyState(room) {
   }
 }
 
+function emitRoomGameStart(room) {
+  io.to(room.code).emit('room:game:start', {
+    code: room.code,
+    gameId: room.gameId
+  });
+}
+
 function launchRoomGame(room) {
   room.gameLaunched = true;
 
@@ -1028,10 +1035,7 @@ function launchRoomGame(room) {
     resetBombRound(room, true);
   }
 
-  io.to(room.code).emit('room:game:start', {
-    code: room.code,
-    gameId: room.gameId
-  });
+  emitRoomGameStart(room);
 }
 
 function toggleRoomReady(room, socketId) {
@@ -3044,8 +3048,18 @@ io.on('connection', (socket) => {
       return;
     }
 
-    toggleRoomReady(room, socket.id);
-    emitRoomUpdate(room);
+    const player = room.players.find((entry) => entry.id === socket.id);
+    if (!player || !player.isHost) {
+      socket.emit('room:error', { message: 'Seul l hote peut lancer le jeu.' });
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends au moins un autre joueur avant de lancer le jeu.' });
+      return;
+    }
+
+    emitRoomGameStart(room);
   });
 
   socket.on('room:chat:send', ({ message }) => {
