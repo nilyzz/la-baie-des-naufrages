@@ -3596,11 +3596,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!isCurrentMultiplayerHost()) {
-            setMultiplayerStatus('Seul l hote peut lancer le jeu.');
-            return;
-        }
-
         try {
             const socket = await ensureMultiplayerConnection();
             socket.emit('room:launch-game');
