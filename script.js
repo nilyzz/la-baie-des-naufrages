@@ -2645,9 +2645,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getCurrentMultiplayerPlayer() {
-        return multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+        return multiplayerActiveRoom?.players?.find((player) => player.isYou)
+            || multiplayerActiveRoom?.players?.find((player) => player.id === multiplayerSocket?.id)
+            || null;
     }
 
+    function isCurrentMultiplayerHost() {
+        const currentPlayer = getCurrentMultiplayerPlayer();
+        return Boolean(currentPlayer?.isHost || (multiplayerSocket?.id && multiplayerActiveRoom?.hostId === multiplayerSocket.id));
+    }
 
     function getMultiplayerReadySummary() {
         const readyCount = Number(multiplayerActiveRoom?.readyCount || 0);
@@ -2666,7 +2672,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncMultiplayerEntryModeAccess() {
         const currentPlayer = getCurrentMultiplayerPlayer();
         const hasActiveRoom = Boolean(multiplayerActiveRoom?.code && currentPlayer);
-        const isHost = Boolean(currentPlayer?.isHost);
+        const isHost = isCurrentMultiplayerHost();
         const isGuest = hasActiveRoom && !isHost;
 
         if (multiplayerCreateModeButton) {
@@ -3239,7 +3245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : selectedLabel;
         const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
         const hasActiveRoom = Boolean(multiplayerActiveRoom?.code);
-        const isHost = Boolean(currentPlayer?.isHost);
+        const isHost = isCurrentMultiplayerHost();
         multiplayerCurrentRoomCode.textContent = multiplayerActiveRoom?.code || '-';
         multiplayerLobbyPlayersBlock?.classList.toggle('hidden', !hasActiveRoom);
         multiplayerCreatePlayerField?.classList.toggle('hidden', hasActiveRoom);
@@ -3345,7 +3351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (MULTIPLAYER_SUPPORTED_GAMES[room.gameId]) {
                     multiplayerSelectedGameId = room.gameId;
                 }
-                multiplayerEntryMode = getCurrentMultiplayerPlayer()?.isHost ? 'create' : 'join';
+                multiplayerEntryMode = isCurrentMultiplayerHost() ? 'create' : 'join';
                 syncMultiplayerAirHockeyState();
                 syncMultiplayerBattleshipState();
                 syncMultiplayerPongState();
@@ -3366,7 +3372,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (MULTIPLAYER_SUPPORTED_GAMES[room.gameId]) {
                     multiplayerSelectedGameId = room.gameId;
                 }
-                multiplayerEntryMode = getCurrentMultiplayerPlayer()?.isHost ? 'create' : 'join';
+                multiplayerEntryMode = isCurrentMultiplayerHost() ? 'create' : 'join';
                 syncMultiplayerAirHockeyState();
                 syncMultiplayerBattleshipState();
                 syncMultiplayerPongState();
@@ -3590,7 +3596,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!getCurrentMultiplayerPlayer()?.isHost) {
+        if (!isCurrentMultiplayerHost()) {
             setMultiplayerStatus('Seul l hote peut lancer le jeu.');
             return;
         }
