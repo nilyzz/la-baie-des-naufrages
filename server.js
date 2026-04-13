@@ -3048,8 +3048,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const player = room.players.find((entry) => entry.id === socket.id);
-    if (!player || !player.isHost) {
+    if (room.hostId !== socket.id) {
       socket.emit('room:error', { message: 'Seul l hote peut lancer le jeu.' });
       return;
     }

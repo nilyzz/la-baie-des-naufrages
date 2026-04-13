@@ -3711,10 +3711,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const currentPlayer = getCurrentMultiplayerPlayer();
-
         if (multiplayerActiveRoom?.code) {
-            if (!currentPlayer?.isHost) {
+            if (!isCurrentMultiplayerHost()) {
                 setMultiplayerStatus('Seul l hote peut changer le jeu du salon.');
                 return;
             }
