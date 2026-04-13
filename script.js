@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamesHeaderNav = document.getElementById('gamesHeaderNav');
     const mathHeaderNav = document.getElementById('mathHeaderNav');
     const musicHeaderNav = document.getElementById('musicHeaderNav');
+    const siteAds = document.querySelector('.site-ads');
     const navButtons = document.querySelectorAll('.nav-button');
     const cinemaNavButtons = document.querySelectorAll('#cinemaHeaderNav .nav-button');
     const mathNavButtons = document.querySelectorAll('#mathHeaderNav .nav-button');
@@ -777,6 +778,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let movies = [];
     let searchTerm = '';
     let currentView = loginView;
+    let siteAdsEnterTimer = null;
+    let gamesFiltersEnterTimer = null;
     let activeGamesSection = 'home';
     let multiplayerSocket = null;
     let multiplayerActiveRoom = null;
@@ -1299,14 +1302,99 @@ document.addEventListener('DOMContentLoaded', () => {
         musicHeaderNav.classList.toggle('hidden', !showMusicHeader);
     }
 
+    function syncSiteAdsVisibility(targetView, options = {}) {
+        if (!siteAds) {
+            return;
+        }
+
+        const { immediate = false } = options;
+        const shouldHide = shouldHideSiteAdsForView(targetView);
+
+        if (shouldHide) {
+            window.clearTimeout(siteAdsEnterTimer);
+            siteAds.classList.remove('site-ads-entering');
+        }
+
+        siteAds.classList.toggle('site-ads-no-transition', immediate);
+        siteAds.classList.toggle('site-ads-hidden', shouldHide);
+
+        if (immediate) {
+            window.requestAnimationFrame(() => {
+                siteAds.classList.remove('site-ads-no-transition');
+            });
+        }
+    }
+
+    function playSiteAdsEntrance() {
+        if (!siteAds) {
+            return;
+        }
+
+        window.clearTimeout(siteAdsEnterTimer);
+        siteAds.classList.remove('site-ads-entering');
+        void siteAds.offsetWidth;
+        siteAds.classList.add('site-ads-entering');
+        siteAdsEnterTimer = window.setTimeout(() => {
+            siteAds.classList.remove('site-ads-entering');
+        }, 550);
+    }
+
+    function syncGamesFiltersCardVisibility(targetView, options = {}) {
+        if (!gamesFiltersCard) {
+            return;
+        }
+
+        const { immediate = false } = options;
+        const shouldHide = targetView !== gamesView;
+
+        gamesFiltersCard.classList.toggle('games-filters-card-no-transition', immediate);
+        gamesFiltersCard.classList.toggle('games-filters-card-hidden', shouldHide);
+
+        if (immediate) {
+            window.requestAnimationFrame(() => {
+                gamesFiltersCard.classList.remove('games-filters-card-no-transition');
+            });
+        }
+    }
+
+    function playGamesFiltersEntrance() {
+        if (!gamesFiltersCard) {
+            return;
+        }
+
+        window.clearTimeout(gamesFiltersEnterTimer);
+        gamesFiltersCard.classList.remove('games-filters-card-entering');
+        void gamesFiltersCard.offsetWidth;
+        gamesFiltersCard.classList.add('games-filters-card-entering');
+        gamesFiltersEnterTimer = window.setTimeout(() => {
+            gamesFiltersCard.classList.remove('games-filters-card-entering');
+        }, 550);
+    }
+
+    function shouldHideSiteAdsForView(view) {
+        return view === loginView || view === servicesView || view === appView;
+    }
+
     function transitionToView(nextView, options = {}) {
         const {
             showHeader = false,
             headerMode = 'none',
             onComplete
         } = options;
+        const shouldHideAdsOnCurrentView = shouldHideSiteAdsForView(currentView);
+        const shouldHideAdsOnNextView = shouldHideSiteAdsForView(nextView);
+        const shouldHideGamesFiltersOnCurrentView = currentView !== gamesView;
+        const shouldHideGamesFiltersOnNextView = nextView !== gamesView;
 
         currentView.classList.add('view-leaving');
+
+        if (shouldHideAdsOnNextView) {
+            syncSiteAdsVisibility(nextView);
+        }
+
+        if (shouldHideGamesFiltersOnNextView) {
+            syncGamesFiltersCardVisibility(nextView);
+        }
 
         window.setTimeout(() => {
             if (currentView === musicView && nextView !== musicView) {
@@ -1325,6 +1413,16 @@ document.addEventListener('DOMContentLoaded', () => {
             nextView.classList.add('view-active');
             nextView.setAttribute('aria-hidden', 'false');
             currentView = nextView;
+
+            if (!shouldHideAdsOnNextView && shouldHideAdsOnCurrentView) {
+                syncSiteAdsVisibility(nextView);
+                playSiteAdsEntrance();
+            }
+
+            if (!shouldHideGamesFiltersOnNextView && shouldHideGamesFiltersOnCurrentView) {
+                syncGamesFiltersCardVisibility(nextView);
+                playGamesFiltersEntrance();
+            }
 
             if (typeof onComplete === 'function') {
                 onComplete();
@@ -1351,6 +1449,8 @@ document.addEventListener('DOMContentLoaded', () => {
         siteHeader.classList.toggle('hidden', !showHeader);
         siteHeader.setAttribute('aria-hidden', String(!showHeader));
         setHeaderMode(headerMode);
+        syncSiteAdsVisibility(nextView, { immediate: true });
+        syncGamesFiltersCardVisibility(nextView, { immediate: true });
         logoutButton?.classList.toggle('hidden', nextView === loginView);
         pageBackButton?.classList.toggle('hidden', nextView !== appView && nextView !== gamesView && nextView !== mathView && nextView !== musicView);
 
@@ -1859,6 +1959,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'Date inconnue';
         }
 
+        if (/^\d{4}$/.test(String(dateString).trim())) {
+            return String(dateString).trim();
+        }
+
         const parsedDate = new Date(dateString);
 
         if (Number.isNaN(parsedDate.getTime())) {
@@ -1868,14 +1972,32 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Intl.DateTimeFormat('fr-FR').format(parsedDate);
     }
 
+    function formatExcelDisplayValue(value) {
+        if (!value && value !== 0) {
+            return '';
+        }
+
+        if (value instanceof Date && !Number.isNaN(value.getTime())) {
+            return new Intl.DateTimeFormat('fr-FR').format(value);
+        }
+
+        return String(value).trim();
+    }
+
     function formatRating(value) {
+        return formatRatingWithScale(value, 20);
+    }
+
+    function formatRatingWithScale(value, scale = 20) {
         const rating = Number(value);
+        const normalizedScale = Number(scale);
 
         if (!Number.isFinite(rating)) {
             return 'Non note';
         }
 
-        return `${rating.toFixed(1)} / 20`;
+        const formattedRating = Number.isInteger(rating) ? String(rating) : rating.toFixed(1);
+        return `${formattedRating} / ${Number.isFinite(normalizedScale) && normalizedScale > 0 ? normalizedScale : 20}`;
     }
 
     function normalizeHeader(value) {
@@ -1934,6 +2056,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return '';
         }
 
+        if (/^\d{4}$/.test(normalizedValue)) {
+            return normalizedValue;
+        }
+
         const isoMatch = normalizedValue.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
 
         if (isoMatch) {
@@ -1962,12 +2088,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const normalizedRecord = Object.fromEntries(
             Object.entries(row).map(([key, value]) => [normalizeHeader(key), value])
         );
-
         const title = String(getFirstFilledValue(normalizedRecord, [
             'titre',
             'title',
             'nom',
-            'film'
+            'film',
+            'films'
         ])).trim();
 
         if (!title) {
@@ -1977,8 +2103,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const ratingValue = parseNumberValue(getFirstFilledValue(normalizedRecord, [
             'note',
             'rating',
-            'score'
+            'score',
+            'notesur20',
+            'notesur5'
         ]));
+        const hasNoteSur5Column = normalizedRecord.notesur5 !== undefined && String(normalizedRecord.notesur5).trim() !== '';
+        const hasNoteSur20Column = normalizedRecord.notesur20 !== undefined && String(normalizedRecord.notesur20).trim() !== '';
+        const ratingScale = hasNoteSur20Column || (Number.isFinite(ratingValue) && ratingValue > 5)
+            ? 20
+            : (hasNoteSur5Column ? 5 : 20);
         const durationValue = parseNumberValue(getFirstFilledValue(normalizedRecord, [
             'duree',
             'duration',
@@ -2000,6 +2133,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'director',
             'auteur'
         ])).trim();
+        const directorLink = String(getFirstFilledValue(normalizedRecord, [
+            'realisateurlink',
+            'directorlink',
+            'auteurlink'
+        ])).trim();
         const posterUrl = String(getFirstFilledValue(normalizedRecord, [
             'affiche',
             'poster',
@@ -2007,24 +2145,119 @@ document.addEventListener('DOMContentLoaded', () => {
             'image',
             'img'
         ])).trim();
-        const comment = String(getFirstFilledValue(normalizedRecord, [
-            'commentaire',
-            'comment',
-            'avis',
-            'description'
-        ])).trim();
+        const releaseDisplay = formatExcelDisplayValue(getFirstFilledValue(normalizedRecord, [
+            'dateaffichage',
+            'date',
+            'datesortie',
+            'sortie',
+            'releasedate'
+        ]));
 
         return {
             id: crypto.randomUUID(),
             title,
             director,
+            directorLink,
             genre,
             releaseDate,
+            releaseDisplay,
+            ratingScale,
             duration: durationValue || 0,
             rating: ratingValue,
-            posterUrl: posterUrl || defaultPoster,
-            comment
+            posterUrl: posterUrl || defaultPoster
         };
+    }
+
+    function parseMoviesFromFixedColumns(worksheet) {
+        if (!worksheet?.['!ref'] || !window.XLSX?.utils) {
+            return [];
+        }
+
+        const range = window.XLSX.utils.decode_range(worksheet['!ref']);
+        const moviesFromColumns = [];
+        const columnMap = {
+            films: 'CA',
+            date: 'CB',
+            dateaffichage: 'CB',
+            genre: 'CC',
+            realisateur: 'CD',
+            realisateurlink: 'CD',
+            notesur20: 'CE'
+        };
+
+        for (let rowNumber = 2; rowNumber <= range.e.r + 1; rowNumber += 1) {
+            const row = Object.fromEntries(Object.entries(columnMap).map(([key, column]) => {
+                const cell = worksheet[`${column}${rowNumber}`];
+
+                if (key === 'dateaffichage') {
+                    return [key, cell?.w ?? cell?.v ?? ''];
+                }
+
+                if (key === 'realisateurlink') {
+                    return [key, cell?.l?.Target ?? ''];
+                }
+
+                return [key, cell?.v ?? ''];
+            }));
+            const normalizedMovie = normalizeMovieRow(row);
+
+            if (normalizedMovie) {
+                moviesFromColumns.push(normalizedMovie);
+            }
+        }
+
+        return moviesFromColumns;
+    }
+
+    function parseMoviesFromWorksheetRows(worksheet) {
+        if (!worksheet?.['!ref'] || !window.XLSX?.utils) {
+            return [];
+        }
+
+        const range = window.XLSX.utils.decode_range(worksheet['!ref']);
+        const headersByColumn = new Map();
+        const moviesFromRows = [];
+
+        for (let columnIndex = range.s.c; columnIndex <= range.e.c; columnIndex += 1) {
+            const headerCellAddress = window.XLSX.utils.encode_cell({ c: columnIndex, r: range.s.r });
+            const headerValue = worksheet[headerCellAddress]?.v;
+
+            if (headerValue !== undefined && headerValue !== null && String(headerValue).trim() !== '') {
+                headersByColumn.set(columnIndex, normalizeHeader(headerValue));
+            }
+        }
+
+        for (let rowIndex = range.s.r + 1; rowIndex <= range.e.r; rowIndex += 1) {
+            const rowRecord = {};
+
+            headersByColumn.forEach((headerKey, columnIndex) => {
+                const cellAddress = window.XLSX.utils.encode_cell({ c: columnIndex, r: rowIndex });
+                const cell = worksheet[cellAddress];
+
+                if (!cell) {
+                    rowRecord[headerKey] = '';
+                    return;
+                }
+
+                rowRecord[headerKey] = cell.v ?? '';
+
+                if (headerKey === 'date') {
+                    rowRecord.dateaffichage = cell.w ?? cell.v ?? '';
+                }
+
+                if (headerKey === 'realisateur' && cell.l?.Target) {
+                    rowRecord.realisateurlink = cell.l.Target;
+                }
+            });
+
+            const normalizedMovie = normalizeMovieRow(rowRecord);
+
+            if (normalizedMovie) {
+                moviesFromRows.push(normalizedMovie);
+            }
+        }
+
+        return moviesFromRows;
     }
 
     function parseMoviesFromWorkbook(arrayBuffer) {
@@ -2039,13 +2272,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const worksheet = workbook.Sheets[firstSheetName];
-        const rows = window.XLSX.utils.sheet_to_json(worksheet, {
-            defval: ''
-        });
+        const importedRows = parseMoviesFromWorksheetRows(worksheet);
 
-        return rows
-            .map((row) => normalizeMovieRow(row))
-            .filter(Boolean);
+        if (importedRows.length) {
+            const shouldUseTwentyPointScale = importedRows.some((movie) => Number(movie.rating) > 5);
+            return shouldUseTwentyPointScale
+                ? importedRows.map((movie) => ({ ...movie, ratingScale: 20 }))
+                : importedRows;
+        }
+
+        const fallbackRows = parseMoviesFromFixedColumns(worksheet);
+        const shouldUseTwentyPointScale = fallbackRows.some((movie) => Number(movie.rating) > 5);
+        return shouldUseTwentyPointScale
+            ? fallbackRows.map((movie) => ({ ...movie, ratingScale: 20 }))
+            : fallbackRows;
     }
 
     function setExcelImportFeedback(message, type = '') {
@@ -2083,7 +2323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const fileBuffer = await response.arrayBuffer();
-                const importedMovies = parseMoviesFromWorkbook(fileBuffer);
+                const importedMovies = await enrichMoviesWithRemotePosters(parseMoviesFromWorkbook(fileBuffer));
 
                 movies = importedMovies;
                 renderAll();
@@ -2117,7 +2357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const value = Number(minutes);
 
         if (!value) {
-            return 'Duree inconnue';
+            return 'xxhxx';
         }
 
         const hours = Math.floor(value / 60);
@@ -2153,13 +2393,57 @@ document.addEventListener('DOMContentLoaded', () => {
         return defaultPoster;
     }
 
-    function createMovieMetaLine(label, value) {
-        const paragraph = document.createElement('p');
-        const strong = document.createElement('strong');
-        strong.textContent = `${label} :`;
-        paragraph.appendChild(strong);
-        paragraph.append(` ${value}`);
-        return paragraph;
+    function buildDirectorSearchUrl(directorName, fallbackUrl = '') {
+        const normalizedName = String(directorName || '').trim();
+
+        if (normalizedName) {
+            return `https://www.google.com/search?q=${encodeURIComponent(normalizedName)}`;
+        }
+
+        return String(fallbackUrl || '').trim();
+    }
+
+    async function enrichMoviesWithRemotePosters(importedMovies) {
+        const moviesNeedingPoster = importedMovies.filter((movie) => !movie.posterUrl || movie.posterUrl === defaultPoster);
+
+        if (!moviesNeedingPoster.length) {
+            return importedMovies;
+        }
+
+        try {
+            const response = await fetch('/api/posters/resolve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    movies: moviesNeedingPoster.map((movie) => ({
+                        id: movie.id,
+                        title: movie.title,
+                        releaseDate: movie.releaseDate,
+                        releaseDisplay: movie.releaseDisplay
+                    }))
+                })
+            });
+
+            if (!response.ok) {
+                return importedMovies;
+            }
+
+            const payload = await response.json();
+            const posterUrlsById = new Map(
+                Array.isArray(payload?.resolutions)
+                    ? payload.resolutions.map((item) => [item.id, item.posterUrl])
+                    : []
+            );
+
+            return importedMovies.map((movie) => {
+                const resolvedPosterUrl = posterUrlsById.get(movie.id);
+                return resolvedPosterUrl ? { ...movie, posterUrl: resolvedPosterUrl } : movie;
+            });
+        } catch (_error) {
+            return importedMovies;
+        }
     }
 
     function getFilteredMovies() {
@@ -2180,9 +2464,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const ratedMovies = movies.filter((movie) => Number.isFinite(Number(movie.rating)));
         const total = ratedMovies.reduce((sum, movie) => sum + Number(movie.rating), 0);
         const average = ratedMovies.length ? (total / ratedMovies.length).toFixed(1) : null;
+        const ratingScale = ratedMovies[0]?.ratingScale || movies[0]?.ratingScale || 20;
 
         movieCount.textContent = `${count} film${count > 1 ? 's' : ''}`;
-        averageRating.textContent = average ? `${average} / 20` : 'Non note';
+        averageRating.textContent = average ? `${average} / ${ratingScale}` : 'Non note';
     }
 
     function renderCatalog() {
@@ -2199,7 +2484,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const ratingBadge = document.createElement('span');
             ratingBadge.className = 'rating-badge rating-badge-floating';
-            ratingBadge.textContent = formatRating(movie.rating);
+            ratingBadge.textContent = formatRatingWithScale(movie.rating, movie.ratingScale);
 
             const poster = document.createElement('img');
             poster.className = 'movie-poster';
@@ -2221,18 +2506,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const meta = document.createElement('div');
             meta.className = 'movie-meta';
 
-            const release = createMovieMetaLine('Sortie', formatDate(movie.releaseDate));
-            const genre = createMovieMetaLine('Genre', movie.genre || 'Inconnu');
-            const director = createMovieMetaLine('Realisateur', movie.director || 'Inconnu');
-            const duration = createMovieMetaLine('Duree', formatDuration(movie.duration));
+            const releaseAndDuration = document.createElement('p');
+            releaseAndDuration.textContent = `${movie.releaseDisplay || formatDate(movie.releaseDate)} • ${formatDuration(movie.duration)}`;
 
-            meta.append(release, genre, director, duration);
+            const genre = document.createElement('p');
+            genre.textContent = movie.genre || 'Inconnu';
 
-            const comment = document.createElement('p');
-            comment.className = 'movie-comment';
-            comment.textContent = movie.comment || 'Aucun commentaire pour le moment.';
+            const director = document.createElement('p');
+            if (movie.directorLink) {
+                const directorLink = document.createElement('a');
+                directorLink.href = buildDirectorSearchUrl(movie.director, movie.directorLink);
+                directorLink.target = '_blank';
+                directorLink.rel = 'noreferrer noopener';
+                directorLink.textContent = movie.director || 'Inconnu';
+                director.appendChild(directorLink);
+            } else {
+                director.textContent = movie.director || 'Inconnu';
+            }
 
-            body.append(title, meta, comment);
+            meta.append(releaseAndDuration, genre, director);
+
+            body.append(title, meta);
             article.append(posterShell, body);
             fragment.appendChild(article);
         });
@@ -2262,7 +2556,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title.textContent = movie.title;
 
             const details = document.createElement('p');
-            details.textContent = `${movie.genre || 'Genre inconnu'} | ${movie.director || 'Realisateur inconnu'} | ${formatDuration(movie.duration)} | ${formatRating(movie.rating)}`;
+            details.textContent = `${movie.genre || 'Genre inconnu'} | ${movie.director || 'Realisateur inconnu'} | ${formatDuration(movie.duration)} | ${formatRatingWithScale(movie.rating, movie.ratingScale)}`;
 
             copy.append(title, details);
             article.appendChild(copy);

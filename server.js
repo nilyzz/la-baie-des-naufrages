@@ -1,5 +1,6 @@
 const path = require('path');
 const http = require('http');
+const fs = require('fs/promises');
 const cors = require('cors');
 const express = require('express');
 const { Server } = require('socket.io');
@@ -36,6 +37,10 @@ const AIR_HOCKEY_SPEED = 280;
 const AIR_HOCKEY_COUNTDOWN_MS = 2120;
 const AIR_HOCKEY_TICK_MS = 1000 / 60;
 const ROOM_CHAT_LIMIT = 40;
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
+const TMDB_SEARCH_BASE_URL = 'https://api.themoviedb.org/3/search/movie';
+const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+const POSTERS_CACHE_PATH = path.join(__dirname, 'posters-cache.json');
 const CHECKERS_DIRECTIONS = {
   red: [[-1, -1], [-1, 1]],
   black: [[1, -1], [1, 1]]
@@ -60,6 +65,7 @@ const io = new Server(server, {
 });
 
 const rooms = new Map();
+let postersCache = null;
 
 function parseCorsOrigin(value) {
   const origins = String(value || '*')
@@ -80,6 +86,106 @@ app.use(cors({
   methods: ['GET', 'POST']
 }));
 app.use(express.static(path.join(__dirname)));
+
+function normalizePosterCacheKey(title, year = '') {
+  return `${String(title || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()}|${String(year || '').trim()}`;
+}
+
+function extractMovieYear(movie = {}) {
+  const rawValue = String(movie.releaseDisplay || movie.releaseDate || '').trim();
+  const yearMatch = rawValue.match(/\b(19|20)\d{2}\b/);
+  return yearMatch ? yearMatch[0] : '';
+}
+
+async function ensurePostersCacheLoaded() {
+  if (postersCache) {
+    return postersCache;
+  }
+
+  try {
+    const cacheContent = await fs.readFile(POSTERS_CACHE_PATH, 'utf8');
+    postersCache = JSON.parse(cacheContent);
+  } catch (_error) {
+    postersCache = {};
+  }
+
+  return postersCache;
+}
+
+async function persistPostersCache() {
+  if (!postersCache) {
+    return;
+  }
+
+  await fs.writeFile(POSTERS_CACHE_PATH, JSON.stringify(postersCache, null, 2));
+}
+
+async function searchTmdbPoster(title, year = '') {
+  if (!TMDB_API_KEY || !title) {
+    return '';
+  }
+
+  const attempts = [
+    { query: title, year },
+    { query: title, year: '' }
+  ];
+
+  for (const attempt of attempts) {
+    const searchParams = new URLSearchParams({
+      api_key: TMDB_API_KEY,
+      query: attempt.query,
+      include_adult: 'false',
+      language: 'fr-FR'
+    });
+
+    if (attempt.year) {
+      searchParams.set('year', attempt.year);
+    }
+
+    const response = await fetch(`${TMDB_SEARCH_BASE_URL}?${searchParams.toString()}`);
+
+    if (!response.ok) {
+      continue;
+    }
+
+    const payload = await response.json();
+    const bestMatch = Array.isArray(payload?.results)
+      ? payload.results.find((item) => item?.poster_path) || payload.results[0]
+      : null;
+
+    if (bestMatch?.poster_path) {
+      return `${TMDB_IMAGE_BASE_URL}${bestMatch.poster_path}`;
+    }
+  }
+
+  return '';
+}
+
+async function resolvePosterForMovie(movie = {}) {
+  const title = String(movie.title || '').trim();
+  const year = extractMovieYear(movie);
+
+  if (!title) {
+    return '';
+  }
+
+  const cache = await ensurePostersCacheLoaded();
+  const cacheKey = normalizePosterCacheKey(title, year);
+
+  if (cacheKey in cache) {
+    return cache[cacheKey];
+  }
+
+  const resolvedPosterUrl = await searchTmdbPoster(title, year);
+  cache[cacheKey] = resolvedPosterUrl;
+  await persistPostersCache();
+  return resolvedPosterUrl;
+}
 
 function generateRoomCode() {
   let code = '';
@@ -1873,6 +1979,21 @@ function removePlayerFromRoom(room, socketId) {
 
 app.get('/api/health', (_request, response) => {
   response.json({ ok: true, rooms: rooms.size });
+});
+
+app.post('/api/posters/resolve', async (request, response) => {
+  try {
+    const movies = Array.isArray(request.body?.movies) ? request.body.movies : [];
+    const resolutions = await Promise.all(movies.map(async (movie) => ({
+      id: movie.id,
+      posterUrl: await resolvePosterForMovie(movie)
+    })));
+
+    response.json({ resolutions });
+  } catch (error) {
+    console.error('Impossible de resoudre les affiches TMDb.', error);
+    response.status(500).json({ error: 'poster-resolution-failed' });
+  }
 });
 
 app.post('/api/rooms', (request, response) => {

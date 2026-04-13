@@ -141,6 +141,26 @@ body {
     z-index: 15;
     width: 280px;
     height: min(740px, calc(100vh - 156px));
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+    transition: opacity 0.45s ease, transform 0.45s ease, visibility 0.45s ease;
+}
+
+.site-ads-entering {
+    animation: siteAdsSlideIn 0.55s ease forwards;
+}
+
+.site-ads-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(20px, 24px);
+    pointer-events: none;
+}
+
+.site-ads-no-transition {
+    transition: none;
 }
 
 .ad-card {
@@ -206,9 +226,8 @@ body {
     display: none;
 }
 
-.app-shell:has(#loginView.view-active) .site-ads,
-.app-shell:has(#servicesView.view-active) .site-ads {
-    display: none;
+.app-shell:has(#appView.view-active) .site-ads {
+    display: none !important;
 }
 
 .card {
@@ -570,6 +589,26 @@ body:has(#servicesView.view-active) .services-legal-button {
     width: 280px;
     height: auto;
     min-height: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+    transition: opacity 0.45s ease, transform 0.45s ease, visibility 0.45s ease;
+}
+
+.games-filters-card-entering {
+    animation: gamesFiltersSlideIn 0.55s ease forwards;
+}
+
+.games-filters-card-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-20px);
+    pointer-events: none;
+}
+
+.games-filters-card-no-transition {
+    transition: none;
 }
 
 .multiplayer-chat-card {
@@ -8190,18 +8229,18 @@ button:hover {
 .section-header-card,
 .form-card,
 .manage-list-card {
-    padding: 28px;
+    padding: 24px;
     background: rgba(6, 10, 20, 0.98);
 }
 
 .hero {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .panel-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
+    gap: 16px;
 }
 
 #dashboardSection {
@@ -8223,13 +8262,13 @@ button:hover {
     display: flex;
     align-items: end;
     justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 16px;
-    padding: 18px 22px;
+    gap: 18px;
+    margin-bottom: 14px;
+    padding: 16px 20px;
 }
 
 .catalog-tools {
-    width: min(320px, 100%);
+    width: min(280px, 100%);
 }
 
 .section-header-card h3 {
@@ -8246,8 +8285,8 @@ button:hover {
 
 .catalog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
     align-items: start;
 }
 
@@ -8271,13 +8310,16 @@ button:hover {
 }
 
 .movie-card-body {
-    margin-top: 12px;
-    padding: 18px;
+    margin-top: 10px;
+    padding: 14px 15px;
     border-radius: 22px;
 }
 
 .movie-card-body h4 {
-    min-height: 52px;
+    min-height: 0;
+    margin: 0 0 8px;
+    font-size: 1.02rem;
+    line-height: 1.2;
 }
 
 .rating-badge {
@@ -8302,13 +8344,26 @@ button:hover {
 
 .movie-meta {
     display: grid;
-    gap: 6px;
-    margin-bottom: 14px;
+    gap: 4px;
+    margin-bottom: 0;
 }
 
 .movie-meta p,
-.movie-comment {
-    margin-bottom: 0;
+.movie-meta a {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.3;
+    color: rgba(226, 232, 240, 0.84);
+}
+
+.movie-meta a {
+    color: rgba(191, 219, 254, 0.96);
+    text-decoration: none;
+}
+
+.movie-meta a:hover,
+.movie-meta a:focus-visible {
+    text-decoration: underline;
 }
 
 .import-source {
@@ -8317,10 +8372,17 @@ button:hover {
     font-size: 0.95rem;
 }
 
+.tmdb-attribution {
+    margin: 14px 0 0;
+    color: rgba(191, 219, 254, 0.72);
+    font-size: 0.82rem;
+    line-height: 1.45;
+}
+
 .management-layout {
     display: grid;
     grid-template-columns: minmax(0, 1.24fr) minmax(0, 0.86fr);
-    gap: 16px;
+    gap: 14px;
     height: 100%;
     align-items: start;
 }
@@ -8343,8 +8405,8 @@ button:hover {
 
 .manage-list {
     display: grid;
-    gap: 12px;
-    margin-top: 14px;
+    gap: 10px;
+    margin-top: 12px;
 }
 
 .manage-item {
@@ -8559,6 +8621,30 @@ button:hover {
     to {
         opacity: 0;
         transform: translateY(24px);
+    }
+}
+
+@keyframes gamesFiltersSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-32px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes siteAdsSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(32px, 24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0);
     }
 }
 
@@ -8850,6 +8936,15 @@ button:hover {
 
     .music-layout {
         height: min(740px, calc(100vh - 72px));
+    }
+}
+
+@media (min-width: 981px) {
+    #appView {
+        width: min(100%, calc(100% - 336px));
+        max-width: 980px;
+        padding-right: 12px;
+        margin-inline: auto;
     }
 }
 
