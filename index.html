@@ -295,7 +295,7 @@
                     <form id="multiplayerChatForm" class="multiplayer-chat-form">
                         <label class="games-filter-search" for="multiplayerChatInput">
                             <span class="games-filter-search-label">Message</span>
-                            <input id="multiplayerChatInput" type="text" maxlength="220" placeholder="Parle a ton equipage..." autocomplete="off">
+                            <input id="multiplayerChatInput" type="text" maxlength="220" placeholder="Parle &agrave; ton &eacute;quipage..." autocomplete="off">
                         </label>
                         <button id="multiplayerChatSendButton" type="submit" class="primary-button">Envoyer</button>
                     </form>
@@ -641,6 +641,10 @@
                             <span class="game-home-art game-home-art-uno" aria-hidden="true"></span>
                             <span class="game-home-title">Buno</span>
                         </button>
+                        <button type="button" class="game-home-tile multiplayer-game-tile" data-open-game="bomb" data-multiplayer-game-select="bomb">
+                            <span class="game-home-art game-home-art-bomb" aria-hidden="true"></span>
+                            <span class="game-home-title">La Bombe</span>
+                        </button>
                     </div>
                 </div>
 
@@ -652,7 +656,7 @@
                         </div>
 
                         <div class="minesweeper-center-stack">
-                            <button id="restartGameButton" type="button" class="minesweeper-face" aria-label="Relancer une partie">
+                            <button id="restartGameButton" type="button" class="minesweeper-face" aria-label="Relancer une partie" hidden>
                                 Aller en mer
                             </button>
                         </div>
@@ -672,7 +676,7 @@
                                 <p id="minesweeperMenuText" class="minesweeper-menu-text">Repere les zones sures du recif, pose tes drapeaux et traverse sans toucher une mine.</p>
                                 <div class="minesweeper-menu-actions">
                                     <button id="minesweeperMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="minesweeperMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="minesweeperMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -687,7 +691,7 @@
                             <strong id="snakeScoreDisplay" class="snake-counter-value">0</strong>
                         </div>
 
-                        <button id="snakeStartButton" type="button" class="snake-face">Lancer la travers&eacute;e</button>
+                        <button id="snakeStartButton" type="button" class="snake-face" hidden>Lancer la travers&eacute;e</button>
 
                         <div class="snake-counter-block">
                             <span class="snake-counter-label">Record</span>
@@ -704,7 +708,7 @@
                                 <p id="snakeMenuText" class="snake-menu-text">Glisse entre les courants, ramasse les lanternes et allonge ton serpent sans heurter la coque.</p>
                                 <div class="snake-menu-actions">
                                     <button id="snakeMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="snakeMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="snakeMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -729,7 +733,7 @@
                         <button type="button" class="secondary-button pong-mode-button" data-pong-mode="duo">2 joueurs</button>
                     </div>
 
-                    <p class="pong-help" id="pongHelpText">Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l IA. Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas.</p>
+                    <p class="pong-help" id="pongHelpText">Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l'IA. Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas.</p>
                     <div id="pongTable" class="pong-table">
                         <div id="pongMenuOverlay" class="pong-menu-overlay">
                             <div class="pong-menu-card">
@@ -738,7 +742,7 @@
                                 <p id="pongMenuText" class="pong-menu-text">Choisis ton mode, puis lance le duel dans la baie.</p>
                                 <div class="pong-menu-actions">
                                     <button id="pongMenuActionButton" type="button" class="game-menu-primary-button">Lancer le duel</button>
-                                    <button id="pongMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="pongMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -769,7 +773,7 @@
                     </div>
                     <div class="sudoku-controls">
                         <button id="sudokuDifficultyButton" type="button" class="sudoku-face sudoku-face-secondary">Difficulte : Moussaillon</button>
-                        <button id="sudokuRestartButton" type="button" class="sudoku-face">Nouvelle grille</button>
+                        <button id="sudokuRestartButton" type="button" class="sudoku-face" hidden>Nouvelle grille</button>
                     </div>
 
                     <p id="sudokuHelpText" class="sudoku-help">Clique une case vide puis tape de 1 &agrave; 9. Suppr ou retour arri&egrave;re pour effacer.</p>
@@ -781,7 +785,7 @@
                                 <p id="sudokuMenuText" class="sudoku-menu-text">Complete la carte sans repeter de chiffre sur une ligne, une colonne ou un carre de 3 par 3.</p>
                                 <div class="sudoku-menu-actions">
                                     <button id="sudokuMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="sudokuMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="sudokuMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -796,7 +800,7 @@
                             <strong id="game2048ScoreDisplay" class="game-2048-counter-value">0</strong>
                         </div>
 
-                        <button id="game2048RestartButton" type="button" class="game-2048-face">Nouvelle mar&eacute;e</button>
+                        <button id="game2048RestartButton" type="button" class="game-2048-face" hidden>Nouvelle mar&eacute;e</button>
 
                         <div class="game-2048-counter-block">
                             <span class="game-2048-counter-label">Record</span>
@@ -813,7 +817,7 @@
                                 <p id="game2048MenuText" class="game-2048-menu-text">Fais glisser les tuiles pour fusionner les valeurs et atteindre 2048 sans bloquer la grille.</p>
                                 <div class="game-2048-menu-actions">
                                     <button id="game2048MenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="game2048MenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="game2048MenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -869,10 +873,10 @@
                             <div class="memory-menu-card">
                                 <span id="memoryMenuEyebrow" class="memory-menu-eyebrow">Pont des souvenirs</span>
                                 <h3 id="memoryMenuTitle" class="memory-menu-title">Memory</h3>
-                                <p id="memoryMenuText" class="memory-menu-text">Retourne les cartes du pont et retrouve toutes les paires avant la fin de la maree.</p>
+                                <p id="memoryMenuText" class="memory-menu-text">Retourne les cartes du pont et retrouve toutes les paires avant la fin de la mar&eacute;e.</p>
                                 <div class="memory-menu-actions">
                                     <button id="memoryMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="memoryMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="memoryMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -887,7 +891,7 @@
                             <strong id="ticTacToeTurnDisplay" class="tictactoe-counter-value">Toi</strong>
                         </div>
 
-                        <button id="ticTacToeRestartButton" type="button" class="tictactoe-face">Nouveau duel</button>
+                        <button id="ticTacToeRestartButton" type="button" class="tictactoe-face" hidden>Nouveau duel</button>
 
                         <div class="tictactoe-counter-block game-score-counter-block">
                             <span class="tictactoe-counter-label">Score</span>
@@ -900,16 +904,16 @@
                         <button type="button" class="secondary-button tictactoe-mode-button" data-tictactoe-mode="duo">2 joueurs</button>
                     </div>
 
-                    <p id="ticTacToeHelpText" class="tictactoe-help">Mode 1 joueur: aligne trois symboles contre l IA pirate.</p>
+                    <p id="ticTacToeHelpText" class="tictactoe-help">Mode 1 joueur: aligne trois symboles contre l'IA pirate.</p>
                     <div id="ticTacToeTable" class="tictactoe-table">
                         <div id="ticTacToeMenuOverlay" class="tictactoe-menu-overlay">
                             <div class="tictactoe-menu-card">
-                                <span id="ticTacToeMenuEyebrow" class="tictactoe-menu-eyebrow">Baie strategique</span>
+                                <span id="ticTacToeMenuEyebrow" class="tictactoe-menu-eyebrow">Baie strat&eacute;gique</span>
                                 <h3 id="ticTacToeMenuTitle" class="tictactoe-menu-title">Morpion</h3>
-                                <p id="ticTacToeMenuText" class="tictactoe-menu-text">Aligne trois symboles avant l equipage adverse pour prendre le pont.</p>
+                                <p id="ticTacToeMenuText" class="tictactoe-menu-text">Aligne trois symboles avant l&rsquo;&eacute;quipage adverse pour prendre le pont.</p>
                                 <div class="tictactoe-menu-actions">
                                     <button id="ticTacToeMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="ticTacToeMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="ticTacToeMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1032,7 +1036,7 @@
                         <button type="button" class="secondary-button connect4-mode-button" data-connect4-mode="duo">2 joueurs</button>
                     </div>
 
-                    <p id="connect4HelpText" class="connect4-help">Mode 1 joueur: clique une colonne pour y larguer un jeton contre l IA.</p>
+                    <p id="connect4HelpText" class="connect4-help">Mode 1 joueur: clique une colonne pour y larguer un jeton contre l'IA.</p>
                     <div id="connect4Table" class="connect4-table">
                         <div id="connect4MenuOverlay" class="connect4-menu-overlay">
                             <div class="connect4-menu-card">
@@ -1041,7 +1045,7 @@
                                 <p id="connect4MenuText" class="connect4-menu-text">Choisis ton mode puis aligne quatre jetons avant ton rival sur le pont.</p>
                                 <div class="connect4-menu-actions">
                                     <button id="connect4MenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="connect4MenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="connect4MenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1099,7 +1103,7 @@
                                 <p id="flappyMenuText" class="flappy-menu-text">Prepare ton envol avant de battre des ailes entre les arches.</p>
                                 <div class="flappy-menu-actions">
                                     <button id="flappyMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="flappyMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="flappyMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1166,7 +1170,7 @@
                                 <p id="mentalMathMenuText" class="mentalmath-menu-text">Prepare-toi a enchainer les calculs avant que le chrono ne te rattrape.</p>
                                 <div class="mentalmath-menu-actions">
                                     <button id="mentalMathMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="mentalMathMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="mentalMathMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1315,7 +1319,7 @@
                                 <p id="chessMenuText" class="chess-menu-text">Installe les pieces et choisis ton mode avant d engager la partie.</p>
                                 <div class="chess-menu-actions">
                                     <button id="chessMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="chessMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="chessMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1347,7 +1351,7 @@
                                 <p id="checkersMenuText" class="checkers-menu-text">Installe les pions et choisis ton mode avant d engager la partie.</p>
                                 <div class="checkers-menu-actions">
                                     <button id="checkersMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="checkersMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="checkersMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1361,7 +1365,7 @@
                             <span class="airhockey-counter-label">Score gauche</span>
                             <strong id="airHockeyLeftScoreDisplay" class="airhockey-counter-value">0</strong>
                         </div>
-                        <button id="airHockeyStartButton" type="button" class="airhockey-face">Lancer</button>
+                        <button id="airHockeyStartButton" type="button" class="airhockey-face" hidden>Lancer</button>
                         <div class="airhockey-counter-block">
                             <span class="airhockey-counter-label">Score droite</span>
                             <strong id="airHockeyRightScoreDisplay" class="airhockey-counter-value">0</strong>
@@ -1371,7 +1375,7 @@
                         <button type="button" class="secondary-button airhockey-mode-button is-active" data-airhockey-mode="solo">1 joueur</button>
                         <button type="button" class="secondary-button airhockey-mode-button" data-airhockey-mode="duo">2 joueurs</button>
                     </div>
-                    <p id="airHockeyHelpText" class="airhockey-help">Joueur gauche: ZQSD. Joueur droit: fleches. En solo, la droite est pilotee par l IA.</p>
+                    <p id="airHockeyHelpText" class="airhockey-help">Joueur gauche: ZQSD. Joueur droit: fleches. En solo, la droite est pilotee par l'IA.</p>
                     <div id="airHockeyBoard" class="airhockey-board" aria-label="Plateau de Sea Hockey">
                         <div id="airHockeyMenuOverlay" class="airhockey-menu-overlay">
                             <div class="airhockey-menu-card">
@@ -1380,7 +1384,7 @@
                                 <p id="airHockeyMenuText" class="airhockey-menu-text">Choisis ton mode puis engage le palet sur le pont glissant de la baie.</p>
                                 <div class="airhockey-menu-actions">
                                     <button id="airHockeyMenuActionButton" type="button" class="game-menu-primary-button">Lancer le duel</button>
-                                    <button id="airHockeyMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="airHockeyMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1413,7 +1417,7 @@
                                 <p id="reactionMenuText" class="reaction-menu-text">Reste calme sur le pont et clique des que la lanterne s allume pour signer le meilleur reflexe.</p>
                                 <div class="reaction-menu-actions">
                                     <button id="reactionMenuActionButton" type="button" class="game-menu-primary-button">Lancer la veille</button>
-                                    <button id="reactionMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="reactionMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1469,7 +1473,7 @@
                             <p id="baieBerryMenuText" class="baieberry-menu-text">Prepare ta recolte avant de laisser tomber les fruits dans le panier.</p>
                             <div class="baieberry-menu-actions">
                                 <button id="baieBerryMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                <button id="baieBerryMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                <button id="baieBerryMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                             </div>
                         </div>
                     </div>
@@ -1495,7 +1499,7 @@
                                 <p id="breakoutMenuText" class="breakout-menu-text">Prepare ta traversee avant d envoyer la balle sur les briques.</p>
                                 <div class="breakout-menu-actions">
                                     <button id="breakoutMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
-                                    <button id="breakoutMenuRulesButton" type="button" class="game-menu-secondary-button">Regles</button>
+                                    <button id="breakoutMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1509,7 +1513,7 @@
                             <span class="blockblast-counter-label">Score</span>
                             <strong id="blockBlastScoreDisplay" class="blockblast-counter-value">0</strong>
                         </div>
-                        <button id="blockBlastStartButton" type="button" class="blockblast-face">Nouvelle maree</button>
+                        <button id="blockBlastStartButton" type="button" class="blockblast-face">Nouvelle mar&eacute;e</button>
                         <div class="blockblast-counter-block">
                             <span class="blockblast-counter-label">Combo</span>
                             <strong id="blockBlastComboDisplay" class="blockblast-counter-value">x1</strong>
@@ -1555,7 +1559,7 @@
                                 <p id="unoMenuText" class="uno-menu-text">Prepare ta partie avant de larguer les amarres.</p>
                                 <div class="uno-menu-actions">
                                     <button id="unoMenuActionButton" type="button" class="uno-face">Lancer la partie</button>
-                                    <button id="unoMenuRulesButton" type="button" class="secondary-button">Regles</button>
+                                    <button id="unoMenuRulesButton" type="button" class="secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
@@ -1580,6 +1584,63 @@
                             <button type="button" class="uno-color-choice is-blue" data-uno-color="blue">Bleu</button>
                         </div>
                         <div id="unoHand" class="uno-hand" aria-label="Ta main Buno"></div>
+                    </div>
+                </div>
+
+                <div id="bombGame" class="card bomb-card games-panel">
+                    <div class="bomb-topbar">
+                        <div class="bomb-counter-block">
+                            <span class="bomb-counter-label">Syllabe</span>
+                            <strong id="bombSyllableDisplay" class="bomb-counter-value">-</strong>
+                        </div>
+                        <div class="bomb-counter-block">
+                            <span class="bomb-counter-label">Temps</span>
+                            <strong id="bombTimerDisplay" class="bomb-counter-value">--</strong>
+                        </div>
+                        <div class="bomb-counter-block">
+                            <span class="bomb-counter-label">Tour</span>
+                            <strong id="bombTurnDisplay" class="bomb-counter-value">-</strong>
+                        </div>
+                    </div>
+                    <p id="bombHelpText" class="bomb-help">Jeu online uniquement. Ecris un mot contenant la syllabe imposee avant l explosion.</p>
+                    <div id="bombTable" class="bomb-table">
+                        <div class="bomb-main-shell">
+                            <div class="bomb-stage-card">
+                                <div class="bomb-status-row">
+                                    <p id="bombStatusBanner" class="bomb-status-banner">Rejoins un salon pour lancer la bombe.</p>
+                                    <button id="bombRestartButton" type="button" class="secondary-button bomb-restart-button">Nouvelle manche</button>
+                                </div>
+                                <div class="bomb-core">
+                                    <div class="bomb-core-device" aria-hidden="true">
+                                        <span class="bomb-core-fuse"></span>
+                                        <span class="bomb-core-body"></span>
+                                        <span class="bomb-core-light"></span>
+                                    </div>
+                                    <div class="bomb-core-copy">
+                                        <span class="bomb-core-label">Syllabe active</span>
+                                        <strong id="bombSpotlightSyllable" class="bomb-core-syllable">-</strong>
+                                        <p id="bombSpotlightPlayer" class="bomb-core-player">En attente d equipage</p>
+                                    </div>
+                                </div>
+                                <form id="bombWordForm" class="bomb-word-form">
+                                    <label class="games-filter-search" for="bombWordInput">
+                                        <span class="games-filter-search-label">Ton mot</span>
+                                        <input id="bombWordInput" type="text" maxlength="32" placeholder="Ex. bateau" autocomplete="off" spellcheck="false">
+                                    </label>
+                                    <button id="bombWordSubmitButton" type="submit" class="primary-button">Envoyer</button>
+                                </form>
+                            </div>
+                            <aside class="bomb-sidebar">
+                                <div class="bomb-sidebar-card">
+                                    <span class="bomb-sidebar-label">Equipage</span>
+                                    <div id="bombPlayersBoard" class="bomb-players-board">Les joueurs de la room apparaitront ici.</div>
+                                </div>
+                                <div class="bomb-sidebar-card">
+                                    <span class="bomb-sidebar-label">Mots utilises</span>
+                                    <div id="bombUsedWords" class="bomb-used-words">Aucun mot valide pour le moment.</div>
+                                </div>
+                            </aside>
+                        </div>
                     </div>
                 </div>
             </div>

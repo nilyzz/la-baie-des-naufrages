@@ -24,9 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
         pong: 'Pong',
         ticTacToe: 'Morpion',
         connect4: 'Coin 4',
-        chess: 'Echecs',
+        chess: '\u00c9checs',
         checkers: 'Dames',
-        uno: 'Buno'
+        uno: 'Buno',
+        bomb: 'La Bombe'
     };
 
     const loginView = document.getElementById('loginView');
@@ -147,7 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
         stacker: ['arcade', 'reflexe'],
         sudoku: ['puzzle', 'strategie'],
         tetris: ['puzzle', 'reflexe'],
-        uno: ['strategie', 'arcade', 'carte']
+        uno: ['strategie', 'arcade', 'carte'],
+        bomb: ['arcade', 'reflexe']
     };
     let activeGamesFilter = 'all';
     const snakeGame = document.getElementById('snakeGame');
@@ -484,6 +486,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const unoMenuText = document.getElementById('unoMenuText');
     const unoMenuActionButton = document.getElementById('unoMenuActionButton');
     const unoMenuRulesButton = document.getElementById('unoMenuRulesButton');
+    const bombGame = document.getElementById('bombGame');
+    const bombSyllableDisplay = document.getElementById('bombSyllableDisplay');
+    const bombSpotlightSyllable = document.getElementById('bombSpotlightSyllable');
+    const bombTimerDisplay = document.getElementById('bombTimerDisplay');
+    const bombTurnDisplay = document.getElementById('bombTurnDisplay');
+    const bombHelpText = document.getElementById('bombHelpText');
+    const bombStatusBanner = document.getElementById('bombStatusBanner');
+    const bombSpotlightPlayer = document.getElementById('bombSpotlightPlayer');
+    const bombPlayersBoard = document.getElementById('bombPlayersBoard');
+    const bombUsedWords = document.getElementById('bombUsedWords');
+    const bombWordForm = document.getElementById('bombWordForm');
+    const bombWordInput = document.getElementById('bombWordInput');
+    const bombWordSubmitButton = document.getElementById('bombWordSubmitButton');
+    const bombRestartButton = document.getElementById('bombRestartButton');
     const mathPanels = document.querySelectorAll('.math-panel');
     const musicPanels = document.querySelectorAll('.music-panel');
     const calculatorDisplay = document.getElementById('calculatorDisplay');
@@ -532,7 +548,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const AIM_BEST_KEY = 'baie-des-naufrages-aim-best';
     const CONNECT4_ROWS = 6;
     const CONNECT4_COLS = 7;
-    const MEMORY_ICONS = ['âš“', 'ðŸ¦€', 'ðŸš', 'ðŸ¦‘', 'ðŸª¸', 'ðŸ¦ž', 'ðŸ ', 'ðŸ§­'];
+    const MEMORY_ICONS = ['\u2693', '\u{1F980}', '\u{1F419}', '\u{1F991}', '\u{1FAB8}', '\u{1F99E}', '\u{1F420}', '\u{1F9ED}'];
     const BATTLESHIP_SIZE = 8;
     const BLOCK_BLAST_SIZE = 8;
     const BLOCK_BLAST_BEST_KEY = 'baie-des-naufrages-block-blast-best';
@@ -636,12 +652,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'treasury', label: 'Tresor royal', baseCost: 760, effectType: 'multiplier', bonus: 0.5, description: '+0,50 multiplicateur' }
     ];
     const CHESS_PIECES = {
-        pawn: { white: 'â™™', black: 'â™Ÿ' },
-        rook: { white: 'â™–', black: 'â™œ' },
-        knight: { white: 'â™˜', black: 'â™ž' },
-        bishop: { white: 'â™—', black: 'â™' },
-        queen: { white: 'â™•', black: 'â™›' },
-        king: { white: 'â™”', black: 'â™š' }
+        pawn: { white: '\u2659', black: '\u265F' },
+        rook: { white: '\u2656', black: '\u265C' },
+        knight: { white: '\u2658', black: '\u265E' },
+        bishop: { white: '\u2657', black: '\u265D' },
+        queen: { white: '\u2655', black: '\u265B' },
+        king: { white: '\u2654', black: '\u265A' }
     };
     const CHECKERS_DIRECTIONS = {
         red: [[-1, -1], [-1, 1]],
@@ -684,10 +700,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const SOLITAIRE_SUITS = ['spades', 'hearts', 'clubs', 'diamonds'];
     const SOLITAIRE_SUIT_SYMBOLS = {
-        spades: 'â™ ',
-        hearts: 'â™¥',
-        clubs: 'â™£',
-        diamonds: 'â™¦'
+        spades: '\u2660',
+        hearts: '\u2665',
+        clubs: '\u2663',
+        diamonds: '\u2666'
     };
     const SUDOKU_DIFFICULTIES = [
         { difficulty: 'Moussaillon', removals: 38 },
@@ -796,6 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let checkersLastMoveAnimationKey = '';
     let chessLastFinishedStateKey = '';
     let checkersLastFinishedStateKey = '';
+    let bombLastFinishedStateKey = '';
     let chessLastCaptureFxKey = '';
     let checkersLastCaptureFxKey = '';
     let chessMenuVisible = true;
@@ -858,6 +875,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongMenuClosing = false;
     let pongMenuEntering = false;
     let pongMenuResult = null;
+    let bombState = null;
+    let bombTimerInterval = null;
     let pongBoardMetrics = null;
     let pongRenderMetrics = null;
     const PONG_SERVE_SPEED_X = 388;
@@ -1097,6 +1116,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let chessState = null;
     let chessSelectedSquare = null;
     let chessMode = 'solo';
+    let chessDragState = null;
+    let chessSuppressNextClick = false;
     let chessAiTimeout = null;
     let chessLastMoveResetTimer = null;
     let checkersState = null;
@@ -2795,7 +2816,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!messages.length) {
             const emptyState = document.createElement('p');
             emptyState.className = 'multiplayer-chat-empty';
-            emptyState.textContent = 'La partie est lancee. Ecris le premier message a ton equipage.';
+            emptyState.textContent = 'La partie est lanc\u00e9e. \u00c9cris le premier message \u00e0 ton \u00e9quipage.';
             multiplayerChatMessages.appendChild(emptyState);
             multiplayerChatSignature = '';
             return;
@@ -2876,7 +2897,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!isMultiplayerChatVisible()) {
-            setMultiplayerStatus('Le chat sera disponible une fois la partie lancee.');
+            setMultiplayerStatus('Le chat sera disponible une fois la partie lanc\u00e9e.');
             return;
         }
 
@@ -3220,7 +3241,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasActiveRoom = Boolean(multiplayerActiveRoom?.code);
         const isHost = Boolean(currentPlayer?.isHost);
         const readySummary = getMultiplayerReadySummary();
-        const readyLabel = isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret';
+        const readyLabel = isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat';
 
         multiplayerCurrentRoomCode.textContent = multiplayerActiveRoom?.code || '-';
         multiplayerLobbyPlayersBlock?.classList.toggle('hidden', !hasActiveRoom);
@@ -3253,7 +3274,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!multiplayerActiveRoom.gameLaunched) {
-                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} pret sur ${activeRoomGameLabel}. ${readySummary} joueurs prets. La partie demarre quand tout le monde est pret.`);
+                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} pr\u00eat sur ${activeRoomGameLabel}. ${readySummary} joueurs pr\u00eats. La partie d\u00e9marre quand tout le monde est pr\u00eat.`);
                 return;
             }
 
@@ -3262,7 +3283,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!canUseMultiplayer) {
-            setMultiplayerStatus('Le multijoueur est prevu pour Bataille, Sea Hockey, Pong, Morpion, Coin 4, Echecs, Dames et Buno.');
+            setMultiplayerStatus('Le multijoueur est pr\u00e9vu pour Bataille, Sea Hockey, Pong, Morpion, Coin 4, \u00c9checs, Dames, Buno et La Bombe.');
             return;
         }
 
@@ -3334,6 +3355,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 syncMultiplayerChessState();
                 syncMultiplayerCheckersState();
                 syncMultiplayerUnoState();
+                syncMultiplayerBombState();
                 syncMultiplayerEntryModeAccess();
                 updateMultiplayerLobby();
                 updateMultiplayerChatPanel();
@@ -3354,6 +3376,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 syncMultiplayerChessState();
                 syncMultiplayerCheckersState();
                 syncMultiplayerUnoState();
+                syncMultiplayerBombState();
                 const nextUiSignature = getMultiplayerRoomUiSignature(room);
                 if (previousUiSignature !== nextUiSignature) {
                     syncMultiplayerEntryModeAccess();
@@ -3385,6 +3408,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 chessLastFinishedStateKey = '';
                 checkersLastFinishedStateKey = '';
                 unoLastWinnerKey = '';
+                bombLastFinishedStateKey = '';
+                bombState = null;
+                stopBombTimerLoop();
                 multiplayerCurrentRoomCode.textContent = '-';
                 multiplayerLobbyPlayersBlock?.classList.add('hidden');
                 if (multiplayerJoinRoomCodeInput) {
@@ -3402,6 +3428,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (activeGameTab === 'uno') {
                     initializeUno();
+                }
+                if (activeGameTab === 'bomb') {
+                    initializeBomb();
                 }
                 syncMultiplayerEntryModeAccess();
                 updateMultiplayerLobby();
@@ -3551,7 +3580,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const socket = await ensureMultiplayerConnection();
             socket.emit('room:toggle-ready');
-            setMultiplayerStatus(`${isCurrentPlayerMultiplayerReady() ? 'Retrait du statut pret' : 'Preparation'} pour ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}...`);
+            setMultiplayerStatus(`${isCurrentPlayerMultiplayerReady() ? 'Retrait du statut pr\u00eat' : 'Pr\u00e9paration'} pour ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}...`);
         } catch (error) {
             setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
         }
@@ -3603,6 +3632,7 @@ document.addEventListener('DOMContentLoaded', () => {
         breakoutGame.classList.toggle('games-panel-active', tabId === 'breakout');
         blockBlastGame.classList.toggle('games-panel-active', tabId === 'blockBlast');
         unoGame.classList.toggle('games-panel-active', tabId === 'uno');
+        bombGame.classList.toggle('games-panel-active', tabId === 'bomb');
         updateMultiplayerChatPanel();
 
         if (tabId !== 'snake') {
@@ -3831,6 +3861,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (previousTab === 'breakout' && nextTab !== 'breakout') {
             stopBreakout();
             initializeBreakout();
+        }
+
+        if (previousTab === 'uno' && nextTab !== 'uno') {
+            initializeUno();
+        }
+
+        if (previousTab === 'bomb' && nextTab !== 'bomb') {
+            initializeBomb();
         }
     }
 
@@ -4092,16 +4130,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const hasResult = memoryMenuResult;
         if (memoryMenuEyebrow) {
-            memoryMenuEyebrow.textContent = memoryMenuShowingRules ? 'Regles' : (hasResult ? 'Fin de recolte' : 'Pont des souvenirs');
+            memoryMenuEyebrow.textContent = memoryMenuShowingRules ? 'R\u00e8gles' : (hasResult ? 'Fin de r\u00e9colte' : 'Pont des souvenirs');
         }
         if (memoryMenuTitle) {
-            memoryMenuTitle.textContent = memoryMenuShowingRules ? 'Rappel rapide' : (hasResult ? 'Memory termine' : 'Memory');
+            memoryMenuTitle.textContent = memoryMenuShowingRules ? 'Rappel rapide' : (hasResult ? 'Memory termin\u00e9' : 'Memory');
         }
         if (memoryMenuText) {
             memoryMenuText.textContent = memoryMenuShowingRules
                 ? getMemoryRulesText()
                 : (hasResult
-                    ? `Toutes les paires ont ete retrouvees en ${memoryMoves} coups.`
+                    ? `Toutes les paires ont \u00e9t\u00e9 retrouv\u00e9es en ${memoryMoves} coups.`
                     : 'Retourne les cartes du pont et retrouve toutes les paires marines.');
         }
         if (memoryMenuActionButton) {
@@ -4110,7 +4148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
         }
         if (memoryMenuRulesButton) {
-            memoryMenuRulesButton.textContent = 'Regles';
+            memoryMenuRulesButton.textContent = 'R\u00e8gles';
             memoryMenuRulesButton.hidden = memoryMenuShowingRules;
         }
     }
@@ -4135,7 +4173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         memoryMenuClosing = false;
         memoryMenuEntering = true;
         if (memoryHelpText) {
-            memoryHelpText.textContent = `Toutes les paires ont ete retrouvees en ${memoryMoves} coups.`;
+            memoryHelpText.textContent = `Toutes les paires ont \u00e9t\u00e9 retrouv\u00e9es en ${memoryMoves} coups.`;
         }
         renderMemoryMenu();
         window.setTimeout(() => {
@@ -4153,7 +4191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     type="button"
                     class="memory-card-tile${isRevealed ? ' is-revealed' : ''}${card.isMatched ? ' is-matched' : ''}${card.isRevealing ? ' is-revealing' : ''}${card.isReturning ? ' is-returning' : ''}"
                     data-index="${index}"
-                    aria-label="${isRevealed ? `Carte ${card.icon}` : 'Carte retournee'}"
+                    aria-label="${isRevealed ? `Carte ${card.icon}` : 'Carte retourn\u00e9e'}"
                 >
                     <div class="memory-card-inner" aria-hidden="true">
                         <div class="memory-card-face memory-card-front">${card.icon}</div>
@@ -4281,7 +4319,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
         ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
             ? 'Mode 2 joueurs: jouez chacun votre tour sur la meme grille.'
-            : 'Mode 1 joueur: aligne trois symboles contre l IA pirate.';
+            : "Mode 1 joueur: aligne trois symboles contre l'IA pirate.";
         ticTacToeModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
         });
@@ -4295,13 +4333,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 data-index="${index}"
                 aria-label="${cell ? (cell === 'anchor' ? 'Case ancre' : 'Case pirate') : 'Case vide'}"
             >
-                <span aria-hidden="true">${cell === 'anchor' ? 'âš“' : cell === 'skull' ? 'â˜ ' : ''}</span>
+                <span aria-hidden="true">${cell === 'anchor' ? '\u2693' : cell === 'skull' ? '\u2620' : ''}</span>
             </button>
         `).join('');
     }
 
     function getTicTacToeRulesText() {
-        return 'Placez chacun votre symbole a tour de role. Le premier a aligner trois cases gagne la manche. En solo, tu affrontes l IA pirate.';
+        return "Placez chacun votre symbole a tour de role. Le premier a aligner trois cases gagne la manche. En solo, tu affrontes l'IA pirate.";
     }
 
     function renderTicTacToeMenu() {
@@ -4322,8 +4360,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (ticTacToeMenuEyebrow) {
             ticTacToeMenuEyebrow.textContent = ticTacToeMenuShowingRules
-                ? 'Regles'
-                : (isOutcome ? 'Fin de manche' : 'Baie strategique');
+                ? 'R\u00e8gles'
+                : (isOutcome ? 'Fin de manche' : 'Baie strat\u00e9gique');
         }
 
         if (ticTacToeMenuTitle) {
@@ -4332,7 +4370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (ticTacToeMenuResult === 'win'
                     ? 'Victoire'
                     : (ticTacToeMenuResult === 'loss'
-                        ? 'Defaite'
+                        ? 'D\u00e9faite'
                         : (ticTacToeMenuResult === 'draw' ? 'Match nul' : 'Morpion')));
         }
 
@@ -4340,26 +4378,26 @@ document.addEventListener('DOMContentLoaded', () => {
             ticTacToeMenuText.textContent = ticTacToeMenuShowingRules
                 ? getTicTacToeRulesText()
                 : (ticTacToeMenuResult === 'win'
-                    ? (ticTacToeMode === 'duo' ? 'Le joueur 1 prend le pont. Relancez une nouvelle manche.' : 'Ton equipage tient le pont. Relance une nouvelle manche.')
+                    ? (ticTacToeMode === 'duo' ? 'Le joueur 1 prend le pont. Relancez une nouvelle manche.' : 'Ton \u00e9quipage tient le pont. Relance une nouvelle manche.')
                     : (ticTacToeMenuResult === 'loss'
-                        ? (ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont. Relancez une nouvelle manche.' : 'L IA pirate prend le pont. Relance une nouvelle manche.')
+                        ? (ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont. Relancez une nouvelle manche.' : "L'IA pirate prend le pont. Relance une nouvelle manche.")
                         : (ticTacToeMenuResult === 'draw'
                             ? 'Personne ne prend l avantage. Relance une nouvelle manche.'
                             : ((isMultiplayerTicTacToeActive() && !multiplayerActiveRoom?.gameLaunched)
-                                ? 'Quand tous les joueurs sont prets, la manche de morpion commence automatiquement.'
-                                : 'Aligne trois symboles avant l equipage adverse pour prendre le pont.'))));
+                                ? 'Quand tous les joueurs sont pr\u00eats, la manche de morpion commence automatiquement.'
+                                : "Aligne trois symboles avant l'\u00e9quipage adverse pour prendre le pont."))));
         }
 
         if (ticTacToeMenuActionButton) {
             ticTacToeMenuActionButton.textContent = ticTacToeMenuShowingRules
                 ? 'Retour'
                 : ((isMultiplayerTicTacToeActive() && !multiplayerActiveRoom?.gameLaunched)
-                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
                     : (isOutcome ? 'Relancer la partie' : 'Lancer la partie'));
         }
 
         if (ticTacToeMenuRulesButton) {
-            ticTacToeMenuRulesButton.textContent = 'Regles';
+            ticTacToeMenuRulesButton.textContent = 'R\u00e8gles';
             ticTacToeMenuRulesButton.hidden = ticTacToeMenuShowingRules;
         }
     }
@@ -4508,10 +4546,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (multiplayerActiveRoom?.gameState?.winner === currentRole) {
-                return 'Victoire. Ton equipage tient le pont.';
+                return 'Victoire. Ton \u00e9quipage tient le pont.';
             }
 
-            return 'Defaite. L adversaire prend le pont.';
+            return "D\u00e9faite. L'adversaire prend le pont.";
         }
 
         if (!currentRole) {
@@ -4519,8 +4557,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return ticTacToeCurrentPlayer === currentRole
-            ? 'A toi de jouer.'
-            : 'Au tour de l adversaire.';
+            ? '\u00c0 toi de jouer.'
+            : "Au tour de l'adversaire.";
     }
 
     function syncMultiplayerTicTacToeState() {
@@ -4583,7 +4621,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ticTacToeBoardState = Array(9).fill('');
         ticTacToeCurrentPlayer = 'anchor';
         ticTacToeFinished = false;
-        ticTacToeHelpText.textContent = 'Place tes ancres contre lâ€™IA pirate pour aligner trois symboles.';
+        ticTacToeHelpText.textContent = "Place tes ancres contre l'IA pirate pour aligner trois symboles.";
         updateTicTacToeHud();
         renderTicTacToeBoard();
     }
@@ -4615,7 +4653,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
         ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
             ? 'Mode 2 joueurs: jouez chacun votre tour sur la meme grille.'
-            : 'Mode 1 joueur: aligne trois symboles contre l IA pirate.';
+            : "Mode 1 joueur: aligne trois symboles contre l'IA pirate.";
         ticTacToeModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
             button.disabled = false;
@@ -4660,11 +4698,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (winner === 'anchor') {
             ticTacToeScores.anchor += 1;
-            ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 1 tient le pont.' : 'Victoire. Ton equipage tient le pont.';
+            ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 1 tient le pont.' : 'Victoire. Ton \u00e9quipage tient le pont.';
             ticTacToeMenuResult = 'win';
         } else if (winner === 'skull') {
             ticTacToeScores.skull += 1;
-            ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont.' : 'Defaite. L IA pirate prend le pont.';
+            ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont.' : "D\u00e9faite. L'IA pirate prend le pont.";
             ticTacToeMenuResult = 'loss';
         } else {
             ticTacToeHelpText.textContent = 'Match nul. Personne ne prend l avantage.';
@@ -4709,7 +4747,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTicTacToeBoard();
 
         if (ticTacToeCurrentPlayer === 'skull' && ticTacToeMode === 'solo') {
-            ticTacToeHelpText.textContent = 'L IA pirate prepare sa riposte.';
+            ticTacToeHelpText.textContent = "L'IA pirate prepare sa riposte.";
             ticTacToeAiTimeout = window.setTimeout(() => {
                 ticTacToeAiTimeout = null;
                 if (ticTacToeFinished) {
@@ -4726,7 +4764,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (!ticTacToeFinished) {
             ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
                 ? (ticTacToeCurrentPlayer === 'anchor' ? 'Au joueur 1 de jouer.' : 'Au joueur 2 de jouer.')
-                : 'A toi de jouer.';
+                : '\u00c0 toi de jouer.';
         }
     }
 
@@ -4797,7 +4835,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return 'Victoire. Tu controles la colonne du pont.';
             }
 
-            return 'Defaite. L adversaire aligne quatre jetons.';
+            return "D\u00e9faite. L'adversaire aligne quatre jetons.";
         }
 
         if (!currentRole) {
@@ -4805,8 +4843,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return connect4CurrentPlayer === currentRole
-            ? 'A toi de jouer.'
-            : 'Au tour de l adversaire.';
+            ? '\u00c0 toi de jouer.'
+            : "Au tour de l'adversaire.";
     }
 
     function getConnect4RulesText() {
@@ -4832,17 +4870,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasResult = connect4MenuResult && connect4Finished;
         const winner = multiplayerConnect4 ? multiplayerActiveRoom?.gameState?.winner : connect4OutcomeWinner;
         if (connect4MenuEyebrow) {
-            connect4MenuEyebrow.textContent = connect4MenuShowingRules ? 'Regles' : (hasResult ? 'Fin de manche' : 'Pont des corsaires');
+            connect4MenuEyebrow.textContent = connect4MenuShowingRules ? 'R\u00e8gles' : (hasResult ? 'Fin de manche' : 'Pont des corsaires');
         }
         if (connect4MenuTitle) {
             connect4MenuTitle.textContent = connect4MenuShowingRules
                 ? 'Rappel rapide'
                 : (hasResult
                     ? (multiplayerConnect4
-                        ? (winner === 'draw' ? 'Match nul' : (winner === getMultiplayerConnect4Role() ? 'Victoire' : 'C est perdu'))
+                        ? (winner === 'draw' ? 'Match nul' : (winner === getMultiplayerConnect4Role() ? 'Victoire' : "C'est perdu"))
                         : (connect4Mode === 'duo'
                             ? (winner === 'draw' ? 'Match nul' : `${winner === 'player' ? 'Joueur 1' : 'Joueur 2'} gagne`)
-                            : (winner === 'draw' ? 'Match nul' : (winner === 'player' ? 'Victoire' : 'C est perdu'))))
+                            : (winner === 'draw' ? 'Match nul' : (winner === 'player' ? 'Victoire' : "C'est perdu"))))
                     : 'Coin 4');
         }
         if (connect4MenuText) {
@@ -4854,29 +4892,29 @@ document.addEventListener('DOMContentLoaded', () => {
                             ? 'La grille est pleine. Il faudra relancer une manche pour vous departager.'
                             : (winner === getMultiplayerConnect4Role()
                                 ? 'Tu remportes cette manche de Coin 4 en ligne.'
-                                : 'L adversaire remporte cette manche de Coin 4.'))
+                                : "L'adversaire remporte cette manche de Coin 4."))
                         : (connect4Mode === 'duo'
                             ? (winner === 'draw'
                                 ? 'La grille est pleine. Aucun des deux capitaines ne prend l avantage.'
                                 : `Le ${winner === 'player' ? 'joueur 1' : 'joueur 2'} aligne quatre jetons.`)
                             : (winner === 'draw'
-                                ? 'La grille est pleine. La manche se termine sans vainqueur.'
+                                ? 'La grille est pleine. La manche se termin\u00e9 sans vainqueur.'
                                 : (winner === 'player'
                                     ? 'Tu remportes cette manche de Coin 4.'
-                                    : 'L IA remporte cette manche de Coin 4.'))))
+                                    : "L'IA remporte cette manche de Coin 4."))))
                     : ((multiplayerConnect4 && !multiplayerActiveRoom?.gameLaunched)
-                        ? 'Quand tous les joueurs sont prets, la manche de Coin 4 se lance automatiquement.'
+                        ? 'Quand tous les joueurs sont pr\u00eats, la manche de Coin 4 se lance automatiquement.'
                         : 'Choisis ton mode puis prends possession du pont en alignant quatre jetons avant ton rival.'));
         }
         if (connect4MenuActionButton) {
             connect4MenuActionButton.textContent = connect4MenuShowingRules
                 ? 'Retour'
                 : ((multiplayerConnect4 && !multiplayerActiveRoom?.gameLaunched)
-                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
                     : (hasResult ? 'Relancer la partie' : 'Lancer la partie'));
         }
         if (connect4MenuRulesButton) {
-            connect4MenuRulesButton.textContent = 'Regles';
+            connect4MenuRulesButton.textContent = 'R\u00e8gles';
             connect4MenuRulesButton.hidden = connect4MenuShowingRules;
         }
     }
@@ -5213,7 +5251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             battleshipFinished = true;
             battleshipStatusText.textContent = `${playerWon ? getBattleshipTurnContext().attackerName : getBattleshipTurnContext().defenderName} remporte la bataille dans la baie.`;
             openGameOverModal(
-                'Bataille terminee',
+                'Bataille termin\u00e9e',
                 `${playerWon ? getBattleshipTurnContext().attackerName : getBattleshipTurnContext().defenderName} gagne la bataille navale.`
             );
             return;
@@ -6223,7 +6261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Toi ${connect4Scores.player} - ${connect4Scores.ai} IA`;
         connect4HelpText.textContent = connect4Mode === 'duo'
             ? 'Mode 2 joueurs: cliquez chacun votre tour sur une colonne pour faire tomber un jeton.'
-            : 'Mode 1 joueur: clique une colonne pour y larguer un jeton contre l IA.';
+            : "Mode 1 joueur: clique une colonne pour y larguer un jeton contre l'IA.";
         connect4ModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.connect4Mode === connect4Mode);
             button.disabled = false;
@@ -6617,7 +6655,7 @@ document.addEventListener('DOMContentLoaded', () => {
             connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 1 aligne quatre jetons.' : 'Victoire. Tu controles la colonne du pont.';
         } else if (winner === 'ai') {
             connect4Scores.ai += 1;
-            connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 2 aligne quatre jetons.' : 'L IA a aligne quatre jetons.';
+            connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 2 aligne quatre jetons.' : "L'IA a aligne quatre jetons.";
         } else {
             connect4HelpText.textContent = 'La grille est pleine. Aucun navire ne prend l avantage.';
         }
@@ -6699,7 +6737,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         connect4CurrentPlayer = 'ai';
-        connect4HelpText.textContent = 'L IA calcule sa reponse...';
+        connect4HelpText.textContent = "L'IA calcule sa r\u00e9ponse...";
         updateConnect4Hud();
         connect4AiTimeout = window.setTimeout(() => {
             connect4AiTimeout = null;
@@ -6834,7 +6872,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stopRhythm();
         rhythmHelpText.textContent = reason === 'misses'
             ? `La coque a trop souffert. Score ${rhythmScore}. Record ${rhythmBestScore}.`
-            : `Traversee terminee. Score ${rhythmScore}. Record ${rhythmBestScore}.`;
+            : `Traversee termin\u00e9e. Score ${rhythmScore}. Record ${rhythmBestScore}.`;
         rhythmStartButton.textContent = 'Relancer la cadence';
         openGameOverModal(
             reason === 'misses' ? 'Navire submerge' : 'Fin de cadence',
@@ -7033,7 +7071,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasFlappyResult = Boolean(flappyMenuResultReason);
 
         if (flappyMenuEyebrow) {
-            flappyMenuEyebrow.textContent = flappyMenuShowingRules ? 'Regles' : (hasFlappyResult ? 'Fin de vol' : 'Baie d arcade');
+            flappyMenuEyebrow.textContent = flappyMenuShowingRules ? 'R\u00e8gles' : (hasFlappyResult ? 'Fin de vol' : "Baie d'arcade");
         }
         if (flappyMenuTitle) {
             flappyMenuTitle.textContent = flappyMenuShowingRules
@@ -7041,7 +7079,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (flappyMenuResultReason === 'water'
                     ? 'Tu t es noye'
                     : (flappyMenuResultReason === 'sky'
-                        ? 'C est perdu'
+                        ? "C'est perdu"
                         : (flappyMenuResultReason === 'pipe'
                         ? 'Tu t es cogne contre une arche'
                         : (hasFlappyResult ? 'Partie perdue' : 'Baiely Bird'))));
@@ -7056,7 +7094,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         : (flappyMenuResultReason === 'pipe'
                         ? `Ton oiseau a touche une arche. Score ${flappyScore}. Record ${flappyBestScore}.`
                         : (hasFlappyResult
-                            ? `Partie terminee. Score ${flappyScore}. Record ${flappyBestScore}.`
+                            ? `Partie termin\u00e9e. Score ${flappyScore}. Record ${flappyBestScore}.`
                             : 'Prepare ton envol avant de battre des ailes entre les arches.'))));
         }
         if (flappyMenuActionButton) {
@@ -7065,7 +7103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (hasFlappyResult ? 'Relancer la partie' : 'Lancer la partie');
         }
         if (flappyMenuRulesButton) {
-            flappyMenuRulesButton.textContent = 'Regles';
+            flappyMenuRulesButton.textContent = 'R\u00e8gles';
             flappyMenuRulesButton.hidden = flappyMenuShowingRules;
         }
     }
@@ -7557,9 +7595,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     text: 'Belle trajectoire. Remets-toi en selle pour une nouvelle manche.'
                 }
                 : {
-                    eyebrow: 'Defaite',
-                    title: 'C est perdu',
-                    text: 'L adversaire remporte le duel. Tu peux patienter ou relancer si tu es l hote.'
+                    eyebrow: 'D\u00e9faite',
+                    title: "C'est perdu",
+                    text: "L'adversaire remporte le duel. Tu peux patienter ou relancer si tu es l hote."
                 };
         }
 
@@ -7588,8 +7626,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 text: 'Belle serie. Relance une partie ou relis les regles avant de repartir.'
             }
             : {
-                eyebrow: 'Defaite',
-                title: 'C est perdu',
+                eyebrow: 'D\u00e9faite',
+                title: "C'est perdu",
                 text: 'L autre rive t echappe cette fois. Relance une partie pour retenter ta chance.'
             };
     }
@@ -7610,12 +7648,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const outcomeContent = getPongMenuOutcomeContent();
         const hasResult = Boolean(outcomeContent);
         const actionLabel = waitingForReady
-            ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+            ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
             : (isOnline
                 ? (roomFinished ? 'Relancer le duel' : 'Lancer le duel')
                 : (hasResult ? 'Relancer le duel' : 'Lancer le duel'));
         const baseText = waitingForReady
-            ? 'Quand tous les joueurs sont prets, toute la room bascule automatiquement sur le terrain.'
+            ? 'Quand tous les joueurs sont pr\u00eats, toute la room bascule automatiquement sur le terrain.'
             : (isOnline
                 ? 'Quand le duel se lance, toute la room bascule sur le terrain.'
                 : 'Choisis ton mode, puis lance le duel dans la baie.');
@@ -7632,7 +7670,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (pongMenuEyebrow) {
-            pongMenuEyebrow.textContent = pongMenuShowingRules ? 'Regles' : (outcomeContent?.eyebrow || 'Baie d arcade');
+            pongMenuEyebrow.textContent = pongMenuShowingRules ? 'R\u00e8gles' : (outcomeContent?.eyebrow || "Baie d'arcade");
         }
         if (pongMenuTitle) {
             pongMenuTitle.textContent = pongMenuShowingRules ? 'Rappel rapide' : (outcomeContent?.title || 'Pong');
@@ -7647,7 +7685,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (waitingForReady ? false : (isOnline ? !hasEnoughPlayers : false));
         }
         if (pongMenuRulesButton) {
-            pongMenuRulesButton.textContent = 'Regles';
+            pongMenuRulesButton.textContent = 'R\u00e8gles';
             pongMenuRulesButton.hidden = pongMenuShowingRules;
         }
     }
@@ -7809,7 +7847,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (multiplayerActiveRoom?.gameState?.finished) {
                 pongHelpText.innerHTML = multiplayerActiveRoom.gameState.winner === currentRole
                     ? 'Victoire. Clique sur le bouton central si tu es l hote pour relancer.'
-                    : 'Defaite. Attends que l hote relance un nouveau duel.';
+                    : "D\u00e9faite. Attends que l'h\u00f4te relance un nouveau duel.";
             } else if (multiplayerActiveRoom?.gameState?.running) {
                 pongHelpText.innerHTML = 'Utilise Z/S ou les fleches pour deplacer ta raquette. Premier a 7.';
             } else {
@@ -7827,7 +7865,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pongRightLabel.textContent = pongMode === 'duo' ? 'Joueur 2' : 'IA';
         pongHelpText.innerHTML = pongMode === 'duo'
             ? 'Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas. Premier &agrave; 7.'
-            : 'Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l IA. Premier &agrave; 7.';
+            : "Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l'IA. Premier &agrave; 7.";
         pongModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.pongMode === pongMode);
             button.disabled = false;
@@ -8509,7 +8547,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (sudokuMenuEyebrow) {
             sudokuMenuEyebrow.textContent = sudokuMenuShowingRules
-                ? 'Regles'
+                ? 'R\u00e8gles'
                 : (hasResult ? sudokuMenuResult.eyebrow : 'Carte de navigation');
         }
 
@@ -8534,7 +8572,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (sudokuMenuRulesButton) {
-            sudokuMenuRulesButton.textContent = 'Regles';
+            sudokuMenuRulesButton.textContent = 'R\u00e8gles';
             sudokuMenuRulesButton.hidden = sudokuMenuShowingRules;
         }
     }
@@ -8986,7 +9024,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stopSudokuTimer();
             revealSudokuOutcomeMenu(
                 'Carte complete',
-                `Grille resolue. Cap ${sudokuPuzzle?.difficulty || 'Moussaillon'} termine en ${sudokuElapsedSeconds}s.`,
+                `Grille resolue. Cap ${sudokuPuzzle?.difficulty || 'Moussaillon'} termin\u00e9 en ${sudokuElapsedSeconds}s.`,
                 'Route tracee'
             );
         }
@@ -9004,7 +9042,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function get2048RulesText() {
-        return 'Fleches ou ZQSD pour faire glisser toutes les tuiles. Quand deux valeurs identiques se rencontrent, elles fusionnent. Atteins 2048 et evite de bloquer toute la grille.';
+        return 'Fleches ou ZQSD pour faire glisser toutes les tuiles. Quand deux valeurs identiques se rencontrent, elles fusionnent. Atteins 2048 et evite de bloqu\u00e9r toute la grille.';
     }
 
     function render2048Menu() {
@@ -9025,22 +9063,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (game2048MenuEyebrow) {
             game2048MenuEyebrow.textContent = game2048MenuShowingRules
-                ? 'Regles'
-                : (hasResult ? 'Maree bloquee' : 'Baie d arcade');
+                ? 'R\u00e8gles'
+                : (hasResult ? 'Maree bloqu\u00e9e' : 'Baie d arcade');
         }
 
         if (game2048MenuTitle) {
             game2048MenuTitle.textContent = game2048MenuShowingRules
                 ? 'Rappel rapide'
-                : (hasResult ? 'C est perdu' : '2048');
+                : (hasResult ? "C'est perdu" : '2048');
         }
 
         if (game2048MenuText) {
             game2048MenuText.textContent = game2048MenuShowingRules
                 ? get2048RulesText()
                 : (hasResult
-                    ? `La maree t a bloque. Score ${game2048Score}. Record ${game2048BestScore}. Relance une nouvelle maree.`
-                    : 'Fais glisser les tuiles pour fusionner les valeurs et atteindre 2048 sans bloquer la grille.');
+                    ? `La mar\u00e9e t'a bloqu\u00e9. Score ${game2048Score}. Record ${game2048BestScore}. Relance une nouvelle mar\u00e9e.`
+                    : 'Fais glisser les tuiles pour fusionner les valeurs et atteindre 2048 sans bloqu\u00e9r la grille.');
         }
 
         if (game2048MenuActionButton) {
@@ -9050,7 +9088,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (game2048MenuRulesButton) {
-            game2048MenuRulesButton.textContent = 'Regles';
+            game2048MenuRulesButton.textContent = 'R\u00e8gles';
             game2048MenuRulesButton.hidden = game2048MenuShowingRules;
         }
     }
@@ -9554,7 +9592,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (minesweeperMenuEyebrow) {
             minesweeperMenuEyebrow.textContent = minesweeperMenuShowingRules
-                ? 'Regles'
+                ? 'R\u00e8gles'
                 : (hasResult ? minesweeperMenuResult.eyebrow : 'Champ de mines du recif');
         }
 
@@ -9579,7 +9617,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (minesweeperMenuRulesButton) {
-            minesweeperMenuRulesButton.textContent = 'Regles';
+            minesweeperMenuRulesButton.textContent = 'R\u00e8gles';
             minesweeperMenuRulesButton.hidden = minesweeperMenuShowingRules;
         }
     }
@@ -9672,7 +9710,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (snakeMenuEyebrow) {
             snakeMenuEyebrow.textContent = snakeMenuShowingRules
-                ? 'Regles'
+                ? 'R\u00e8gles'
                 : (hasResult ? snakeMenuResult.eyebrow : 'Serpent de mer');
         }
 
@@ -9697,7 +9735,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (snakeMenuRulesButton) {
-            snakeMenuRulesButton.textContent = 'Regles';
+            snakeMenuRulesButton.textContent = 'R\u00e8gles';
             snakeMenuRulesButton.hidden = snakeMenuShowingRules;
         }
     }
@@ -10701,7 +10739,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
                 flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
                 renderFlowFree();
-                openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracÃ©s.`);
+                openGameOverModal('Courants relies', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracÃ©s.`);
                 flowFreePointerDown = false;
                 flowFreeActiveColor = null;
                 flowFreeLastHoverKey = null;
@@ -10793,7 +10831,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
             flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
             renderFlowFree();
-            openGameOverModal('Courants relies', `Toutes les liaisons sont terminees en ${flowFreeMoves} tracÃ©s.`);
+            openGameOverModal('Courants relies', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracÃ©s.`);
         }
 
         return true;
@@ -11296,7 +11334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (mentalMathMenuEyebrow) {
-            mentalMathMenuEyebrow.textContent = mentalMathMenuShowingRules ? 'Regles' : (mentalMathMenuResult ? 'Fin de partie' : 'Baie d arcade');
+            mentalMathMenuEyebrow.textContent = mentalMathMenuShowingRules ? 'R\u00e8gles' : (mentalMathMenuResult ? 'Fin de partie' : "Baie d'arcade");
         }
         if (mentalMathMenuTitle) {
             mentalMathMenuTitle.textContent = mentalMathMenuShowingRules
@@ -11307,7 +11345,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mentalMathMenuText.textContent = mentalMathMenuShowingRules
                 ? getMentalMathRulesText()
                 : (mentalMathMenuResult
-                    ? `Tu as enchaine ${mentalMathScore} bonne${mentalMathScore > 1 ? 's' : ''} reponse${mentalMathScore > 1 ? 's' : ''}.`
+                    ? `Tu as enchaine ${mentalMathScore} bonne${mentalMathScore > 1 ? 's' : ''} r\u00e9ponse${mentalMathScore > 1 ? 's' : ''}.`
                     : 'Prepare-toi a enchainer les calculs avant que le chrono ne te rattrape.');
         }
         if (mentalMathMenuActionButton) {
@@ -11316,7 +11354,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (mentalMathMenuResult ? 'Relancer la partie' : 'Lancer la partie');
         }
         if (mentalMathMenuRulesButton) {
-            mentalMathMenuRulesButton.textContent = 'Regles';
+            mentalMathMenuRulesButton.textContent = 'R\u00e8gles';
             mentalMathMenuRulesButton.hidden = mentalMathMenuShowingRules;
         }
     }
@@ -11360,7 +11398,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mentalMathRoundRunning = false;
         mentalMathTimeRemainingMs = 0;
         mentalMathFeedback.textContent = `Temps ecoule. Score final : ${mentalMathScore}.`;
-        mentalMathHelpText.textContent = 'La maree s est retiree. Relance une partie pour tenter de battre ton score.';
+        mentalMathHelpText.textContent = "La mar\u00e9e s'est retir\u00e9e. Relance une partie pour tenter de battre ton score.";
         renderMentalMathQuestion();
         revealMentalMathOutcomeMenu();
     }
@@ -11418,7 +11456,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const userAnswer = Number(mentalMathAnswerInput.value);
         if (Number.isNaN(userAnswer)) {
-            mentalMathFeedback.textContent = 'Entre une reponse avant de valider.';
+            mentalMathFeedback.textContent = 'Entre une r\u00e9ponse avant de valider.';
             return;
         }
 
@@ -11428,8 +11466,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const timeReward = MENTAL_MATH_BASE_REWARD_MS + (MENTAL_MATH_FAST_REWARD_MS * fastRewardRatio);
             mentalMathScore += 1;
             mentalMathTimeRemainingMs = Math.min(MENTAL_MATH_MAX_TIME_MS, mentalMathTimeRemainingMs + timeReward);
-            mentalMathFeedback.textContent = `Bonne reponse. +${(timeReward / 1000).toFixed(1)}s`;
-            mentalMathHelpText.textContent = 'Belle reponse. Enchaine pour garder la maree avec toi.';
+            mentalMathFeedback.textContent = `Bonne r\u00e9ponse. +${(timeReward / 1000).toFixed(1)}s`;
+            mentalMathHelpText.textContent = 'Belle r\u00e9ponse. Encha\u00eene pour garder la mar\u00e9e avec toi.';
         } else {
             mentalMathFeedback.textContent = `Presque. Il fallait ${mentalMathCurrentQuestion.answer}.`;
             mentalMathHelpText.textContent = 'Pas de bonus cette fois. Repars vite sur le calcul suivant.';
@@ -12336,7 +12374,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 upgrades: Object.fromEntries(COIN_CLICKER_UPGRADES.map((upgrade) => [upgrade.id, 0]))
             };
             saveCoinClickerState();
-            coinClickerHelpText.textContent = 'Nouvelle fortune lancee. Clique pour remplir la caisse, puis automatise ton butin.';
+            coinClickerHelpText.textContent = 'Nouvelle fortune lanc\u00e9e. Clique pour remplir la caisse, puis automatise ton butin.';
         } else {
             loadCoinClickerState();
         }
@@ -12422,12 +12460,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? {
                     eyebrow: 'Victoire',
                     title: 'Tu remportes la partie',
-                    text: 'Echec et mat. Tu peux te remettre pret pour relancer une manche.'
+                    text: '\u00c9chec et mat. Tu peux te remettre pr\u00eat pour relancer une manche.'
                 }
                 : {
-                    eyebrow: 'Defaite',
-                    title: 'C est perdu',
-                    text: 'Echec et mat. L adversaire remporte la partie. Tu peux te remettre pret pour la suivante.'
+                    eyebrow: 'D\u00e9faite',
+                    title: "C'est perdu",
+                    text: "\u00c9chec et mat. L'adversaire remporte la partie. Tu peux te remettre pr\u00eat pour la suivante."
                 };
         }
 
@@ -12439,8 +12477,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     text: 'Le roi adverse tombe. Tu peux relancer une nouvelle partie ou relire les regles.'
                 }
                 : {
-                    eyebrow: 'Defaite',
-                    title: 'C est perdu',
+                    eyebrow: 'D\u00e9faite',
+                    title: "C'est perdu",
                     text: 'Ton roi est mat. Relance une partie pour retenter ta chance.'
                 };
         }
@@ -12448,7 +12486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return {
             eyebrow: 'Fin de partie',
             title: chessState.winner === 'white' ? 'Blancs gagnent' : 'Noirs gagnent',
-            text: `Echec et mat. ${chessState.winner === 'white' ? 'Les Blancs' : 'Les Noirs'} remportent la partie.`
+            text: `\u00c9chec et mat. ${chessState.winner === 'white' ? 'Les Blancs' : 'Les Noirs'} remportent la partie.`
         };
     }
 
@@ -12495,12 +12533,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
         const outcomeContent = getChessMenuOutcomeContent();
         const hasResult = Boolean(outcomeContent);
-        const readyLabel = currentPlayer?.chessReady ? 'Retirer pret' : 'Mettre pret';
+        const readyLabel = currentPlayer?.chessReady ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat';
         const actionLabel = isOnline
             ? `${readyLabel} (${getChessReadySummary()})`
             : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
         const baseText = isOnline
-            ? 'Quand les deux joueurs sont prets, la partie d echecs commence automatiquement.'
+            ? "Quand les deux joueurs sont pr\u00eats, la partie d'\u00e9checs commence automatiquement."
             : 'Installe les pieces et choisis ton mode avant d engager la partie.';
 
         chessMenuVisible = isOnline ? (!roomStarted || hasResult) : chessMenuVisible;
@@ -12515,10 +12553,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (chessMenuEyebrow) {
-            chessMenuEyebrow.textContent = chessMenuShowingRules ? 'Regles' : (outcomeContent?.eyebrow || 'Baie strategique');
+            chessMenuEyebrow.textContent = chessMenuShowingRules ? 'R\u00e8gles' : (outcomeContent?.eyebrow || 'Baie strat\u00e9gique');
         }
         if (chessMenuTitle) {
-            chessMenuTitle.textContent = chessMenuShowingRules ? 'Rappel rapide' : (outcomeContent?.title || 'Echecs');
+            chessMenuTitle.textContent = chessMenuShowingRules ? 'Rappel rapide' : (outcomeContent?.title || '\u00c9checs');
         }
         if (chessMenuText) {
             chessMenuText.textContent = chessMenuShowingRules
@@ -12529,7 +12567,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chessMenuActionButton.textContent = chessMenuShowingRules ? 'Retour' : actionLabel;
         }
         if (chessMenuRulesButton) {
-            chessMenuRulesButton.textContent = 'Regles';
+            chessMenuRulesButton.textContent = 'R\u00e8gles';
             chessMenuRulesButton.hidden = chessMenuShowingRules;
         }
     }
@@ -12842,6 +12880,175 @@ document.addEventListener('DOMContentLoaded', () => {
         return getChessMovesForState(chessState, row, col);
     }
 
+    function canInteractWithChessPiece(row, col) {
+        const piece = chessState?.board?.[row]?.[col];
+        if (!piece || chessState?.winner) {
+            return false;
+        }
+
+        if (isMultiplayerChessActive()) {
+            return chessState.turn === getMultiplayerChessRole() && piece.color === chessState.turn;
+        }
+
+        return !isChessAiTurn() && piece.color === chessState.turn;
+    }
+
+    function getChessMoveFromSelection(row, col) {
+        if (!chessSelectedSquare) {
+            return null;
+        }
+
+        return getChessMoves(chessSelectedSquare.row, chessSelectedSquare.col)
+            .find((candidate) => candidate.row === row && candidate.col === col) || null;
+    }
+
+    function submitChessMove(toRow, toCol) {
+        const move = getChessMoveFromSelection(toRow, toCol);
+        if (!move || !chessSelectedSquare) {
+            return false;
+        }
+
+        if (isMultiplayerChessActive()) {
+            multiplayerSocket?.emit('chess:move', {
+                fromRow: chessSelectedSquare.row,
+                fromCol: chessSelectedSquare.col,
+                toRow,
+                toCol
+            });
+            return true;
+        }
+
+        return applyChessMove(chessSelectedSquare.row, chessSelectedSquare.col, toRow, toCol);
+    }
+
+    function clearChessDragState(shouldRender = true) {
+        chessDragState = null;
+        chessBoard?.classList.remove('is-dragging-piece');
+        document.querySelector('.chess-drag-ghost')?.remove();
+        if (shouldRender) {
+            renderChess();
+        }
+    }
+
+    function updateChessDragPointer(clientX, clientY) {
+        if (!chessDragState || !chessDragState.dragging || !chessBoard) {
+            return;
+        }
+
+        chessDragState.pointerX = clientX;
+        chessDragState.pointerY = clientY;
+
+        const hoveredCell = document.elementFromPoint(clientX, clientY)?.closest?.('[data-chess-cell]');
+        chessDragState.hoveredCell = hoveredCell?.dataset?.chessCell || null;
+
+        renderChess();
+    }
+
+    function startChessPieceDrag(clientX, clientY) {
+        if (!chessDragState) {
+            return;
+        }
+
+        chessDragState.dragging = true;
+        chessDragState.pointerX = clientX;
+        chessDragState.pointerY = clientY;
+        chessBoard?.classList.add('is-dragging-piece');
+        updateChessDragPointer(clientX, clientY);
+    }
+
+    function renderChessDragGhost() {
+        document.querySelector('.chess-drag-ghost')?.remove();
+
+        if (!chessDragState?.dragging) {
+            return;
+        }
+
+        const piece = chessState?.board?.[chessDragState.row]?.[chessDragState.col];
+        if (!piece) {
+            return;
+        }
+
+        const ghost = document.createElement('div');
+        ghost.className = `chess-drag-ghost chess-piece chess-piece-${piece.color} chess-piece-${piece.type}`;
+        ghost.textContent = getChessPieceGlyph(piece.type);
+        ghost.style.left = `${chessDragState.pointerX}px`;
+        ghost.style.top = `${chessDragState.pointerY}px`;
+        document.body.appendChild(ghost);
+    }
+
+    function finishChessPieceDrag(clientX, clientY) {
+        if (!chessDragState) {
+            return;
+        }
+
+        const wasDragging = chessDragState.dragging;
+        const source = { row: chessDragState.row, col: chessDragState.col };
+        const legalMove = wasDragging
+            ? (() => {
+                const hoveredCell = document.elementFromPoint(clientX, clientY)?.closest?.('[data-chess-cell]');
+                if (!hoveredCell?.dataset?.chessCell) {
+                    return null;
+                }
+                const [targetRow, targetCol] = hoveredCell.dataset.chessCell.split('-').map(Number);
+                return getChessMoves(source.row, source.col)
+                    .find((candidate) => candidate.row === targetRow && candidate.col === targetCol) || null;
+            })()
+            : null;
+
+        chessSuppressNextClick = wasDragging;
+        clearChessDragState(false);
+        chessSelectedSquare = source;
+
+        if (legalMove) {
+            submitChessMove(legalMove.row, legalMove.col);
+            return;
+        }
+
+        renderChess();
+    }
+
+    function handleChessPiecePointerDown(event, row, col) {
+        if (event.button !== 0 || !canInteractWithChessPiece(row, col)) {
+            return;
+        }
+
+        chessSelectedSquare = { row, col };
+        chessDragState = {
+            row,
+            col,
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            pointerX: event.clientX,
+            pointerY: event.clientY,
+            dragging: false,
+            hoveredCell: null
+        };
+        renderChess();
+    }
+
+    function handleChessPointerMove(event) {
+        if (!chessDragState || chessDragState.pointerId !== event.pointerId) {
+            return;
+        }
+
+        const distance = Math.hypot(event.clientX - chessDragState.startX, event.clientY - chessDragState.startY);
+        if (!chessDragState.dragging && distance >= 8) {
+            startChessPieceDrag(event.clientX, event.clientY);
+            return;
+        }
+
+        updateChessDragPointer(event.clientX, event.clientY);
+    }
+
+    function handleChessPointerUp(event) {
+        if (!chessDragState || chessDragState.pointerId !== event.pointerId) {
+            return;
+        }
+
+        finishChessPieceDrag(event.clientX, event.clientY);
+    }
+
     function renderChess() {
         const legalMoves = chessSelectedSquare ? getChessMoves(chessSelectedSquare.row, chessSelectedSquare.col) : [];
         const whiteInCheck = isChessKingInCheck('white');
@@ -12856,13 +13063,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentRole = getMultiplayerChessRole();
             chessTurnDisplay.textContent = chessState.turn === currentRole ? 'Toi' : 'Adversaire';
             chessStatusDisplay.textContent = chessState.winner
-                ? (chessState.winner === currentRole ? 'Victoire' : 'Defaite')
-                : (checkedColor === currentRole ? 'Echec' : (checkedColor ? 'Tu mets echec' : 'En cours'));
+                ? (chessState.winner === currentRole ? 'Victoire' : 'D\u00e9faite')
+                : (checkedColor === currentRole ? '\u00c9chec' : (checkedColor ? 'Tu mets \u00e9chec' : 'En cours'));
             chessHelpText.textContent = chessState.winner
-                ? (chessState.winner === currentRole ? 'Ã‰chec et mat. Tu controles l echiquier.' : 'Ã‰chec et mat. L adversaire controle l echiquier.')
+                ? (chessState.winner === currentRole ? "\u00c9chec et mat. Tu contr\u00f4les l'\u00e9chiquier." : "\u00c9chec et mat. L'adversaire contr\u00f4le l'\u00e9chiquier.")
                 : (chessState.turn === currentRole
-                    ? (checkedColor === currentRole ? 'Ton roi est en echec.' : 'A toi de jouer.')
-                    : (checkedColor ? 'Le roi est en echec.' : 'Au tour de l adversaire.'));
+                    ? (checkedColor === currentRole ? 'Ton roi est en \u00e9chec.' : '\u00c0 toi de jouer.')
+                    : (checkedColor ? 'Le roi est en echec.' : "Au tour de l'adversaire."));
         } else {
             chessTurnDisplay.textContent = chessState.turn === 'white'
                 ? (chessMode === 'solo' ? 'Toi' : 'Blancs')
@@ -12870,10 +13077,10 @@ document.addEventListener('DOMContentLoaded', () => {
             chessStatusDisplay.textContent = chessState.winner
                 ? `${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Toi' : 'Blancs') : (chessMode === 'solo' ? 'IA' : 'Noirs')} gagnent`
                 : (checkedColor
-                    ? `Echec ${checkedColor === 'white' ? 'blanc' : 'noir'}`
+                    ? `\u00c9chec ${checkedColor === 'white' ? 'blanc' : 'noir'}`
                     : 'En cours');
             chessHelpText.textContent = chessState.winner
-                ? `Ã‰chec et mat. ${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Tu remportes' : 'Les Blancs remportent') : (chessMode === 'solo' ? 'L IA remporte' : 'Les Noirs remportent')} la partie.`
+                ? `\u00c9chec et mat. ${chessState.winner === 'white' ? (chessMode === 'solo' ? 'Tu remportes' : 'Les Blancs remportent') : (chessMode === 'solo' ? "L'IA remporte" : 'Les Noirs remportent')} la partie.`
                 : (chessMode === 'solo'
                     ? (checkedColor === 'white' ? 'Ton roi est en echec.' : (checkedColor === 'black' ? 'Le roi adverse est en echec.' : 'Mode 1 joueur: blancs contre IA. Promotion en reine, avec roque.'))
                     : (checkedColor ? `Le roi ${checkedColor === 'white' ? 'blanc' : 'noir'} est en echec.` : 'Mode 2 joueurs: blancs et noirs en tour par tour. Promotion en reine, avec roque.'));
@@ -12906,10 +13113,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 >
                     ${rankLabel ? `<span class="chess-coordinate chess-coordinate-rank">${rankLabel}</span>` : ''}
                     ${fileLabel ? `<span class="chess-coordinate chess-coordinate-file">${fileLabel}</span>` : ''}
-                    ${piece ? `<span class="chess-piece chess-piece-${piece.color} chess-piece-${piece.type} ${pieceAnimation.className}" ${pieceAnimation.style}>${getChessPieceGlyph(piece.type)}</span>` : ''}
+                    ${piece ? `<span class="chess-piece chess-piece-${piece.color} chess-piece-${piece.type} ${pieceAnimation.className}${chessDragState?.row === row && chessDragState?.col === col ? ' is-drag-source' : ''}${chessDragState?.hoveredCell === `${row}-${col}` && legalMoves.some((move) => move.row === row && move.col === col) ? ' is-drag-target' : ''}" ${pieceAnimation.style} data-chess-piece="${row}-${col}">${getChessPieceGlyph(piece.type)}</span>` : ''}
                 </button>
             `;
         }).join('')).join('');
+        renderChessDragGhost();
 
         if (chessState.lastMove && shouldAnimateLastMove) {
             scheduleChessMoveAnimationClear();
@@ -12920,44 +13128,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleChessCellClick(row, col) {
-        if (isMultiplayerChessActive()) {
-            if (chessState.winner || chessState.turn !== getMultiplayerChessRole()) {
-                return;
-            }
-
-            const piece = chessState.board[row][col];
-            if (piece && piece.color === chessState.turn) {
-                chessSelectedSquare = { row, col };
-                renderChess();
-                return;
-            }
-
-            if (!chessSelectedSquare) {
-                return;
-            }
-
-            const move = getChessMoves(chessSelectedSquare.row, chessSelectedSquare.col).find((candidate) => candidate.row === row && candidate.col === col);
-            if (!move) {
-                chessSelectedSquare = null;
-                renderChess();
-                return;
-            }
-
-            multiplayerSocket?.emit('chess:move', {
-                fromRow: chessSelectedSquare.row,
-                fromCol: chessSelectedSquare.col,
-                toRow: row,
-                toCol: col
-            });
-            return;
-        }
-
-        if (chessState.winner || isChessAiTurn()) {
-            return;
-        }
-
         const piece = chessState.board[row][col];
-        if (piece && piece.color === chessState.turn) {
+        if (piece && canInteractWithChessPiece(row, col)) {
             chessSelectedSquare = { row, col };
             renderChess();
             return;
@@ -12967,14 +13139,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const move = getChessMoves(chessSelectedSquare.row, chessSelectedSquare.col).find((candidate) => candidate.row === row && candidate.col === col);
-        if (!move) {
+        if (!submitChessMove(row, col)) {
             chessSelectedSquare = null;
             renderChess();
             return;
         }
-
-        applyChessMove(chessSelectedSquare.row, chessSelectedSquare.col, row, col);
     }
 
     function applyChessMove(fromRow, fromCol, toRow, toCol) {
@@ -13343,8 +13512,8 @@ document.addEventListener('DOMContentLoaded', () => {
         checkersCountDisplay.textContent = `${blackCount}/${redCount}`;
         checkersHelpText.textContent = isMultiplayerCheckersActive()
             ? (checkersState.winner
-                ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Tu remportes la partie.' : 'L adversaire remporte la partie.')
-                : (checkersState.turn === getMultiplayerCheckersRole() ? 'A toi de jouer.' : 'Au tour de l adversaire.'))
+                ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Tu remportes la partie.' : "L'adversaire remporte la partie.")
+                : (checkersState.turn === getMultiplayerCheckersRole() ? '\u00c0 toi de jouer.' : "Au tour de l'adversaire."))
             : (checkersMode === 'solo'
                 ? 'Mode 1 joueur: rouges contre IA. Roi a la promotion.'
                 : 'Mode 2 joueurs: rouges et noirs en tour par tour. Roi a la promotion.');
@@ -13396,16 +13565,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const multiplayerCheckers = isMultiplayerCheckersActive();
         const hasResult = checkersMenuResult && Boolean(checkersState?.winner);
         if (checkersMenuEyebrow) {
-            checkersMenuEyebrow.textContent = checkersMenuShowingRules ? 'Regles' : (hasResult ? 'Fin de partie' : 'Baie strategique');
+            checkersMenuEyebrow.textContent = checkersMenuShowingRules ? 'R\u00e8gles' : (hasResult ? 'Fin de partie' : 'Baie strat\u00e9gique');
         }
         if (checkersMenuTitle) {
             checkersMenuTitle.textContent = checkersMenuShowingRules
                 ? 'Rappel rapide'
                 : (hasResult
                     ? (multiplayerCheckers
-                        ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Victoire' : 'C est perdu')
+                        ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Victoire' : "C'est perdu")
                         : (checkersMode === 'solo'
-                            ? (checkersState.winner === 'red' ? 'Victoire' : 'C est perdu')
+                            ? (checkersState.winner === 'red' ? 'Victoire' : "C'est perdu")
                             : `${checkersState.winner === 'red' ? 'Rouges' : 'Noirs'} gagnent`))
                     : 'Dames');
         }
@@ -13414,23 +13583,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? getCheckersRulesText()
                 : (hasResult
                     ? (multiplayerCheckers
-                        ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Tu remportes cette partie de dames en ligne.' : 'L adversaire remporte cette partie de dames.')
+                        ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Tu remportes cette partie de dames en ligne.' : "L'adversaire remporte cette partie de dames.")
                         : (checkersMode === 'solo'
-                            ? (checkersState.winner === 'red' ? 'Tu remportes la partie de dames.' : 'L IA remporte la partie de dames.')
+                            ? (checkersState.winner === 'red' ? 'Tu remportes la partie de dames.' : "L'IA remporte la partie de dames.")
                             : `${checkersState.winner === 'red' ? 'Les Rouges' : 'Les Noirs'} remportent la partie de dames.`))
                     : ((multiplayerCheckers && !multiplayerActiveRoom?.gameLaunched)
-                        ? 'Quand tous les joueurs sont prets, la partie de dames commence automatiquement.'
+                        ? 'Quand tous les joueurs sont pr\u00eats, la partie de dames commence automatiquement.'
                         : 'Installe les pions et choisis ton mode avant d engager la partie.'));
         }
         if (checkersMenuActionButton) {
             checkersMenuActionButton.textContent = checkersMenuShowingRules
                 ? 'Retour'
                 : ((multiplayerCheckers && !multiplayerActiveRoom?.gameLaunched)
-                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
                     : (hasResult ? 'Relancer la partie' : 'Lancer la partie'));
         }
         if (checkersMenuRulesButton) {
-            checkersMenuRulesButton.textContent = 'Regles';
+            checkersMenuRulesButton.textContent = 'R\u00e8gles';
             checkersMenuRulesButton.hidden = checkersMenuShowingRules;
         }
     }
@@ -13823,10 +13992,10 @@ document.addEventListener('DOMContentLoaded', () => {
         battleshipStatusText.textContent = multiplayerActiveRoom.gameState.winner
             ? (multiplayerActiveRoom.gameState.winner === yourRole
                 ? 'Victoire. Tu coules la flotte adverse.'
-                : 'Defaite. L adversaire remporte la bataille.')
+                : "D\u00e9faite. L'adversaire remporte la bataille.")
             : (isYourTurn
-                ? 'A toi de tirer sur la flotte adverse.'
-                : 'Attends le tir de l adversaire.');
+                ? "\u00c0 toi de tirer sur la flotte adverse."
+                : "Attends le tir de l'adversaire.");
         renderBattleship();
 
         if (!multiplayerActiveRoom.gameState.winner) {
@@ -13845,7 +14014,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (multiplayerActiveRoom.gameState.winner === yourRole) {
             openGameOverModal('Victoire', 'Tu remportes cette bataille navale en ligne.');
         } else {
-            openGameOverModal('C est perdu', 'L adversaire remporte cette bataille navale.');
+            openGameOverModal("C'est perdu", "L'adversaire remporte cette bataille navale.");
         }
     }
 
@@ -14068,7 +14237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         airHockeyStartButton.textContent = getCurrentMultiplayerPlayer()?.isHost ? 'Lancer' : 'En attente';
         airHockeyStartButton.disabled = !getCurrentMultiplayerPlayer()?.isHost || (multiplayerActiveRoom?.playerCount || 0) < 2;
         airHockeyHelpText.textContent = airHockeyState.finished
-            ? (airHockeyState.winner === getMultiplayerAirHockeyRole() ? 'Victoire. Le palet finit dans les filets adverses.' : 'Defaite. L adversaire remporte le duel.')
+            ? (airHockeyState.winner === getMultiplayerAirHockeyRole() ? 'Victoire. Le palet finit dans les filets adverses.' : "D\u00e9faite. L'adversaire remporte le duel.")
             : (airHockeyState.running ? 'Deplace ton palet avec fluidite. Premier a 5.' : 'Attends que l hote lance le duel.');
 
         if (airHockeyState.finished) {
@@ -14101,9 +14270,9 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         } else {
             revealAirHockeyOutcomeMenu(
-                'C est perdu',
-                'L adversaire remporte ce duel de Sea Hockey.',
-                'Duel termine'
+                "C'est perdu",
+                "L'adversaire remporte ce duel de Sea Hockey.",
+                'Duel termin\u00e9'
             );
         }
     }
@@ -14196,7 +14365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getAirHockeyRulesText() {
-        return 'Le joueur gauche se deplace avec ZQSD. En solo, la droite est pilotee par l IA. En duo local, la droite se joue aux fleches. Premier a 5 buts.';
+        return "Le joueur gauche se deplace avec ZQSD. En solo, la droite est pilotee par l'IA. En duo local, la droite se joue aux fleches. Premier a 5 buts.";
     }
 
     function renderAirHockeyMenu() {
@@ -14217,7 +14386,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasResult = Boolean(airHockeyMenuResult);
         if (airHockeyMenuEyebrow) {
             airHockeyMenuEyebrow.textContent = airHockeyMenuShowingRules
-                ? 'Regles'
+                ? 'R\u00e8gles'
                 : (hasResult ? airHockeyMenuResult.eyebrow : 'Duel de pont');
         }
         if (airHockeyMenuTitle) {
@@ -14231,18 +14400,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (hasResult
                     ? airHockeyMenuResult.text
                     : ((isMultiplayerAirHockeyActive() && !multiplayerActiveRoom?.gameLaunched)
-                        ? 'Quand tous les joueurs sont prets, le duel de Sea Hockey commence automatiquement.'
+                        ? 'Quand tous les joueurs sont pr\u00eats, le duel de Sea Hockey commence automatiquement.'
                         : 'Choisis ton mode puis engage le palet sur le pont glissant de la baie.'));
         }
         if (airHockeyMenuActionButton) {
             airHockeyMenuActionButton.textContent = airHockeyMenuShowingRules
                 ? 'Retour'
                 : ((isMultiplayerAirHockeyActive() && !multiplayerActiveRoom?.gameLaunched)
-                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pret' : 'Mettre pret'} (${getMultiplayerReadySummary()})`
+                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
                     : (hasResult ? 'Relancer le duel' : 'Lancer le duel'));
         }
         if (airHockeyMenuRulesButton) {
-            airHockeyMenuRulesButton.textContent = 'Regles';
+            airHockeyMenuRulesButton.textContent = 'R\u00e8gles';
             airHockeyMenuRulesButton.hidden = airHockeyMenuShowingRules;
         }
     }
@@ -14400,7 +14569,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stopAirHockeyRuntime();
             const winnerLabel = airHockeyState.leftScore > airHockeyState.rightScore ? 'Le joueur gauche' : 'Le joueur droit';
             revealAirHockeyOutcomeMenu(
-                'Duel termine',
+                'Duel termin\u00e9',
                 `${winnerLabel} gagne ${airHockeyState.leftScore} a ${airHockeyState.rightScore}.`,
                 'Pont en liesse'
             );
@@ -14609,22 +14778,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reactionTime <= 300) {
             return {
                 eyebrow: 'Tres bon temps',
-                title: 'Veille terminee',
-                text: `Belle reponse en ${reactionTime} ms. Tu tiens bien la veille du pont.`
+                title: 'Veille termin\u00e9e',
+                text: `Belle r\u00e9ponse en ${reactionTime} ms. Tu tiens bien la veille du pont.`
             };
         }
 
         if (reactionTime <= 420) {
             return {
                 eyebrow: 'Reflexe valide',
-                title: 'Veille terminee',
+                title: 'Veille termin\u00e9e',
                 text: `Reflexe enregistre en ${reactionTime} ms. Relance pour aller chercher un meilleur temps.`
             };
         }
 
         return {
             eyebrow: 'Peut mieux faire',
-            title: 'Veille terminee',
+            title: 'Veille termin\u00e9e',
             text: `Temps releve a ${reactionTime} ms. La prochaine lanterne peut tomber plus vite.`
         };
     }
@@ -14647,7 +14816,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasResult = Boolean(reactionMenuResult);
         if (reactionMenuEyebrow) {
             reactionMenuEyebrow.textContent = reactionMenuShowingRules
-                ? 'Regles'
+                ? 'R\u00e8gles'
                 : (hasResult ? reactionMenuResult.eyebrow : 'Veille au phare');
         }
         if (reactionMenuTitle) {
@@ -14668,7 +14837,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (hasResult ? 'Relancer la veille' : 'Lancer la veille');
         }
         if (reactionMenuRulesButton) {
-            reactionMenuRulesButton.textContent = 'Regles';
+            reactionMenuRulesButton.textContent = 'R\u00e8gles';
             reactionMenuRulesButton.hidden = reactionMenuShowingRules;
         }
     }
@@ -14792,7 +14961,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (objective.completed) {
-            baieBerryHelpText.textContent = `Objectif accompli: ${objective.label}. Continue de faire grimper la recolte.`;
+            baieBerryHelpText.textContent = `Objectif accompli: ${objective.label}. Continue de faire grimper la r\u00e9colte.`;
             addBaieBerryScorePopup(baieBerryCanvas.width * 0.5, 108, 'Objectif atteint', '#fde68a');
             refreshBaieBerryHud();
         }
@@ -14829,7 +14998,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mergeScale = fruit.mergeProgress ? (1 + (fruit.mergeProgress * 0.14)) : 1;
         const eyeOffsetX = config.radius * 0.22;
         const eyeY = -config.radius * 0.08;
-        const blink = fruit.blink ?? 1;
+        const blink = fruit.blink ? 0.18 : 1;
         const mouthCurve = fruit.expression === 'happy' ? 1 : fruit.expression === 'worried' ? -1 : 0;
         const pirateVariant = (fruit.id + fruit.level) % 5;
         const gradient = context.createRadialGradient(
@@ -15139,7 +15308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getBaieBerryRulesText() {
-        return 'Glisse la recolte en cliquant ou en touchant la colonne voulue. Deux fruits identiques fusionnent au simple contact, mais la ligne rouge ne doit jamais rester occupee trop longtemps.';
+        return 'Glisse la r\u00e9colte en cliquant ou en touchant la colonne voulue. Deux fruits identiques fusionnent au simple contact, mais la ligne rouge ne doit jamais rester occupee trop longtemps.';
     }
 
     function renderBaieBerryMenu() {
@@ -15171,19 +15340,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const objectiveStatus = baieBerryState?.objective?.completed ? 'Objectif accompli.' : `Objectif du jour: ${objectiveLabel}.`;
 
         if (baieBerryMenuEyebrow) {
-            baieBerryMenuEyebrow.textContent = baieBerryMenuShowingRules ? 'Regles' : (baieBerryMenuResult ? 'Fin de recolte' : 'Baie d arcade');
+            baieBerryMenuEyebrow.textContent = baieBerryMenuShowingRules ? 'R\u00e8gles' : (baieBerryMenuResult ? 'Fin de r\u00e9colte' : "Baie d'arcade");
         }
         if (baieBerryMenuTitle) {
             baieBerryMenuTitle.textContent = baieBerryMenuShowingRules
                 ? 'Rappel rapide'
-                : (baieBerryMenuResult ? 'Recolte terminee' : 'BaieBerry');
+                : (baieBerryMenuResult ? 'Recolte termin\u00e9e' : 'BaieBerry');
         }
         if (baieBerryMenuText) {
             baieBerryMenuText.textContent = baieBerryMenuShowingRules
                 ? getBaieBerryRulesText()
                 : (baieBerryMenuResult
                     ? `Score ${currentScore}. ${objectiveStatus} La ligne rouge est restee occupee trop longtemps.`
-                    : 'Prepare ta recolte avant de laisser tomber les fruits dans le panier.');
+                    : 'Prepare ta r\u00e9colte avant de laisser tomber les fruits dans le panier.');
         }
         if (baieBerryMenuActionButton) {
             baieBerryMenuActionButton.textContent = baieBerryMenuShowingRules
@@ -15191,7 +15360,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (baieBerryMenuResult ? 'Relancer la partie' : 'Lancer la partie');
         }
         if (baieBerryMenuRulesButton) {
-            baieBerryMenuRulesButton.textContent = 'Regles';
+            baieBerryMenuRulesButton.textContent = 'R\u00e8gles';
             baieBerryMenuRulesButton.hidden = baieBerryMenuShowingRules;
         }
     }
@@ -15435,7 +15604,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             baieBerryState.shake = Math.min(18, 8 + (nextLevel * 1.8) + (baieBerryState.comboCount * 1.5));
                             baieBerryHelpText.textContent = baieBerryState.comboCount > 1
                                 ? `Combo x${baieBerryState.comboCount}. Les fusions s enchainent.`
-                                : `Fusion ${BAIE_BERRY_FRUITS[nextLevel].name}. Continue la recolte.`;
+                                : `Fusion ${BAIE_BERRY_FRUITS[nextLevel].name}. Continue la r\u00e9colte.`;
                             refreshBaieBerryHud();
                             updateBaieBerryObjective(nextLevel);
                             if (baieBerryState.score > baieBerryBestScore) {
@@ -15481,7 +15650,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (baieBerryState.dangerTime >= BAIE_BERRY_DANGER_DURATION_MS) {
                 baieBerryState.gameOver = true;
-                baieBerryHelpText.textContent = `Recolte terminee. Score ${baieBerryState.score}. La ligne rouge est restee occupee trop longtemps.`;
+                baieBerryHelpText.textContent = `Recolte termin\u00e9e. Score ${baieBerryState.score}. La ligne rouge est restee occupee trop longtemps.`;
                 revealBaieBerryOutcomeMenu();
             }
         }
@@ -15686,7 +15855,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (breakoutMenuEyebrow) {
             breakoutMenuEyebrow.textContent = breakoutMenuShowingRules
-                ? 'Regles'
+                ? 'R\u00e8gles'
                 : (hasResult ? breakoutMenuResult.eyebrow : 'Baie d arcade');
         }
         if (breakoutMenuTitle) {
@@ -15707,7 +15876,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
         }
         if (breakoutMenuRulesButton) {
-            breakoutMenuRulesButton.textContent = 'Regles';
+            breakoutMenuRulesButton.textContent = 'R\u00e8gles';
             breakoutMenuRulesButton.hidden = breakoutMenuShowingRules;
         }
     }
@@ -15872,10 +16041,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     breakoutLivesDisplay.textContent = String(breakoutState.lives);
                     breakoutState.running = false;
                     resetBreakoutBall();
-                    breakoutHelpText.textContent = breakoutState.lives > 0 ? 'Balle perdue. Clique relancer.' : `Partie terminee. Score ${breakoutState.score}.`;
+                    breakoutHelpText.textContent = breakoutState.lives > 0 ? 'Balle perdue. Clique relancer.' : `Partie termin\u00e9e. Score ${breakoutState.score}.`;
                     if (breakoutState.lives <= 0) {
                         revealBreakoutOutcomeMenu(
-                            'Partie terminee',
+                            'Partie termin\u00e9e',
                             `Score ${breakoutState.score}. Record ${breakoutBestScore}.`,
                             'Pont en cale seche'
                         );
@@ -16111,7 +16280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         blockBlastHelpText.textContent = `Le pont est sature. Score final ${blockBlastState.score}. Record ${blockBlastBestScore}.`;
-        openGameOverModal('Maree bloquee', `Score ${blockBlastState.score}. Record ${blockBlastBestScore}.`);
+        openGameOverModal('Maree bloqu\u00e9e', `Score ${blockBlastState.score}. Record ${blockBlastBestScore}.`);
     }
 
     function refillBlockBlastPiecesIfNeeded() {
@@ -16511,10 +16680,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const isOnline = isMultiplayerUnoActive();
         const roomStarted = Boolean(multiplayerActiveRoom?.unoStarted);
         const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
-        const readyLabel = currentPlayer?.unoReady ? 'Retirer pret' : 'Mettre pret';
+        const readyLabel = currentPlayer?.unoReady ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat';
         const actionLabel = isOnline ? `${readyLabel} (${getUnoReadySummary()})` : 'Lancer la partie';
         const baseText = isOnline
-            ? 'Quand tout le monde est pret, la traversee commence automatiquement.'
+            ? 'Quand tout le monde est pr\u00eat, la travers\u00e9e commence automatiquement.'
             : 'Lance une nouvelle manche quand tu es pret.';
 
         unoMenuVisible = isOnline ? !roomStarted : unoMenuVisible;
@@ -16527,7 +16696,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (unoMenuEyebrow) {
-            unoMenuEyebrow.textContent = unoMenuShowingRules ? 'Regles' : (isOnline ? 'Salle multijoueur' : 'Baie des cartes');
+            unoMenuEyebrow.textContent = unoMenuShowingRules ? 'R\u00e8gles' : (isOnline ? 'Salle multijoueur' : 'Baie des cartes');
         }
         if (unoMenuTitle) {
             unoMenuTitle.textContent = unoMenuShowingRules ? 'Rappel rapide' : 'Buno';
@@ -16539,7 +16708,7 @@ document.addEventListener('DOMContentLoaded', () => {
             unoMenuActionButton.textContent = unoMenuShowingRules ? 'Retour' : actionLabel;
         }
         if (unoMenuRulesButton) {
-            unoMenuRulesButton.textContent = 'Regles';
+            unoMenuRulesButton.textContent = 'R\u00e8gles';
             unoMenuRulesButton.hidden = unoMenuShowingRules;
         }
     }
@@ -16592,7 +16761,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (card.type === 'skip') {
             state.currentPlayerIndex = getNextUnoPlayerIndex(state, 2);
-            state.lastAction = `${actorName} bloque le tour.`;
+            state.lastAction = `${actorName} bloqu\u00e9 le tour.`;
             return;
         }
 
@@ -16653,9 +16822,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     ? '+2'
                     : (card.type === 'wildDraw4' ? '+4' : (card.type === 'wild' ? 'Couleur' : card.value))));
         const visualLabel = card.type === 'skip'
-            ? 'âŠ˜'
+            ? '\u2298'
             : (card.type === 'reverse'
-                ? 'âŸ²'
+                ? '\u27F2'
                 : (card.type === 'wild' ? '' : label));
         const isWildFamily = card.type === 'wild' || card.type === 'wildDraw4';
         const wildIcon = `
@@ -16814,7 +16983,7 @@ document.addEventListener('DOMContentLoaded', () => {
         unoLastWinnerKey = winnerKey;
         const winner = unoState.players.find((player) => player.id === unoState.winner);
         const isVictory = winner?.id === 'you' || winner?.isYou;
-        openGameOverModal(isVictory ? 'Victoire' : 'Partie terminee', `${winner?.name || 'Un joueur'} remporte la manche de Buno.`);
+        openGameOverModal(isVictory ? 'Victoire' : 'Partie termin\u00e9e', `${winner?.name || 'Un joueur'} remporte la manche de Buno.`);
     }
 
     function updateUnoHud() {
@@ -16831,7 +17000,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `${unoState.players.find((player) => player.id === unoState.winner)?.name || 'Un joueur'} a gagne la manche.`
             : (isMultiplayerUnoActive()
                 ? 'Pose une carte valide quand la main est a toi. Les autres mains restent cachees.'
-                : 'Clique une carte jouable ou pioche si tu es bloque.');
+                : 'Clique une carte jouable ou pioche si tu es bloqu\u00e9.');
         unoModeButtons.forEach((button) => {
             button.classList.toggle('is-active', (button.dataset.unoMode === 'online') === isMultiplayerUnoActive() && (!isMultiplayerUnoActive() || button.dataset.unoMode === 'online'));
             if (isMultiplayerUnoActive()) {
@@ -17204,6 +17373,207 @@ document.addEventListener('DOMContentLoaded', () => {
         renderUno();
     }
 
+    function cloneBombState(state) {
+        if (!state) {
+            return null;
+        }
+
+        return {
+            players: Array.isArray(state.players) ? state.players.map((player) => ({ ...player })) : [],
+            currentPlayerIndex: Number(state.currentPlayerIndex ?? -1),
+            currentSyllable: String(state.currentSyllable || ''),
+            usedWords: Array.isArray(state.usedWords) ? state.usedWords.map((entry) => ({ ...entry })) : [],
+            winner: state.winner || null,
+            statusMessage: String(state.statusMessage || ''),
+            turnCount: Number(state.turnCount || 0),
+            round: Number(state.round || 0),
+            turnDurationMs: Number(state.turnDurationMs || 0),
+            turnDeadlineAt: Number(state.turnDeadlineAt || 0),
+            lastWord: String(state.lastWord || ''),
+            lastWordBy: state.lastWordBy || null
+        };
+    }
+
+    function isMultiplayerBombActive() {
+        return multiplayerActiveRoom?.gameId === 'bomb' && Boolean(multiplayerActiveRoom?.gameState);
+    }
+
+    function stopBombTimerLoop() {
+        if (bombTimerInterval) {
+            window.clearInterval(bombTimerInterval);
+            bombTimerInterval = null;
+        }
+    }
+
+    function startBombTimerLoop() {
+        stopBombTimerLoop();
+        bombTimerInterval = window.setInterval(() => {
+            if (activeGameTab === 'bomb') {
+                renderBomb();
+            }
+        }, 200);
+    }
+
+    function getBombCurrentPlayer() {
+        return bombState?.players?.[bombState.currentPlayerIndex] || null;
+    }
+
+    function getBombTimerSecondsLeft() {
+        if (!bombState?.turnDeadlineAt) {
+            return null;
+        }
+
+        return Math.max(0, Math.ceil((bombState.turnDeadlineAt - Date.now()) / 1000));
+    }
+
+    function maybeOpenBombOutcomeModal() {
+        if (!bombState?.winner) {
+            bombLastFinishedStateKey = '';
+            return;
+        }
+
+        const finishedKey = `${bombState.round}:${bombState.winner}`;
+        if (finishedKey === bombLastFinishedStateKey) {
+            return;
+        }
+
+        bombLastFinishedStateKey = finishedKey;
+        const winner = bombState.players.find((player) => player.id === bombState.winner);
+        const isVictory = Boolean(multiplayerActiveRoom?.players?.find((player) => player.isYou)?.id === bombState.winner);
+        openGameOverModal(isVictory ? 'Victoire' : 'Partie terminee', `${winner?.name || 'Un joueur'} remporte la manche de la Bombe.`);
+    }
+
+    function renderBombPlayers() {
+        if (!bombPlayersBoard) {
+            return;
+        }
+
+        if (!bombState?.players?.length) {
+            bombPlayersBoard.textContent = 'Les joueurs de la room apparaitront ici.';
+            return;
+        }
+
+        const currentPlayer = getBombCurrentPlayer();
+        const currentRoomPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+        bombPlayersBoard.innerHTML = bombState.players.map((player) => {
+            const classes = ['bomb-player-chip'];
+            if (currentPlayer?.id === player.id) {
+                classes.push('is-active');
+            }
+            if (currentRoomPlayer?.id === player.id) {
+                classes.push('is-you');
+            }
+            if (player.eliminated) {
+                classes.push('is-eliminated');
+            }
+
+            return `
+                <div class="${classes.join(' ')}">
+                    <div class="bomb-player-head">
+                        <span class="bomb-player-name">${player.name}</span>
+                        <span class="bomb-player-role">${currentRoomPlayer?.id === player.id ? 'Toi' : (currentPlayer?.id === player.id ? 'Actif' : 'En veille')}</span>
+                    </div>
+                    <div class="bomb-player-meta">
+                        <span>Vies: ${Math.max(0, Number(player.lives || 0))}</span>
+                        <span>${player.eliminated ? 'Explose' : 'Encore a bord'}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderBombUsedWords() {
+        if (!bombUsedWords) {
+            return;
+        }
+
+        if (!bombState?.usedWords?.length) {
+            bombUsedWords.textContent = 'Aucun mot valide pour le moment.';
+            return;
+        }
+
+        bombUsedWords.innerHTML = bombState.usedWords.slice(0, 16).map((entry) => {
+            return `<span class="bomb-used-word-chip">${entry.value}</span>`;
+        }).join('');
+    }
+
+    function renderBomb() {
+        if (!bombGame) {
+            return;
+        }
+
+        const isOnline = isMultiplayerBombActive();
+        const currentPlayer = getBombCurrentPlayer();
+        const you = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+        const isYourTurn = Boolean(currentPlayer?.id && currentPlayer.id === you?.id);
+        const secondsLeft = getBombTimerSecondsLeft();
+        const waitingForReady = isOnline && !multiplayerActiveRoom?.gameLaunched;
+        const winner = bombState?.players?.find((player) => player.id === bombState?.winner) || null;
+
+        bombSyllableDisplay.textContent = bombState?.currentSyllable?.toUpperCase?.() || '-';
+        bombSpotlightSyllable.textContent = bombState?.currentSyllable?.toUpperCase?.() || '-';
+        bombTurnDisplay.textContent = currentPlayer?.name || '-';
+        bombTimerDisplay.textContent = secondsLeft === null ? '--' : `${secondsLeft}s`;
+        bombSpotlightPlayer.textContent = winner
+            ? `${winner.name} garde son calme jusqu au bout.`
+            : (currentPlayer ? `${currentPlayer.name} doit repondre maintenant.` : 'En attente d equipage');
+        bombStatusBanner.textContent = waitingForReady
+            ? 'Quand tout le monde est pret, la bombe s allume dans la room.'
+            : (bombState?.statusMessage || 'Rejoins un salon pour lancer la bombe.');
+        bombHelpText.textContent = isOnline
+            ? (isYourTurn
+                ? `A toi de jouer. Entre un mot avec ${bombState?.currentSyllable?.toUpperCase?.() || '-'} avant l explosion.`
+                : `Observe la manche. ${currentPlayer?.name || 'Un joueur'} tient la bombe.`)
+            : 'Jeu online uniquement. Ecris un mot contenant la syllabe imposee avant l explosion.';
+        bombWordInput.disabled = !isOnline || waitingForReady || !isYourTurn || Boolean(bombState?.winner);
+        bombWordSubmitButton.disabled = bombWordInput.disabled;
+        bombRestartButton.disabled = !isOnline || waitingForReady || !Boolean(bombState?.winner);
+
+        renderBombPlayers();
+        renderBombUsedWords();
+        maybeOpenBombOutcomeModal();
+    }
+
+    function syncMultiplayerBombState() {
+        if (!isMultiplayerBombActive()) {
+            if (activeGameTab === 'bomb') {
+                initializeBomb();
+            }
+            return;
+        }
+
+        bombState = cloneBombState(multiplayerActiveRoom.gameState);
+        startBombTimerLoop();
+        renderBomb();
+        const currentPlayer = getBombCurrentPlayer();
+        const you = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+        if (activeGameTab === 'bomb' && currentPlayer?.id === you?.id && !bombState?.winner) {
+            window.setTimeout(() => {
+                bombWordInput?.focus();
+                bombWordInput?.select?.();
+            }, 40);
+        }
+    }
+
+    function initializeBomb() {
+        closeGameOverModal();
+        if (isMultiplayerBombActive()) {
+            syncMultiplayerBombState();
+            if (bombWordInput && multiplayerActiveRoom?.gameLaunched) {
+                const currentPlayer = getBombCurrentPlayer();
+                const you = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
+                if (currentPlayer?.id === you?.id) {
+                    window.setTimeout(() => bombWordInput.focus(), 60);
+                }
+            }
+            return;
+        }
+
+        stopBombTimerLoop();
+        bombState = null;
+        renderBomb();
+    }
+
     function initializeUno() {
         closeGameOverModal();
         if (unoAiTimeout) {
@@ -17285,7 +17655,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'ticTacToe') {
-            initializeTicTacToe(false);
+            initializeTicTacToe();
             return;
         }
 
@@ -17398,6 +17768,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (nextTab === 'uno') {
             initializeUno();
+            return;
+        }
+
+        if (nextTab === 'bomb') {
+            initializeBomb();
             return;
         }
 
@@ -18284,7 +18659,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    chessBoard?.addEventListener('pointerdown', (event) => {
+        const piece = event.target.closest('[data-chess-piece]');
+        if (!piece) {
+            return;
+        }
+
+        const [row, col] = piece.dataset.chessPiece.split('-').map(Number);
+        handleChessPiecePointerDown(event, row, col);
+    });
+
+    window.addEventListener('pointermove', handleChessPointerMove);
+    window.addEventListener('pointerup', handleChessPointerUp);
+    window.addEventListener('pointercancel', handleChessPointerUp);
+
     chessBoard?.addEventListener('click', (event) => {
+        if (chessSuppressNextClick) {
+            chessSuppressNextClick = false;
+            return;
+        }
+
         const cell = event.target.closest('[data-chess-cell]');
 
         if (!cell) {
@@ -18356,7 +18750,7 @@ document.addEventListener('DOMContentLoaded', () => {
             airHockeyMode = button.dataset.airhockeyMode;
             airHockeyModeButtons.forEach((item) => item.classList.toggle('is-active', item === button));
             airHockeyHelpText.textContent = airHockeyMode === 'solo'
-                ? 'Joueur gauche: ZQSD. La droite est pilotee par l IA.'
+                ? "Joueur gauche: ZQSD. La droite est pilotee par l'IA."
                 : 'Joueur gauche: ZQSD. Joueur droit: fleches directionnelles.';
             initializeAirHockey();
         });
@@ -18742,6 +19136,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         handleSoloUnoCardPlay(cardIndex);
+    });
+
+    bombWordForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        if (!isMultiplayerBombActive()) {
+            setMultiplayerStatus('La Bombe se joue uniquement en ligne.');
+            return;
+        }
+
+        const value = bombWordInput?.value?.trim() || '';
+        if (!value) {
+            setMultiplayerStatus('Entre un mot avant d envoyer.');
+            return;
+        }
+
+        multiplayerSocket?.emit('bomb:submit-word', { word: value });
+        bombWordInput.value = '';
+    });
+
+    bombRestartButton?.addEventListener('click', () => {
+        if (!isMultiplayerBombActive()) {
+            return;
+        }
+
+        multiplayerSocket?.emit('bomb:restart');
     });
 
     battleshipEnemyBoard.addEventListener('click', (event) => {

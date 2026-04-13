@@ -36,6 +36,11 @@ const AIR_HOCKEY_PUCK_RADIUS = 22;
 const AIR_HOCKEY_SPEED = 280;
 const AIR_HOCKEY_COUNTDOWN_MS = 2120;
 const AIR_HOCKEY_TICK_MS = 1000 / 60;
+const BOMB_TURN_MS = 14000;
+const BOMB_MIN_TURN_MS = 7000;
+const BOMB_TURN_STEP_MS = 350;
+const BOMB_STARTING_LIVES = 3;
+const BOMB_WORD_HISTORY_LIMIT = 24;
 const ROOM_CHAT_LIMIT = 40;
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_SEARCH_BASE_URL = 'https://api.themoviedb.org/3/search/movie';
@@ -53,8 +58,25 @@ const MAX_PLAYERS_BY_GAME = {
   connect4: 2,
   chess: 2,
   checkers: 2,
-  uno: 4
+  uno: 4,
+  bomb: 6
 };
+
+const BOMB_SYLLABLES = [
+  'ba', 'be', 'bi', 'bo', 'bu',
+  'ca', 'ce', 'ci', 'co',
+  'da', 'de', 'di', 'do',
+  'fa', 'fe', 'fi', 'fo',
+  'ga', 'ge', 'go',
+  'la', 'le', 'li', 'lo', 'lu',
+  'ma', 'me', 'mi', 'mo', 'mu',
+  'na', 'ne', 'ni', 'no',
+  'pa', 'pe', 'pi', 'po',
+  'ra', 're', 'ri', 'ro',
+  'sa', 'se', 'si', 'so',
+  'ta', 'te', 'ti', 'to',
+  'ou', 'on', 'an', 'eu', 'oi'
+];
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -345,6 +367,83 @@ function createCheckersState() {
     lastMove: null,
     round: 1
   };
+}
+
+function normalizeBombWord(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z]+/g, '');
+}
+
+function getRandomBombSyllable(previousSyllable = '') {
+  const pool = BOMB_SYLLABLES.filter((syllable) => syllable !== previousSyllable);
+  const source = pool.length ? pool : BOMB_SYLLABLES;
+  return source[Math.floor(Math.random() * source.length)] || 'ba';
+}
+
+function getNextActiveBombPlayerIndex(state, startIndex) {
+  const total = state.players.length;
+  if (!total) {
+    return -1;
+  }
+
+  for (let step = 1; step <= total; step += 1) {
+    const nextIndex = (startIndex + step) % total;
+    if (!state.players[nextIndex]?.eliminated) {
+      return nextIndex;
+    }
+  }
+
+  return -1;
+}
+
+function getBombAlivePlayers(state) {
+  return state.players.filter((player) => !player.eliminated);
+}
+
+function getBombTurnDurationMs(state) {
+  const reduction = Math.max(0, Number(state.turnCount || 1) - 1) * BOMB_TURN_STEP_MS;
+  return Math.max(BOMB_MIN_TURN_MS, BOMB_TURN_MS - reduction);
+}
+
+function startBombTurn(state, nextPlayerIndex, statusMessage) {
+  state.currentPlayerIndex = nextPlayerIndex;
+  state.currentSyllable = getRandomBombSyllable(state.currentSyllable);
+  state.turnDurationMs = getBombTurnDurationMs(state);
+  state.turnDeadlineAt = Date.now() + state.turnDurationMs;
+  state.statusMessage = statusMessage || `${state.players[nextPlayerIndex]?.name || 'Un joueur'} prend la bombe.`;
+}
+
+function createBombState(players = [], options = {}) {
+  const statePlayers = players.map((player) => ({
+    id: player.id,
+    name: player.name,
+    lives: BOMB_STARTING_LIVES,
+    eliminated: false
+  }));
+  const state = {
+    players: statePlayers,
+    currentPlayerIndex: statePlayers.length ? 0 : -1,
+    currentSyllable: getRandomBombSyllable(),
+    usedWords: [],
+    usedWordsMap: {},
+    winner: null,
+    statusMessage: 'La bombe attend encore le signal de depart.',
+    turnCount: 1,
+    round: Number(options.round || 1),
+    turnDurationMs: BOMB_TURN_MS,
+    turnDeadlineAt: 0,
+    lastWord: '',
+    lastWordBy: null
+  };
+
+  if (options.started && statePlayers.length >= 2) {
+    startBombTurn(state, 0, `${statePlayers[0].name} ouvre la manche. La bombe est allumee.`);
+  }
+
+  return state;
 }
 
 function createBattleshipGrid() {
@@ -765,6 +864,10 @@ function createGameState(gameId) {
     return createUnoState([]);
   }
 
+  if (gameId === 'bomb') {
+    return createBombState([]);
+  }
+
   if (gameId === 'pong') {
     return createPongState();
   }
@@ -872,6 +975,13 @@ function resetUnoRound(room) {
   };
 }
 
+function resetBombRound(room, started = false) {
+  room.gameState = createBombState(room.players, {
+    started,
+    round: Number(room.gameState?.round || 0) + 1
+  });
+}
+
 function resetUnoReadyState(room) {
   room.unoReadyPlayerIds = [];
   room.unoStarted = false;
@@ -912,6 +1022,10 @@ function launchRoomGame(room) {
     room.chessStarted = true;
     room.chessReadyPlayerIds = [...room.readyPlayerIds];
     resetChessRound(room);
+  }
+
+  if (room.gameId === 'bomb') {
+    resetBombRound(room, true);
   }
 
   io.to(room.code).emit('room:game:start', {
@@ -963,6 +1077,11 @@ function resetRoomGame(room, keepScores = false) {
   if (room.gameId === 'chess') {
     resetChessReadyState(room);
     resetChessRound(room);
+    return;
+  }
+
+  if (room.gameId === 'bomb') {
+    resetBombRound(room, false);
     return;
   }
 
@@ -1570,6 +1689,53 @@ function updatePongRoom(room, deltaSeconds) {
     || room.gameState.ballVelocityY !== previousVelocityY;
 }
 
+function updateBombRoom(room) {
+  const state = room?.gameState;
+  if (!room || room.gameId !== 'bomb' || !state || !room.gameLaunched || state.winner || !Number(state.turnDeadlineAt || 0)) {
+    return false;
+  }
+
+  if (Date.now() < state.turnDeadlineAt) {
+    return false;
+  }
+
+  const currentPlayer = state.players[state.currentPlayerIndex];
+  if (!currentPlayer || currentPlayer.eliminated) {
+    const nextIndex = getNextActiveBombPlayerIndex(state, Math.max(0, state.currentPlayerIndex));
+    if (nextIndex === -1) {
+      return false;
+    }
+    startBombTurn(state, nextIndex, `${state.players[nextIndex].name} reprend la bombe.`);
+    return true;
+  }
+
+  currentPlayer.lives = Math.max(0, Number(currentPlayer.lives || 0) - 1);
+  if (currentPlayer.lives <= 0) {
+    currentPlayer.eliminated = true;
+  }
+
+  const alivePlayers = getBombAlivePlayers(state);
+  if (alivePlayers.length <= 1) {
+    state.winner = alivePlayers[0]?.id || null;
+    state.turnDeadlineAt = 0;
+    state.statusMessage = currentPlayer.eliminated
+      ? `${currentPlayer.name} explose. ${alivePlayers[0]?.name || 'Plus personne'} gagne la manche.`
+      : `${currentPlayer.name} manque de temps. ${alivePlayers[0]?.name || 'Plus personne'} gagne la manche.`;
+    return true;
+  }
+
+  const nextPlayerIndex = getNextActiveBombPlayerIndex(state, state.currentPlayerIndex);
+  state.turnCount += 1;
+  startBombTurn(
+    state,
+    nextPlayerIndex,
+    currentPlayer.eliminated
+      ? `${currentPlayer.name} explose et quitte la manche. ${state.players[nextPlayerIndex].name} enchaine.`
+      : `${currentPlayer.name} explose. ${state.players[nextPlayerIndex].name} attrape la bombe.`
+  );
+  return true;
+}
+
 function getChessAttackMoves(state, row, col) {
   const piece = state?.board?.[row]?.[col];
   if (!piece) {
@@ -1930,7 +2096,7 @@ function buildRoomPayload(room, socketId = null) {
       ? buildBattleshipStateForPlayer(room, socketId)
       : (room.gameId === 'uno'
         ? buildUnoStateForPlayer(room, socketId)
-        : (['pong', 'airHockey', 'ticTacToe', 'connect4', 'chess', 'checkers'].includes(room.gameId) ? room.gameState : null)),
+        : (['pong', 'airHockey', 'ticTacToe', 'connect4', 'chess', 'checkers', 'bomb'].includes(room.gameId) ? room.gameState : null)),
     readyCount: Number(room.readyPlayerIds?.length || 0),
     readyTotal: Number(room.players.length || 0),
     unoReadyCount: room.gameId === 'uno' ? Number(room.readyPlayerIds?.length || 0) : 0,
@@ -2769,6 +2935,95 @@ io.on('connection', (socket) => {
     emitRoomUpdate(room);
   });
 
+  socket.on('bomb:submit-word', ({ word }) => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'bomb') {
+      socket.emit('room:error', { message: 'Aucune partie de la Bombe active.' });
+      return;
+    }
+
+    if (room.players.length < 2 || !room.gameLaunched) {
+      socket.emit('room:error', { message: 'Attends que la room soit complete et prete.' });
+      return;
+    }
+
+    const state = room.gameState;
+    const currentPlayer = state.players[state.currentPlayerIndex];
+    if (!currentPlayer || currentPlayer.id !== socket.id || currentPlayer.eliminated || state.winner) {
+      return;
+    }
+
+    const normalizedWord = normalizeBombWord(word);
+    const normalizedSyllable = normalizeBombWord(state.currentSyllable);
+
+    if (normalizedWord.length < 3) {
+      socket.emit('room:error', { message: 'Entre un mot plus long.' });
+      return;
+    }
+
+    if (!normalizedWord.includes(normalizedSyllable)) {
+      socket.emit('room:error', { message: `Ton mot doit contenir la syllabe ${state.currentSyllable.toUpperCase()}.` });
+      return;
+    }
+
+    if (state.usedWordsMap[normalizedWord]) {
+      socket.emit('room:error', { message: 'Ce mot a deja ete utilise dans cette manche.' });
+      return;
+    }
+
+    state.usedWordsMap[normalizedWord] = true;
+    state.usedWords.unshift({
+      value: String(word || '').trim().slice(0, 32),
+      normalized: normalizedWord,
+      by: currentPlayer.id
+    });
+    if (state.usedWords.length > BOMB_WORD_HISTORY_LIMIT) {
+      const removedWord = state.usedWords.pop();
+      if (removedWord?.normalized) {
+        delete state.usedWordsMap[removedWord.normalized];
+      }
+    }
+
+    state.lastWord = String(word || '').trim().slice(0, 32);
+    state.lastWordBy = currentPlayer.id;
+
+    const alivePlayers = getBombAlivePlayers(state);
+    if (alivePlayers.length <= 1) {
+      state.winner = alivePlayers[0]?.id || currentPlayer.id;
+      state.turnDeadlineAt = 0;
+      state.statusMessage = `${currentPlayer.name} tient jusqu au bout et remporte la manche.`;
+      emitRoomUpdate(room);
+      return;
+    }
+
+    const nextPlayerIndex = getNextActiveBombPlayerIndex(state, state.currentPlayerIndex);
+    state.turnCount += 1;
+    startBombTurn(state, nextPlayerIndex, `${currentPlayer.name} joue "${state.lastWord}". ${state.players[nextPlayerIndex].name} prend la bombe.`);
+    emitRoomUpdate(room);
+  });
+
+  socket.on('bomb:restart', () => {
+    const room = getRoom(socket.data.roomCode);
+
+    if (!room || room.gameId !== 'bomb') {
+      return;
+    }
+
+    if (!room.players.some((player) => player.id === socket.id)) {
+      return;
+    }
+
+    if (room.players.length < 2) {
+      socket.emit('room:error', { message: 'Attends au moins un autre joueur pour relancer la manche.' });
+      return;
+    }
+
+    room.gameLaunched = true;
+    resetBombRound(room, true);
+    emitRoomUpdate(room);
+  });
+
   socket.on('room:toggle-ready', () => {
     const room = getRoom(socket.data.roomCode);
 
@@ -2875,6 +3130,18 @@ setInterval(() => {
     }
   });
 }, AIR_HOCKEY_TICK_MS);
+
+setInterval(() => {
+  rooms.forEach((room) => {
+    if (room.gameId !== 'bomb') {
+      return;
+    }
+
+    if (updateBombRoom(room)) {
+      emitRoomUpdate(room);
+    }
+  });
+}, 250);
 
 server.listen(PORT, () => {
   console.log(`La Baie des Naufrages multiplayer server listening on port ${PORT}`);
