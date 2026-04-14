@@ -951,6 +951,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let memoryMenuEntering = false;
     let memoryMenuResult = false;
     let ticTacToeBoardState = Array(9).fill('');
+    let ticTacToeRenderedBoardState = Array(9).fill('');
     let ticTacToeCurrentPlayer = 'anchor';
     let ticTacToeScores = { anchor: 0, skull: 0 };
     let ticTacToeFinished = false;
@@ -959,7 +960,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let ticTacToeMenuVisible = true;
     let ticTacToeMenuShowingRules = false;
     let ticTacToeMenuClosing = false;
+    let ticTacToeMenuEntering = false;
     let ticTacToeMenuResult = null;
+    let ticTacToeOutcomeMenuTimeout = null;
     let battleshipPlayerGrid = [];
     let battleshipEnemyGrid = [];
     let battleshipPlayerRemainingShips = 0;
@@ -1011,6 +1014,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let connect4MenuClosing = false;
     let connect4MenuEntering = false;
     let connect4MenuResult = false;
+    let connect4OutcomeMenuTimeout = null;
     let rhythmNotes = [];
     let rhythmScore = 0;
     let rhythmStreak = 0;
@@ -1209,6 +1213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let unoMenuShowingRules = false;
     let unoMenuClosing = false;
     const UNO_MENU_CLOSE_DURATION_MS = 260;
+    const GRID_OUTCOME_MENU_DELAY_MS = 650;
     let resizeFrame = null;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
@@ -4339,16 +4344,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTicTacToeBoard() {
-        ticTacToeBoard.innerHTML = ticTacToeBoardState.map((cell, index) => `
+        const winningLine = getTicTacToeWinner() || [];
+        ticTacToeBoard.innerHTML = ticTacToeBoardState.map((cell, index) => {
+            const isNewMove = Boolean(cell) && ticTacToeRenderedBoardState[index] !== cell;
+            const isWinningCell = winningLine.includes(index);
+            return `
             <button
                 type="button"
-                class="tictactoe-cell${cell ? ` is-${cell}` : ''}"
+                class="tictactoe-cell${cell ? ` is-${cell}` : ''}${isNewMove ? ' is-new-move' : ''}${isWinningCell ? ' is-winning-cell' : ''}"
                 data-index="${index}"
                 aria-label="${cell ? (cell === 'anchor' ? 'Case ancre' : 'Case pirate') : 'Case vide'}"
             >
                 <span aria-hidden="true">${cell === 'anchor' ? '\u2693' : cell === 'skull' ? '\u2620' : ''}</span>
             </button>
-        `).join('');
+        `;
+        }).join('');
+        ticTacToeRenderedBoardState = [...ticTacToeBoardState];
     }
 
     function getTicTacToeRulesText() {
@@ -4363,6 +4374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncGameMenuOverlayBounds(ticTacToeMenuOverlay, ticTacToeTable);
         ticTacToeMenuOverlay.classList.toggle('hidden', !ticTacToeMenuVisible);
         ticTacToeMenuOverlay.classList.toggle('is-closing', ticTacToeMenuClosing);
+        ticTacToeMenuOverlay.classList.toggle('is-entering', ticTacToeMenuEntering);
         ticTacToeTable.classList.toggle('is-menu-open', ticTacToeMenuVisible);
 
         if (!ticTacToeMenuVisible) {
@@ -4417,11 +4429,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeTicTacToeMenu() {
         ticTacToeMenuClosing = true;
+        ticTacToeMenuEntering = false;
         renderTicTacToeMenu();
         window.setTimeout(() => {
             ticTacToeMenuClosing = false;
             ticTacToeMenuVisible = false;
             ticTacToeMenuShowingRules = false;
+            ticTacToeMenuEntering = false;
             renderTicTacToeMenu();
         }, 220);
     }
@@ -4430,7 +4444,30 @@ document.addEventListener('DOMContentLoaded', () => {
         ticTacToeMenuVisible = true;
         ticTacToeMenuShowingRules = false;
         ticTacToeMenuClosing = false;
+        ticTacToeMenuEntering = true;
         renderTicTacToeMenu();
+        window.setTimeout(() => {
+            ticTacToeMenuEntering = false;
+            renderTicTacToeMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function showTicTacToeMenuWithDelay() {
+        if (ticTacToeOutcomeMenuTimeout) {
+            window.clearTimeout(ticTacToeOutcomeMenuTimeout);
+            ticTacToeOutcomeMenuTimeout = null;
+        }
+
+        ticTacToeMenuVisible = false;
+        ticTacToeMenuShowingRules = false;
+        ticTacToeMenuClosing = false;
+        ticTacToeMenuEntering = false;
+        renderTicTacToeMenu();
+
+        ticTacToeOutcomeMenuTimeout = window.setTimeout(() => {
+            ticTacToeOutcomeMenuTimeout = null;
+            showTicTacToeMenu();
+        }, GRID_OUTCOME_MENU_DELAY_MS);
     }
 
     function getTicTacToeWinner() {
@@ -4577,6 +4614,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncMultiplayerTicTacToeState() {
         if (!isMultiplayerTicTacToeActive()) {
             ticTacToeLastFinishedStateKey = '';
+            if (ticTacToeOutcomeMenuTimeout) {
+                window.clearTimeout(ticTacToeOutcomeMenuTimeout);
+                ticTacToeOutcomeMenuTimeout = null;
+            }
             return;
         }
 
@@ -4600,6 +4641,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!ticTacToeFinished) {
             ticTacToeLastFinishedStateKey = '';
+            if (ticTacToeOutcomeMenuTimeout) {
+                window.clearTimeout(ticTacToeOutcomeMenuTimeout);
+                ticTacToeOutcomeMenuTimeout = null;
+            }
             return;
         }
 
@@ -4622,7 +4667,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ticTacToeMenuResult = 'loss';
         }
 
-        showTicTacToeMenu();
+        showTicTacToeMenuWithDelay();
     }
 
     function initializeTicTacToe() {
@@ -4631,7 +4676,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ticTacToeAiTimeout = null;
         }
         closeGameOverModal();
+        if (ticTacToeOutcomeMenuTimeout) {
+            window.clearTimeout(ticTacToeOutcomeMenuTimeout);
+            ticTacToeOutcomeMenuTimeout = null;
+        }
         ticTacToeBoardState = Array(9).fill('');
+        ticTacToeRenderedBoardState = Array(9).fill('');
         ticTacToeCurrentPlayer = 'anchor';
         ticTacToeFinished = false;
         ticTacToeHelpText.textContent = "Place tes ancres contre l'IA pirate pour aligner trois symboles.";
@@ -4679,6 +4729,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ticTacToeMenuVisible = false;
             ticTacToeMenuShowingRules = false;
             ticTacToeMenuClosing = false;
+            ticTacToeMenuEntering = false;
             renderTicTacToeMenu();
             syncMultiplayerTicTacToeState();
             return;
@@ -4690,6 +4741,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         closeGameOverModal();
+        if (ticTacToeOutcomeMenuTimeout) {
+            window.clearTimeout(ticTacToeOutcomeMenuTimeout);
+            ticTacToeOutcomeMenuTimeout = null;
+        }
         ticTacToeBoardState = Array(9).fill('');
         ticTacToeCurrentPlayer = 'anchor';
         ticTacToeFinished = false;
@@ -4724,7 +4779,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateTicTacToeHud();
         renderTicTacToeBoard();
-        showTicTacToeMenu();
+        showTicTacToeMenuWithDelay();
     }
 
     function handleTicTacToeMove(index, player = 'anchor') {
@@ -4958,6 +5013,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
+    function revealConnect4OutcomeMenuWithDelay() {
+        if (connect4OutcomeMenuTimeout) {
+            window.clearTimeout(connect4OutcomeMenuTimeout);
+            connect4OutcomeMenuTimeout = null;
+        }
+
+        connect4MenuVisible = false;
+        connect4MenuShowingRules = false;
+        connect4MenuClosing = false;
+        connect4MenuEntering = false;
+        renderConnect4Menu();
+
+        connect4OutcomeMenuTimeout = window.setTimeout(() => {
+            connect4OutcomeMenuTimeout = null;
+            revealConnect4OutcomeMenu();
+        }, GRID_OUTCOME_MENU_DELAY_MS);
+    }
+
     function syncMultiplayerConnect4State() {
         if (!isMultiplayerConnect4Active()) {
             connect4LastFinishedStateKey = '';
@@ -4994,6 +5067,11 @@ document.addEventListener('DOMContentLoaded', () => {
         connect4MenuClosing = false;
         connect4MenuResult = connect4Finished;
 
+        if (connect4OutcomeMenuTimeout) {
+            window.clearTimeout(connect4OutcomeMenuTimeout);
+            connect4OutcomeMenuTimeout = null;
+        }
+
         renderConnect4();
 
         const lastMove = multiplayerActiveRoom.gameState.lastMove;
@@ -5028,7 +5106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeGameTab !== 'connect4') {
             return;
         }
-        revealConnect4OutcomeMenu();
+        revealConnect4OutcomeMenuWithDelay();
     }
 
     function createBattleshipGrid() {
@@ -6329,6 +6407,10 @@ document.addEventListener('DOMContentLoaded', () => {
         connect4MenuClosing = false;
         connect4MenuEntering = false;
         connect4MenuResult = false;
+        if (connect4OutcomeMenuTimeout) {
+            window.clearTimeout(connect4OutcomeMenuTimeout);
+            connect4OutcomeMenuTimeout = null;
+        }
         updateConnect4Hud();
         renderConnect4();
     }
@@ -6674,7 +6756,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateConnect4Hud();
-        revealConnect4OutcomeMenu();
+        revealConnect4OutcomeMenuWithDelay();
     }
 
     function dropConnect4Token(col, token) {
