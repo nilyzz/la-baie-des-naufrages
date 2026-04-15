@@ -56,6 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const catalogGrid = document.getElementById('catalogGrid');
     const emptyCatalogMessage = document.getElementById('emptyCatalogMessage');
+    const catalogResultsSummary = document.getElementById('catalogResultsSummary');
+    const catalogGenreFilterGroup = document.getElementById('catalogGenreFilterGroup');
+    const catalogReleaseFilterSelect = document.getElementById('catalogReleaseFilterSelect');
+    const catalogLetterFilterSelect = document.getElementById('catalogLetterFilterSelect');
+    const catalogRatingFilterSelect = document.getElementById('catalogRatingFilterSelect');
+    const catalogSortFilterSelect = document.getElementById('catalogSortFilterSelect');
+    const catalogDirectorFilterInput = document.getElementById('catalogDirectorFilterInput');
+    const catalogDirectorSuggestions = document.getElementById('catalogDirectorSuggestions');
+    const catalogResetFiltersButton = document.getElementById('catalogResetFiltersButton');
     const manageList = document.getElementById('manageList');
     const excelImportStatus = document.getElementById('excelImportStatus');
     const excelSourceName = document.getElementById('excelSourceName');
@@ -793,6 +802,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let movies = [];
     let searchTerm = '';
+    let catalogSelectedGenres = new Set();
+    let catalogReleaseFilter = 'all';
+    let catalogLetterFilter = 'all';
+    let catalogMinimumRatingFilter = 'all';
+    let catalogSortMode = 'title-asc';
+    let catalogDirectorTerm = '';
     let currentView = loginView;
     let siteAdsEnterTimer = null;
     let gamesFiltersEnterTimer = null;
@@ -2026,6 +2041,35 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${formattedRating} / ${Number.isFinite(normalizedScale) && normalizedScale > 0 ? normalizedScale : 20}`;
     }
 
+    function getRatingBadgeTone(value, scale = 20) {
+        const rating = Number(value);
+        const normalizedScale = Number(scale);
+        const safeScale = Number.isFinite(normalizedScale) && normalizedScale > 0 ? normalizedScale : 20;
+
+        if (!Number.isFinite(rating)) {
+            return 'is-unrated';
+        }
+
+        const ratio = Math.max(0, Math.min(1, rating / safeScale));
+
+        if (ratio < 0.3) {
+            return 'is-poor';
+        }
+        if (ratio < 0.5) {
+            return 'is-rough';
+        }
+        if (ratio < 0.65) {
+            return 'is-fair';
+        }
+        if (ratio < 0.8) {
+            return 'is-good';
+        }
+        if (ratio < 0.9) {
+            return 'is-great';
+        }
+        return 'is-excellent';
+    }
+
     function normalizeHeader(value) {
         return String(value || '')
             .normalize('NFD')
@@ -2472,17 +2516,293 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function getFilteredMovies() {
-        if (!searchTerm) {
-            return movies;
+    function normalizeCatalogText(value) {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim();
+    }
+
+    function getMovieGenreTokens(movie) {
+        return Array.from(new Set(
+            String(movie?.genre || '')
+                .split(/[,/;|]+/)
+                .map((entry) => entry.trim())
+                .filter(Boolean)
+        ));
+    }
+
+    function getMovieReleaseYear(movie) {
+        const directYear = Number(String(movie?.releaseDate || '').slice(0, 4));
+        if (Number.isFinite(directYear) && directYear > 1800) {
+            return directYear;
         }
 
-        const normalizedSearch = searchTerm.trim().toLowerCase();
+        const fallbackMatch = String(movie?.releaseDisplay || '').match(/(19|20)\d{2}/);
+        return fallbackMatch ? Number(fallbackMatch[0]) : null;
+    }
 
-        return movies.filter((movie) => {
-            return movie.title.toLowerCase().includes(normalizedSearch)
-                || movie.director.toLowerCase().includes(normalizedSearch);
+    function getMovieRatingOutOfTwenty(movie) {
+        const rating = Number(movie?.rating);
+        const scale = Number(movie?.ratingScale || 20);
+        if (!Number.isFinite(rating) || !Number.isFinite(scale) || scale <= 0) {
+            return null;
+        }
+        return (rating / scale) * 20;
+    }
+
+    function getMovieTitleLetter(movie) {
+        const normalizedTitle = normalizeCatalogText(movie?.title);
+        if (!normalizedTitle) {
+            return '#';
+        }
+
+        const firstCharacter = normalizedTitle.charAt(0).toUpperCase();
+        return /[A-Z]/.test(firstCharacter) ? firstCharacter : '#';
+    }
+
+    function syncCatalogSelectOptions(selectElement, options, currentValue) {
+        if (!selectElement) {
+            return;
+        }
+
+        const previousValue = currentValue ?? selectElement.value;
+        selectElement.textContent = '';
+        const fragment = document.createDocumentFragment();
+
+        options.forEach(({ value, label }) => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            fragment.appendChild(option);
         });
+
+        selectElement.appendChild(fragment);
+        selectElement.value = options.some((option) => option.value === previousValue)
+            ? previousValue
+            : (options[0]?.value || '');
+    }
+
+    function renderCatalogFilters() {
+        const genreCounts = new Map();
+        const directorNames = new Set();
+        const titleLetters = new Set();
+
+        movies.forEach((movie) => {
+            getMovieGenreTokens(movie).forEach((genre) => {
+                genreCounts.set(genre, Number(genreCounts.get(genre) || 0) + 1);
+            });
+
+            if (movie.director) {
+                directorNames.add(movie.director);
+            }
+
+            titleLetters.add(getMovieTitleLetter(movie));
+        });
+
+        catalogSelectedGenres = new Set([...catalogSelectedGenres].filter((genre) => genreCounts.has(genre)));
+
+        if (catalogGenreFilterGroup) {
+            catalogGenreFilterGroup.textContent = '';
+            const fragment = document.createDocumentFragment();
+            const sortedGenres = [...genreCounts.entries()].sort((left, right) => left[0].localeCompare(right[0], 'fr'));
+
+            if (!sortedGenres.length) {
+                const empty = document.createElement('p');
+                empty.className = 'catalog-filter-empty';
+                empty.textContent = "Les genres appara\u00eetront ici apr\u00e8s l'import.";
+                fragment.appendChild(empty);
+            } else {
+                sortedGenres.forEach(([genre, count]) => {
+                    const label = document.createElement('label');
+                    label.className = 'catalog-genre-option';
+
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.name = 'catalogGenreFilter';
+                    input.value = genre;
+                    input.checked = catalogSelectedGenres.has(genre);
+
+                    const copy = document.createElement('span');
+                    copy.className = 'catalog-genre-option-copy';
+                    copy.textContent = genre;
+
+                    const meta = document.createElement('span');
+                    meta.className = 'catalog-genre-option-count';
+                    meta.textContent = String(count);
+
+                    label.append(input, copy, meta);
+                    fragment.appendChild(label);
+                });
+            }
+
+            catalogGenreFilterGroup.appendChild(fragment);
+        }
+
+        syncCatalogSelectOptions(catalogReleaseFilterSelect, [
+            { value: 'all', label: 'Toutes les p\u00e9riodes' },
+            { value: '2020+', label: "2020 \u00e0 aujourd'hui" },
+            { value: '2010s', label: 'Ann\u00e9es 2010' },
+            { value: '2000s', label: 'Ann\u00e9es 2000' },
+            { value: '1990s', label: 'Ann\u00e9es 1990' },
+            { value: '1980s', label: 'Ann\u00e9es 1980' },
+            { value: 'before-1980', label: 'Avant 1980' }
+        ], catalogReleaseFilter);
+        catalogReleaseFilter = catalogReleaseFilterSelect?.value || 'all';
+
+        syncCatalogSelectOptions(catalogLetterFilterSelect, [
+            { value: 'all', label: 'Toutes les initiales' },
+            ...[...titleLetters].sort().map((letter) => ({ value: letter, label: letter === '#' ? 'Titres num\u00e9riques / autres' : letter }))
+        ], catalogLetterFilter);
+        catalogLetterFilter = catalogLetterFilterSelect?.value || 'all';
+
+        syncCatalogSelectOptions(catalogRatingFilterSelect, [
+            { value: 'all', label: 'Toutes les notes' },
+            { value: '16', label: '16 / 20 et plus' },
+            { value: '14', label: '14 / 20 et plus' },
+            { value: '12', label: '12 / 20 et plus' },
+            { value: '10', label: '10 / 20 et plus' },
+            { value: '8', label: '8 / 20 et plus' }
+        ], catalogMinimumRatingFilter);
+        catalogMinimumRatingFilter = catalogRatingFilterSelect?.value || 'all';
+
+        syncCatalogSelectOptions(catalogSortFilterSelect, [
+            { value: 'title-asc', label: 'Titre A \u00e0 Z' },
+            { value: 'title-desc', label: 'Titre Z \u00e0 A' },
+            { value: 'rating-desc', label: 'Note d\u00e9croissante' },
+            { value: 'rating-asc', label: 'Note croissante' },
+            { value: 'release-desc', label: 'Sortie la plus r\u00e9cente' },
+            { value: 'release-asc', label: 'Sortie la plus ancienne' },
+            { value: 'director-asc', label: 'R\u00e9alisateur A \u00e0 Z' }
+        ], catalogSortMode);
+        catalogSortMode = catalogSortFilterSelect?.value || 'title-asc';
+
+        if (catalogDirectorSuggestions) {
+            catalogDirectorSuggestions.textContent = '';
+            const fragment = document.createDocumentFragment();
+            [...directorNames].sort((left, right) => left.localeCompare(right, 'fr')).forEach((directorName) => {
+                const option = document.createElement('option');
+                option.value = directorName;
+                fragment.appendChild(option);
+            });
+            catalogDirectorSuggestions.appendChild(fragment);
+        }
+
+        if (catalogDirectorFilterInput && catalogDirectorFilterInput.value !== catalogDirectorTerm) {
+            catalogDirectorFilterInput.value = catalogDirectorTerm;
+        }
+    }
+
+    function updateCatalogResultsSummary(filteredMovies) {
+        if (!catalogResultsSummary) {
+            return;
+        }
+
+        const activeFilters = [
+            searchTerm,
+            catalogDirectorTerm,
+            catalogReleaseFilter !== 'all' ? catalogReleaseFilter : '',
+            catalogLetterFilter !== 'all' ? catalogLetterFilter : '',
+            catalogMinimumRatingFilter !== 'all' ? catalogMinimumRatingFilter : '',
+            catalogSortMode !== 'title-asc' ? catalogSortMode : '',
+            catalogSelectedGenres.size ? 'genres' : ''
+        ].filter(Boolean).length;
+
+        if (!movies.length) {
+            catalogResultsSummary.textContent = 'Le panneau sera pr?t d?s que les films seront import?s.';
+            return;
+        }
+
+        catalogResultsSummary.textContent = activeFilters
+            ? `${filteredMovies.length} film${filteredMovies.length > 1 ? 's correspondent' : ' correspond'} aux filtres sur ${movies.length}.`
+            : `${movies.length} film${movies.length > 1 ? 's disponibles' : ' disponible'} dans le catalogue.`;
+    }
+
+    function getFilteredMovies() {
+        const normalizedSearch = normalizeCatalogText(searchTerm);
+        const normalizedDirectorSearch = normalizeCatalogText(catalogDirectorTerm);
+        const minimumRating = catalogMinimumRatingFilter === 'all' ? null : Number(catalogMinimumRatingFilter);
+
+        const filteredMovies = movies.filter((movie) => {
+            if (normalizedSearch) {
+                const titleMatches = normalizeCatalogText(movie.title).includes(normalizedSearch);
+                const directorMatches = normalizeCatalogText(movie.director).includes(normalizedSearch);
+                if (!titleMatches && !directorMatches) {
+                    return false;
+                }
+            }
+
+            if (normalizedDirectorSearch && !normalizeCatalogText(movie.director).includes(normalizedDirectorSearch)) {
+                return false;
+            }
+
+            if (catalogSelectedGenres.size) {
+                const movieGenres = new Set(getMovieGenreTokens(movie));
+                if (![...catalogSelectedGenres].every((genre) => movieGenres.has(genre))) {
+                    return false;
+                }
+            }
+
+            if (catalogLetterFilter !== 'all' && getMovieTitleLetter(movie) !== catalogLetterFilter) {
+                return false;
+            }
+
+            const releaseYear = getMovieReleaseYear(movie);
+            if (catalogReleaseFilter === '2020+' && (!releaseYear || releaseYear < 2020)) {
+                return false;
+            }
+            if (catalogReleaseFilter === '2010s' && (!releaseYear || releaseYear < 2010 || releaseYear > 2019)) {
+                return false;
+            }
+            if (catalogReleaseFilter === '2000s' && (!releaseYear || releaseYear < 2000 || releaseYear > 2009)) {
+                return false;
+            }
+            if (catalogReleaseFilter === '1990s' && (!releaseYear || releaseYear < 1990 || releaseYear > 1999)) {
+                return false;
+            }
+            if (catalogReleaseFilter === '1980s' && (!releaseYear || releaseYear < 1980 || releaseYear > 1989)) {
+                return false;
+            }
+            if (catalogReleaseFilter === 'before-1980' && (!releaseYear || releaseYear >= 1980)) {
+                return false;
+            }
+
+            if (minimumRating !== null) {
+                const ratingOnTwenty = getMovieRatingOutOfTwenty(movie);
+                if (!Number.isFinite(ratingOnTwenty) || ratingOnTwenty < minimumRating) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        const compareText = (left, right) => String(left || '').localeCompare(String(right || ''), 'fr', { sensitivity: 'base' });
+
+        filteredMovies.sort((left, right) => {
+            if (catalogSortMode === 'title-desc') {
+                return compareText(right.title, left.title);
+            }
+            if (catalogSortMode === 'rating-desc') {
+                return (getMovieRatingOutOfTwenty(right) ?? -Infinity) - (getMovieRatingOutOfTwenty(left) ?? -Infinity);
+            }
+            if (catalogSortMode === 'rating-asc') {
+                return (getMovieRatingOutOfTwenty(left) ?? Infinity) - (getMovieRatingOutOfTwenty(right) ?? Infinity);
+            }
+            if (catalogSortMode === 'release-desc') {
+                return (getMovieReleaseYear(right) ?? -Infinity) - (getMovieReleaseYear(left) ?? -Infinity);
+            }
+            if (catalogSortMode === 'release-asc') {
+                return (getMovieReleaseYear(left) ?? Infinity) - (getMovieReleaseYear(right) ?? Infinity);
+            }
+            if (catalogSortMode === 'director-asc') {
+                return compareText(left.director, right.director) || compareText(left.title, right.title);
+            }
+            return compareText(left.title, right.title);
+        });
+
+        return filteredMovies;
     }
 
     function renderStats() {
@@ -2498,6 +2818,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCatalog() {
         const filteredMovies = getFilteredMovies();
+        updateCatalogResultsSummary(filteredMovies);
         catalogGrid.textContent = '';
         const fragment = document.createDocumentFragment();
 
@@ -2509,7 +2830,7 @@ document.addEventListener('DOMContentLoaded', () => {
             posterShell.className = 'movie-poster-shell';
 
             const ratingBadge = document.createElement('span');
-            ratingBadge.className = 'rating-badge rating-badge-floating';
+            ratingBadge.className = `rating-badge rating-badge-floating ${getRatingBadgeTone(movie.rating, movie.ratingScale)}`;
             ratingBadge.textContent = formatRatingWithScale(movie.rating, movie.ratingScale);
 
             const poster = document.createElement('img');
@@ -2594,6 +2915,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderAll() {
         renderStats();
+        renderCatalogFilters();
         renderCatalog();
         renderManageList();
     }
@@ -19596,6 +19918,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('input', (event) => {
         searchTerm = event.target.value;
+        renderCatalog();
+    });
+
+    catalogDirectorFilterInput?.addEventListener('input', (event) => {
+        catalogDirectorTerm = event.target.value;
+        renderCatalog();
+    });
+
+    catalogReleaseFilterSelect?.addEventListener('change', (event) => {
+        catalogReleaseFilter = event.target.value;
+        renderCatalog();
+    });
+
+    catalogLetterFilterSelect?.addEventListener('change', (event) => {
+        catalogLetterFilter = event.target.value;
+        renderCatalog();
+    });
+
+    catalogRatingFilterSelect?.addEventListener('change', (event) => {
+        catalogMinimumRatingFilter = event.target.value;
+        renderCatalog();
+    });
+
+    catalogSortFilterSelect?.addEventListener('change', (event) => {
+        catalogSortMode = event.target.value;
+        renderCatalog();
+    });
+
+    catalogGenreFilterGroup?.addEventListener('change', (event) => {
+        const genreInput = event.target.closest('input[name="catalogGenreFilter"]');
+        if (!genreInput) {
+            return;
+        }
+
+        if (genreInput.checked) {
+            catalogSelectedGenres.add(genreInput.value);
+        } else {
+            catalogSelectedGenres.delete(genreInput.value);
+        }
+        renderCatalog();
+    });
+
+    catalogResetFiltersButton?.addEventListener('click', () => {
+        catalogSelectedGenres = new Set();
+        catalogReleaseFilter = 'all';
+        catalogLetterFilter = 'all';
+        catalogMinimumRatingFilter = 'all';
+        catalogSortMode = 'title-asc';
+        catalogDirectorTerm = '';
+        searchTerm = '';
+
+        if (searchInput) {
+            searchInput.value = '';
+        }
+
+        renderCatalogFilters();
         renderCatalog();
     });
 

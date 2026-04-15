@@ -197,27 +197,74 @@
                     </article>
                 </div>
             </section>
-
             <section id="catalogSection" class="panel">
-                <div class="card section-header-card">
-                    <div>
-                        <p class="section-tag">Catalogue</p>
-                        <h3>Films vus</h3>
-                        <p>Retrouve tous tes films, bientôt avec tri et filtres plus poussés.</p>
-                    </div>
+                <div class="catalog-layout">
+                    <aside id="catalogFiltersCard" class="card catalog-filters-card" aria-labelledby="catalogFiltersTitle">
+                        <div class="catalog-filters-copy">
+                            <p class="section-tag">Filtres</p>
+                            <h3 id="catalogFiltersTitle">Affiner le catalogue</h3>
+                            <p id="catalogResultsSummary" class="catalog-results-summary">Tous les films du navire sont affich?s.</p>
+                        </div>
 
-                    <div class="catalog-tools">
-                        <label class="field-label" for="searchInput">Rechercher un film</label>
-                        <input
-                            id="searchInput"
-                            type="search"
-                            placeholder="Titre ou réalisateur"
-                        >
+                        <div class="catalog-filter-block">
+                            <label class="field-label" for="catalogDirectorFilterInput">R&eacute;alisateur</label>
+                            <input id="catalogDirectorFilterInput" class="catalog-filter-input" type="search" placeholder="Nom du r&eacute;alisateur" list="catalogDirectorSuggestions">
+                            <datalist id="catalogDirectorSuggestions"></datalist>
+                        </div>
+
+                        <div class="catalog-filter-block">
+                            <label class="field-label" for="catalogReleaseFilterSelect">P&eacute;riode de sortie</label>
+                            <select id="catalogReleaseFilterSelect" class="catalog-filter-input"></select>
+                        </div>
+
+                        <div class="catalog-filter-block">
+                            <label class="field-label" for="catalogLetterFilterSelect">Filtre alphab&eacute;tique</label>
+                            <select id="catalogLetterFilterSelect" class="catalog-filter-input"></select>
+                        </div>
+
+                        <div class="catalog-filter-block">
+                            <label class="field-label" for="catalogRatingFilterSelect">Note minimale</label>
+                            <select id="catalogRatingFilterSelect" class="catalog-filter-input"></select>
+                        </div>
+
+                        <div class="catalog-filter-block">
+                            <label class="field-label" for="catalogSortFilterSelect">Trier par</label>
+                            <select id="catalogSortFilterSelect" class="catalog-filter-input"></select>
+                        </div>
+
+                        <div class="catalog-filter-block">
+                            <div class="catalog-filter-heading">
+                                <span class="field-label">Genres</span>
+                                <span class="catalog-filter-hint">Tu peux en cocher plusieurs.</span>
+                            </div>
+                            <div id="catalogGenreFilterGroup" class="catalog-genre-list"></div>
+                        </div>
+
+                        <button id="catalogResetFiltersButton" type="button" class="secondary-button catalog-reset-button">R&eacute;initialiser les filtres</button>
+                    </aside>
+
+                    <div class="catalog-main">
+                        <div class="card section-header-card">
+                            <div>
+                                <p class="section-tag">Catalogue</p>
+                                <h3>Films vus</h3>
+                                <p>Retrouve tous tes films, bient&ocirc;t avec tri et filtres plus pouss&eacute;s.</p>
+                            </div>
+
+                            <div class="catalog-tools">
+                                <label class="field-label" for="searchInput">Rechercher un film</label>
+                                <input
+                                    id="searchInput"
+                                    type="search"
+                                    placeholder="Titre ou r&eacute;alisateur"
+                                >
+                            </div>
+                        </div>
+
+                        <div id="catalogGrid" class="catalog-grid"></div>
+                        <p id="emptyCatalogMessage" class="empty-state hidden">Aucun film ne correspond &agrave; cette recherche.</p>
                     </div>
                 </div>
-
-                <div id="catalogGrid" class="catalog-grid"></div>
-                <p id="emptyCatalogMessage" class="empty-state hidden">Aucun film ne correspond à cette recherche.</p>
             </section>
 
             <section id="manageSection" class="panel">
