@@ -54,6 +54,12 @@ import * as musicModule from './navires/music.js';
 import * as mathModule from './navires/math.js';
 import * as cinemaModule from './navires/cinema.js';
 
+import {
+    syncGameMenuOverlayBounds,
+    syncAllGameMenuOverlayBounds,
+    GAME_MENU_OVERLAY_PAIRS
+} from './games/_shared/menu-overlay.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const sanityChecks = [
         Array.isArray(shuffleArray([1, 2, 3])) && shuffleArray([1, 2, 3]).length === 3,
@@ -112,12 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof cinemaModule.parseMoviesFromWorkbook === 'function',
         typeof cinemaModule.formatDate === 'function',
         cinemaModule.getRatingBadgeTone(18, 20) === 'is-excellent',
-        cinemaModule.DEFAULT_POSTER_URL.startsWith('https://')
+        cinemaModule.DEFAULT_POSTER_URL.startsWith('https://'),
+        typeof syncGameMenuOverlayBounds === 'function',
+        typeof syncAllGameMenuOverlayBounds === 'function',
+        Array.isArray(GAME_MENU_OVERLAY_PAIRS) && GAME_MENU_OVERLAY_PAIRS.length === 31
     ];
 
     const allOk = sanityChecks.every(Boolean);
     if (allOk) {
-        console.log('ES Modules OK — core/ + multiplayer/ + navires/ extracted.');
+        console.log('ES Modules OK — core/ + multiplayer/ + navires/ + games/_shared extracted.');
     } else {
         console.warn('ES Modules : un ou plusieurs imports ont échoué.', sanityChecks);
     }
