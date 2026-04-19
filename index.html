@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.css?v=2026-03-28-bird-1">
+    <link rel="stylesheet" href="style.css?v=2026-04-19-audit-1">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -975,7 +975,7 @@
                             <strong id="battleshipPlayerShipsDisplay" class="battleship-counter-value">0</strong>
                         </div>
 
-                        <button id="battleshipRestartButton" type="button" class="battleship-face">Nouvelle bataille</button>
+                        <button id="battleshipRestartButton" type="button" class="battleship-face" hidden>Nouvelle bataille</button>
 
                         <div class="battleship-counter-block">
                             <span id="battleshipEnemyLabel" class="battleship-counter-label">Flotte adverse</span>
@@ -985,15 +985,28 @@
 
                     <p id="battleshipStatusText" class="battleship-help">Choisis une case dans la grille ennemie pour ouvrir le feu.</p>
 
-                    <div class="battleship-layout">
-                        <div class="battleship-board-shell">
-                            <p id="battleshipPlayerBoardLabel" class="section-tag">Ta flotte</p>
-                    <div id="battleshipPlayerBoard" class="battleship-board" aria-label="Plateau de Bataille"></div>
+                    <div id="battleshipTable" class="battleship-table">
+                        <div id="battleshipMenuOverlay" class="battleship-menu-overlay">
+                            <div class="battleship-menu-card">
+                                <span id="battleshipMenuEyebrow" class="battleship-menu-eyebrow">Bataille navale de la baie</span>
+                                <h3 id="battleshipMenuTitle" class="battleship-menu-title">Bataille</h3>
+                                <p id="battleshipMenuText" class="battleship-menu-text">Repère les navires ennemis et coule toute leur flotte avant qu&rsquo;ils ne coulent la tienne.</p>
+                                <div class="battleship-menu-actions">
+                                    <button id="battleshipMenuActionButton" type="button" class="game-menu-primary-button">Lancer la bataille</button>
+                                    <button id="battleshipMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
                         </div>
+                        <div class="battleship-layout">
+                            <div class="battleship-board-shell">
+                                <p id="battleshipPlayerBoardLabel" class="section-tag">Ta flotte</p>
+                                <div id="battleshipPlayerBoard" class="battleship-board" aria-label="Plateau de Bataille"></div>
+                            </div>
 
-                        <div class="battleship-board-shell">
-                            <p id="battleshipEnemyBoardLabel" class="section-tag">Flotte ennemie</p>
-                    <div id="battleshipEnemyBoard" class="battleship-board" aria-label="Plateau ennemi de Bataille"></div>
+                            <div class="battleship-board-shell">
+                                <p id="battleshipEnemyBoardLabel" class="section-tag">Flotte ennemie</p>
+                                <div id="battleshipEnemyBoard" class="battleship-board" aria-label="Plateau ennemi de Bataille"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1005,7 +1018,7 @@
                             <strong id="tetrisScoreDisplay" class="tetris-counter-value">0</strong>
                         </div>
 
-                        <button id="tetrisStartButton" type="button" class="tetris-face">Lancer la cale</button>
+                        <button id="tetrisStartButton" type="button" class="tetris-face" hidden>Lancer la cale</button>
 
                         <div class="tetris-counter-block">
                             <span class="tetris-counter-label">Lignes</span>
@@ -1014,7 +1027,20 @@
                     </div>
 
                     <p id="tetrisHelpText" class="tetris-help">Empile les caisses. Flèches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.</p>
-                    <div id="tetrisBoard" class="tetris-board" aria-label="Plateau du Baietris"></div>
+                    <div id="tetrisTable" class="tetris-table">
+                        <div id="tetrisMenuOverlay" class="tetris-menu-overlay">
+                            <div class="tetris-menu-card">
+                                <span id="tetrisMenuEyebrow" class="tetris-menu-eyebrow">Cale de cargaison</span>
+                                <h3 id="tetrisMenuTitle" class="tetris-menu-title">Baietris</h3>
+                                <p id="tetrisMenuText" class="tetris-menu-text">Empile les caisses dans la cale du navire sans laisser la pile atteindre le pont.</p>
+                                <div class="tetris-menu-actions">
+                                    <button id="tetrisMenuActionButton" type="button" class="game-menu-primary-button">Lancer la cale</button>
+                                    <button id="tetrisMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tetrisBoard" class="tetris-board" aria-label="Plateau du Baietris"></div>
+                    </div>
                 </div>
 
                 <div id="pacmanGame" class="card pacman-card games-panel">
@@ -1024,7 +1050,7 @@
                             <strong id="pacmanScoreDisplay" class="pacman-counter-value">0</strong>
                         </div>
 
-                        <button id="pacmanStartButton" type="button" class="pacman-face">Lancer la chasse</button>
+                        <button id="pacmanStartButton" type="button" class="pacman-face" hidden>Lancer la chasse</button>
 
                         <div class="pacman-counter-block">
                             <span class="pacman-counter-label">Vies</span>
@@ -1033,8 +1059,21 @@
                     </div>
 
                     <p id="pacmanHelpText" class="pacman-help">Ramasse toutes les perles de la baie sans te faire attraper par les esprits du brouillard.</p>
-                    <div id="pacmanBoard" class="pacman-board" aria-label="Labyrinthe de Baie-Man">
-                        <div id="pacmanCountdown" class="pacman-countdown hidden" aria-hidden="true"></div>
+                    <div id="pacmanTable" class="pacman-table">
+                        <div id="pacmanMenuOverlay" class="pacman-menu-overlay">
+                            <div class="pacman-menu-card">
+                                <span id="pacmanMenuEyebrow" class="pacman-menu-eyebrow">Labyrinthe du port</span>
+                                <h3 id="pacmanMenuTitle" class="pacman-menu-title">Baie-Man</h3>
+                                <p id="pacmanMenuText" class="pacman-menu-text">Ramasse toutes les perles de la baie sans te faire attraper par les esprits du brouillard.</p>
+                                <div class="pacman-menu-actions">
+                                    <button id="pacmanMenuActionButton" type="button" class="game-menu-primary-button">Lancer la chasse</button>
+                                    <button id="pacmanMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pacmanBoard" class="pacman-board" aria-label="Labyrinthe de Baie-Man">
+                            <div id="pacmanCountdown" class="pacman-countdown hidden" aria-hidden="true"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1275,7 +1314,7 @@
                             <strong id="harborRunScoreDisplay" class="harborrun-counter-value">0</strong>
                         </div>
 
-                        <button id="harborRunStartButton" type="button" class="harborrun-face">Prendre la mer</button>
+                        <button id="harborRunStartButton" type="button" class="harborrun-face" hidden>Prendre la mer</button>
 
                         <div class="harborrun-counter-block">
                             <span class="harborrun-counter-label">Record</span>
@@ -1284,7 +1323,20 @@
                     </div>
 
                     <p id="harborRunHelpText" class="harborrun-help">Guide le navire entre rochers, épaves et autres bateaux pendant que la vitesse monte.</p>
-                    <div id="harborRunBoard" class="harborrun-board" aria-label="Plateau de Navire 2D"></div>
+                    <div id="harborRunTable" class="harborrun-table">
+                        <div id="harborRunMenuOverlay" class="harborrun-menu-overlay">
+                            <div class="harborrun-menu-card">
+                                <span id="harborRunMenuEyebrow" class="harborrun-menu-eyebrow">Course dans le chenal</span>
+                                <h3 id="harborRunMenuTitle" class="harborrun-menu-title">Navire 2D</h3>
+                                <p id="harborRunMenuText" class="harborrun-menu-text">Guide ton navire entre rochers, épaves et autres bateaux pendant que la vitesse monte.</p>
+                                <div class="harborrun-menu-actions">
+                                    <button id="harborRunMenuActionButton" type="button" class="game-menu-primary-button">Prendre la mer</button>
+                                    <button id="harborRunMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="harborRunBoard" class="harborrun-board" aria-label="Plateau de Navire 2D"></div>
+                    </div>
                 </div>
 
                 <div id="stackerGame" class="card stacker-card games-panel">
@@ -1294,7 +1346,7 @@
                             <strong id="stackerScoreDisplay" class="stacker-counter-value">0</strong>
                         </div>
 
-                        <button id="stackerStartButton" type="button" class="stacker-face">Empiler</button>
+                        <button id="stackerStartButton" type="button" class="stacker-face" hidden>Empiler</button>
 
                         <div class="stacker-counter-block">
                             <span class="stacker-counter-label">Record</span>
@@ -1303,7 +1355,20 @@
                     </div>
 
                     <p id="stackerHelpText" class="stacker-help">Empile les caisses de butin le plus proprement possible pour monter la tour.</p>
-                    <div id="stackerBoard" class="stacker-board" aria-label="Plateau de Stack 2D"></div>
+                    <div id="stackerTable" class="stacker-table">
+                        <div id="stackerMenuOverlay" class="stacker-menu-overlay">
+                            <div class="stacker-menu-card">
+                                <span id="stackerMenuEyebrow" class="stacker-menu-eyebrow">Tour de butin</span>
+                                <h3 id="stackerMenuTitle" class="stacker-menu-title">Stack 2D</h3>
+                                <p id="stackerMenuText" class="stacker-menu-text">Clique ou appuie sur Espace au bon moment pour empiler la cargaison. Vise la plus haute tour du port.</p>
+                                <div class="stacker-menu-actions">
+                                    <button id="stackerMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
+                                    <button id="stackerMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="stackerBoard" class="stacker-board" aria-label="Plateau de Stack 2D"></div>
+                    </div>
                 </div>
 
                 <div id="coinClickerGame" class="card coinclicker-card games-panel">

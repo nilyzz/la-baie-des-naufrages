@@ -265,6 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const ticTacToeMenuRulesButton = document.getElementById('ticTacToeMenuRulesButton');
     const battleshipPlayerBoard = document.getElementById('battleshipPlayerBoard');
     const battleshipEnemyBoard = document.getElementById('battleshipEnemyBoard');
+    const battleshipTable = document.getElementById('battleshipTable');
+    const battleshipMenuOverlay = document.getElementById('battleshipMenuOverlay');
+    const battleshipMenuEyebrow = document.getElementById('battleshipMenuEyebrow');
+    const battleshipMenuTitle = document.getElementById('battleshipMenuTitle');
+    const battleshipMenuText = document.getElementById('battleshipMenuText');
+    const battleshipMenuActionButton = document.getElementById('battleshipMenuActionButton');
+    const battleshipMenuRulesButton = document.getElementById('battleshipMenuRulesButton');
     const battleshipPlayerShipsDisplay = document.getElementById('battleshipPlayerShipsDisplay');
     const battleshipEnemyShipsDisplay = document.getElementById('battleshipEnemyShipsDisplay');
     const battleshipPlayerLabel = document.getElementById('battleshipPlayerLabel');
@@ -275,16 +282,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const battleshipRestartButton = document.getElementById('battleshipRestartButton');
     const battleshipModeButtons = document.querySelectorAll('[data-battleship-mode]');
     const tetrisBoard = document.getElementById('tetrisBoard');
+    const tetrisTable = document.getElementById('tetrisTable');
     const tetrisScoreDisplay = document.getElementById('tetrisScoreDisplay');
     const tetrisLinesDisplay = document.getElementById('tetrisLinesDisplay');
     const tetrisStartButton = document.getElementById('tetrisStartButton');
     const tetrisHelpText = document.getElementById('tetrisHelpText');
+    const tetrisMenuOverlay = document.getElementById('tetrisMenuOverlay');
+    const tetrisMenuEyebrow = document.getElementById('tetrisMenuEyebrow');
+    const tetrisMenuTitle = document.getElementById('tetrisMenuTitle');
+    const tetrisMenuText = document.getElementById('tetrisMenuText');
+    const tetrisMenuActionButton = document.getElementById('tetrisMenuActionButton');
+    const tetrisMenuRulesButton = document.getElementById('tetrisMenuRulesButton');
     const pacmanBoard = document.getElementById('pacmanBoard');
+    const pacmanTable = document.getElementById('pacmanTable');
     const pacmanScoreDisplay = document.getElementById('pacmanScoreDisplay');
     const pacmanLivesDisplay = document.getElementById('pacmanLivesDisplay');
     const pacmanStartButton = document.getElementById('pacmanStartButton');
     const pacmanHelpText = document.getElementById('pacmanHelpText');
     let pacmanCountdown = document.getElementById('pacmanCountdown');
+    const pacmanMenuOverlay = document.getElementById('pacmanMenuOverlay');
+    const pacmanMenuEyebrow = document.getElementById('pacmanMenuEyebrow');
+    const pacmanMenuTitle = document.getElementById('pacmanMenuTitle');
+    const pacmanMenuText = document.getElementById('pacmanMenuText');
+    const pacmanMenuActionButton = document.getElementById('pacmanMenuActionButton');
+    const pacmanMenuRulesButton = document.getElementById('pacmanMenuRulesButton');
     const solitaireStock = document.getElementById('solitaireStock');
     const solitaireWaste = document.getElementById('solitaireWaste');
     const solitaireFoundations = document.getElementById('solitaireFoundations');
@@ -360,16 +381,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const candyCrushRestartButton = document.getElementById('candyCrushRestartButton');
     const harborRunGame = document.getElementById('harborRunGame');
     const harborRunBoard = document.getElementById('harborRunBoard');
+    const harborRunTable = document.getElementById('harborRunTable');
     const harborRunScoreDisplay = document.getElementById('harborRunScoreDisplay');
     const harborRunBestDisplay = document.getElementById('harborRunBestDisplay');
     const harborRunHelpText = document.getElementById('harborRunHelpText');
     const harborRunStartButton = document.getElementById('harborRunStartButton');
+    const harborRunMenuOverlay = document.getElementById('harborRunMenuOverlay');
+    const harborRunMenuEyebrow = document.getElementById('harborRunMenuEyebrow');
+    const harborRunMenuTitle = document.getElementById('harborRunMenuTitle');
+    const harborRunMenuText = document.getElementById('harborRunMenuText');
+    const harborRunMenuActionButton = document.getElementById('harborRunMenuActionButton');
+    const harborRunMenuRulesButton = document.getElementById('harborRunMenuRulesButton');
     const stackerGame = document.getElementById('stackerGame');
     const stackerBoard = document.getElementById('stackerBoard');
+    const stackerTable = document.getElementById('stackerTable');
     const stackerScoreDisplay = document.getElementById('stackerScoreDisplay');
     const stackerBestDisplay = document.getElementById('stackerBestDisplay');
     const stackerHelpText = document.getElementById('stackerHelpText');
     const stackerStartButton = document.getElementById('stackerStartButton');
+    const stackerMenuOverlay = document.getElementById('stackerMenuOverlay');
+    const stackerMenuEyebrow = document.getElementById('stackerMenuEyebrow');
+    const stackerMenuTitle = document.getElementById('stackerMenuTitle');
+    const stackerMenuText = document.getElementById('stackerMenuText');
+    const stackerMenuActionButton = document.getElementById('stackerMenuActionButton');
+    const stackerMenuRulesButton = document.getElementById('stackerMenuRulesButton');
     const coinClickerGame = document.getElementById('coinClickerGame');
     const coinClickerScoreDisplay = document.getElementById('coinClickerScoreDisplay');
     const coinClickerPowerDisplay = document.getElementById('coinClickerPowerDisplay');
@@ -986,12 +1021,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let battleshipAwaitingAi = false;
     let battleshipMode = 'solo';
     let battleshipCurrentTurn = 'captain1';
+    let battleshipMenuVisible = true;
+    let battleshipMenuShowingRules = false;
+    let battleshipMenuClosing = false;
+    let battleshipMenuEntering = false;
+    let battleshipMenuResult = null;
     let tetrisGrid = [];
     let tetrisPiece = null;
     let tetrisScore = 0;
     let tetrisLines = 0;
     let tetrisRunning = false;
     let tetrisInterval = null;
+    let tetrisMenuVisible = true;
+    let tetrisMenuShowingRules = false;
+    let tetrisMenuClosing = false;
+    let tetrisMenuEntering = false;
+    let tetrisMenuResult = null;
     let pacmanGrid = [];
     let pacmanPosition = { row: 1, col: 1 };
     let pacmanDirection = { row: 0, col: 0 };
@@ -1008,6 +1053,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacmanCellElements = [];
     let pacmanHeroElement = null;
     let pacmanGhostElements = [];
+    let pacmanMenuVisible = true;
+    let pacmanMenuShowingRules = false;
+    let pacmanMenuClosing = false;
+    let pacmanMenuEntering = false;
+    let pacmanMenuResult = null;
     let solitaireStockCards = [];
     let solitaireWasteCards = [];
     let solitaireFoundationsState = { spades: [], hearts: [], clubs: [], diamonds: [] };
@@ -1114,6 +1164,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let harborRunSpawnTimer = 0;
     let harborRunSafeLane = 1;
     let harborRunBackdropOffset = 0;
+    let harborRunMenuVisible = true;
+    let harborRunMenuShowingRules = false;
+    let harborRunMenuClosing = false;
+    let harborRunMenuEntering = false;
+    let harborRunMenuResult = null;
     let stackerLayers = [];
     let stackerCurrentLayer = null;
     let stackerFragments = [];
@@ -1122,6 +1177,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let stackerRunning = false;
     let stackerAnimationFrame = null;
     let stackerLastFrame = 0;
+    let stackerMenuVisible = true;
+    let stackerMenuShowingRules = false;
+    let stackerMenuClosing = false;
+    let stackerMenuEntering = false;
+    let stackerMenuResult = null;
     let coinClickerState = {
         coins: 0,
         clickPower: 1,
@@ -2390,42 +2450,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setExcelImportFeedback('Recherche du fichier Excel du cinema...', '');
 
-        for (const fileName of EXCEL_FILE_CANDIDATES) {
-            try {
-                const response = await fetch(fileName, { cache: 'no-store' });
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 8000);
 
-                if (!response.ok) {
-                    continue;
+        try {
+            for (const fileName of EXCEL_FILE_CANDIDATES) {
+                if (controller.signal.aborted) {
+                    break;
                 }
+                try {
+                    const response = await fetch(fileName, { cache: 'no-store', signal: controller.signal });
 
-                const fileBuffer = await response.arrayBuffer();
-                const importedMovies = await enrichMoviesWithRemotePosters(parseMoviesFromWorkbook(fileBuffer));
+                    if (!response.ok) {
+                        continue;
+                    }
 
-                movies = importedMovies;
-                renderAll();
-                setExcelImportFeedback(
-                    importedMovies.length
-                        ? `${importedMovies.length} film${importedMovies.length > 1 ? 's importés' : ' importé'} depuis Excel.`
-                        : "Le fichier Excel a été trouvé, mais aucune ligne film exploitable n'a été lue.",
-                    importedMovies.length ? 'success' : 'error'
-                );
+                    const fileBuffer = await response.arrayBuffer();
+                    const importedMovies = await enrichMoviesWithRemotePosters(parseMoviesFromWorkbook(fileBuffer));
 
-                if (excelSourceName) {
-                    excelSourceName.textContent = `Source détectée : ${fileName}`;
+                    movies = importedMovies;
+                    renderAll();
+                    setExcelImportFeedback(
+                        importedMovies.length
+                            ? `${importedMovies.length} film${importedMovies.length > 1 ? 's importés' : ' importé'} depuis Excel.`
+                            : "Le fichier Excel a été trouvé, mais aucune ligne film exploitable n'a été lue.",
+                        importedMovies.length ? 'success' : 'error'
+                    );
+
+                    if (excelSourceName) {
+                        excelSourceName.textContent = `Source détectée : ${fileName}`;
+                    }
+
+                    return;
+                } catch (error) {
+                    if (error?.name === 'AbortError') {
+                        break;
+                    }
+                    console.error(`Impossible de lire ${fileName}.`, error);
                 }
-
-                return;
-            } catch (error) {
-                console.error(`Impossible de lire ${fileName}.`, error);
             }
-        }
 
-        movies = loadMovies();
-        renderAll();
-        setExcelImportFeedback('Aucun fichier Excel détecté à la racine du dépôt.', 'error');
+            movies = loadMovies();
+            renderAll();
+            setExcelImportFeedback('Aucun fichier Excel trouvé. Place un fichier film.xlsx à la racine du dépôt pour importer des films.', 'error');
 
-        if (excelSourceName) {
-            excelSourceName.textContent = 'Ajoute par exemple film.xlsx ou film.xls à côté de index.html.';
+            if (excelSourceName) {
+                excelSourceName.textContent = 'Ajoute par exemple film.xlsx ou film.xls à côté de index.html.';
+            }
+        } finally {
+            window.clearTimeout(timeoutId);
         }
     }
 
@@ -3291,6 +3364,11 @@ document.addEventListener('DOMContentLoaded', () => {
         syncGameMenuOverlayBounds(baieBerryMenuOverlay, baieBerryGame);
         syncGameMenuOverlayBounds(breakoutMenuOverlay, breakoutTable);
         syncGameMenuOverlayBounds(unoMenuOverlay, unoTable);
+        syncGameMenuOverlayBounds(stackerMenuOverlay, stackerTable);
+        syncGameMenuOverlayBounds(pacmanMenuOverlay, pacmanTable);
+        syncGameMenuOverlayBounds(tetrisMenuOverlay, tetrisTable);
+        syncGameMenuOverlayBounds(battleshipMenuOverlay, battleshipTable);
+        syncGameMenuOverlayBounds(harborRunMenuOverlay, harborRunTable);
     }
 
     function getBoardMoveAnimationMetadata(lastMove, row, col, flip = false) {
@@ -4122,14 +4200,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'battleship' && nextTab !== 'battleship') {
+            battleshipMenuVisible = true;
             initializeBattleship();
         }
 
         if (previousTab === 'tetris' && nextTab !== 'tetris') {
+            tetrisMenuVisible = true;
             initializeTetris();
         }
 
         if (previousTab === 'pacman' && nextTab !== 'pacman') {
+            pacmanMenuVisible = true;
             initializePacman();
         }
 
@@ -4166,10 +4247,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'harborRun' && nextTab !== 'harborRun') {
+            harborRunMenuVisible = true;
             initializeHarborRun();
         }
 
         if (previousTab === 'stacker' && nextTab !== 'stacker') {
+            stackerMenuVisible = true;
             initializeStacker();
         }
 
@@ -5638,8 +5721,98 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBattleshipHud();
     }
 
+    function getBattleshipRulesText() {
+        return 'Chaque flotte place 5 navires al\u00e9atoirement dans la baie. Clique sur la grille ennemie pour ouvrir le feu. Touche tous leurs navires avant qu\u2019ils ne coulent les tiens. En solo, un ennemi IA riposte apr\u00e8s chaque tir.';
+    }
+
+    function renderBattleshipMenu() {
+        if (!battleshipMenuOverlay || !battleshipTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(battleshipMenuOverlay, battleshipTable);
+        battleshipMenuOverlay.classList.toggle('hidden', !battleshipMenuVisible);
+        battleshipMenuOverlay.classList.toggle('is-closing', battleshipMenuClosing);
+        battleshipMenuOverlay.classList.toggle('is-entering', battleshipMenuEntering);
+        battleshipTable.classList.toggle('is-menu-open', battleshipMenuVisible);
+
+        if (!battleshipMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(battleshipMenuResult);
+
+        if (battleshipMenuEyebrow) {
+            battleshipMenuEyebrow.textContent = battleshipMenuShowingRules
+                ? 'R\u00e8gles'
+                : (hasResult ? battleshipMenuResult.eyebrow : 'Bataille navale de la baie');
+        }
+
+        if (battleshipMenuTitle) {
+            battleshipMenuTitle.textContent = battleshipMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? battleshipMenuResult.title : 'Bataille');
+        }
+
+        if (battleshipMenuText) {
+            battleshipMenuText.textContent = battleshipMenuShowingRules
+                ? getBattleshipRulesText()
+                : (hasResult
+                    ? battleshipMenuResult.text
+                    : 'Rep\u00e8re les navires ennemis et coule toute leur flotte avant qu\u2019ils ne coulent la tienne.');
+        }
+
+        if (battleshipMenuActionButton) {
+            battleshipMenuActionButton.textContent = battleshipMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la bataille' : 'Lancer la bataille');
+        }
+
+        if (battleshipMenuRulesButton) {
+            battleshipMenuRulesButton.textContent = 'R\u00e8gles';
+            battleshipMenuRulesButton.hidden = battleshipMenuShowingRules;
+        }
+    }
+
+    function closeBattleshipMenu() {
+        battleshipMenuClosing = true;
+        renderBattleshipMenu();
+        window.setTimeout(() => {
+            battleshipMenuClosing = false;
+            battleshipMenuVisible = false;
+            battleshipMenuShowingRules = false;
+            battleshipMenuEntering = false;
+            battleshipMenuResult = null;
+            renderBattleshipMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealBattleshipOutcomeMenu(title, text, eyebrow) {
+        battleshipMenuVisible = true;
+        battleshipMenuResult = { title, text, eyebrow };
+        battleshipMenuShowingRules = false;
+        battleshipMenuClosing = false;
+        battleshipMenuEntering = true;
+
+        if (battleshipStatusText) {
+            battleshipStatusText.textContent = text;
+        }
+
+        renderBattleshipMenu();
+        window.setTimeout(() => {
+            battleshipMenuEntering = false;
+            renderBattleshipMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeBattleship() {
         if (isMultiplayerBattleshipActive()) {
+            battleshipMenuVisible = false;
+            battleshipMenuResult = null;
+            battleshipMenuShowingRules = false;
+            battleshipMenuClosing = false;
+            battleshipMenuEntering = false;
+            renderBattleshipMenu();
             syncMultiplayerBattleshipState();
             return;
         }
@@ -5653,6 +5826,10 @@ document.addEventListener('DOMContentLoaded', () => {
         battleshipFinished = false;
         battleshipAwaitingAi = false;
         battleshipCurrentTurn = 'captain1';
+        battleshipMenuResult = null;
+        battleshipMenuShowingRules = false;
+        battleshipMenuClosing = false;
+        battleshipMenuEntering = false;
         battleshipAiTargets = shuffleArray(
             Array.from({ length: BATTLESHIP_SIZE * BATTLESHIP_SIZE }, (_, index) => ({
                 row: Math.floor(index / BATTLESHIP_SIZE),
@@ -5663,15 +5840,19 @@ document.addEventListener('DOMContentLoaded', () => {
             ? 'Choisis une case dans la grille ennemie pour ouvrir le feu.'
             : 'Capitaine 1 ouvre le duel. Choisis une case dans la grille ennemie.';
         renderBattleship();
+        renderBattleshipMenu();
     }
 
     function finishBattleship(playerWon) {
         if (battleshipMode === 'duo') {
             battleshipFinished = true;
-            battleshipStatusText.textContent = `${playerWon ? getBattleshipTurnContext().attackerName : getBattleshipTurnContext().defenderName} remporte la bataille dans la baie.`;
-            openGameOverModal(
-                'Bataille termin\u00e9e',
-                `${playerWon ? getBattleshipTurnContext().attackerName : getBattleshipTurnContext().defenderName} gagne la bataille navale.`
+            const context = getBattleshipTurnContext();
+            const winnerName = playerWon ? context.attackerName : context.defenderName;
+            battleshipStatusText.textContent = `${winnerName} remporte la bataille dans la baie.`;
+            revealBattleshipOutcomeMenu(
+                'Bataille terminée',
+                `${winnerName} gagne la bataille navale.`,
+                'Pont en liesse'
             );
             return;
         }
@@ -5680,9 +5861,10 @@ document.addEventListener('DOMContentLoaded', () => {
         battleshipStatusText.textContent = playerWon
             ? 'Victoire. La flotte adverse sombre dans la baie.'
             : 'Défaite. Ta flotte a été coulée.';
-        openGameOverModal(
-            playerWon ? 'Victoire' : "C'est perdu",
-            playerWon ? 'La bataille navale est remportée.' : 'La flotte ennemie gagne la bataille.'
+        revealBattleshipOutcomeMenu(
+            playerWon ? 'Flotte ennemie coulée' : 'Flotte coulée',
+            playerWon ? 'La bataille navale est remportée.' : 'La flotte ennemie gagne la bataille.',
+            playerWon ? 'Victoire en baie' : 'Cap sur le port'
         );
     }
 
@@ -5914,7 +6096,11 @@ document.addEventListener('DOMContentLoaded', () => {
             stopTetris();
             tetrisPiece = null;
             tetrisHelpText.textContent = 'La cale est pleine. Relance une traversée.';
-            openGameOverModal("C'est perdu", `La cargaison s'est empilée. Score : ${tetrisScore}.`);
+            revealTetrisOutcomeMenu(
+                'Cale pleine',
+                `La cargaison a dépassé le pont. Score final : ${tetrisScore}. Lignes nettoyées : ${tetrisLines}.`,
+                'Fin de cargaison'
+            );
             renderTetris();
         }
     }
@@ -6006,6 +6192,90 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTetris();
     }
 
+    function getTetrisRulesText() {
+        return 'D\u00e9place la caisse qui tombe avec les fl\u00e8ches ou ZQSD. Haut ou Z pour la pivoter, bas ou S pour acc\u00e9l\u00e9rer sa descente, Espace pour la faire chuter d\u2019un coup. Compl\u00e8te une ligne enti\u00e8re pour la nettoyer. Si la pile touche le pont, la cale est pleine.';
+    }
+
+    function renderTetrisMenu() {
+        if (!tetrisMenuOverlay || !tetrisTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(tetrisMenuOverlay, tetrisTable);
+        tetrisMenuOverlay.classList.toggle('hidden', !tetrisMenuVisible);
+        tetrisMenuOverlay.classList.toggle('is-closing', tetrisMenuClosing);
+        tetrisMenuOverlay.classList.toggle('is-entering', tetrisMenuEntering);
+        tetrisTable.classList.toggle('is-menu-open', tetrisMenuVisible);
+
+        if (!tetrisMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(tetrisMenuResult);
+
+        if (tetrisMenuEyebrow) {
+            tetrisMenuEyebrow.textContent = tetrisMenuShowingRules
+                ? 'R\u00e8gles'
+                : (hasResult ? tetrisMenuResult.eyebrow : 'Cale de cargaison');
+        }
+
+        if (tetrisMenuTitle) {
+            tetrisMenuTitle.textContent = tetrisMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? tetrisMenuResult.title : 'Baietris');
+        }
+
+        if (tetrisMenuText) {
+            tetrisMenuText.textContent = tetrisMenuShowingRules
+                ? getTetrisRulesText()
+                : (hasResult
+                    ? tetrisMenuResult.text
+                    : 'Empile les caisses dans la cale du navire sans laisser la pile atteindre le pont.');
+        }
+
+        if (tetrisMenuActionButton) {
+            tetrisMenuActionButton.textContent = tetrisMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la cale' : 'Lancer la cale');
+        }
+
+        if (tetrisMenuRulesButton) {
+            tetrisMenuRulesButton.textContent = 'R\u00e8gles';
+            tetrisMenuRulesButton.hidden = tetrisMenuShowingRules;
+        }
+    }
+
+    function closeTetrisMenu() {
+        tetrisMenuClosing = true;
+        renderTetrisMenu();
+        window.setTimeout(() => {
+            tetrisMenuClosing = false;
+            tetrisMenuVisible = false;
+            tetrisMenuShowingRules = false;
+            tetrisMenuEntering = false;
+            tetrisMenuResult = null;
+            renderTetrisMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealTetrisOutcomeMenu(title, text, eyebrow) {
+        tetrisMenuVisible = true;
+        tetrisMenuResult = { title, text, eyebrow };
+        tetrisMenuShowingRules = false;
+        tetrisMenuClosing = false;
+        tetrisMenuEntering = true;
+
+        if (tetrisHelpText) {
+            tetrisHelpText.textContent = text;
+        }
+
+        renderTetrisMenu();
+        window.setTimeout(() => {
+            tetrisMenuEntering = false;
+            renderTetrisMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeTetris() {
         closeGameOverModal();
         stopTetris();
@@ -6013,8 +6283,13 @@ document.addEventListener('DOMContentLoaded', () => {
         tetrisPiece = createRandomTetrisPiece();
         tetrisScore = 0;
         tetrisLines = 0;
-        tetrisHelpText.textContent = 'Empile les caisses. FlÃ¨ches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.';
+        tetrisMenuResult = null;
+        tetrisMenuShowingRules = false;
+        tetrisMenuClosing = false;
+        tetrisMenuEntering = false;
+        tetrisHelpText.textContent = 'Empile les caisses. Fl\u00e8ches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.';
         renderTetris();
+        renderTetrisMenu();
     }
 
     function startTetris() {
@@ -6317,7 +6592,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (pacmanLives <= 0) {
             resetPacmanAfterHit();
-            openGameOverModal("C'est perdu", `Les esprits du brouillard t'ont capturé. Score : ${pacmanScore}.`);
+            revealPacmanOutcomeMenu(
+                'Chasse terminée',
+                `Les esprits du brouillard t'ont capturé. Perles ramassées : ${pacmanScore}.`,
+                'Cap sur le port'
+            );
             return true;
         }
 
@@ -6367,10 +6646,98 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pacmanPellets === 0) {
             stopPacman();
             pacmanHelpText.textContent = 'La baie est nettoyée. Plus aucune perle à  ramasser.';
-            openGameOverModal('Victoire', `Tu as vidé la baie de ses perles. Score : ${pacmanScore}.`);
+            revealPacmanOutcomeMenu(
+                'Port nettoyé',
+                `Toutes les perles de la baie ont été ramassées. Score final : ${pacmanScore}.`,
+                'Chasse réussie'
+            );
         }
 
         renderPacman();
+    }
+
+    function getPacmanRulesText() {
+        return 'D\u00e9place Baie-Man avec les fl\u00e8ches ou ZQSD. Ramasse toutes les perles du labyrinthe pour nettoyer le port. Si un esprit du brouillard te rattrape, tu perds une vie. Trois captures et la chasse s\u2019arr\u00eate.';
+    }
+
+    function renderPacmanMenu() {
+        if (!pacmanMenuOverlay || !pacmanTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(pacmanMenuOverlay, pacmanTable);
+        pacmanMenuOverlay.classList.toggle('hidden', !pacmanMenuVisible);
+        pacmanMenuOverlay.classList.toggle('is-closing', pacmanMenuClosing);
+        pacmanMenuOverlay.classList.toggle('is-entering', pacmanMenuEntering);
+        pacmanTable.classList.toggle('is-menu-open', pacmanMenuVisible);
+
+        if (!pacmanMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(pacmanMenuResult);
+
+        if (pacmanMenuEyebrow) {
+            pacmanMenuEyebrow.textContent = pacmanMenuShowingRules
+                ? 'R\u00e8gles'
+                : (hasResult ? pacmanMenuResult.eyebrow : 'Labyrinthe du port');
+        }
+
+        if (pacmanMenuTitle) {
+            pacmanMenuTitle.textContent = pacmanMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? pacmanMenuResult.title : 'Baie-Man');
+        }
+
+        if (pacmanMenuText) {
+            pacmanMenuText.textContent = pacmanMenuShowingRules
+                ? getPacmanRulesText()
+                : (hasResult
+                    ? pacmanMenuResult.text
+                    : 'Ramasse toutes les perles de la baie sans te faire attraper par les esprits du brouillard.');
+        }
+
+        if (pacmanMenuActionButton) {
+            pacmanMenuActionButton.textContent = pacmanMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la chasse' : 'Lancer la chasse');
+        }
+
+        if (pacmanMenuRulesButton) {
+            pacmanMenuRulesButton.textContent = 'R\u00e8gles';
+            pacmanMenuRulesButton.hidden = pacmanMenuShowingRules;
+        }
+    }
+
+    function closePacmanMenu() {
+        pacmanMenuClosing = true;
+        renderPacmanMenu();
+        window.setTimeout(() => {
+            pacmanMenuClosing = false;
+            pacmanMenuVisible = false;
+            pacmanMenuShowingRules = false;
+            pacmanMenuEntering = false;
+            pacmanMenuResult = null;
+            renderPacmanMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealPacmanOutcomeMenu(title, text, eyebrow) {
+        pacmanMenuVisible = true;
+        pacmanMenuResult = { title, text, eyebrow };
+        pacmanMenuShowingRules = false;
+        pacmanMenuClosing = false;
+        pacmanMenuEntering = true;
+
+        if (pacmanHelpText) {
+            pacmanHelpText.textContent = text;
+        }
+
+        renderPacmanMenu();
+        window.setTimeout(() => {
+            pacmanMenuEntering = false;
+            renderPacmanMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function initializePacman() {
@@ -6379,6 +6746,10 @@ document.addEventListener('DOMContentLoaded', () => {
         pacmanGrid = createPacmanGrid();
         pacmanScore = 0;
         pacmanLives = 3;
+        pacmanMenuResult = null;
+        pacmanMenuShowingRules = false;
+        pacmanMenuClosing = false;
+        pacmanMenuEntering = false;
         pacmanHelpText.textContent = 'Ramasse toutes les perles de la baie sans te faire attraper par les esprits du brouillard.';
         resetPacmanActors();
         if (pacmanGrid[pacmanPosition.row][pacmanPosition.col] === 'pellet') {
@@ -6387,6 +6758,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pacmanPellets = pacmanGrid.flat().filter((cell) => cell === 'pellet').length;
         buildPacmanBoard();
         renderPacman();
+        renderPacmanMenu();
     }
 
     function startPacman() {
@@ -8985,7 +9357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? getSudokuRulesText()
                 : (hasResult
                     ? sudokuMenuResult.text
-                    : 'Complete la carte sans repeter de chiffre sur une ligne, une colonne ou un carre de 3 par 3.');
+                    : 'Compl\u00e8te la carte sans r\u00e9p\u00e9ter de chiffre sur une ligne, une colonne ou un carr\u00e9 de 3 par 3.');
         }
 
         if (sudokuMenuActionButton) {
@@ -10016,13 +10388,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (minesweeperMenuEyebrow) {
             minesweeperMenuEyebrow.textContent = minesweeperMenuShowingRules
                 ? 'R\u00e8gles'
-                : (hasResult ? minesweeperMenuResult.eyebrow : 'Champ de mines du recif');
+                : (hasResult ? minesweeperMenuResult.eyebrow : 'Champ de mines du r\u00e9cif');
         }
 
         if (minesweeperMenuTitle) {
             minesweeperMenuTitle.textContent = minesweeperMenuShowingRules
                 ? 'Rappel rapide'
-                : (hasResult ? minesweeperMenuResult.title : 'Demineur');
+                : (hasResult ? minesweeperMenuResult.title : 'D\u00e9mineur');
         }
 
         if (minesweeperMenuText) {
@@ -10030,7 +10402,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? getMinesweeperRulesText()
                 : (hasResult
                     ? minesweeperMenuResult.text
-                    : 'Repere les zones sures du recif, pose tes drapeaux et traverse sans toucher une mine.');
+                    : 'Rep\u00e8re les zones s\u00fbres du r\u00e9cif, pose tes drapeaux et traverse sans toucher une mine.');
         }
 
         if (minesweeperMenuActionButton) {
@@ -10410,7 +10782,7 @@ document.addEventListener('DOMContentLoaded', () => {
         snakeScore = 0;
         snakeJustAte = false;
         if (snakeHelpText) {
-            snakeHelpText.textContent = 'Fleches ou ZQSD pour tourner. Attrape les lanternes sans percuter la coque.';
+            snakeHelpText.textContent = 'Fl\u00e8ches ou ZQSD pour tourner. Attrape les lanternes sans percuter la coque.';
         }
         updateSnakeHud();
         renderSnake();
@@ -12329,6 +12701,90 @@ document.addEventListener('DOMContentLoaded', () => {
         updateHarborRunHud();
     }
 
+    function getHarborRunRulesText() {
+        return 'Pilote ton navire dans le chenal du port. Fl\u00e8ches, ZQSD ou clic gauche/droit sur l\u2019\u00e9cran pour changer de voie. \u00c9vite rochers, \u00e9paves et autres bateaux \u2014 la vitesse monte au fil de la course.';
+    }
+
+    function renderHarborRunMenu() {
+        if (!harborRunMenuOverlay || !harborRunTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(harborRunMenuOverlay, harborRunTable);
+        harborRunMenuOverlay.classList.toggle('hidden', !harborRunMenuVisible);
+        harborRunMenuOverlay.classList.toggle('is-closing', harborRunMenuClosing);
+        harborRunMenuOverlay.classList.toggle('is-entering', harborRunMenuEntering);
+        harborRunTable.classList.toggle('is-menu-open', harborRunMenuVisible);
+
+        if (!harborRunMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(harborRunMenuResult);
+
+        if (harborRunMenuEyebrow) {
+            harborRunMenuEyebrow.textContent = harborRunMenuShowingRules
+                ? 'R\u00e8gles'
+                : (hasResult ? harborRunMenuResult.eyebrow : 'Course dans le chenal');
+        }
+
+        if (harborRunMenuTitle) {
+            harborRunMenuTitle.textContent = harborRunMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? harborRunMenuResult.title : 'Navire 2D');
+        }
+
+        if (harborRunMenuText) {
+            harborRunMenuText.textContent = harborRunMenuShowingRules
+                ? getHarborRunRulesText()
+                : (hasResult
+                    ? harborRunMenuResult.text
+                    : 'Guide ton navire entre rochers, \u00e9paves et autres bateaux pendant que la vitesse monte.');
+        }
+
+        if (harborRunMenuActionButton) {
+            harborRunMenuActionButton.textContent = harborRunMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Reprendre la mer' : 'Prendre la mer');
+        }
+
+        if (harborRunMenuRulesButton) {
+            harborRunMenuRulesButton.textContent = 'R\u00e8gles';
+            harborRunMenuRulesButton.hidden = harborRunMenuShowingRules;
+        }
+    }
+
+    function closeHarborRunMenu() {
+        harborRunMenuClosing = true;
+        renderHarborRunMenu();
+        window.setTimeout(() => {
+            harborRunMenuClosing = false;
+            harborRunMenuVisible = false;
+            harborRunMenuShowingRules = false;
+            harborRunMenuEntering = false;
+            harborRunMenuResult = null;
+            renderHarborRunMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealHarborRunOutcomeMenu(title, text, eyebrow) {
+        harborRunMenuVisible = true;
+        harborRunMenuResult = { title, text, eyebrow };
+        harborRunMenuShowingRules = false;
+        harborRunMenuClosing = false;
+        harborRunMenuEntering = true;
+
+        if (harborRunHelpText) {
+            harborRunHelpText.textContent = text;
+        }
+
+        renderHarborRunMenu();
+        window.setTimeout(() => {
+            harborRunMenuEntering = false;
+            renderHarborRunMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeHarborRun() {
         closeGameOverModal();
         stopHarborRun();
@@ -12339,9 +12795,14 @@ document.addEventListener('DOMContentLoaded', () => {
         harborRunScore = 0;
         harborRunSpawnTimer = 0;
         harborRunBackdropOffset = 0;
+        harborRunMenuResult = null;
+        harborRunMenuShowingRules = false;
+        harborRunMenuClosing = false;
+        harborRunMenuEntering = false;
         harborRunStartButton.textContent = 'Lancer la route';
         harborRunHelpText.textContent = 'Guide ton navire entre navires, épaves et rochers avec plus de marge pour passer.';
         renderHarborRun();
+        renderHarborRunMenu();
     }
 
     function moveHarborRun(direction) {
@@ -12432,7 +12893,11 @@ document.addEventListener('DOMContentLoaded', () => {
             stopHarborRun();
             harborRunHelpText.textContent = 'Collision dans le port.';
             renderHarborRun();
-            openGameOverModal('Carambolage', `Distance parcourue : ${harborRunScore}.`);
+            revealHarborRunOutcomeMenu(
+                'Navire échoué',
+                `Collision dans le chenal. Distance parcourue : ${harborRunScore}. Record : ${harborRunBestScore}.`,
+                'Cap sur le port'
+            );
             return;
         }
 
@@ -12549,6 +13014,90 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function getStackerRulesText() {
+        return 'Clique sur le plateau ou appuie sur Espace au bon moment pour poser la cargaison qui va et vient. Chaque étage trop décalé se fait rogner. Vise la plus haute tour du port.';
+    }
+
+    function renderStackerMenu() {
+        if (!stackerMenuOverlay || !stackerTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(stackerMenuOverlay, stackerTable);
+        stackerMenuOverlay.classList.toggle('hidden', !stackerMenuVisible);
+        stackerMenuOverlay.classList.toggle('is-closing', stackerMenuClosing);
+        stackerMenuOverlay.classList.toggle('is-entering', stackerMenuEntering);
+        stackerTable.classList.toggle('is-menu-open', stackerMenuVisible);
+
+        if (!stackerMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(stackerMenuResult);
+
+        if (stackerMenuEyebrow) {
+            stackerMenuEyebrow.textContent = stackerMenuShowingRules
+                ? 'R\u00e8gles'
+                : (hasResult ? stackerMenuResult.eyebrow : 'Tour de butin');
+        }
+
+        if (stackerMenuTitle) {
+            stackerMenuTitle.textContent = stackerMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? stackerMenuResult.title : 'Stack 2D');
+        }
+
+        if (stackerMenuText) {
+            stackerMenuText.textContent = stackerMenuShowingRules
+                ? getStackerRulesText()
+                : (hasResult
+                    ? stackerMenuResult.text
+                    : 'Clique ou appuie sur Espace au bon moment pour empiler la cargaison. Vise la plus haute tour du port.');
+        }
+
+        if (stackerMenuActionButton) {
+            stackerMenuActionButton.textContent = stackerMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
+        }
+
+        if (stackerMenuRulesButton) {
+            stackerMenuRulesButton.textContent = 'R\u00e8gles';
+            stackerMenuRulesButton.hidden = stackerMenuShowingRules;
+        }
+    }
+
+    function closeStackerMenu() {
+        stackerMenuClosing = true;
+        renderStackerMenu();
+        window.setTimeout(() => {
+            stackerMenuClosing = false;
+            stackerMenuVisible = false;
+            stackerMenuShowingRules = false;
+            stackerMenuEntering = false;
+            stackerMenuResult = null;
+            renderStackerMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealStackerOutcomeMenu(title, text, eyebrow) {
+        stackerMenuVisible = true;
+        stackerMenuResult = { title, text, eyebrow };
+        stackerMenuShowingRules = false;
+        stackerMenuClosing = false;
+        stackerMenuEntering = true;
+
+        if (stackerHelpText) {
+            stackerHelpText.textContent = text;
+        }
+
+        renderStackerMenu();
+        window.setTimeout(() => {
+            stackerMenuEntering = false;
+            renderStackerMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeStacker() {
         closeGameOverModal();
         stopStacker();
@@ -12563,8 +13112,13 @@ document.addEventListener('DOMContentLoaded', () => {
         stackerFragments = [];
         stackerCurrentLayer = createNextStackerLayer(2, 72, true);
         stackerScore = 0;
+        stackerMenuResult = null;
+        stackerMenuShowingRules = false;
+        stackerMenuClosing = false;
+        stackerMenuEntering = false;
         stackerHelpText.textContent = 'Clique ou appuie sur Espace au bon moment pour empiler les couches du phare.';
         renderStacker();
+        renderStackerMenu();
     }
 
     function runStackerFrame(timestamp) {
@@ -12620,6 +13174,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function dropStackerLayer() {
+        if (stackerMenuVisible || stackerMenuClosing) {
+            return;
+        }
+
         if (!stackerCurrentLayer) {
             return;
         }
@@ -12654,7 +13212,11 @@ document.addEventListener('DOMContentLoaded', () => {
             stopStacker();
             stackerHelpText.textContent = 'La couche est tombée dans la baie.';
             renderStacker();
-            openGameOverModal('Tour écroulée', `Tu as empilé ${stackerScore} étages.`);
+            revealStackerOutcomeMenu(
+                'Tour écroulée',
+                `La cargaison s'est effondrée après ${stackerScore} étage${stackerScore > 1 ? 's' : ''}. Record : ${stackerBestScore}.`,
+                'Cap sur la baie'
+            );
             return;
         }
 
@@ -14435,9 +14997,17 @@ document.addEventListener('DOMContentLoaded', () => {
         battleshipLastFinishedStateKey = nextFinishedKey;
 
         if (multiplayerActiveRoom.gameState.winner === yourRole) {
-            openGameOverModal('Victoire', 'Tu remportes cette bataille navale en ligne.');
+            revealBattleshipOutcomeMenu(
+                'Flotte ennemie coulée',
+                'Tu remportes cette bataille navale en ligne.',
+                'Victoire en baie'
+            );
         } else {
-            openGameOverModal("C'est perdu", "L'adversaire remporte cette bataille navale.");
+            revealBattleshipOutcomeMenu(
+                'Flotte coulée',
+                "L'adversaire remporte cette bataille navale.",
+                'Cap sur le port'
+            );
         }
     }
 
@@ -14970,7 +15540,7 @@ document.addEventListener('DOMContentLoaded', () => {
         airHockeyState.puck.vx = 0;
         airHockeyState.puck.vy = 0;
         airHockeyState.running = false;
-        airHockeyHelpText.textContent = 'Preparation de l engagement...';
+        airHockeyHelpText.textContent = 'Pr\u00e9paration de l\u2019engagement\u2026';
         startAirHockeyCountdown(() => {
             airHockeyState.running = true;
             airHockeyHelpText.textContent = airHockeyState.servingSide === 'left'
@@ -15001,7 +15571,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         initializeAirHockey(false);
         positionAirHockeyPuck(side === 'left' ? 'right' : 'left');
-        airHockeyHelpText.textContent = 'But marque. Nouvel engagement en preparation...';
+        airHockeyHelpText.textContent = 'But marqu\u00e9. Nouvel engagement en pr\u00e9paration\u2026';
         startAirHockeyCountdown(() => {
             airHockeyState.running = true;
             airHockeyHelpText.textContent = airHockeyState.servingSide === 'left'
@@ -15245,7 +15815,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reactionMenuTitle) {
             reactionMenuTitle.textContent = reactionMenuShowingRules
                 ? 'Rappel rapide'
-                : (hasResult ? reactionMenuResult.title : 'Reaction');
+                : (hasResult ? reactionMenuResult.title : 'R\u00e9action');
         }
         if (reactionMenuText) {
             reactionMenuText.textContent = reactionMenuShowingRules
@@ -18083,16 +18653,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'battleship') {
+            battleshipMenuVisible = true;
             initializeBattleship();
             return;
         }
 
         if (nextTab === 'tetris') {
+            tetrisMenuVisible = true;
             initializeTetris();
             return;
         }
 
         if (nextTab === 'pacman') {
+            pacmanMenuVisible = true;
             initializePacman();
             return;
         }
@@ -18138,11 +18711,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'harborRun') {
+            harborRunMenuVisible = true;
             initializeHarborRun();
             return;
         }
 
         if (nextTab === 'stacker') {
+            stackerMenuVisible = true;
             initializeStacker();
             return;
         }
@@ -18594,7 +19169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: false });
 
     pacmanBoard?.addEventListener('touchstart', (event) => {
-        if (activeGameTab !== 'pacman') {
+        if (activeGameTab !== 'pacman' || pacmanMenuVisible || pacmanMenuClosing) {
             return;
         }
 
@@ -18608,7 +19183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     pacmanBoard?.addEventListener('touchend', (event) => {
-        if (activeGameTab !== 'pacman') {
+        if (activeGameTab !== 'pacman' || pacmanMenuVisible || pacmanMenuClosing) {
             pacmanTouchStartX = null;
             pacmanTouchStartY = null;
             return;
@@ -18641,7 +19216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: false });
 
     tetrisBoard?.addEventListener('touchstart', (event) => {
-        if (activeGameTab !== 'tetris') {
+        if (activeGameTab !== 'tetris' || tetrisMenuVisible || tetrisMenuClosing) {
             return;
         }
 
@@ -18655,7 +19230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     tetrisBoard?.addEventListener('touchend', (event) => {
-        if (activeGameTab !== 'tetris') {
+        if (activeGameTab !== 'tetris' || tetrisMenuVisible || tetrisMenuClosing) {
             tetrisTouchStartX = null;
             tetrisTouchStartY = null;
             return;
@@ -18828,12 +19403,70 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeBattleship();
     });
 
+    battleshipMenuActionButton?.addEventListener('click', () => {
+        if (battleshipMenuShowingRules) {
+            battleshipMenuShowingRules = false;
+            renderBattleshipMenu();
+            return;
+        }
+
+        if (isMultiplayerBattleshipActive()) {
+            multiplayerSocket?.emit('battleship:restart');
+        } else {
+            initializeBattleship();
+        }
+        closeBattleshipMenu();
+    });
+
+    battleshipMenuRulesButton?.addEventListener('click', () => {
+        battleshipMenuShowingRules = true;
+        renderBattleshipMenu();
+    });
+
     tetrisStartButton.addEventListener('click', () => {
         startTetris();
     });
 
+    tetrisMenuActionButton?.addEventListener('click', () => {
+        if (tetrisMenuShowingRules) {
+            tetrisMenuShowingRules = false;
+            renderTetrisMenu();
+            return;
+        }
+
+        initializeTetris();
+        closeTetrisMenu();
+        window.setTimeout(() => {
+            startTetris();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    });
+
+    tetrisMenuRulesButton?.addEventListener('click', () => {
+        tetrisMenuShowingRules = true;
+        renderTetrisMenu();
+    });
+
     pacmanStartButton.addEventListener('click', () => {
         startPacman();
+    });
+
+    pacmanMenuActionButton?.addEventListener('click', () => {
+        if (pacmanMenuShowingRules) {
+            pacmanMenuShowingRules = false;
+            renderPacmanMenu();
+            return;
+        }
+
+        initializePacman();
+        closePacmanMenu();
+        window.setTimeout(() => {
+            startPacman();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    });
+
+    pacmanMenuRulesButton?.addEventListener('click', () => {
+        pacmanMenuShowingRules = true;
+        renderPacmanMenu();
     });
 
     solitaireRestartButton.addEventListener('click', () => {
@@ -18994,8 +19627,43 @@ document.addEventListener('DOMContentLoaded', () => {
         startHarborRun();
     });
 
+    harborRunMenuActionButton?.addEventListener('click', () => {
+        if (harborRunMenuShowingRules) {
+            harborRunMenuShowingRules = false;
+            renderHarborRunMenu();
+            return;
+        }
+
+        initializeHarborRun();
+        closeHarborRunMenu();
+        window.setTimeout(() => {
+            startHarborRun();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    });
+
+    harborRunMenuRulesButton?.addEventListener('click', () => {
+        harborRunMenuShowingRules = true;
+        renderHarborRunMenu();
+    });
+
     stackerStartButton.addEventListener('click', () => {
         dropStackerLayer();
+    });
+
+    stackerMenuActionButton?.addEventListener('click', () => {
+        if (stackerMenuShowingRules) {
+            stackerMenuShowingRules = false;
+            renderStackerMenu();
+            return;
+        }
+
+        initializeStacker();
+        closeStackerMenu();
+    });
+
+    stackerMenuRulesButton?.addEventListener('click', () => {
+        stackerMenuShowingRules = true;
+        renderStackerMenu();
     });
 
     coinClickerButton?.addEventListener('pointerdown', (event) => {
@@ -19581,6 +20249,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     battleshipEnemyBoard.addEventListener('click', (event) => {
+        if (battleshipMenuVisible || battleshipMenuClosing) {
+            return;
+        }
+
         const cellButton = event.target.closest('.battleship-cell');
 
         if (!cellButton) {
@@ -19835,6 +20507,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     harborRunBoard.addEventListener('pointerdown', (event) => {
+        if (harborRunMenuVisible || harborRunMenuClosing) {
+            return;
+        }
+
         const bounds = harborRunBoard.getBoundingClientRect();
         const relativeX = event.clientX - bounds.left;
         const zone = relativeX / bounds.width;
@@ -20084,6 +20760,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'tetris') {
+            if (tetrisMenuVisible || tetrisMenuClosing) {
+                return;
+            }
             if (['ArrowLeft', 'q', 'Q'].includes(event.key)) {
                 event.preventDefault();
                 moveTetrisHorizontally(-1);
@@ -20116,6 +20795,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'pacman') {
+            if (pacmanMenuVisible || pacmanMenuClosing) {
+                return;
+            }
             const pacmanDirections = {
                 ArrowUp: { row: -1, col: 0 },
                 ArrowDown: { row: 1, col: 0 },
@@ -20163,6 +20845,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'harborRun') {
+            if (harborRunMenuVisible || harborRunMenuClosing) {
+                return;
+            }
             if (['ArrowLeft', 'q', 'Q', 'a', 'A'].includes(event.key)) {
                 event.preventDefault();
                 moveHarborRun(-1);
@@ -20409,6 +21094,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMultiplayerLobby();
     initializeGame();
     renderMinesweeperMenu();
+    renderStackerMenu();
+    renderPacmanMenu();
+    renderTetrisMenu();
+    renderBattleshipMenu();
+    renderHarborRunMenu();
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     startCoinClickerAutoLoop();
