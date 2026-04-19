@@ -426,7 +426,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const reactionLastDisplay = document.getElementById('reactionLastDisplay');
     const reactionBestDisplay = document.getElementById('reactionBestDisplay');
     const reactionHelpText = document.getElementById('reactionHelpText');
-    const reactionStartButton = document.getElementById('reactionStartButton');
     const reactionTable = document.getElementById('reactionTable');
     const reactionMenuOverlay = document.getElementById('reactionMenuOverlay');
     const reactionMenuEyebrow = document.getElementById('reactionMenuEyebrow');
@@ -655,10 +654,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const COIN_CLICKER_UPGRADES = [
         { id: 'captain', label: 'Capitaine', baseCost: 15, effectType: 'click', bonus: 1, description: '+1 par clic' },
         { id: 'hook', label: 'Crochet en or', baseCost: 60, effectType: 'multiplier', bonus: 0.2, description: '+0,20 multiplicateur' },
-        { id: 'parrot', label: 'Perroquet mousse', baseCost: 110, effectType: 'auto', bonus: 1, description: '+1 piece / sec' },
-        { id: 'harbor', label: 'Port marchand', baseCost: 260, effectType: 'auto', bonus: 4, description: '+4 pieces / sec' },
-        { id: 'fleet', label: 'Flotte doree', baseCost: 420, effectType: 'click', bonus: 8, description: '+8 par clic' },
-        { id: 'treasury', label: 'Tresor royal', baseCost: 760, effectType: 'multiplier', bonus: 0.5, description: '+0,50 multiplicateur' }
+        { id: 'parrot', label: 'Perroquet mousse', baseCost: 110, effectType: 'auto', bonus: 1, description: '+1 pièce / sec' },
+        { id: 'harbor', label: 'Port marchand', baseCost: 260, effectType: 'auto', bonus: 4, description: '+4 pièces / sec' },
+        { id: 'fleet', label: 'Flotte dorée', baseCost: 420, effectType: 'click', bonus: 8, description: '+8 par clic' },
+        { id: 'treasury', label: 'Trésor royal', baseCost: 760, effectType: 'multiplier', bonus: 0.5, description: '+0,50 multiplicateur' }
     ];
     const CHESS_PIECES = {
         pawn: { white: '\u2659', black: '\u265F' },
@@ -1667,16 +1666,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updatePianoHelpText(note = null) {
         if (note) {
-            pianoHelpText.textContent = `${note.note} en cours. ${pianoSustainActive ? 'Pedale active. ' : ''}Commande: ${note.keyLabel}.`;
+            pianoHelpText.textContent = `${note.note} en cours. ${pianoSustainActive ? 'Pédale active. ' : ''}Commande : ${note.keyLabel}.`;
             return;
         }
 
         if (pianoSustainActive) {
-            pianoHelpText.textContent = 'Pedale active. Espace maintient les notes, relache Espace pour couper celles qui ne sont plus tenues.';
+            pianoHelpText.textContent = 'Pédale active. Espace maintient les notes, relâche Espace pour couper celles qui ne sont plus tenues.';
             return;
         }
 
-        pianoHelpText.textContent = 'Utilise A a K. Maintiens Maj pour l octave au-dessus, Espace pour la pedale, ou clique directement sur le clavier.';
+        pianoHelpText.textContent = "Utilise A à K. Maintiens Maj pour l'octave au-dessus, Espace pour la pédale, ou clique directement sur le clavier.";
     }
 
     function releasePianoAudioNote(noteId) {
@@ -1830,20 +1829,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function normalizeCalculatorExpression(expression) {
-        return expression
-            .replace(/,/g, '.')
+        const mathFunctions = ['sqrt', 'cbrt', 'abs', 'exp', 'log', 'log2', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'floor', 'ceil', 'round', 'sign'];
+        let normalized = expression
+            .replace(/(\d),(\d)/g, '$1.$2')
             .replace(/[xÃ—]/gi, '*')
             .replace(/[Ã·]/g, '/')
             .replace(/\bpi\b/gi, 'Math.PI')
-            .replace(/\bsqrt\(/gi, 'Math.sqrt(')
+            .replace(/\be\b/g, 'Math.E')
             .replace(/\^/g, '**');
+
+        mathFunctions.forEach((name) => {
+            normalized = normalized.replace(new RegExp(`\\b${name}\\(`, 'gi'), `Math.${name}(`);
+        });
+
+        return normalized;
     }
 
     function evaluateCalculatorExpression() {
         const rawExpression = calculatorDisplay.value.trim();
 
         if (!rawExpression) {
-            calculatorStatus.textContent = 'Entre une expression a calculer.';
+            calculatorStatus.textContent = 'Entre une expression à calculer.';
             calculatorStatus.classList.remove('feedback-success');
             calculatorStatus.classList.add('feedback-error');
             return;
@@ -1851,7 +1857,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const normalizedExpression = normalizeCalculatorExpression(rawExpression);
 
-        if (!/^(?:[0-9+\-*/().%\s]|Math\.PI|Math\.sqrt)+$/.test(normalizedExpression)) {
+        if (!/^(?:[0-9+\-*/().%\s]|Math\.(?:PI|E|abs|sqrt|cbrt|exp|log|log2|log10|sin|cos|tan|asin|acos|atan|floor|ceil|round|sign))+$/.test(normalizedExpression)) {
             calculatorStatus.textContent = 'Expression invalide.';
             calculatorStatus.classList.remove('feedback-success');
             calculatorStatus.classList.add('feedback-error');
@@ -1866,11 +1872,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             calculatorDisplay.value = String(Number(result.toFixed(10)));
-            calculatorStatus.textContent = `Resultat: ${formatMathNumber(result, 10)}`;
+            calculatorStatus.textContent = `Résultat : ${formatMathNumber(result, 10)}`;
             calculatorStatus.classList.remove('feedback-error');
             calculatorStatus.classList.add('feedback-success');
         } catch (error) {
-            calculatorStatus.textContent = 'Calcul impossible. Verifie l expression.';
+            calculatorStatus.textContent = "Calcul impossible. Vérifie l'expression.";
             calculatorStatus.classList.remove('feedback-success');
             calculatorStatus.classList.add('feedback-error');
         }
@@ -1972,12 +1978,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const c = Number(ruleThreeC.value);
 
         if (Number.isNaN(a) || Number.isNaN(b) || Number.isNaN(c) || a === 0) {
-            ruleThreeResult.textContent = 'Entre trois valeurs valides et un a different de 0.';
+            ruleThreeResult.textContent = 'Entre trois valeurs valides et un a différent de 0.';
             return;
         }
 
         const result = (b * c) / a;
-        ruleThreeResult.textContent = `Si ${formatMathNumber(a)} correspond a ${formatMathNumber(b)}, alors ${formatMathNumber(c)} correspond a ${formatMathNumber(result)}.`;
+        ruleThreeResult.textContent = `Si ${formatMathNumber(a)} correspond à ${formatMathNumber(b)}, alors ${formatMathNumber(c)} correspond à ${formatMathNumber(result)}.`;
     }
 
     function calculateCircle() {
@@ -1992,7 +1998,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const circumference = 2 * Math.PI * radius;
         const area = Math.PI * radius * radius;
 
-        circleResult.textContent = `Diametre: ${formatMathNumber(diameter)} | Circonference: ${formatMathNumber(circumference)} | Aire: ${formatMathNumber(area)}`;
+        circleResult.textContent = `Diamètre : ${formatMathNumber(diameter)} | Circonférence : ${formatMathNumber(circumference)} | Aire : ${formatMathNumber(area)}`;
     }
 
     function formatDate(dateString) {
@@ -2399,13 +2405,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderAll();
                 setExcelImportFeedback(
                     importedMovies.length
-                        ? `${importedMovies.length} film${importedMovies.length > 1 ? 's importes' : ' importe'} depuis Excel.`
-                        : 'Le fichier Excel a ete trouve, mais aucune ligne film exploitable n a ete lue.',
+                        ? `${importedMovies.length} film${importedMovies.length > 1 ? 's importés' : ' importé'} depuis Excel.`
+                        : "Le fichier Excel a été trouvé, mais aucune ligne film exploitable n'a été lue.",
                     importedMovies.length ? 'success' : 'error'
                 );
 
                 if (excelSourceName) {
-                    excelSourceName.textContent = `Source detectee : ${fileName}`;
+                    excelSourceName.textContent = `Source détectée : ${fileName}`;
                 }
 
                 return;
@@ -2416,10 +2422,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         movies = loadMovies();
         renderAll();
-        setExcelImportFeedback('Aucun fichier Excel detecte a la racine du depot.', 'error');
+        setExcelImportFeedback('Aucun fichier Excel détecté à la racine du dépôt.', 'error');
 
         if (excelSourceName) {
-            excelSourceName.textContent = 'Ajoute par exemple film.xlsx ou film.xls a cote de index.html.';
+            excelSourceName.textContent = 'Ajoute par exemple film.xlsx ou film.xls à côté de index.html.';
         }
     }
 
@@ -2710,7 +2716,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ].filter(Boolean).length;
 
         if (!movies.length) {
-            catalogResultsSummary.textContent = 'Le panneau sera pr?t d?s que les films seront import?s.';
+            catalogResultsSummary.textContent = 'Le panneau sera prêt dès que les films seront importés.';
             return;
         }
 
@@ -2885,7 +2891,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderManageList() {
         if (!movies.length) {
-            manageList.innerHTML = '<p class="empty-state">Aucun film importe pour le moment.</p>';
+            manageList.innerHTML = '<p class="empty-state">Aucun film importé pour le moment.</p>';
             return;
         }
 
@@ -2903,7 +2909,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title.textContent = movie.title;
 
             const details = document.createElement('p');
-            details.textContent = `${movie.genre || 'Genre inconnu'} | ${movie.director || 'Realisateur inconnu'} | ${formatDuration(movie.duration)} | ${formatRatingWithScale(movie.rating, movie.ratingScale)}`;
+            details.textContent = `${movie.genre || 'Genre inconnu'} | ${movie.director || 'Réalisateur inconnu'} | ${formatDuration(movie.duration)} | ${formatRatingWithScale(movie.rating, movie.ratingScale)}`;
 
             copy.append(title, details);
             article.appendChild(copy);
@@ -3092,7 +3098,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderMultiplayerPlayers() {
         if (!multiplayerActiveRoom?.players?.length) {
-            multiplayerRoomPlayers.textContent = 'Personne n a embarque pour l instant.';
+            multiplayerRoomPlayers.textContent = "Personne n'a embarqué pour l'instant.";
             return;
         }
 
@@ -3110,7 +3116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pill.classList.add('is-host');
             }
 
-            const suffix = [player.isHost ? 'hote' : '', player.isYou ? 'toi' : ''].filter(Boolean).join(' - ');
+            const suffix = [player.isHost ? 'hôte' : '', player.isYou ? 'toi' : ''].filter(Boolean).join(' - ');
             pill.textContent = `${player.name}${suffix ? ` (${suffix})` : ''}`;
             fragment.appendChild(pill);
         });
@@ -3204,7 +3210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (multiplayerChatSubtitle) {
             multiplayerChatSubtitle.textContent = chatVisible
                 ? `Salon ${multiplayerActiveRoom.code} sur ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}.`
-                : 'Le chat apparait quand l hote lance la partie en ligne.';
+                : "Le chat apparaît quand l'hôte lance la partie en ligne.";
         }
 
         if (!chatVisible) {
@@ -3605,8 +3611,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!multiplayerActiveRoom.gameLaunched) {
                 setMultiplayerStatus(isHost
-                    ? `Salon ${multiplayerActiveRoom.code} pret. Tu peux lancer ${activeRoomGameLabel} quand tout le monde est la.`
-                    : `Salon ${multiplayerActiveRoom.code} pret. Attends que l'hote lance ${activeRoomGameLabel}.`);
+                    ? `Salon ${multiplayerActiveRoom.code} prêt. Tu peux lancer ${activeRoomGameLabel} quand tout le monde est là.`
+                    : `Salon ${multiplayerActiveRoom.code} prêt. Attends que l'hôte lance ${activeRoomGameLabel}.`);
                 return;
             }
 
@@ -3812,7 +3818,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         multiplayerBusy = true;
         updateMultiplayerLobby();
-        setMultiplayerStatus(`Creation d une room pour ${MULTIPLAYER_SUPPORTED_GAMES[selectedGame]}...`);
+        setMultiplayerStatus(`Création d'une room pour ${MULTIPLAYER_SUPPORTED_GAMES[selectedGame]}...`);
 
         try {
             const response = await fetch(getMultiplayerApiUrl('/api/rooms'), {
@@ -3859,7 +3865,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         multiplayerBusy = true;
         updateMultiplayerLobby();
-        setMultiplayerStatus(`Connexion a la room ${roomCode}...`);
+        setMultiplayerStatus(`Connexion à la room ${roomCode}...`);
 
         try {
             syncMultiplayerPlayerNames('join');
@@ -4040,7 +4046,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (multiplayerActiveRoom?.code) {
             if (!isCurrentMultiplayerHost()) {
-                setMultiplayerStatus('Seul l hote peut changer le jeu du salon.');
+                setMultiplayerStatus("Seul l'hôte peut changer le jeu du salon.");
                 return;
             }
 
@@ -4450,7 +4456,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getMemoryRulesText() {
-        return 'Retourne deux cartes a la fois pour retrouver chaque paire. Quand les deux symboles correspondent, ils restent visibles jusqu a vider tout le pont.';
+        return "Retourne deux cartes à la fois pour retrouver chaque paire. Quand les deux symboles correspondent, ils restent visibles jusqu'à vider tout le pont.";
     }
 
     function renderMemoryMenu() {
@@ -4658,7 +4664,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `J1 ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} J2`
             : `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
         ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
-            ? 'Mode 2 joueurs: jouez chacun votre tour sur la meme grille.'
+            ? 'Mode 2 joueurs : jouez chacun votre tour sur la même grille.'
             : "Mode 1 joueur: aligne trois symboles contre l'IA pirate.";
         ticTacToeModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
@@ -4685,7 +4691,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getTicTacToeRulesText() {
-        return "Placez chacun votre symbole a tour de role. Le premier a aligner trois cases gagne la manche. En solo, tu affrontes l'IA pirate.";
+        return "Placez chacun votre symbole à tour de rôle. Le premier à aligner trois cases gagne la manche. En solo, tu affrontes l'IA pirate.";
     }
 
     function renderTicTacToeMenu() {
@@ -4729,7 +4735,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     : (ticTacToeMenuResult === 'loss'
                         ? (ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont. Relancez une nouvelle manche.' : "L'IA pirate prend le pont. Relance une nouvelle manche.")
                         : (ticTacToeMenuResult === 'draw'
-                            ? 'Personne ne prend l avantage. Relance une nouvelle manche.'
+                            ? "Personne ne prend l'avantage. Relance une nouvelle manche."
                             : ((isMultiplayerTicTacToeActive() && !multiplayerActiveRoom?.gameLaunched)
                                 ? 'Quand tous les joueurs sont pr\u00eats, la manche de morpion commence automatiquement.'
                                 : "Aligne trois symboles avant l'\u00e9quipage adverse pour prendre le pont."))));
@@ -4909,12 +4915,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentRole = getMultiplayerTicTacToeRole();
 
         if (playerCount < 2) {
-            return 'En attente d un adversaire pour lancer la manche.';
+            return "En attente d'un adversaire pour lancer la manche.";
         }
 
         if (ticTacToeFinished) {
             if (multiplayerActiveRoom?.gameState?.winner === 'draw') {
-                return 'Match nul. Relance une manche pour vous departager.';
+                return 'Match nul. Relance une manche pour vous départager.';
             }
 
             if (multiplayerActiveRoom?.gameState?.winner === currentRole) {
@@ -5037,7 +5043,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `J1 ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} J2`
             : `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
         ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
-            ? 'Mode 2 joueurs: jouez chacun votre tour sur la meme grille.'
+            ? 'Mode 2 joueurs : jouez chacun votre tour sur la même grille.'
             : "Mode 1 joueur: aligne trois symboles contre l'IA pirate.";
         ticTacToeModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
@@ -5095,7 +5101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont.' : "D\u00e9faite. L'IA pirate prend le pont.";
             ticTacToeMenuResult = 'loss';
         } else {
-            ticTacToeHelpText.textContent = 'Match nul. Personne ne prend l avantage.';
+            ticTacToeHelpText.textContent = "Match nul. Personne ne prend l'avantage.";
             ticTacToeMenuResult = 'draw';
         }
 
@@ -5160,7 +5166,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setTicTacToeMode(nextMode) {
         if (isMultiplayerTicTacToeActive()) {
-            setMultiplayerStatus('Le mode est pilote par la room en ligne.');
+            setMultiplayerStatus('Le mode est piloté par la room en ligne.');
             return;
         }
 
@@ -5213,12 +5219,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentRole = getMultiplayerConnect4Role();
 
         if (playerCount < 2) {
-            return 'En attente d un adversaire pour lancer la manche.';
+            return "En attente d'un adversaire pour lancer la manche.";
         }
 
         if (connect4Finished) {
             if (multiplayerActiveRoom?.gameState?.winner === 'draw') {
-                return 'La grille est pleine. Relance une manche pour vous departager.';
+                return 'La grille est pleine. Relance une manche pour vous départager.';
             }
 
             if (multiplayerActiveRoom?.gameState?.winner === currentRole) {
@@ -5238,7 +5244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getConnect4RulesText() {
-        return 'Largue un jeton dans une colonne pour former une ligne de quatre, a l horizontale, a la verticale ou en diagonale avant ton rival.';
+        return "Largue un jeton dans une colonne pour former une ligne de quatre, à l'horizontale, à la verticale ou en diagonale avant ton rival.";
     }
 
     function renderConnect4Menu() {
@@ -5279,16 +5285,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 : (hasResult
                     ? (multiplayerConnect4
                         ? (winner === 'draw'
-                            ? 'La grille est pleine. Il faudra relancer une manche pour vous departager.'
+                            ? 'La grille est pleine. Il faudra relancer une manche pour vous départager.'
                             : (winner === getMultiplayerConnect4Role()
                                 ? 'Tu remportes cette manche de Coin 4 en ligne.'
                                 : "L'adversaire remporte cette manche de Coin 4."))
                         : (connect4Mode === 'duo'
                             ? (winner === 'draw'
-                                ? 'La grille est pleine. Aucun des deux capitaines ne prend l avantage.'
+                                ? "La grille est pleine. Aucun des deux capitaines ne prend l'avantage."
                                 : `Le ${winner === 'player' ? 'joueur 1' : 'joueur 2'} aligne quatre jetons.`)
                             : (winner === 'draw'
-                                ? 'La grille est pleine. La manche se termin\u00e9 sans vainqueur.'
+                                ? 'La grille est pleine. La manche se termine sans vainqueur.'
                                 : (winner === 'player'
                                     ? 'Tu remportes cette manche de Coin 4.'
                                     : "L'IA remporte cette manche de Coin 4."))))
@@ -5673,10 +5679,10 @@ document.addEventListener('DOMContentLoaded', () => {
         battleshipFinished = true;
         battleshipStatusText.textContent = playerWon
             ? 'Victoire. La flotte adverse sombre dans la baie.'
-            : 'DÃ©faite. Ta flotte a Ã©tÃ© coulÃ©e.';
+            : 'Défaite. Ta flotte a été coulée.';
         openGameOverModal(
-            playerWon ? 'Victoire' : 'Câ€™est perdu',
-            playerWon ? 'La bataille navale est remportÃ©e.' : 'La flotte ennemie gagne la bataille.'
+            playerWon ? 'Victoire' : "C'est perdu",
+            playerWon ? 'La bataille navale est remportée.' : 'La flotte ennemie gagne la bataille.'
         );
     }
 
@@ -5700,7 +5706,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (targetCell.hasShip) {
             battleshipPlayerRemainingShips = countRemainingBattleshipShips(battleshipPlayerGrid);
-            battleshipStatusText.textContent = 'L ennemi a touche un de tes navires.';
+            battleshipStatusText.textContent = "L'ennemi a touché un de tes navires.";
 
             if (battleshipPlayerRemainingShips === 0) {
                 renderBattleship();
@@ -5708,7 +5714,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         } else {
-            battleshipStatusText.textContent = 'L ennemi a manque son tir.';
+            battleshipStatusText.textContent = "L'ennemi a manqué son tir.";
         }
 
         battleshipAwaitingAi = false;
@@ -5750,7 +5756,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
             } else {
-                battleshipStatusText.textContent = `Dans l eau. ${context.defenderName} prend maintenant la barre.`;
+                battleshipStatusText.textContent = `Dans l'eau. ${context.defenderName} prend maintenant la barre.`;
                 renderBattleship();
             }
 
@@ -5775,7 +5781,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (targetCell.hasShip) {
             battleshipEnemyRemainingShips = countRemainingBattleshipShips(battleshipEnemyGrid);
-            battleshipStatusText.textContent = 'Touche. Tu viens de frapper un navire ennemi.';
+            battleshipStatusText.textContent = 'Touché. Tu viens de frapper un navire ennemi.';
             renderBattleship();
 
             if (battleshipEnemyRemainingShips === 0) {
@@ -5785,7 +5791,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!targetCell.hasShip) {
-            battleshipStatusText.textContent = 'Dans l eau. La flotte ennemie replique.';
+            battleshipStatusText.textContent = "Dans l'eau. La flotte ennemie réplique.";
             renderBattleship();
         }
 
@@ -5896,8 +5902,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tetrisLines += cleared;
             tetrisScore += [0, 100, 260, 460, 700][cleared] || (cleared * 200);
             tetrisHelpText.textContent = cleared > 1
-                ? `Belle manÅ“uvre. ${cleared} lignes nettoyÃ©es dans la cale.`
-                : 'Une ligne libÃ©rÃ©e dans la cale.';
+                ? `Belle manœuvre. ${cleared} lignes nettoyées dans la cale.`
+                : 'Une ligne libérée dans la cale.';
         }
     }
 
@@ -5907,8 +5913,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!canPlaceTetrisPiece(tetrisPiece)) {
             stopTetris();
             tetrisPiece = null;
-            tetrisHelpText.textContent = 'La cale est pleine. Relance une traversÃ©e.';
-            openGameOverModal('Câ€™est perdu', `La cargaison sâ€™est empilÃ©e. Score : ${tetrisScore}.`);
+            tetrisHelpText.textContent = 'La cale est pleine. Relance une traversée.';
+            openGameOverModal("C'est perdu", `La cargaison s'est empilée. Score : ${tetrisScore}.`);
             renderTetris();
         }
     }
@@ -6278,8 +6284,8 @@ document.addEventListener('DOMContentLoaded', () => {
         stopPacman();
         resetPacmanActors();
         pacmanHelpText.textContent = pacmanLives > 0
-            ? 'Un esprit tâ€™a touchÃ©. Relance la chasse pour reprendre la baie.'
-            : 'Les esprits du brouillard tâ€™ont rattrapÃ©.';
+            ? "Un esprit t'a touché. Relance la chasse pour reprendre la baie."
+            : "Les esprits du brouillard t'ont rattrapé.";
         renderPacman();
 
         if (pacmanLives > 0) {
@@ -6311,7 +6317,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (pacmanLives <= 0) {
             resetPacmanAfterHit();
-            openGameOverModal('Câ€™est perdu', `Les esprits du brouillard tâ€™ont capturÃ©. Score : ${pacmanScore}.`);
+            openGameOverModal("C'est perdu", `Les esprits du brouillard t'ont capturé. Score : ${pacmanScore}.`);
             return true;
         }
 
@@ -6360,8 +6366,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (pacmanPellets === 0) {
             stopPacman();
-            pacmanHelpText.textContent = 'La baie est nettoyÃ©e. Plus aucune perle Ã  ramasser.';
-            openGameOverModal('Victoire', `Tu as vidÃ© la baie de ses perles. Score : ${pacmanScore}.`);
+            pacmanHelpText.textContent = 'La baie est nettoyée. Plus aucune perle à  ramasser.';
+            openGameOverModal('Victoire', `Tu as vidé la baie de ses perles. Score : ${pacmanScore}.`);
         }
 
         renderPacman();
@@ -6520,8 +6526,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const foundationCount = SOLITAIRE_SUITS.reduce((total, suit) => total + solitaireFoundationsState[suit].length, 0);
 
         if (foundationCount === 52) {
-            solitaireHelpText.textContent = 'Le pont est rangÃ©. Toutes les fondations sont complÃ¨tes.';
-            openGameOverModal('Victoire', 'Tu as rÃ©ussi le solitaire du navire.');
+            solitaireHelpText.textContent = 'Le pont est rangé. Toutes les fondations sont complètes.';
+            openGameOverModal('Victoire', 'Tu as réussi le solitaire du navire.');
         }
     }
 
@@ -6535,7 +6541,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const wasteTopCard = solitaireWasteCards[solitaireWasteCards.length - 1];
         solitaireWaste.innerHTML = wasteTopCard
             ? `<button type="button" class="solitaire-playing-card${solitaireSelectedSource?.type === 'waste' ? ' is-selected' : ''} ${getSolitaireCardColor(wasteTopCard.suit)}" data-solitaire-source="waste">${getSolitaireCardLabel(wasteTopCard)}</button>`
-            : '<div class="solitaire-playing-card-placeholder">DÃ©fausse</div>';
+            : '<div class="solitaire-playing-card-placeholder">Défausse</div>';
 
         solitaireFoundations.innerHTML = SOLITAIRE_SUITS.map((suit) => {
             const topCard = solitaireFoundationsState[suit][solitaireFoundationsState[suit].length - 1];
@@ -6609,7 +6615,7 @@ document.addEventListener('DOMContentLoaded', () => {
         removeSolitaireSourceCards(solitaireSelectedSource, 1);
         solitaireFoundationsState[suit].push(movableCards[0]);
         clearSolitaireSelection();
-        solitaireHelpText.textContent = 'Carte placÃ©e sur une fondation.';
+        solitaireHelpText.textContent = 'Carte placée sur une fondation.';
         renderSolitaire();
         checkSolitaireWin();
         return true;
@@ -6625,7 +6631,7 @@ document.addEventListener('DOMContentLoaded', () => {
         removeSolitaireSourceCards(solitaireSelectedSource, movableCards.length);
         solitaireTableauColumns[col].push(...movableCards);
         clearSolitaireSelection();
-        solitaireHelpText.textContent = 'Pile dÃ©placÃ©e sur une colonne du pont.';
+        solitaireHelpText.textContent = 'Pile déplacée sur une colonne du pont.';
         renderSolitaire();
         checkSolitaireWin();
         return true;
@@ -6649,7 +6655,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         solitaireStockCards = deck.map((card) => ({ ...card, faceUp: false }));
-        solitaireHelpText.textContent = 'Clique une carte pour la sÃ©lectionner puis clique sa destination. La pioche se recycle quand elle est vide.';
+        solitaireHelpText.textContent = 'Clique une carte pour la sélectionner puis clique sa destination. La pioche se recycle quand elle est vide.';
         renderSolitaire();
     }
 
@@ -7074,7 +7080,7 @@ document.addEventListener('DOMContentLoaded', () => {
             connect4Scores.ai += 1;
             connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 2 aligne quatre jetons.' : "L'IA a aligne quatre jetons.";
         } else {
-            connect4HelpText.textContent = 'La grille est pleine. Aucun navire ne prend l avantage.';
+            connect4HelpText.textContent = "La grille est pleine. Aucun navire ne prend l'avantage.";
         }
 
         updateConnect4Hud();
@@ -7164,7 +7170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setConnect4Mode(nextMode) {
         if (isMultiplayerConnect4Active()) {
-            setMultiplayerStatus('Le mode est pilote par la room en ligne.');
+            setMultiplayerStatus('Le mode est piloté par la room en ligne.');
             return;
         }
 
@@ -7222,7 +7228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rhythmStartedAt = 0;
         rhythmLastFrame = 0;
         rhythmSpawnTimer = 0;
-        rhythmHelpText.textContent = `Protege le navire avec ${RHYTHM_LANES.join(', ')}. Tiens jusqu a la fin sans trop rater.`;
+        rhythmHelpText.textContent = `Protège le navire avec ${RHYTHM_LANES.join(', ')}. Tiens jusqu'à la fin sans trop rater.`;
         rhythmStartButton.textContent = 'Lancer la cadence';
         updateRhythmHud();
         renderRhythmBoard();
@@ -7467,7 +7473,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getFlappyRulesText() {
-        return 'Appuie sur espace, clique ou tapote pour battre des ailes. Traverse entre les arches sans toucher le ciel, les obstacles ou l eau.';
+        return "Appuie sur espace, clique ou tapote pour battre des ailes. Traverse entre les arches sans toucher le ciel, les obstacles ou l'eau.";
     }
 
     function renderFlappyMenu() {
@@ -7494,22 +7500,22 @@ document.addEventListener('DOMContentLoaded', () => {
             flappyMenuTitle.textContent = flappyMenuShowingRules
                 ? 'Rappel rapide'
                 : (flappyMenuResultReason === 'water'
-                    ? 'Tu t es noye'
+                    ? "Tu t'es noyé"
                     : (flappyMenuResultReason === 'sky'
                         ? "C'est perdu"
                         : (flappyMenuResultReason === 'pipe'
-                        ? 'Tu t es cogne contre une arche'
+                        ? "Tu t'es cogné contre une arche"
                         : (hasFlappyResult ? 'Partie perdue' : 'Baiely Bird'))));
         }
         if (flappyMenuText) {
             flappyMenuText.textContent = flappyMenuShowingRules
                 ? getFlappyRulesText()
                 : (flappyMenuResultReason === 'water'
-                    ? `Ton oiseau a fini dans l eau. Score ${flappyScore}. Record ${flappyBestScore}.`
+                    ? `Ton oiseau a fini dans l'eau. Score ${flappyScore}. Record ${flappyBestScore}.`
                     : (flappyMenuResultReason === 'sky'
-                        ? `Ton oiseau a perdu le controle en touchant le ciel. Score ${flappyScore}. Record ${flappyBestScore}.`
+                        ? `Ton oiseau a perdu le contrôle en touchant le ciel. Score ${flappyScore}. Record ${flappyBestScore}.`
                         : (flappyMenuResultReason === 'pipe'
-                        ? `Ton oiseau a touche une arche. Score ${flappyScore}. Record ${flappyBestScore}.`
+                        ? `Ton oiseau a touché une arche. Score ${flappyScore}. Record ${flappyBestScore}.`
                         : (hasFlappyResult
                             ? `Partie termin\u00e9e. Score ${flappyScore}. Record ${flappyBestScore}.`
                             : 'Prepare ton envol avant de battre des ailes entre les arches.'))));
@@ -7720,7 +7726,7 @@ document.addEventListener('DOMContentLoaded', () => {
         aimScoreDisplay.textContent = String(aimScore);
         aimTimerDisplay.textContent = String(aimTimeRemaining);
         aimBestScoreDisplay.textContent = String(aimBestScore);
-        aimStartButton.textContent = aimRoundRunning ? 'BordÃ©e en cours' : 'Nouvelle bordÃ©e';
+        aimStartButton.textContent = aimRoundRunning ? 'Bordée en cours' : 'Nouvelle bordée';
     }
 
     function getAimFreeCells(excludedKey = null) {
@@ -7794,7 +7800,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data-row="${row}"
                     data-col="${col}"
                     ${target ? `data-target-id="${target.id}"` : ''}
-                    aria-label="${target ? 'Oursin a toucher' : 'Case d eau'}"
+                    aria-label="${target ? 'Oursin à toucher' : "Case d'eau"}"
                 >
                     ${shouldRenderTarget ? `<span class="${targetClasses}" aria-hidden="true"></span>` : ''}
                     ${hitEffect ? `
@@ -7851,8 +7857,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateAimHud();
         openGameOverModal(
-            'Fin de la bordÃ©e',
-            `Tu as inscrit ${aimScore} touches avant la fin de la marÃ©e.`
+            'Fin de la bordée',
+            `Tu as inscrit ${aimScore} touches avant la fin de la marée.`
         );
     }
 
@@ -7935,7 +7941,7 @@ document.addEventListener('DOMContentLoaded', () => {
         aimScoreDisplay.textContent = String(aimScore);
         aimTimerDisplay.textContent = String(aimTimeRemaining);
         aimBestScoreDisplay.textContent = String(aimBestScore);
-        aimStartButton.textContent = aimRoundRunning ? 'BordÃ©e en cours' : 'Nouvelle bordÃ©e';
+        aimStartButton.textContent = aimRoundRunning ? 'Bordée en cours' : 'Nouvelle bordée';
         aimDurationButtons.forEach((button) => {
             button.classList.toggle('is-active', Number(button.dataset.aimDuration) === aimRoundSeconds);
         });
@@ -7995,7 +8001,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getPongRulesText() {
-        return 'Deplace ta raquette avec Z et S ou avec les fleches. Renvoie la balle sans la laisser filer et marque 7 points pour gagner le duel.';
+        return 'Déplace ta raquette avec Z et S ou avec les flèches. Renvoie la balle sans la laisser filer et marque 7 points pour gagner le duel.';
     }
 
     function getPongMenuOutcomeContent() {
@@ -8014,7 +8020,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : {
                     eyebrow: 'D\u00e9faite',
                     title: "C'est perdu",
-                    text: "L'adversaire remporte le duel. Tu peux patienter ou relancer si tu es l hote."
+                    text: "L'adversaire remporte le duel. Tu peux patienter ou relancer si tu es l'hôte."
                 };
         }
 
@@ -8027,12 +8033,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? {
                     eyebrow: 'Fin de duel',
                     title: 'Joueur 1 gagne',
-                    text: 'La balle echappe au joueur 2. Relance une manche quand vous voulez.'
+                    text: 'La balle échappe au joueur 2. Relance une manche quand vous voulez.'
                 }
                 : {
                     eyebrow: 'Fin de duel',
                     title: 'Joueur 2 gagne',
-                    text: 'La balle echappe au joueur 1. Relance une manche quand vous voulez.'
+                    text: 'La balle échappe au joueur 1. Relance une manche quand vous voulez.'
                 };
         }
 
@@ -8040,7 +8046,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ? {
                 eyebrow: 'Victoire',
                 title: 'Tu remportes le duel',
-                text: 'Belle serie. Relance une partie ou relis les regles avant de repartir.'
+                text: 'Belle série. Relance une partie ou relis les règles avant de repartir.'
             }
             : {
                 eyebrow: 'D\u00e9faite',
@@ -8263,12 +8269,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 pongHelpText.innerHTML = 'Salon en attente. Il faut deux joueurs pour lancer le duel.';
             } else if (multiplayerActiveRoom?.gameState?.finished) {
                 pongHelpText.innerHTML = multiplayerActiveRoom.gameState.winner === currentRole
-                    ? 'Victoire. Clique sur le bouton central si tu es l hote pour relancer.'
+                    ? "Victoire. Clique sur le bouton central si tu es l'hôte pour relancer."
                     : "D\u00e9faite. Attends que l'h\u00f4te relance un nouveau duel.";
             } else if (multiplayerActiveRoom?.gameState?.running) {
-                pongHelpText.innerHTML = 'Utilise Z/S ou les fleches pour deplacer ta raquette. Premier a 7.';
+                pongHelpText.innerHTML = 'Utilise Z/S ou les flèches pour déplacer ta raquette. Premier à 7.';
             } else {
-                pongHelpText.innerHTML = 'Attends que l hote lance le duel de Pong.';
+                pongHelpText.innerHTML = "Attends que l'hôte lance le duel de Pong.";
             }
             pongModeButtons.forEach((button) => {
                 button.classList.remove('is-active');
@@ -8724,8 +8730,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function finishPongMatch(playerWon) {
         stopPong();
         openGameOverModal(
-            playerWon ? 'Victoire' : 'Câ€™est perdu',
-            playerWon ? 'Le duel est gagnÃ©. La baie tâ€™acclame.' : 'Lâ€™IA remporte la manche. Le courant tâ€™Ã©chappe.'
+            playerWon ? 'Victoire' : "C'est perdu",
+            playerWon ? "Le duel est gagné. La baie t'acclame." : "L'IA remporte la manche. Le courant t'échappe."
         );
     }
 
@@ -8811,7 +8817,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setPongMode(nextMode) {
         if (isMultiplayerPongActive()) {
-            setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+            setMultiplayerStatus('Le mode est piloté par le salon en ligne.');
             return;
         }
 
@@ -8831,7 +8837,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!getCurrentMultiplayerPlayer()?.isHost) {
-                setMultiplayerStatus('Seul l hote peut lancer le duel.');
+                setMultiplayerStatus("Seul l'hôte peut lancer le duel.");
                 return;
             }
 
@@ -8875,7 +8881,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getSudokuDefaultHelpText() {
-        return 'Clique une case vide puis tape de 1 a 9. Suppr ou retour arriere pour effacer.';
+        return 'Clique une case vide puis tape de 1 à 9. Suppr ou retour arrière pour effacer.';
     }
 
     function clearSudokuStatusMessage() {
@@ -8942,7 +8948,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getSudokuRulesText() {
-        return 'Chaque ligne, chaque colonne et chaque carre de 3 par 3 doit contenir les chiffres de 1 a 9 une seule fois. Clique une case vide puis tape un chiffre. Trois erreurs et la traversee s arrete.';
+        return "Chaque ligne, chaque colonne et chaque carré de 3 par 3 doit contenir les chiffres de 1 à 9 une seule fois. Clique une case vide puis tape un chiffre. Trois erreurs et la traversée s'arrête.";
     }
 
     function renderSudokuMenu() {
@@ -9414,9 +9420,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 sudokuFailed = true;
                 stopSudokuTimer();
                 revealSudokuOutcomeMenu(
-                    'Carte egaree',
-                    'Trois erreurs. Le navire s est perdu dans le brouillard.',
-                    'Cap manque'
+                    'Carte égarée',
+                    "Trois erreurs. Le navire s'est perdu dans le brouillard.",
+                    'Cap manqué'
                 );
             }
 
@@ -9440,9 +9446,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sudokuSolved) {
             stopSudokuTimer();
             revealSudokuOutcomeMenu(
-                'Carte complete',
-                `Grille resolue. Cap ${sudokuPuzzle?.difficulty || 'Moussaillon'} termin\u00e9 en ${sudokuElapsedSeconds}s.`,
-                'Route tracee'
+                'Carte complète',
+                `Grille résolue. Cap ${sudokuPuzzle?.difficulty || 'Moussaillon'} terminé en ${sudokuElapsedSeconds}s.`,
+                'Route tracée'
             );
         }
 
@@ -9459,7 +9465,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function get2048RulesText() {
-        return 'Fleches ou ZQSD pour faire glisser toutes les tuiles. Quand deux valeurs identiques se rencontrent, elles fusionnent. Atteins 2048 et evite de bloqu\u00e9r toute la grille.';
+        return 'Flèches ou ZQSD pour faire glisser toutes les tuiles. Quand deux valeurs identiques se rencontrent, elles fusionnent. Atteins 2048 et évite de bloquer toute la grille.';
     }
 
     function render2048Menu() {
@@ -9872,7 +9878,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ));
 
             if (!hasMovesLeft) {
-                openGameOverModal('Câ€™est perdu', 'La marÃ©e tâ€™a bloquÃ©. Plus aucun coup possible.');
+                openGameOverModal("C'est perdu", "La marée t'a bloqué. Plus aucun coup possible.");
                 game2048QueuedMove = null;
                 return;
             }
@@ -9987,7 +9993,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getMinesweeperRulesText() {
-        return 'Clique sur une case pour reveler le recif. Les chiffres indiquent combien de mines touchent la case. Clique droit pour poser un drapeau et ouvre toutes les cases sures pour gagner.';
+        return "Clique sur une case pour révéler le récif. Les chiffres indiquent combien de mines touchent la case. Clique droit pour poser un drapeau et ouvre toutes les cases sûres pour gagner.";
     }
 
     function renderMinesweeperMenu() {
@@ -10078,7 +10084,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateFace(gameStarted ? 'Changer de cap' : 'Aller en mer');
     }
 
-    function openGameOverModal(title = 'Câ€™est perdu', text = 'Le joueur sâ€™est noyÃ©.') {
+    function openGameOverModal(title = "C'est perdu", text = "Le joueur s'est noyé.") {
         if (activeGameTab === '2048') {
             reveal2048OutcomeMenu();
             return;
@@ -10105,7 +10111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getSnakeRulesText() {
-        return 'Utilise les fleches ou ZQSD pour tourner. Chaque lanterne ramassee allonge le serpent. Evite les bords et ta propre queue pour garder le cap.';
+        return 'Utilise les flèches ou ZQSD pour tourner. Chaque lanterne ramassée allonge le serpent. Évite les bords et ta propre queue pour garder le cap.';
     }
 
     function renderSnakeMenu() {
@@ -10191,7 +10197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateSnakeHud() {
         snakeScoreDisplay.textContent = String(snakeScore);
         snakeBestScoreDisplay.textContent = String(snakeBestScore);
-        snakeStartButton.textContent = snakeRunning ? 'Changer de cap' : 'Lancer la traversee';
+        snakeStartButton.textContent = snakeRunning ? 'Changer de cap' : 'Lancer la traversée';
     }
 
     function queueSnakeDirectionInput(nextDirection) {
@@ -10421,9 +10427,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateSnakeHud();
         revealSnakeOutcomeMenu(
-            'Coque heurtee',
-            `Le serpent a percute la coque. Score final : ${snakeScore}.`,
-            'Fin de traversee'
+            'Coque heurtée',
+            `Le serpent a percuté la coque. Score final : ${snakeScore}.`,
+            'Fin de traversée'
         );
     }
 
@@ -10480,9 +10486,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 stopSnake();
                 updateSnakeHud();
                 revealSnakeOutcomeMenu(
-                    'Mer nettoyee',
-                    `Toutes les lanternes ont ete ramassees. Score final : ${snakeScore}.`,
-                    'Traversee parfaite'
+                    'Mer nettoyée',
+                    `Toutes les lanternes ont été ramassées. Score final : ${snakeScore}.`,
+                    'Traversée parfaite'
                 );
                 return;
             }
@@ -10535,7 +10541,7 @@ document.addEventListener('DOMContentLoaded', () => {
         minesweeperMenuClosing = false;
         minesweeperMenuEntering = false;
         if (minesweeperHelpText) {
-            minesweeperHelpText.textContent = 'Clic gauche pour reveler. Clic droit pour poser un drapeau.';
+            minesweeperHelpText.textContent = 'Clic gauche pour révéler. Clic droit pour poser un drapeau.';
         }
         updateRestartButtonLabel();
         updateCounters();
@@ -10611,9 +10617,9 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCounters();
         renderBoard();
         revealMinesweeperOutcomeMenu(
-            'Recif traverse',
-            `Toutes les zones sures ont ete degagees en ${timer} secondes.`,
-            'Traversee reussie'
+            'Récif traversé',
+            `Toutes les zones sûres ont été dégagées en ${timer} secondes.`,
+            'Traversée réussie'
         );
     }
 
@@ -10668,9 +10674,9 @@ document.addEventListener('DOMContentLoaded', () => {
             minesweeperBoard.classList.add('is-shaking');
             renderBoard();
             revealMinesweeperOutcomeMenu(
-                'Mine declenchee',
-                `La traversee s arrete apres ${timer} secondes. Repars avec un nouveau trace.`,
-                'Recif en alerte'
+                'Mine déclenchée',
+                `La traversée s'arrête après ${timer} secondes. Repars avec un nouveau tracé.`,
+                'Récif en alerte'
             );
             return;
         }
@@ -11074,7 +11080,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     : [{ row, col }]
         );
         flowFreeLastHoverKey = `${row}-${col}`;
-        flowFreeHelpText.textContent = 'Trace maintenant le courant jusqu a la bouee jumelle.';
+        flowFreeHelpText.textContent = "Trace maintenant le courant jusqu'à la bouée jumelle.";
         scheduleFlowFreeRender();
     }
 
@@ -11154,9 +11160,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const allCellsFilled = flowFreeCells.every((rowCells) => rowCells.every((cell) => Boolean(cell.color)));
             if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
-                flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
+                flowFreeHelpText.textContent = 'Tous les courants sont reliés. Le port est sécurisé.';
                 renderFlowFree();
-                openGameOverModal('Courants relies', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracÃ©s.`);
+                openGameOverModal('Courants reliés', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracés.`);
                 flowFreePointerDown = false;
                 flowFreeActiveColor = null;
                 flowFreeLastHoverKey = null;
@@ -11248,7 +11254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
             flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
             renderFlowFree();
-            openGameOverModal('Courants relies', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracÃ©s.`);
+            openGameOverModal('Courants reliés', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracés.`);
         }
 
         return true;
@@ -11606,7 +11612,7 @@ document.addEventListener('DOMContentLoaded', () => {
         magicSortTubes = generateMagicSortLevel();
         magicSortSelectedTube = null;
         magicSortMoves = 0;
-        magicSortHelpText.textContent = 'Verse les couleurs d un recipient a l autre pour obtenir des tubes uniformes. Chaque partie melange les fioles differemment.';
+        magicSortHelpText.textContent = "Verse les couleurs d'un récipient à l'autre pour obtenir des tubes uniformes. Chaque partie mélange les fioles différemment.";
         renderMagicSort();
     }
 
@@ -11632,7 +11638,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (magicSortSelectedTube === index) {
             magicSortSelectedTube = null;
-            magicSortHelpText.textContent = 'Selection annulee.';
+            magicSortHelpText.textContent = 'Sélection annulée.';
             renderMagicSort();
             return;
         }
@@ -11680,8 +11686,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMagicSort();
 
         if (isMagicSortSolved()) {
-            magicSortHelpText.textContent = 'Toutes les fioles sont rangees.';
-            openGameOverModal('Tri reussi', `Les couleurs sont rangees en ${magicSortMoves} coups.`);
+            magicSortHelpText.textContent = 'Toutes les fioles sont rangées.';
+            openGameOverModal('Tri réussi', `Les couleurs sont rangées en ${magicSortMoves} coups.`);
         }
     }
 
@@ -11732,7 +11738,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getMentalMathRulesText() {
-        return 'Le chrono descend en continu. Reponds juste et vite pour gagner du temps, enchainer les calculs et faire grimper ton score avant la fin.';
+        return 'Le chrono descend en continu. Réponds juste et vite pour gagner du temps, enchaîner les calculs et faire grimper ton score avant la fin.';
     }
 
     function renderMentalMathMenu() {
@@ -11842,7 +11848,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mentalMathRoundRunning = true;
         mentalMathQuestionStartedAt = performance.now();
         mentalMathFeedback.textContent = '';
-        mentalMathHelpText.textContent = 'Le chrono file. Reponds vite et juste pour regagner du temps.';
+        mentalMathHelpText.textContent = 'Le chrono file. Réponds vite et juste pour regagner du temps.';
         renderMentalMathQuestion();
         startMentalMathTimer();
     }
@@ -11861,7 +11867,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mentalMathMenuEntering = false;
         mentalMathMenuResult = false;
         mentalMathFeedback.textContent = '';
-        mentalMathHelpText.textContent = 'Le chrono descend. Reponds juste et vite pour regagner un peu de temps et pousser ton score au plus haut.';
+        mentalMathHelpText.textContent = 'Le chrono descend. Réponds juste et vite pour regagner un peu de temps et pousser ton score au plus haut.';
         renderMentalMathQuestion();
         renderMentalMathMenu();
     }
@@ -12239,7 +12245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         candyCrushAnimating = false;
 
         if (candyCrushScore >= CANDY_CRUSH_TARGET_SCORE) {
-            openGameOverModal('Cale videe', `Objectif atteint avec ${candyCrushScore} points.`);
+            openGameOverModal('Cale vidée', `Objectif atteint avec ${candyCrushScore} points.`);
             return;
         }
 
@@ -12334,7 +12340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         harborRunSpawnTimer = 0;
         harborRunBackdropOffset = 0;
         harborRunStartButton.textContent = 'Lancer la route';
-        harborRunHelpText.textContent = 'Guide ton navire entre navires, epaves et rochers avec plus de marge pour passer.';
+        harborRunHelpText.textContent = 'Guide ton navire entre navires, épaves et rochers avec plus de marge pour passer.';
         renderHarborRun();
     }
 
@@ -12355,7 +12361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeGameOverModal();
         initializeHarborRun();
         harborRunRunning = true;
-        harborRunHelpText.textContent = 'Garde le cap. La mer s accelere peu a peu a mesure que tu avances.';
+        harborRunHelpText.textContent = "Garde le cap. La mer s'accélère peu à peu à mesure que tu avances.";
         updateHarborRunHud();
         harborRunAnimationFrame = window.requestAnimationFrame(runHarborRunFrame);
     }
@@ -12607,7 +12613,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         closeGameOverModal();
         stackerRunning = true;
-        stackerHelpText.textContent = 'Empile les couches sans perdre l alignement.';
+        stackerHelpText.textContent = "Empile les couches sans perdre l'alignement.";
         stackerStartButton.textContent = 'Empiler';
         updateStackerHud();
         stackerAnimationFrame = window.requestAnimationFrame(runStackerFrame);
@@ -12646,9 +12652,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             stackerCurrentLayer = null;
             stopStacker();
-            stackerHelpText.textContent = 'La couche est tombee dans la baie.';
+            stackerHelpText.textContent = 'La couche est tombée dans la baie.';
             renderStacker();
-            openGameOverModal('Tour ecroulee', `Tu as empile ${stackerScore} etages.`);
+            openGameOverModal('Tour écroulée', `Tu as empilé ${stackerScore} étages.`);
             return;
         }
 
@@ -12694,7 +12700,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         stackerCurrentLayer = createNextStackerLayer(nextLevel + 1, overlap, nextLevel % 2 === 1);
         stackerHelpText.textContent = overlap < previousLayer.width
-            ? 'Oups, une partie est tombee. Continue de monter.'
+            ? 'Oups, une partie est tombée. Continue de monter.'
             : 'Empilement parfait. La tour prend de la hauteur.';
         renderStacker();
     }
@@ -12858,7 +12864,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getChessRulesText() {
-        return 'Les pieces se deplacent selon les regles classiques. La promotion devient une reine et le roque est disponible. La prise en passant n est pas geree ici.';
+        return "Les pièces se déplacent selon les règles classiques. La promotion devient une reine et le roque est disponible. La prise en passant n'est pas gérée ici.";
     }
 
     function getChessReadySummary() {
@@ -12891,7 +12897,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? {
                     eyebrow: 'Victoire',
                     title: 'Tu remportes la partie',
-                    text: 'Le roi adverse tombe. Tu peux relancer une nouvelle partie ou relire les regles.'
+                    text: 'Le roi adverse tombe. Tu peux relancer une nouvelle partie ou relire les règles.'
                 }
                 : {
                     eyebrow: 'D\u00e9faite',
@@ -12956,7 +12962,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
         const baseText = isOnline
             ? "Quand les deux joueurs sont pr\u00eats, la partie d'\u00e9checs commence automatiquement."
-            : 'Installe les pieces et choisis ton mode avant d engager la partie.';
+            : "Installe les pièces et choisis ton mode avant d'engager la partie.";
 
         chessMenuVisible = isOnline ? (!roomStarted || hasResult) : chessMenuVisible;
 
@@ -13812,7 +13818,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setChessMode(nextMode) {
         if (isMultiplayerChessActive()) {
-            setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+            setMultiplayerStatus('Le mode est piloté par le salon en ligne.');
             return;
         }
 
@@ -13932,8 +13938,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Tu remportes la partie.' : "L'adversaire remporte la partie.")
                 : (checkersState.turn === getMultiplayerCheckersRole() ? '\u00c0 toi de jouer.' : "Au tour de l'adversaire."))
             : (checkersMode === 'solo'
-                ? 'Mode 1 joueur: rouges contre IA. Roi a la promotion.'
-                : 'Mode 2 joueurs: rouges et noirs en tour par tour. Roi a la promotion.');
+                ? 'Mode 1 joueur : rouges contre IA. Roi à la promotion.'
+                : 'Mode 2 joueurs : rouges et noirs en tour par tour. Roi à la promotion.');
         checkersModeButtons.forEach((button) => {
             button.classList.toggle('is-active', button.dataset.checkersMode === checkersMode);
             button.disabled = isMultiplayerCheckersActive();
@@ -13961,7 +13967,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getCheckersRulesText() {
-        return 'Deplace tes pions en diagonale. Capture en sautant par-dessus un pion adverse, et un pion promu devient roi quand il atteint le bout du plateau.';
+        return 'Déplace tes pions en diagonale. Capture en sautant par-dessus un pion adverse, et un pion promu devient roi quand il atteint le bout du plateau.';
     }
 
     function renderCheckersMenu() {
@@ -14006,7 +14012,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             : `${checkersState.winner === 'red' ? 'Les Rouges' : 'Les Noirs'} remportent la partie de dames.`))
                     : ((multiplayerCheckers && !multiplayerActiveRoom?.gameLaunched)
                         ? 'Quand tous les joueurs sont pr\u00eats, la partie de dames commence automatiquement.'
-                        : 'Installe les pions et choisis ton mode avant d engager la partie.'));
+                        : "Installe les pions et choisis ton mode avant d'engager la partie."));
         }
         if (checkersMenuActionButton) {
             checkersMenuActionButton.textContent = checkersMenuShowingRules
@@ -14239,7 +14245,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setCheckersMode(nextMode) {
         if (isMultiplayerCheckersActive()) {
-            setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+            setMultiplayerStatus('Le mode est piloté par le salon en ligne.');
             return;
         }
 
@@ -14655,7 +14661,7 @@ document.addEventListener('DOMContentLoaded', () => {
         airHockeyStartButton.disabled = !getCurrentMultiplayerPlayer()?.isHost || (multiplayerActiveRoom?.playerCount || 0) < 2;
         airHockeyHelpText.textContent = airHockeyState.finished
             ? (airHockeyState.winner === getMultiplayerAirHockeyRole() ? 'Victoire. Le palet finit dans les filets adverses.' : "D\u00e9faite. L'adversaire remporte le duel.")
-            : (airHockeyState.running ? 'Deplace ton palet avec fluidite. Premier a 5.' : 'Attends que l hote lance le duel.');
+            : (airHockeyState.running ? 'Déplace ton palet avec fluidité. Premier à 5.' : "Attends que l'hôte lance le duel.");
 
         if (airHockeyState.finished) {
             stopAirHockeyRuntime();
@@ -14782,7 +14788,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getAirHockeyRulesText() {
-        return "Le joueur gauche se deplace avec ZQSD. En solo, la droite est pilotee par l'IA. En duo local, la droite se joue aux fleches. Premier a 5 buts.";
+        return "Le joueur gauche se déplace avec ZQSD. En solo, la droite est pilotée par l'IA. En duo local, la droite se joue aux flèches. Premier à 5 buts.";
     }
 
     function renderAirHockeyMenu() {
@@ -14948,7 +14954,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!getCurrentMultiplayerPlayer()?.isHost) {
-                setMultiplayerStatus('Seul l hote peut lancer le duel.');
+                setMultiplayerStatus("Seul l'hôte peut lancer le duel.");
                 return;
             }
 
@@ -14968,8 +14974,8 @@ document.addEventListener('DOMContentLoaded', () => {
         startAirHockeyCountdown(() => {
             airHockeyState.running = true;
             airHockeyHelpText.textContent = airHockeyState.servingSide === 'left'
-                ? 'Engagement a gauche. Va toucher la balle pour lancer l action.'
-                : 'Engagement a droite. Va toucher la balle pour lancer l action.';
+                ? "Engagement à gauche. Va toucher la balle pour lancer l'action."
+                : "Engagement à droite. Va toucher la balle pour lancer l'action.";
             if (!airHockeyAnimationFrame) {
                 airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
             }
@@ -14999,8 +15005,8 @@ document.addEventListener('DOMContentLoaded', () => {
         startAirHockeyCountdown(() => {
             airHockeyState.running = true;
             airHockeyHelpText.textContent = airHockeyState.servingSide === 'left'
-                ? 'Engagement a gauche. Va toucher la balle pour lancer l action.'
-                : 'Engagement a droite. Va toucher la balle pour lancer l action.';
+                ? "Engagement à gauche. Va toucher la balle pour lancer l'action."
+                : "Engagement à droite. Va toucher la balle pour lancer l'action.";
             if (!airHockeyAnimationFrame) {
                 airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
             }
@@ -15171,7 +15177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reactionLantern.classList.remove('is-armed', 'is-lit');
         reactionTable?.classList.remove('is-armed', 'is-lit', 'is-extinguishing');
         reactionBestDisplay.textContent = reactionBestTime ? `${reactionBestTime} ms` : '-';
-        reactionHelpText.textContent = 'Attends que la lanterne s allume, puis clique le plus vite possible.';
+        reactionHelpText.textContent = "Attends que la lanterne s'allume, puis clique le plus vite possible.";
         reactionMenuResult = null;
         reactionMenuShowingRules = false;
         reactionMenuClosing = false;
@@ -15180,15 +15186,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getReactionRulesText() {
-        return 'Lance une veille puis attends que la lanterne s allume. Clique uniquement au bon moment. Un clic trop tot annule la manche.';
+        return "Lance une veille puis attends que la lanterne s'allume. Clique uniquement au bon moment. Un clic trop tôt annule la manche.";
     }
 
     function getReactionPerformanceCopy(reactionTime, isRecord) {
         if (isRecord || reactionTime <= 220) {
             return {
-                eyebrow: isRecord ? 'Meilleur temps' : 'Reflexe legendaire',
-                title: isRecord ? 'Nouveau record' : 'Reflexe legendaire',
-                text: `Reflexe eclair en ${reactionTime} ms. Le phare n a meme pas eu le temps de trembler.`
+                eyebrow: isRecord ? 'Meilleur temps' : 'Réflexe légendaire',
+                title: isRecord ? 'Nouveau record' : 'Réflexe légendaire',
+                text: `Réflexe éclair en ${reactionTime} ms. Le phare n'a même pas eu le temps de trembler.`
             };
         }
 
@@ -15246,7 +15252,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? getReactionRulesText()
                 : (hasResult
                     ? reactionMenuResult.text
-                    : 'Reste calme sur le pont et clique des que la lanterne s allume pour signer le meilleur reflexe.');
+                    : "Reste calme sur le pont et clique dès que la lanterne s'allume pour signer le meilleur réflexe.");
         }
         if (reactionMenuActionButton) {
             reactionMenuActionButton.textContent = reactionMenuShowingRules
@@ -15291,7 +15297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reactionState = 'armed';
         reactionLantern.classList.add('is-armed');
         reactionTable?.classList.add('is-armed');
-        reactionHelpText.textContent = 'Patiente... la lanterne va s allumer.';
+        reactionHelpText.textContent = "Patiente... la lanterne va s'allumer.";
         reactionTimeout = window.setTimeout(() => {
             reactionState = 'lit';
             reactionLantern.classList.remove('is-armed');
@@ -15299,7 +15305,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reactionTable?.classList.remove('is-armed');
             reactionTable?.classList.add('is-lit');
             reactionStartTime = performance.now();
-            reactionHelpText.textContent = 'Clique vite, la lanterne est allumee.';
+            reactionHelpText.textContent = 'Clique vite, la lanterne est allumée.';
         }, 1200 + Math.random() * 2400);
     }
 
@@ -15725,7 +15731,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getBaieBerryRulesText() {
-        return 'Glisse la r\u00e9colte en cliquant ou en touchant la colonne voulue. Deux fruits identiques fusionnent au simple contact, mais la ligne rouge ne doit jamais rester occupee trop longtemps.';
+        return 'Glisse la récolte en cliquant ou en touchant la colonne voulue. Deux fruits identiques fusionnent au simple contact, mais la ligne rouge ne doit jamais rester occupée trop longtemps.';
     }
 
     function renderBaieBerryMenu() {
@@ -15768,7 +15774,7 @@ document.addEventListener('DOMContentLoaded', () => {
             baieBerryMenuText.textContent = baieBerryMenuShowingRules
                 ? getBaieBerryRulesText()
                 : (baieBerryMenuResult
-                    ? `Score ${currentScore}. ${objectiveStatus} La ligne rouge est restee occupee trop longtemps.`
+                    ? `Score ${currentScore}. ${objectiveStatus} La ligne rouge est restée occupée trop longtemps.`
                     : 'Prepare ta r\u00e9colte avant de laisser tomber les fruits dans le panier.');
         }
         if (baieBerryMenuActionButton) {
@@ -16067,7 +16073,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (baieBerryState.dangerTime >= BAIE_BERRY_DANGER_DURATION_MS) {
                 baieBerryState.gameOver = true;
-                baieBerryHelpText.textContent = `Recolte termin\u00e9e. Score ${baieBerryState.score}. La ligne rouge est restee occupee trop longtemps.`;
+                baieBerryHelpText.textContent = `Récolte terminée. Score ${baieBerryState.score}. La ligne rouge est restée occupée trop longtemps.`;
                 revealBaieBerryOutcomeMenu();
             }
         }
@@ -16251,7 +16257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getBreakoutRulesText() {
-        return 'Deplace la raquette avec Q, D ou les fleches. La balle rebondit selon la zone touchee sur le bateau. Casse toutes les briques sans perdre tes trois vies.';
+        return 'Déplace la raquette avec Q, D ou les flèches. La balle rebondit selon la zone touchée sur le bateau. Casse toutes les briques sans perdre tes trois vies.';
     }
 
     function renderBreakoutMenu() {
@@ -16285,7 +16291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? getBreakoutRulesText()
                 : (hasResult
                     ? breakoutMenuResult.text
-                    : 'Prepare ta traversee avant d envoyer la balle sur les briques.');
+                    : "Prépare ta traversée avant d'envoyer la balle sur les briques.");
         }
         if (breakoutMenuActionButton) {
             breakoutMenuActionButton.textContent = breakoutMenuShowingRules
@@ -16749,7 +16755,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!cleared.length) {
             blockBlastState.combo = 1;
-            blockBlastHelpText.textContent = 'Pose les formes pour preparer un gros nettoyage.';
+            blockBlastHelpText.textContent = 'Pose les formes pour préparer un gros nettoyage.';
             return;
         }
 
@@ -16825,7 +16831,7 @@ document.addEventListener('DOMContentLoaded', () => {
         blockBlastSelectedPieceIndex = null;
         clearBlockBlastPreview(false);
         stopBlockBlastDrag();
-        blockBlastHelpText.textContent = 'Fais glisser une forme sur le pont. Efface des lignes pour garder la baie degagee.';
+        blockBlastHelpText.textContent = 'Fais glisser une forme sur le pont. Efface des lignes pour garder la baie dégagée.';
         renderBlockBlast();
     }
 
@@ -17085,7 +17091,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getUnoRulesText() {
-        return 'Pose une carte de meme couleur ou de meme valeur. Les +2 et +4 peuvent s empiler. La carte Couleur change la teinte du tour. Si tu ne peux rien jouer, tu pioches.';
+        return "Pose une carte de même couleur ou de même valeur. Les +2 et +4 peuvent s'empiler. La carte Couleur change la teinte du tour. Si tu ne peux rien jouer, tu pioches.";
     }
 
     function renderUnoMenu() {
@@ -17101,7 +17107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const actionLabel = isOnline ? `${readyLabel} (${getUnoReadySummary()})` : 'Lancer la partie';
         const baseText = isOnline
             ? 'Quand tout le monde est pr\u00eat, la travers\u00e9e commence automatiquement.'
-            : 'Lance une nouvelle manche quand tu es pret.';
+            : 'Lance une nouvelle manche quand tu es prêt.';
 
         unoMenuVisible = isOnline ? !roomStarted : unoMenuVisible;
         unoMenuOverlay.classList.toggle('hidden', !unoMenuVisible);
@@ -17414,9 +17420,9 @@ document.addEventListener('DOMContentLoaded', () => {
         unoHandCountDisplay.textContent = String((unoMenuVisible && !unoMenuClosing) ? 0 : (me?.hand?.length || 0));
         unoTurnDisplay.textContent = currentPlayer ? `A ${currentPlayer.name} de jouer !` : '-';
         unoHelpText.textContent = unoState.winner
-            ? `${unoState.players.find((player) => player.id === unoState.winner)?.name || 'Un joueur'} a gagne la manche.`
+            ? `${unoState.players.find((player) => player.id === unoState.winner)?.name || 'Un joueur'} a gagné la manche.`
             : (isMultiplayerUnoActive()
-                ? 'Pose une carte valide quand la main est a toi. Les autres mains restent cachees.'
+                ? 'Pose une carte valide quand la main est à toi. Les autres mains restent cachées.'
                 : 'Clique une carte jouable ou pioche si tu es bloqu\u00e9.');
         unoModeButtons.forEach((button) => {
             button.classList.toggle('is-active', (button.dataset.unoMode === 'online') === isMultiplayerUnoActive() && (!isMultiplayerUnoActive() || button.dataset.unoMode === 'online'));
@@ -17748,7 +17754,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setUnoMode(nextMode) {
         if (isMultiplayerUnoActive()) {
-            setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+            setMultiplayerStatus('Le mode est piloté par le salon en ligne.');
             return;
         }
 
@@ -17857,7 +17863,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bombLastFinishedStateKey = finishedKey;
         const winner = bombState.players.find((player) => player.id === bombState.winner);
         const isVictory = Boolean(multiplayerActiveRoom?.players?.find((player) => player.isYou)?.id === bombState.winner);
-        openGameOverModal(isVictory ? 'Victoire' : 'Partie terminee', `${winner?.name || 'Un joueur'} remporte la manche de la Bombe.`);
+        openGameOverModal(isVictory ? 'Victoire' : 'Partie terminée', `${winner?.name || 'Un joueur'} remporte la manche de la Bombe.`);
     }
 
     function renderBombPlayers() {
@@ -17892,7 +17898,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="bomb-player-meta">
                         <span>Vies: ${Math.max(0, Number(player.lives || 0))}</span>
-                        <span>${player.eliminated ? 'Explose' : 'Encore a bord'}</span>
+                        <span>${player.eliminated ? 'Explosé' : 'Encore à bord'}</span>
                     </div>
                 </div>
             `;
@@ -17932,10 +17938,10 @@ document.addEventListener('DOMContentLoaded', () => {
         bombTurnDisplay.textContent = currentPlayer?.name || '-';
         bombTimerDisplay.textContent = secondsLeft === null ? '--' : `${secondsLeft}s`;
         bombSpotlightPlayer.textContent = winner
-            ? `${winner.name} garde son calme jusqu au bout.`
-            : (currentPlayer ? `${currentPlayer.name} doit repondre maintenant.` : 'En attente d equipage');
+            ? `${winner.name} garde son calme jusqu'au bout.`
+            : (currentPlayer ? `${currentPlayer.name} doit répondre maintenant.` : "En attente d'équipage");
         bombStatusBanner.textContent = waitingForReady
-            ? 'Quand tout le monde est pret, la bombe s allume dans la room.'
+            ? "Quand tout le monde est prêt, la bombe s'allume dans la room."
             : (bombState?.statusMessage || 'Rejoins un salon pour lancer la bombe.');
         bombHelpText.textContent = isOnline
             ? (isYourTurn
@@ -19043,7 +19049,7 @@ document.addEventListener('DOMContentLoaded', () => {
         coinClickerHelpText.textContent = upgrade.effectType === 'auto'
             ? 'Le butin tombe maintenant tout seul dans la cale.'
             : (upgrade.effectType === 'multiplier'
-                ? 'Ton butin vaut plus a chaque clic.'
+                ? 'Ton butin vaut plus à chaque clic.'
                 : 'Tes clics frappent plus fort sur la caisse.');
         saveCoinClickerState();
         renderCoinClicker();
@@ -19160,15 +19166,15 @@ document.addEventListener('DOMContentLoaded', () => {
     airHockeyModeButtons.forEach((button) => {
         button.addEventListener('click', () => {
             if (isMultiplayerAirHockeyActive()) {
-                setMultiplayerStatus('Le mode est pilote par le salon en ligne.');
+                setMultiplayerStatus('Le mode est piloté par le salon en ligne.');
                 return;
             }
 
             airHockeyMode = button.dataset.airhockeyMode;
             airHockeyModeButtons.forEach((item) => item.classList.toggle('is-active', item === button));
             airHockeyHelpText.textContent = airHockeyMode === 'solo'
-                ? "Joueur gauche: ZQSD. La droite est pilotee par l'IA."
-                : 'Joueur gauche: ZQSD. Joueur droit: fleches directionnelles.';
+                ? "Joueur gauche : ZQSD. La droite est pilotée par l'IA."
+                : 'Joueur gauche : ZQSD. Joueur droit : flèches directionnelles.';
             initializeAirHockey();
         });
     });
@@ -19204,13 +19210,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAirHockeyMenu();
     });
 
-    reactionStartButton?.addEventListener('click', () => {
-        startReactionRound();
-        if (reactionMenuVisible) {
-            closeReactionMenu();
-        }
-    });
-
     reactionMenuActionButton?.addEventListener('click', () => {
         if (reactionMenuShowingRules) {
             reactionMenuShowingRules = false;
@@ -19232,9 +19231,9 @@ document.addEventListener('DOMContentLoaded', () => {
             window.clearTimeout(reactionTimeout);
             initializeReaction();
             revealReactionOutcomeMenu(
-                'Faux depart',
-                'Trop tot. Attends vraiment l allumage de la lanterne avant de cliquer.',
-                'Veille annulee'
+                'Faux départ',
+                "Trop tôt. Attends vraiment l'allumage de la lanterne avant de cliquer.",
+                'Veille annulée'
             );
             return;
         }
@@ -19565,7 +19564,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const value = bombWordInput?.value?.trim() || '';
         if (!value) {
-            setMultiplayerStatus('Entre un mot avant d envoyer.');
+            setMultiplayerStatus("Entre un mot avant d'envoyer.");
             return;
         }
 

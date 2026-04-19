@@ -4,6 +4,7 @@ const fs = require('fs/promises');
 const cors = require('cors');
 const express = require('express');
 const { Server } = require('socket.io');
+const compression = require('compression');
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -88,6 +89,8 @@ const io = new Server(server, {
 
 const rooms = new Map();
 let postersCache = null;
+let postersPersistTimer = null;
+const roomCreationRateMap = new Map();
 
 function parseCorsOrigin(value) {
   const origins = String(value || '*')
@@ -102,11 +105,29 @@ function parseCorsOrigin(value) {
   return origins;
 }
 
+app.use(compression());
 app.use(express.json());
+app.use((err, _request, response, next) => {
+  if (err && err.type === 'entity.parse.failed') {
+    return response.status(400).json({ error: 'invalid-json' });
+  }
+  return next(err);
+});
 app.use(cors({
   origin: CORS_ORIGIN,
   methods: ['GET', 'POST']
 }));
+
+const SENSITIVE_FILE_RE = /^\/(?:server\.js|package(?:-lock)?\.json|film\.xlsx|posters-cache\.json|render\.yaml|readme\.md|cname|\.env|node_modules)/i;
+
+app.use((req, res, next) => {
+  if (SENSITIVE_FILE_RE.test(req.path)) {
+    return res.status(403).end();
+  }
+
+  next();
+});
+
 app.use(express.static(path.join(__dirname)));
 
 function normalizePosterCacheKey(title, year = '') {
@@ -144,7 +165,22 @@ async function persistPostersCache() {
     return;
   }
 
-  await fs.writeFile(POSTERS_CACHE_PATH, JSON.stringify(postersCache, null, 2));
+  try {
+    await fs.writeFile(POSTERS_CACHE_PATH, JSON.stringify(postersCache, null, 2));
+  } catch (error) {
+    console.error('Impossible de persister posters-cache.json.', error);
+  }
+}
+
+function schedulePersistPostersCache() {
+  if (postersPersistTimer) {
+    return;
+  }
+
+  postersPersistTimer = setTimeout(() => {
+    postersPersistTimer = null;
+    persistPostersCache();
+  }, 10000);
 }
 
 async function searchTmdbPoster(title, year = '') {
@@ -205,7 +241,7 @@ async function resolvePosterForMovie(movie = {}) {
 
   const resolvedPosterUrl = await searchTmdbPoster(title, year);
   cache[cacheKey] = resolvedPosterUrl;
-  await persistPostersCache();
+  schedulePersistPostersCache();
   return resolvedPosterUrl;
 }
 
@@ -430,7 +466,7 @@ function createBombState(players = [], options = {}) {
     usedWords: [],
     usedWordsMap: {},
     winner: null,
-    statusMessage: 'La bombe attend encore le signal de depart.',
+    statusMessage: 'La bombe attend encore le signal de départ.',
     turnCount: 1,
     round: Number(options.round || 1),
     turnDurationMs: BOMB_TURN_MS,
@@ -470,8 +506,10 @@ function canPlaceBattleshipShip(grid, row, col, length, horizontal) {
 function placeBattleshipFleet(grid) {
   BATTLESHIP_SHIPS.forEach((length, shipIndex) => {
     let placed = false;
+    let attempts = 0;
 
-    while (!placed) {
+    while (!placed && attempts < 1000) {
+      attempts += 1;
       const horizontal = Math.random() > 0.5;
       const row = Math.floor(Math.random() * BATTLESHIP_SIZE);
       const col = Math.floor(Math.random() * BATTLESHIP_SIZE);
@@ -660,6 +698,14 @@ function createUnoDeck() {
 
 function ensureUnoDrawPile(state) {
   if (state.drawPile.length) {
+    return;
+  }
+
+  if (state.discardPile.length > 1) {
+    const topCard = state.discardPile.pop();
+    const reshuffled = shuffleUnoDeck(state.discardPile.splice(0));
+    state.drawPile = reshuffled;
+    state.discardPile = [topCard];
     return;
   }
 
@@ -1111,11 +1157,6 @@ function resetRoomGame(room, keepScores = false) {
 
   if (room.gameId === 'connect4') {
     resetConnect4Round(room, keepScores);
-    return;
-  }
-
-  if (room.gameId === 'chess') {
-    resetChessRound(room);
     return;
   }
 
@@ -1819,6 +1860,69 @@ function getChessAttackMoves(state, row, col) {
   return moves;
 }
 
+function cloneChessBoard(board) {
+  return board.map((row) => row.map((cell) => (cell ? { ...cell } : null)));
+}
+
+function isChessKingInCheck(state, color) {
+  const opponent = color === 'white' ? 'black' : 'white';
+  let kingRow = -1;
+  let kingCol = -1;
+
+  for (let row = 0; row < CHESS_SIZE; row += 1) {
+    for (let col = 0; col < CHESS_SIZE; col += 1) {
+      const piece = state.board[row][col];
+      if (piece?.type === 'king' && piece.color === color) {
+        kingRow = row;
+        kingCol = col;
+      }
+    }
+  }
+
+  if (kingRow === -1) {
+    return false;
+  }
+
+  for (let row = 0; row < CHESS_SIZE; row += 1) {
+    for (let col = 0; col < CHESS_SIZE; col += 1) {
+      const attacker = state.board[row][col];
+      if (!attacker || attacker.color !== opponent) {
+        continue;
+      }
+
+      if (getChessAttackMoves(state, row, col).some((move) => move.row === kingRow && move.col === kingCol)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function simulateChessMove(state, fromRow, fromCol, toRow, toCol) {
+  const board = cloneChessBoard(state.board);
+  const piece = board[fromRow][fromCol];
+
+  if (piece) {
+    board[toRow][toCol] = { ...piece, hasMoved: true };
+  } else {
+    board[toRow][toCol] = null;
+  }
+  board[fromRow][fromCol] = null;
+
+  if (piece?.type === 'king' && Math.abs(toCol - fromCol) === 2) {
+    const rookFromCol = toCol > fromCol ? CHESS_SIZE - 1 : 0;
+    const rookToCol = toCol > fromCol ? toCol - 1 : toCol + 1;
+    const rook = board[toRow][rookFromCol];
+    if (rook) {
+      board[toRow][rookToCol] = { ...rook, hasMoved: true };
+      board[toRow][rookFromCol] = null;
+    }
+  }
+
+  return { ...state, board };
+}
+
 function getChessMoves(state, row, col) {
   const piece = state?.board[row][col];
 
@@ -1974,7 +2078,10 @@ function getChessMoves(state, row, col) {
     }
   }
 
-  return moves;
+  return moves.filter((move) => {
+    const simulated = simulateChessMove(state, row, col, move.row, move.col);
+    return !isChessKingInCheck(simulated, piece.color);
+  });
 }
 
 function getChessAllMoves(state, color) {
@@ -2004,7 +2111,7 @@ function getChessAllMoves(state, color) {
   return moves;
 }
 
-function getCheckersMoves(state, row, col) {
+function getCheckersPseudoMoves(state, row, col) {
   const piece = state?.board[row][col];
 
   if (!piece || piece.color !== state.turn || state.winner) {
@@ -2039,6 +2146,34 @@ function getCheckersMoves(state, row, col) {
   });
 
   return moves;
+}
+
+function hasAnyCheckersCapture(state, color) {
+  for (let row = 0; row < CHECKERS_SIZE; row += 1) {
+    for (let col = 0; col < CHECKERS_SIZE; col += 1) {
+      const piece = state.board[row][col];
+      if (!piece || piece.color !== color) {
+        continue;
+      }
+      if (getCheckersPseudoMoves(state, row, col).some((move) => move.capture)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function getCheckersMoves(state, row, col) {
+  const pseudoMoves = getCheckersPseudoMoves(state, row, col);
+  if (!pseudoMoves.length) {
+    return pseudoMoves;
+  }
+
+  const piece = state.board[row][col];
+  if (hasAnyCheckersCapture(state, piece.color)) {
+    return pseudoMoves.filter((move) => move.capture);
+  }
+  return pseudoMoves;
 }
 
 function getCheckersAllMoves(state, color) {
@@ -2124,6 +2259,7 @@ function getRoom(code) {
 }
 
 function emitRoomUpdate(room) {
+  room.lastActivityAt = Date.now();
   room.players.forEach((player) => {
     io.to(player.id).emit('room:updated', buildRoomPayload(room, player.id));
   });
@@ -2166,12 +2302,44 @@ app.post('/api/posters/resolve', async (request, response) => {
   }
 });
 
+setInterval(() => {
+  const cutoff = Date.now() - 60000;
+
+  for (const [ip, entry] of roomCreationRateMap) {
+    if (entry.windowStart < cutoff) {
+      roomCreationRateMap.delete(ip);
+    }
+  }
+}, 60000);
+
 app.post('/api/rooms', (request, response) => {
+  const clientIp = request.ip || 'unknown';
+  const now = Date.now();
+  const rateLimitEntry = roomCreationRateMap.get(clientIp) || { count: 0, windowStart: now };
+
+  if (now - rateLimitEntry.windowStart >= 60000) {
+    rateLimitEntry.count = 0;
+    rateLimitEntry.windowStart = now;
+  }
+
+  rateLimitEntry.count += 1;
+  roomCreationRateMap.set(clientIp, rateLimitEntry);
+
+  if (rateLimitEntry.count > 10) {
+    return response.status(429).json({ error: 'too-many-requests' });
+  }
+
+  const requestedGameId = String(request.body?.gameId || '').trim();
+
+  if (!requestedGameId || !MAX_PLAYERS_BY_GAME[requestedGameId]) {
+    return response.status(400).json({ error: 'invalid-game-id' });
+  }
+
   try {
     const roomCode = createUniqueRoomCode();
     const room = {
       code: roomCode,
-      gameId: String(request.body?.gameId || 'lobby').trim() || 'lobby',
+      gameId: requestedGameId,
       hostId: null,
       players: [],
       readyPlayerIds: [],
@@ -2181,7 +2349,9 @@ app.post('/api/rooms', (request, response) => {
       chessStarted: false,
       gameLaunched: false,
       chatMessages: [],
-      gameState: createGameState(String(request.body?.gameId || 'lobby').trim() || 'lobby')
+      gameState: createGameState(requestedGameId),
+      createdAt: Date.now(),
+      lastActivityAt: Date.now()
     };
 
     rooms.set(roomCode, room);
@@ -2203,16 +2373,40 @@ app.get('/api/rooms/:code', (request, response) => {
 });
 
 io.on('connection', (socket) => {
+  const socketRateLimit = { count: 0, windowStart: Date.now(), warned: false };
+
+  socket.use(([_event, ..._args], next) => {
+    const now = Date.now();
+
+    if (now - socketRateLimit.windowStart >= 1000) {
+      socketRateLimit.count = 0;
+      socketRateLimit.windowStart = now;
+      socketRateLimit.warned = false;
+    }
+
+    socketRateLimit.count += 1;
+
+    if (socketRateLimit.count > 120) {
+      if (!socketRateLimit.warned) {
+        socket.emit('room:error', { message: 'Trop de requêtes. Attends un instant.' });
+        socketRateLimit.warned = true;
+      }
+      return;
+    }
+
+    next();
+  });
+
   socket.on('room:create', ({ code, playerName }) => {
     const room = getRoom(code);
 
     if (!room) {
-      socket.emit('room:error', { message: 'Cette room n existe pas.' });
+      socket.emit('room:error', { message: "Cette room n'existe pas." });
       return;
     }
 
     if (room.players.length >= getRoomMaxPlayers(room)) {
-      socket.emit('room:error', { message: 'Cette room est deja pleine.' });
+      socket.emit('room:error', { message: 'Cette room est déjà pleine.' });
       return;
     }
 
@@ -2248,7 +2442,7 @@ io.on('connection', (socket) => {
     }
 
     if (room.players.length >= getRoomMaxPlayers(room)) {
-      socket.emit('room:error', { message: 'La room est complete.' });
+      socket.emit('room:error', { message: 'La room est complète.' });
       return;
     }
 
@@ -2281,12 +2475,12 @@ io.on('connection', (socket) => {
     }
 
     if (room.hostId !== socket.id) {
-      socket.emit('room:error', { message: 'Seul l hote peut changer le jeu du salon.' });
+      socket.emit('room:error', { message: "Seul l'hôte peut changer le jeu du salon." });
       return;
     }
 
     if (!MAX_PLAYERS_BY_GAME[nextGameId]) {
-      socket.emit('room:error', { message: 'Ce jeu n est pas disponible en multijoueur.' });
+      socket.emit('room:error', { message: "Ce jeu n'est pas disponible en multijoueur." });
       return;
     }
 
@@ -2310,12 +2504,12 @@ io.on('connection', (socket) => {
     }
 
     if (room.hostId !== socket.id) {
-      socket.emit('room:error', { message: 'Seul l hote peut lancer le duel.' });
+      socket.emit('room:error', { message: "Seul l'hôte peut lancer le duel." });
       return;
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne le salon.' });
+      socket.emit('room:error', { message: "Attends qu'un deuxième joueur rejoigne le salon." });
       return;
     }
 
@@ -2350,17 +2544,17 @@ io.on('connection', (socket) => {
     const room = getRoom(socket.data.roomCode);
 
     if (!room || room.gameId !== 'airHockey') {
-      socket.emit('room:error', { message: 'Aucune partie d Air Hockey active.' });
+      socket.emit('room:error', { message: "Aucune partie d'Air Hockey active." });
       return;
     }
 
     if (room.hostId !== socket.id) {
-      socket.emit('room:error', { message: 'Seul l hote peut lancer le duel.' });
+      socket.emit('room:error', { message: "Seul l'hôte peut lancer le duel." });
       return;
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne le salon.' });
+      socket.emit('room:error', { message: "Attends qu'un deuxième joueur rejoigne le salon." });
       return;
     }
 
@@ -2402,7 +2596,7 @@ io.on('connection', (socket) => {
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      socket.emit('room:error', { message: "Attends qu'un deuxième joueur rejoigne la room." });
       return;
     }
 
@@ -2475,7 +2669,7 @@ io.on('connection', (socket) => {
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      socket.emit('room:error', { message: "Attends qu'un deuxième joueur rejoigne la room." });
       return;
     }
 
@@ -2553,7 +2747,7 @@ io.on('connection', (socket) => {
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      socket.emit('room:error', { message: "Attends qu'un deuxième joueur rejoigne la room." });
       return;
     }
 
@@ -2626,12 +2820,12 @@ io.on('connection', (socket) => {
     const room = getRoom(socket.data.roomCode);
 
     if (!room || room.gameId !== 'chess') {
-      socket.emit('room:error', { message: 'Aucune partie d echecs active.' });
+      socket.emit('room:error', { message: "Aucune partie d'échecs active." });
       return;
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      socket.emit('room:error', { message: "Attends qu'un deuxième joueur rejoigne la room." });
       return;
     }
 
@@ -2680,12 +2874,13 @@ io.on('connection', (socket) => {
       captureColor: capturedPiece?.color || null
     };
 
-    if (capturedPiece?.type === 'king') {
-      room.gameState.winner = nextPiece.color;
-    } else {
-      room.gameState.turn = room.gameState.turn === 'white' ? 'black' : 'white';
-      if (!getChessAllMoves(room.gameState, room.gameState.turn).length) {
+    room.gameState.turn = room.gameState.turn === 'white' ? 'black' : 'white';
+
+    if (!getChessAllMoves(room.gameState, room.gameState.turn).length) {
+      if (isChessKingInCheck(room.gameState, room.gameState.turn)) {
         room.gameState.winner = nextPiece.color;
+      } else {
+        room.gameState.winner = 'draw';
       }
     }
 
@@ -2727,7 +2922,7 @@ io.on('connection', (socket) => {
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends qu un deuxieme joueur rejoigne la room.' });
+      socket.emit('room:error', { message: "Attends qu'un deuxième joueur rejoigne la room." });
       return;
     }
 
@@ -2948,7 +3143,7 @@ io.on('connection', (socket) => {
     }
 
     if (room.players.length < 2 || !room.gameLaunched) {
-      socket.emit('room:error', { message: 'Attends que la room soit complete et prete.' });
+      socket.emit('room:error', { message: 'Attends que la room soit complète et prête.' });
       return;
     }
 
@@ -2972,7 +3167,7 @@ io.on('connection', (socket) => {
     }
 
     if (state.usedWordsMap[normalizedWord]) {
-      socket.emit('room:error', { message: 'Ce mot a deja ete utilise dans cette manche.' });
+      socket.emit('room:error', { message: 'Ce mot a déjà été utilisé dans cette manche.' });
       return;
     }
 
@@ -3019,7 +3214,7 @@ io.on('connection', (socket) => {
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends au moins un autre joueur pour relancer la manche.' });
+      socket.emit('room:error', { message: "Attends au moins un autre joueur pour relancer la manche." });
       return;
     }
 
@@ -3044,21 +3239,21 @@ io.on('connection', (socket) => {
     const room = getRoom(socket.data.roomCode);
 
     if (!room) {
-      socket.emit('room:error', { message: 'Aucune room active a lancer.' });
+      socket.emit('room:error', { message: "Aucune room active à lancer." });
       return;
     }
 
     if (room.hostId !== socket.id) {
-      socket.emit('room:error', { message: 'Seul l hote peut lancer le jeu.' });
+      socket.emit('room:error', { message: "Seul l'hôte peut lancer le jeu." });
       return;
     }
 
     if (room.players.length < 2) {
-      socket.emit('room:error', { message: 'Attends au moins un autre joueur avant de lancer le jeu.' });
+      socket.emit('room:error', { message: "Attends au moins un autre joueur avant de lancer le jeu." });
       return;
     }
 
-    emitRoomGameStart(room);
+    launchRoomGame(room);
   });
 
   socket.on('room:chat:send', ({ message }) => {
@@ -3070,7 +3265,7 @@ io.on('connection', (socket) => {
     }
 
     if (!room.gameLaunched) {
-      socket.emit('room:error', { message: 'Le chat sera disponible quand toute la room sera prete.' });
+      socket.emit('room:error', { message: 'Le chat sera disponible quand toute la room sera prête.' });
       return;
     }
 
@@ -3155,6 +3350,26 @@ setInterval(() => {
     }
   });
 }, 250);
+
+const ROOM_INACTIVITY_TTL_MS = 30 * 60 * 1000;
+setInterval(() => {
+  const cutoff = Date.now() - ROOM_INACTIVITY_TTL_MS;
+  for (const [code, room] of rooms) {
+    if ((room.lastActivityAt || room.createdAt || 0) < cutoff) {
+      rooms.delete(code);
+    }
+  }
+}, 5 * 60 * 1000);
+
+process.on('SIGTERM', async () => {
+  if (postersPersistTimer) {
+    clearTimeout(postersPersistTimer);
+    postersPersistTimer = null;
+  }
+
+  await persistPostersCache();
+  process.exit(0);
+});
 
 server.listen(PORT, () => {
   console.log(`La Baie des Naufrages multiplayer server listening on port ${PORT}`);
