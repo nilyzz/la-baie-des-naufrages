@@ -50,6 +50,10 @@ import {
 } from './multiplayer/lobby.js';
 import * as multiplayerState from './multiplayer/state.js';
 
+import * as musicModule from './navires/music.js';
+import * as mathModule from './navires/math.js';
+import * as cinemaModule from './navires/cinema.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const sanityChecks = [
         Array.isArray(shuffleArray([1, 2, 3])) && shuffleArray([1, 2, 3]).length === 3,
@@ -95,12 +99,25 @@ document.addEventListener('DOMContentLoaded', () => {
         multiplayerState.getMultiplayerSocket() === null,
         multiplayerState.getMultiplayerActiveRoom() === null,
         multiplayerState.getMultiplayerEntryMode() === 'create',
-        multiplayerState.getMultiplayerBusy() === false
+        multiplayerState.getMultiplayerBusy() === false,
+        Array.isArray(musicModule.PIANO_NOTES) && musicModule.PIANO_NOTES.length === 25,
+        musicModule.PIANO_NOTE_MAP.get('c4')?.frequency === 261.63,
+        typeof musicModule.renderPiano === 'function',
+        typeof musicModule.startPianoNote === 'function',
+        typeof musicModule.stopAllPianoNotes === 'function',
+        mathModule.UNIT_GROUPS.temperature.units.length === 3,
+        typeof mathModule.evaluateCalculatorExpression === 'function',
+        typeof mathModule.convertTemperature === 'function',
+        mathModule.convertTemperature(100, 'c', 'f') === 212,
+        typeof cinemaModule.parseMoviesFromWorkbook === 'function',
+        typeof cinemaModule.formatDate === 'function',
+        cinemaModule.getRatingBadgeTone(18, 20) === 'is-excellent',
+        cinemaModule.DEFAULT_POSTER_URL.startsWith('https://')
     ];
 
     const allOk = sanityChecks.every(Boolean);
     if (allOk) {
-        console.log('ES Modules OK — core/ + multiplayer/ (state + lobby extended).');
+        console.log('ES Modules OK — core/ + multiplayer/ + navires/ extracted.');
     } else {
         console.warn('ES Modules : un ou plusieurs imports ont échoué.', sanityChecks);
     }
