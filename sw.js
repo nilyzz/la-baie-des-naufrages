@@ -1,4 +1,4 @@
-const CACHE_NAME = 'baie-des-naufrages-v7';
+const CACHE_NAME = 'baie-des-naufrages-v8';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
@@ -18,6 +18,11 @@ const PRECACHE_URLS = [
     '/js/navires/math.js',
     '/js/navires/cinema.js',
     '/js/games/_shared/menu-overlay.js',
+    '/js/games/memory.js',
+    '/js/games/stacker.js',
+    '/js/games/reaction.js',
+    '/js/games/aim.js',
+    '/js/games/mentalMath.js',
     '/site.webmanifest',
     '/assets/branding/logo-baie-cartoon.svg',
     '/assets/navires/navire-cinema.svg',
