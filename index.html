@@ -879,7 +879,7 @@
                             <strong id="aimScoreDisplay" class="aim-counter-value">0</strong>
                         </div>
 
-                        <button id="aimStartButton" type="button" class="aim-face">Nouvelle bord&eacute;e</button>
+                        <button id="aimStartButton" type="button" class="aim-face" hidden>Nouvelle bord&eacute;e</button>
 
                         <div class="aim-counter-block">
                             <span class="aim-counter-label">Mar&eacute;e</span>
@@ -899,7 +899,20 @@
                     </div>
 
                     <p class="aim-help">OursAim. Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l eau te co&ucirc;te des points.</p>
-                    <div id="aimBoard" class="aim-board" aria-label="Zone de tir de la baie"></div>
+                    <div id="aimTable" class="aim-table">
+                        <div id="aimMenuOverlay" class="aim-menu-overlay">
+                            <div class="aim-menu-card">
+                                <span id="aimMenuEyebrow" class="aim-menu-eyebrow">Canon de bord</span>
+                                <h3 id="aimMenuTitle" class="aim-menu-title">OursAim</h3>
+                                <p id="aimMenuText" class="aim-menu-text">Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l&rsquo;eau te coûte des points.</p>
+                                <div class="aim-menu-actions">
+                                    <button id="aimMenuActionButton" type="button" class="game-menu-primary-button">Lancer la bordée</button>
+                                    <button id="aimMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="aimBoard" class="aim-board" aria-label="Zone de tir de la baie"></div>
+                    </div>
                 </div>
 
                 <div id="memoryGame" class="card memory-card games-panel">
@@ -1084,7 +1097,7 @@
                             <strong id="solitaireStockDisplay" class="solitaire-counter-value">24</strong>
                         </div>
 
-                        <button id="solitaireRestartButton" type="button" class="solitaire-face">Nouvelle donne</button>
+                        <button id="solitaireRestartButton" type="button" class="solitaire-face" hidden>Nouvelle donne</button>
 
                         <div class="solitaire-counter-block">
                             <span class="solitaire-counter-label">Fondations</span>
@@ -1094,14 +1107,27 @@
 
                     <p id="solitaireHelpText" class="solitaire-help">Clique une carte pour la sélectionner puis clique sa destination. La pioche se recycle quand elle est vide.</p>
 
-                    <div class="solitaire-layout">
-                        <div class="solitaire-top-row">
-                            <div id="solitaireStock" class="solitaire-slot solitaire-stock" aria-label="Pioche"></div>
-                            <div id="solitaireWaste" class="solitaire-slot solitaire-waste" aria-label="Défausse"></div>
-                            <div id="solitaireFoundations" class="solitaire-foundations" aria-label="Fondations"></div>
+                    <div id="solitaireTable" class="solitaire-table">
+                        <div id="solitaireMenuOverlay" class="solitaire-menu-overlay">
+                            <div class="solitaire-menu-card">
+                                <span id="solitaireMenuEyebrow" class="solitaire-menu-eyebrow">Cabine du capitaine</span>
+                                <h3 id="solitaireMenuTitle" class="solitaire-menu-title">Solitaire</h3>
+                                <p id="solitaireMenuText" class="solitaire-menu-text">Trie les cartes du capitaine dans les quatre fondations en suivant couleurs et valeurs.</p>
+                                <div class="solitaire-menu-actions">
+                                    <button id="solitaireMenuActionButton" type="button" class="game-menu-primary-button">Lancer la donne</button>
+                                    <button id="solitaireMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
                         </div>
+                        <div class="solitaire-layout">
+                            <div class="solitaire-top-row">
+                                <div id="solitaireStock" class="solitaire-slot solitaire-stock" aria-label="Pioche"></div>
+                                <div id="solitaireWaste" class="solitaire-slot solitaire-waste" aria-label="Défausse"></div>
+                                <div id="solitaireFoundations" class="solitaire-foundations" aria-label="Fondations"></div>
+                            </div>
 
-                        <div id="solitaireTableau" class="solitaire-tableau" aria-label="Colonnes du solitaire"></div>
+                            <div id="solitaireTableau" class="solitaire-tableau" aria-label="Colonnes du solitaire"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1146,7 +1172,7 @@
                             <strong id="rhythmScoreDisplay" class="rhythm-counter-value">0</strong>
                         </div>
 
-                        <button id="rhythmStartButton" type="button" class="rhythm-face">Lancer la cadence</button>
+                        <button id="rhythmStartButton" type="button" class="rhythm-face" hidden>Lancer la cadence</button>
 
                         <div class="rhythm-counter-block">
                             <span class="rhythm-counter-label">Serie</span>
@@ -1165,7 +1191,20 @@
                     </div>
 
                     <p id="rhythmHelpText" class="rhythm-help">Garde le pont en rythme avec Q, S et D. Trop de fautes et la traversée s'arrête.</p>
-                    <div id="rhythmBoard" class="rhythm-board" aria-label="Plateau du jeu de rythme"></div>
+                    <div id="rhythmTable" class="rhythm-table">
+                        <div id="rhythmMenuOverlay" class="rhythm-menu-overlay">
+                            <div class="rhythm-menu-card">
+                                <span id="rhythmMenuEyebrow" class="rhythm-menu-eyebrow">Cadence des marins</span>
+                                <h3 id="rhythmMenuTitle" class="rhythm-menu-title">Rythme</h3>
+                                <p id="rhythmMenuText" class="rhythm-menu-text">Garde le tempo avec Q, S et D pour accompagner la chanson des marins. Trop de fautes et la cadence s&rsquo;arrête.</p>
+                                <div class="rhythm-menu-actions">
+                                    <button id="rhythmMenuActionButton" type="button" class="game-menu-primary-button">Lancer la cadence</button>
+                                    <button id="rhythmMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="rhythmBoard" class="rhythm-board" aria-label="Plateau du jeu de rythme"></div>
+                    </div>
                 </div>
 
                 <div id="flappyGame" class="card flappy-card games-panel">
@@ -1204,7 +1243,7 @@
                             <strong id="flowFreePairsDisplay" class="flowfree-counter-value">0 / 0</strong>
                         </div>
 
-                        <button id="flowFreeRestartButton" type="button" class="flowfree-face">Nouvelle corde</button>
+                        <button id="flowFreeRestartButton" type="button" class="flowfree-face" hidden>Nouvelle corde</button>
 
                         <div class="flowfree-counter-block">
                             <span class="flowfree-counter-label">Coups</span>
@@ -1213,7 +1252,20 @@
                     </div>
 
                     <p id="flowFreeHelpText" class="flowfree-help">Relie chaque paire de clous avec une corde colorée et remplis toute la grille.</p>
-                    <div id="flowFreeBoard" class="flowfree-board" aria-label="Plateau de Rope Line"></div>
+                    <div id="flowFreeTable" class="flowfree-table">
+                        <div id="flowFreeMenuOverlay" class="flowfree-menu-overlay">
+                            <div class="flowfree-menu-card">
+                                <span id="flowFreeMenuEyebrow" class="flowfree-menu-eyebrow">Cordages du quai</span>
+                                <h3 id="flowFreeMenuTitle" class="flowfree-menu-title">Rope Line</h3>
+                                <p id="flowFreeMenuText" class="flowfree-menu-text">Relie chaque paire de bouées avec un cordage coloré et remplis toutes les cases du quai.</p>
+                                <div class="flowfree-menu-actions">
+                                    <button id="flowFreeMenuActionButton" type="button" class="game-menu-primary-button">Lancer le tracé</button>
+                                    <button id="flowFreeMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="flowFreeBoard" class="flowfree-board" aria-label="Plateau de Rope Line"></div>
+                    </div>
                 </div>
 
                 <div id="magicSortGame" class="card magicsort-card games-panel">
@@ -1223,7 +1275,7 @@
                             <strong id="magicSortSolvedDisplay" class="magicsort-counter-value">0 / 0</strong>
                         </div>
 
-                        <button id="magicSortRestartButton" type="button" class="magicsort-face">Nouveau tri</button>
+                        <button id="magicSortRestartButton" type="button" class="magicsort-face" hidden>Nouveau tri</button>
 
                         <div class="magicsort-counter-block">
                             <span class="magicsort-counter-label">Coups</span>
@@ -1232,7 +1284,20 @@
                     </div>
 
                     <p id="magicSortHelpText" class="magicsort-help">Trie les couleurs dans les fioles jusqu'à n'avoir qu'une couleur par fiole.</p>
-                    <div id="magicSortBoard" class="magicsort-board" aria-label="Plateau de Magic Sort"></div>
+                    <div id="magicSortTable" class="magicsort-table">
+                        <div id="magicSortMenuOverlay" class="magicsort-menu-overlay">
+                            <div class="magicsort-menu-card">
+                                <span id="magicSortMenuEyebrow" class="magicsort-menu-eyebrow">Fioles du vieux navigateur</span>
+                                <h3 id="magicSortMenuTitle" class="magicsort-menu-title">Magic Sort</h3>
+                                <p id="magicSortMenuText" class="magicsort-menu-text">Verse les couleurs dans les fioles jusqu&rsquo;à ce que chacune n&rsquo;en contienne plus qu&rsquo;une.</p>
+                                <div class="magicsort-menu-actions">
+                                    <button id="magicSortMenuActionButton" type="button" class="game-menu-primary-button">Lancer le tri</button>
+                                    <button id="magicSortMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="magicSortBoard" class="magicsort-board" aria-label="Plateau de Magic Sort"></div>
+                    </div>
                 </div>
 
                 <div id="mentalMathGame" class="card mentalmath-card games-panel">
@@ -1295,7 +1360,7 @@
                             <strong id="candyCrushScoreDisplay" class="candycrush-counter-value">0</strong>
                         </div>
 
-                        <button id="candyCrushRestartButton" type="button" class="candycrush-face">Nouvelle cale</button>
+                        <button id="candyCrushRestartButton" type="button" class="candycrush-face" hidden>Nouvelle cale</button>
 
                         <div class="candycrush-counter-block">
                             <span class="candycrush-counter-label">Coups</span>
@@ -1304,7 +1369,20 @@
                     </div>
 
                     <p id="candyCrushHelpText" class="candycrush-help">Glisse les bonbons marins pour former des lignes de 3 ou plus.</p>
-                    <div id="candyCrushBoard" class="candycrush-board" aria-label="Plateau de Coin Crush"></div>
+                    <div id="candyCrushTable" class="candycrush-table">
+                        <div id="candyCrushMenuOverlay" class="candycrush-menu-overlay">
+                            <div class="candycrush-menu-card">
+                                <span id="candyCrushMenuEyebrow" class="candycrush-menu-eyebrow">Cale à confiseries marines</span>
+                                <h3 id="candyCrushMenuTitle" class="candycrush-menu-title">Coin Crush</h3>
+                                <p id="candyCrushMenuText" class="candycrush-menu-text">Glisse les trésors marins pour former des alignements de 3 ou plus avant d&rsquo;épuiser ta réserve de coups.</p>
+                                <div class="candycrush-menu-actions">
+                                    <button id="candyCrushMenuActionButton" type="button" class="game-menu-primary-button">Lancer la cale</button>
+                                    <button id="candyCrushMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="candyCrushBoard" class="candycrush-board" aria-label="Plateau de Coin Crush"></div>
+                    </div>
                 </div>
 
                 <div id="harborRunGame" class="card harborrun-card games-panel">
@@ -1384,26 +1462,39 @@
                         </div>
                     </div>
                     <p id="coinClickerHelpText" class="coinclicker-help">Clique sur la pièce de la baie, puis achète des améliorations pour gagner plus vite.</p>
-                    <div class="coinclicker-layout">
-                        <div class="coinclicker-mint">
-                            <button id="coinClickerButton" type="button" class="coin-clicker-button" aria-label="Cliquer pour gagner des pieces">
-                                <span class="coin-clicker-skull" aria-hidden="true">☠</span>
-                                <span class="coin-clicker-rim" aria-hidden="true"></span>
-                                <span class="coin-clicker-title">Baie Coin</span>
-                                <span class="coin-clicker-subtitle">Clique pour piller</span>
-                            </button>
-                            <div class="coinclicker-stats">
-                                <div class="coinclicker-stat-card">
-                                    <span class="coinclicker-stat-label">Multiplicateur</span>
-                                    <strong id="coinClickerMultiplierDisplay" class="coinclicker-stat-value">x1.00</strong>
-                                </div>
-                                <div class="coinclicker-stat-card">
-                                    <span class="coinclicker-stat-label">Auto / sec</span>
-                                    <strong id="coinClickerAutoDisplay" class="coinclicker-stat-value">0</strong>
+                    <div id="coinClickerTable" class="coinclicker-table">
+                        <div id="coinClickerMenuOverlay" class="coinclicker-menu-overlay">
+                            <div class="coinclicker-menu-card">
+                                <span id="coinClickerMenuEyebrow" class="coinclicker-menu-eyebrow">Trésor du capitaine</span>
+                                <h3 id="coinClickerMenuTitle" class="coinclicker-menu-title">Coin Clicker</h3>
+                                <p id="coinClickerMenuText" class="coinclicker-menu-text">Clique sur la pièce pour remplir le coffre, puis automatise ton butin grâce à la boutique du navire.</p>
+                                <div class="coinclicker-menu-actions">
+                                    <button id="coinClickerMenuActionButton" type="button" class="game-menu-primary-button">Lancer la fortune</button>
+                                    <button id="coinClickerMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
                         </div>
-                        <div id="coinClickerShop" class="coinclicker-shop"></div>
+                        <div class="coinclicker-layout">
+                            <div class="coinclicker-mint">
+                                <button id="coinClickerButton" type="button" class="coin-clicker-button" aria-label="Cliquer pour gagner des pieces">
+                                    <span class="coin-clicker-skull" aria-hidden="true">☠</span>
+                                    <span class="coin-clicker-rim" aria-hidden="true"></span>
+                                    <span class="coin-clicker-title">Baie Coin</span>
+                                    <span class="coin-clicker-subtitle">Clique pour piller</span>
+                                </button>
+                                <div class="coinclicker-stats">
+                                    <div class="coinclicker-stat-card">
+                                        <span class="coinclicker-stat-label">Multiplicateur</span>
+                                        <strong id="coinClickerMultiplierDisplay" class="coinclicker-stat-value">x1.00</strong>
+                                    </div>
+                                    <div class="coinclicker-stat-card">
+                                        <span class="coinclicker-stat-label">Auto / sec</span>
+                                        <strong id="coinClickerAutoDisplay" class="coinclicker-stat-value">0</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="coinClickerShop" class="coinclicker-shop"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1625,25 +1716,38 @@
                             <span class="blockblast-counter-label">Score</span>
                             <strong id="blockBlastScoreDisplay" class="blockblast-counter-value">0</strong>
                         </div>
-                        <button id="blockBlastStartButton" type="button" class="blockblast-face">Nouvelle mar&eacute;e</button>
+                        <button id="blockBlastStartButton" type="button" class="blockblast-face" hidden>Nouvelle mar&eacute;e</button>
                         <div class="blockblast-counter-block">
                             <span class="blockblast-counter-label">Combo</span>
                             <strong id="blockBlastComboDisplay" class="blockblast-counter-value">x1</strong>
                         </div>
                     </div>
                     <p id="blockBlastHelpText" class="blockblast-help">Fais glisser une forme sur le plateau. Les lignes et colonnes complètes disparaissent.</p>
-                    <div class="blockblast-shell">
-                        <div id="blockBlastBoard" class="blockblast-board" aria-label="Plateau de Block Line"></div>
-                        <aside class="blockblast-sidebar">
-                            <div class="blockblast-sidebar-card">
-                                <span class="blockblast-sidebar-label">Reserve</span>
-                                <div id="blockBlastPieces" class="blockblast-pieces" aria-label="Pièces de Block Line"></div>
+                    <div id="blockBlastTable" class="blockblast-table">
+                        <div id="blockBlastMenuOverlay" class="blockblast-menu-overlay">
+                            <div class="blockblast-menu-card">
+                                <span id="blockBlastMenuEyebrow" class="blockblast-menu-eyebrow">Ligne de cargaison</span>
+                                <h3 id="blockBlastMenuTitle" class="blockblast-menu-title">Block Line</h3>
+                                <p id="blockBlastMenuText" class="blockblast-menu-text">Pose les pièces de cargaison sur le pont pour former des lignes et colonnes complètes. Tiens le plus longtemps possible.</p>
+                                <div class="blockblast-menu-actions">
+                                    <button id="blockBlastMenuActionButton" type="button" class="game-menu-primary-button">Lancer la marée</button>
+                                    <button id="blockBlastMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
                             </div>
-                            <div class="blockblast-sidebar-card">
-                                <span class="blockblast-sidebar-label">Objectif</span>
-                                <p class="blockblast-sidebar-text">Garde le pont libre le plus longtemps possible et enchaine les effacements pour faire grimper le score.</p>
-                            </div>
-                        </aside>
+                        </div>
+                        <div class="blockblast-shell">
+                            <div id="blockBlastBoard" class="blockblast-board" aria-label="Plateau de Block Line"></div>
+                            <aside class="blockblast-sidebar">
+                                <div class="blockblast-sidebar-card">
+                                    <span class="blockblast-sidebar-label">Reserve</span>
+                                    <div id="blockBlastPieces" class="blockblast-pieces" aria-label="Pièces de Block Line"></div>
+                                </div>
+                                <div class="blockblast-sidebar-card">
+                                    <span class="blockblast-sidebar-label">Objectif</span>
+                                    <p class="blockblast-sidebar-text">Garde le pont libre le plus longtemps possible et enchaine les effacements pour faire grimper le score.</p>
+                                </div>
+                            </aside>
+                        </div>
                     </div>
                 </div>
 

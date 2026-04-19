@@ -234,11 +234,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const game2048MenuActionButton = document.getElementById('game2048MenuActionButton');
     const game2048MenuRulesButton = document.getElementById('game2048MenuRulesButton');
     const aimBoard = document.getElementById('aimBoard');
+    const aimTable = document.getElementById('aimTable');
     const aimScoreDisplay = document.getElementById('aimScoreDisplay');
     const aimTimerDisplay = document.getElementById('aimTimerDisplay');
     const aimBestScoreDisplay = document.getElementById('aimBestScoreDisplay');
     const aimStartButton = document.getElementById('aimStartButton');
     const aimDurationButtons = document.querySelectorAll('[data-aim-duration]');
+    const aimMenuOverlay = document.getElementById('aimMenuOverlay');
+    const aimMenuEyebrow = document.getElementById('aimMenuEyebrow');
+    const aimMenuTitle = document.getElementById('aimMenuTitle');
+    const aimMenuText = document.getElementById('aimMenuText');
+    const aimMenuActionButton = document.getElementById('aimMenuActionButton');
+    const aimMenuRulesButton = document.getElementById('aimMenuRulesButton');
     const memoryBoard = document.getElementById('memoryBoard');
     const memoryPairsDisplay = document.getElementById('memoryPairsDisplay');
     const memoryMovesDisplay = document.getElementById('memoryMovesDisplay');
@@ -310,10 +317,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const solitaireWaste = document.getElementById('solitaireWaste');
     const solitaireFoundations = document.getElementById('solitaireFoundations');
     const solitaireTableau = document.getElementById('solitaireTableau');
+    const solitaireTable = document.getElementById('solitaireTable');
     const solitaireStockDisplay = document.getElementById('solitaireStockDisplay');
     const solitaireFoundationsDisplay = document.getElementById('solitaireFoundationsDisplay');
     const solitaireRestartButton = document.getElementById('solitaireRestartButton');
     const solitaireHelpText = document.getElementById('solitaireHelpText');
+    const solitaireMenuOverlay = document.getElementById('solitaireMenuOverlay');
+    const solitaireMenuEyebrow = document.getElementById('solitaireMenuEyebrow');
+    const solitaireMenuTitle = document.getElementById('solitaireMenuTitle');
+    const solitaireMenuText = document.getElementById('solitaireMenuText');
+    const solitaireMenuActionButton = document.getElementById('solitaireMenuActionButton');
+    const solitaireMenuRulesButton = document.getElementById('solitaireMenuRulesButton');
     const connect4Board = document.getElementById('connect4Board');
     const connect4TurnDisplay = document.getElementById('connect4TurnDisplay');
     const connect4ScoreDisplay = document.getElementById('connect4ScoreDisplay');
@@ -327,12 +341,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const connect4MenuRulesButton = document.getElementById('connect4MenuRulesButton');
     const connect4ModeButtons = document.querySelectorAll('[data-connect4-mode]');
     const rhythmBoard = document.getElementById('rhythmBoard');
+    const rhythmTable = document.getElementById('rhythmTable');
     const rhythmScoreDisplay = document.getElementById('rhythmScoreDisplay');
     const rhythmStreakDisplay = document.getElementById('rhythmStreakDisplay');
     const rhythmMissesDisplay = document.getElementById('rhythmMissesDisplay');
     const rhythmTimerDisplay = document.getElementById('rhythmTimerDisplay');
     const rhythmHelpText = document.getElementById('rhythmHelpText');
     const rhythmStartButton = document.getElementById('rhythmStartButton');
+    const rhythmMenuOverlay = document.getElementById('rhythmMenuOverlay');
+    const rhythmMenuEyebrow = document.getElementById('rhythmMenuEyebrow');
+    const rhythmMenuTitle = document.getElementById('rhythmMenuTitle');
+    const rhythmMenuText = document.getElementById('rhythmMenuText');
+    const rhythmMenuActionButton = document.getElementById('rhythmMenuActionButton');
+    const rhythmMenuRulesButton = document.getElementById('rhythmMenuRulesButton');
     const flappyBoard = document.getElementById('flappyBoard');
     const flappyScoreDisplay = document.getElementById('flappyScoreDisplay');
     const flappyBestDisplay = document.getElementById('flappyBestDisplay');
@@ -346,16 +367,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const flappyMenuRulesButton = document.getElementById('flappyMenuRulesButton');
     const flowFreeGame = document.getElementById('flowFreeGame');
     const flowFreeBoard = document.getElementById('flowFreeBoard');
+    const flowFreeTable = document.getElementById('flowFreeTable');
     const flowFreePairsDisplay = document.getElementById('flowFreePairsDisplay');
     const flowFreeMovesDisplay = document.getElementById('flowFreeMovesDisplay');
     const flowFreeHelpText = document.getElementById('flowFreeHelpText');
     const flowFreeRestartButton = document.getElementById('flowFreeRestartButton');
+    const flowFreeMenuOverlay = document.getElementById('flowFreeMenuOverlay');
+    const flowFreeMenuEyebrow = document.getElementById('flowFreeMenuEyebrow');
+    const flowFreeMenuTitle = document.getElementById('flowFreeMenuTitle');
+    const flowFreeMenuText = document.getElementById('flowFreeMenuText');
+    const flowFreeMenuActionButton = document.getElementById('flowFreeMenuActionButton');
+    const flowFreeMenuRulesButton = document.getElementById('flowFreeMenuRulesButton');
     const magicSortGame = document.getElementById('magicSortGame');
     const magicSortBoard = document.getElementById('magicSortBoard');
+    const magicSortTable = document.getElementById('magicSortTable');
     const magicSortSolvedDisplay = document.getElementById('magicSortSolvedDisplay');
     const magicSortMovesDisplay = document.getElementById('magicSortMovesDisplay');
     const magicSortHelpText = document.getElementById('magicSortHelpText');
     const magicSortRestartButton = document.getElementById('magicSortRestartButton');
+    const magicSortMenuOverlay = document.getElementById('magicSortMenuOverlay');
+    const magicSortMenuEyebrow = document.getElementById('magicSortMenuEyebrow');
+    const magicSortMenuTitle = document.getElementById('magicSortMenuTitle');
+    const magicSortMenuText = document.getElementById('magicSortMenuText');
+    const magicSortMenuActionButton = document.getElementById('magicSortMenuActionButton');
+    const magicSortMenuRulesButton = document.getElementById('magicSortMenuRulesButton');
     const mentalMathGame = document.getElementById('mentalMathGame');
     const mentalMathScoreDisplay = document.getElementById('mentalMathScoreDisplay');
     const mentalMathRoundDisplay = document.getElementById('mentalMathRoundDisplay');
@@ -375,10 +410,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const mentalMathFeedback = document.getElementById('mentalMathFeedback');
     const candyCrushGame = document.getElementById('candyCrushGame');
     const candyCrushBoard = document.getElementById('candyCrushBoard');
+    const candyCrushTable = document.getElementById('candyCrushTable');
     const candyCrushScoreDisplay = document.getElementById('candyCrushScoreDisplay');
     const candyCrushMovesDisplay = document.getElementById('candyCrushMovesDisplay');
     const candyCrushHelpText = document.getElementById('candyCrushHelpText');
     const candyCrushRestartButton = document.getElementById('candyCrushRestartButton');
+    const candyCrushMenuOverlay = document.getElementById('candyCrushMenuOverlay');
+    const candyCrushMenuEyebrow = document.getElementById('candyCrushMenuEyebrow');
+    const candyCrushMenuTitle = document.getElementById('candyCrushMenuTitle');
+    const candyCrushMenuText = document.getElementById('candyCrushMenuText');
+    const candyCrushMenuActionButton = document.getElementById('candyCrushMenuActionButton');
+    const candyCrushMenuRulesButton = document.getElementById('candyCrushMenuRulesButton');
     const harborRunGame = document.getElementById('harborRunGame');
     const harborRunBoard = document.getElementById('harborRunBoard');
     const harborRunTable = document.getElementById('harborRunTable');
@@ -406,6 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const stackerMenuActionButton = document.getElementById('stackerMenuActionButton');
     const stackerMenuRulesButton = document.getElementById('stackerMenuRulesButton');
     const coinClickerGame = document.getElementById('coinClickerGame');
+    const coinClickerTable = document.getElementById('coinClickerTable');
     const coinClickerScoreDisplay = document.getElementById('coinClickerScoreDisplay');
     const coinClickerPowerDisplay = document.getElementById('coinClickerPowerDisplay');
     const coinClickerMultiplierDisplay = document.getElementById('coinClickerMultiplierDisplay');
@@ -414,6 +457,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const coinClickerButton = document.getElementById('coinClickerButton');
     const coinClickerShop = document.getElementById('coinClickerShop');
     const coinClickerResetButton = document.getElementById('coinClickerResetButton');
+    const coinClickerMenuOverlay = document.getElementById('coinClickerMenuOverlay');
+    const coinClickerMenuEyebrow = document.getElementById('coinClickerMenuEyebrow');
+    const coinClickerMenuTitle = document.getElementById('coinClickerMenuTitle');
+    const coinClickerMenuText = document.getElementById('coinClickerMenuText');
+    const coinClickerMenuActionButton = document.getElementById('coinClickerMenuActionButton');
+    const coinClickerMenuRulesButton = document.getElementById('coinClickerMenuRulesButton');
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -502,11 +551,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const breakoutMenuRulesButton = document.getElementById('breakoutMenuRulesButton');
     const blockBlastGame = document.getElementById('blockBlastGame');
     const blockBlastBoard = document.getElementById('blockBlastBoard');
+    const blockBlastTable = document.getElementById('blockBlastTable');
     const blockBlastPieces = document.getElementById('blockBlastPieces');
     const blockBlastScoreDisplay = document.getElementById('blockBlastScoreDisplay');
     const blockBlastComboDisplay = document.getElementById('blockBlastComboDisplay');
     const blockBlastHelpText = document.getElementById('blockBlastHelpText');
     const blockBlastStartButton = document.getElementById('blockBlastStartButton');
+    const blockBlastMenuOverlay = document.getElementById('blockBlastMenuOverlay');
+    const blockBlastMenuEyebrow = document.getElementById('blockBlastMenuEyebrow');
+    const blockBlastMenuTitle = document.getElementById('blockBlastMenuTitle');
+    const blockBlastMenuText = document.getElementById('blockBlastMenuText');
+    const blockBlastMenuActionButton = document.getElementById('blockBlastMenuActionButton');
+    const blockBlastMenuRulesButton = document.getElementById('blockBlastMenuRulesButton');
     const unoGame = document.getElementById('unoGame');
     const unoModeButtons = document.querySelectorAll('[data-uno-mode]');
     const unoModeDisplay = document.getElementById('unoModeDisplay');
@@ -976,6 +1032,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacmanTouchStartY = null;
     let tetrisTouchStartX = null;
     let tetrisTouchStartY = null;
+    let aimMenuVisible = true;
+    let aimMenuShowingRules = false;
+    let aimMenuClosing = false;
+    let aimMenuEntering = false;
+    let aimMenuResult = null;
     let aimTargets = [];
     let aimScore = 0;
     let aimBestScore = Number(window.localStorage.getItem(AIM_BEST_KEY)) || 0;
@@ -1063,6 +1124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let solitaireFoundationsState = { spades: [], hearts: [], clubs: [], diamonds: [] };
     let solitaireTableauColumns = [];
     let solitaireSelectedSource = null;
+    let solitaireMenuVisible = true;
+    let solitaireMenuShowingRules = false;
+    let solitaireMenuClosing = false;
+    let solitaireMenuEntering = false;
+    let solitaireMenuResult = null;
     let connect4BoardState = [];
     let connect4CurrentPlayer = 'player';
     let connect4Scores = { player: 0, ai: 0 };
@@ -1079,6 +1145,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let connect4MenuEntering = false;
     let connect4MenuResult = false;
     let connect4OutcomeMenuTimeout = null;
+    let rhythmMenuVisible = true;
+    let rhythmMenuShowingRules = false;
+    let rhythmMenuClosing = false;
+    let rhythmMenuEntering = false;
+    let rhythmMenuResult = null;
     let rhythmNotes = [];
     let rhythmScore = 0;
     let rhythmStreak = 0;
@@ -1122,6 +1193,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let flowFreePaths = new Map();
     let flowFreeCompleted = new Set();
     let flowFreeMoves = 0;
+    let flowFreeMenuVisible = true;
+    let flowFreeMenuShowingRules = false;
+    let flowFreeMenuClosing = false;
+    let flowFreeMenuEntering = false;
+    let flowFreeMenuResult = null;
     let flowFreeActiveColor = null;
     let flowFreePointerDown = false;
     let flowFreeRenderFrame = null;
@@ -1136,6 +1212,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let magicSortTubes = [];
     let magicSortSelectedTube = null;
     let magicSortMoves = 0;
+    let magicSortMenuVisible = true;
+    let magicSortMenuShowingRules = false;
+    let magicSortMenuClosing = false;
+    let magicSortMenuEntering = false;
+    let magicSortMenuResult = null;
     let mentalMathScore = 0;
     let mentalMathCurrentQuestion = null;
     let mentalMathTimeRemainingMs = MENTAL_MATH_START_TIME_MS;
@@ -1153,6 +1234,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let candyCrushMoves = 18;
     let candyCrushAnimating = false;
     let candyCrushPointerStart = null;
+    let candyCrushMenuVisible = true;
+    let candyCrushMenuShowingRules = false;
+    let candyCrushMenuClosing = false;
+    let candyCrushMenuEntering = false;
+    let candyCrushMenuResult = null;
     let harborRunLane = 1;
     let harborRunVisualLane = 1;
     let harborRunObstacles = [];
@@ -1182,6 +1268,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let stackerMenuClosing = false;
     let stackerMenuEntering = false;
     let stackerMenuResult = null;
+    let coinClickerMenuVisible = true;
+    let coinClickerMenuShowingRules = false;
+    let coinClickerMenuClosing = false;
+    let coinClickerMenuEntering = false;
     let coinClickerState = {
         coins: 0,
         clickPower: 1,
@@ -1266,6 +1356,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let blockBlastPreview = null;
     let blockBlastDragState = null;
     let blockBlastSuppressClick = false;
+    let blockBlastMenuVisible = true;
+    let blockBlastMenuShowingRules = false;
+    let blockBlastMenuClosing = false;
+    let blockBlastMenuEntering = false;
+    let blockBlastMenuResult = null;
     let unoMode = 'solo';
     let unoState = null;
     let unoAiTimeout = null;
@@ -3369,6 +3464,14 @@ document.addEventListener('DOMContentLoaded', () => {
         syncGameMenuOverlayBounds(tetrisMenuOverlay, tetrisTable);
         syncGameMenuOverlayBounds(battleshipMenuOverlay, battleshipTable);
         syncGameMenuOverlayBounds(harborRunMenuOverlay, harborRunTable);
+        syncGameMenuOverlayBounds(coinClickerMenuOverlay, coinClickerTable);
+        syncGameMenuOverlayBounds(candyCrushMenuOverlay, candyCrushTable);
+        syncGameMenuOverlayBounds(flowFreeMenuOverlay, flowFreeTable);
+        syncGameMenuOverlayBounds(magicSortMenuOverlay, magicSortTable);
+        syncGameMenuOverlayBounds(blockBlastMenuOverlay, blockBlastTable);
+        syncGameMenuOverlayBounds(aimMenuOverlay, aimTable);
+        syncGameMenuOverlayBounds(rhythmMenuOverlay, rhythmTable);
+        syncGameMenuOverlayBounds(solitaireMenuOverlay, solitaireTable);
     }
 
     function getBoardMoveAnimationMetadata(lastMove, row, col, flip = false) {
@@ -4188,6 +4291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'aim' && nextTab !== 'aim') {
+            aimMenuVisible = true;
             initializeAim();
         }
 
@@ -4215,6 +4319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'solitaire' && nextTab !== 'solitaire') {
+            solitaireMenuVisible = true;
             initializeSolitaire();
         }
 
@@ -4223,6 +4328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'rhythm' && nextTab !== 'rhythm') {
+            rhythmMenuVisible = true;
             initializeRhythm();
         }
 
@@ -4231,10 +4337,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'flowFree' && nextTab !== 'flowFree') {
+            flowFreeMenuVisible = true;
             initializeFlowFree();
         }
 
         if (previousTab === 'magicSort' && nextTab !== 'magicSort') {
+            magicSortMenuVisible = true;
             initializeMagicSort();
         }
 
@@ -4243,6 +4351,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'candyCrush' && nextTab !== 'candyCrush') {
+            candyCrushMenuVisible = true;
             initializeCandyCrush();
         }
 
@@ -4258,6 +4367,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (previousTab === 'coinClicker' && nextTab !== 'coinClicker') {
             saveCoinClickerState();
+            coinClickerMenuVisible = true;
         }
 
         if (previousTab === 'chess' && nextTab !== 'chess') {
@@ -6899,7 +7009,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (foundationCount === 52) {
             solitaireHelpText.textContent = 'Le pont est rangé. Toutes les fondations sont complètes.';
-            openGameOverModal('Victoire', 'Tu as réussi le solitaire du navire.');
+            revealSolitaireOutcomeMenu(
+                'Fondations complètes',
+                'Les 52 cartes sont rangées sur les fondations. Belle traversée, capitaine.',
+                'Cabine rangée'
+            );
         }
     }
 
@@ -7009,6 +7123,50 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     }
 
+    function getSolitaireRulesText() {
+        return 'Clique une carte pour la s\u00e9lectionner puis clique sa destination. Sur les colonnes, alterne couleurs rouge/noir en descendant. Monte les quatre fondations de l\u2019As au Roi par couleur. La pioche se recycle quand elle est \u00e9puis\u00e9e.';
+    }
+
+    function renderSolitaireMenu() {
+        if (!solitaireMenuOverlay || !solitaireTable) return;
+        syncGameMenuOverlayBounds(solitaireMenuOverlay, solitaireTable);
+        solitaireMenuOverlay.classList.toggle('hidden', !solitaireMenuVisible);
+        solitaireMenuOverlay.classList.toggle('is-closing', solitaireMenuClosing);
+        solitaireMenuOverlay.classList.toggle('is-entering', solitaireMenuEntering);
+        solitaireTable.classList.toggle('is-menu-open', solitaireMenuVisible);
+        if (!solitaireMenuVisible) return;
+        const hasResult = Boolean(solitaireMenuResult);
+        if (solitaireMenuEyebrow) solitaireMenuEyebrow.textContent = solitaireMenuShowingRules ? 'R\u00e8gles' : (hasResult ? solitaireMenuResult.eyebrow : 'Cabine du capitaine');
+        if (solitaireMenuTitle) solitaireMenuTitle.textContent = solitaireMenuShowingRules ? 'Rappel rapide' : (hasResult ? solitaireMenuResult.title : 'Solitaire');
+        if (solitaireMenuText) solitaireMenuText.textContent = solitaireMenuShowingRules ? getSolitaireRulesText() : (hasResult ? solitaireMenuResult.text : 'Trie les cartes du capitaine dans les quatre fondations en suivant couleurs et valeurs.');
+        if (solitaireMenuActionButton) solitaireMenuActionButton.textContent = solitaireMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la donne' : 'Lancer la donne');
+        if (solitaireMenuRulesButton) { solitaireMenuRulesButton.textContent = 'R\u00e8gles'; solitaireMenuRulesButton.hidden = solitaireMenuShowingRules; }
+    }
+
+    function closeSolitaireMenu() {
+        solitaireMenuClosing = true;
+        renderSolitaireMenu();
+        window.setTimeout(() => {
+            solitaireMenuClosing = false;
+            solitaireMenuVisible = false;
+            solitaireMenuShowingRules = false;
+            solitaireMenuEntering = false;
+            solitaireMenuResult = null;
+            renderSolitaireMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealSolitaireOutcomeMenu(title, text, eyebrow) {
+        solitaireMenuVisible = true;
+        solitaireMenuResult = { title, text, eyebrow };
+        solitaireMenuShowingRules = false;
+        solitaireMenuClosing = false;
+        solitaireMenuEntering = true;
+        if (solitaireHelpText) solitaireHelpText.textContent = text;
+        renderSolitaireMenu();
+        window.setTimeout(() => { solitaireMenuEntering = false; renderSolitaireMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeSolitaire() {
         closeGameOverModal();
         const deck = createSolitaireDeck();
@@ -7028,7 +7186,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         solitaireStockCards = deck.map((card) => ({ ...card, faceUp: false }));
         solitaireHelpText.textContent = 'Clique une carte pour la sélectionner puis clique sa destination. La pioche se recycle quand elle est vide.';
+        solitaireMenuResult = null;
+        solitaireMenuShowingRules = false;
+        solitaireMenuClosing = false;
+        solitaireMenuEntering = false;
         renderSolitaire();
+        renderSolitaireMenu();
     }
 
     function updateConnect4Hud() {
@@ -7589,6 +7752,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function getRhythmRulesText() {
+        return `Appuie sur ${RHYTHM_LANES.join(', ')} au bon moment quand la note croise la ligne d\u2019impact. Encha\u00eene les touches parfaites pour faire monter la s\u00e9rie. Au-del\u00e0 de 10 fautes, la cadence s\u2019arr\u00eate.`;
+    }
+
+    function renderRhythmMenu() {
+        if (!rhythmMenuOverlay || !rhythmTable) return;
+        syncGameMenuOverlayBounds(rhythmMenuOverlay, rhythmTable);
+        rhythmMenuOverlay.classList.toggle('hidden', !rhythmMenuVisible);
+        rhythmMenuOverlay.classList.toggle('is-closing', rhythmMenuClosing);
+        rhythmMenuOverlay.classList.toggle('is-entering', rhythmMenuEntering);
+        rhythmTable.classList.toggle('is-menu-open', rhythmMenuVisible);
+        if (!rhythmMenuVisible) return;
+        const hasResult = Boolean(rhythmMenuResult);
+        if (rhythmMenuEyebrow) rhythmMenuEyebrow.textContent = rhythmMenuShowingRules ? 'R\u00e8gles' : (hasResult ? rhythmMenuResult.eyebrow : 'Cadence des marins');
+        if (rhythmMenuTitle) rhythmMenuTitle.textContent = rhythmMenuShowingRules ? 'Rappel rapide' : (hasResult ? rhythmMenuResult.title : 'Rythme');
+        if (rhythmMenuText) rhythmMenuText.textContent = rhythmMenuShowingRules ? getRhythmRulesText() : (hasResult ? rhythmMenuResult.text : 'Garde le tempo avec Q, S et D pour accompagner la chanson des marins. Trop de fautes et la cadence s\u2019arr\u00eate.');
+        if (rhythmMenuActionButton) rhythmMenuActionButton.textContent = rhythmMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la cadence' : 'Lancer la cadence');
+        if (rhythmMenuRulesButton) { rhythmMenuRulesButton.textContent = 'R\u00e8gles'; rhythmMenuRulesButton.hidden = rhythmMenuShowingRules; }
+    }
+
+    function closeRhythmMenu() {
+        rhythmMenuClosing = true;
+        renderRhythmMenu();
+        window.setTimeout(() => {
+            rhythmMenuClosing = false;
+            rhythmMenuVisible = false;
+            rhythmMenuShowingRules = false;
+            rhythmMenuEntering = false;
+            rhythmMenuResult = null;
+            renderRhythmMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealRhythmOutcomeMenu(title, text, eyebrow) {
+        rhythmMenuVisible = true;
+        rhythmMenuResult = { title, text, eyebrow };
+        rhythmMenuShowingRules = false;
+        rhythmMenuClosing = false;
+        rhythmMenuEntering = true;
+        if (rhythmHelpText) rhythmHelpText.textContent = text;
+        renderRhythmMenu();
+        window.setTimeout(() => { rhythmMenuEntering = false; renderRhythmMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeRhythm() {
         stopRhythm();
         closeGameOverModal();
@@ -7600,10 +7807,15 @@ document.addEventListener('DOMContentLoaded', () => {
         rhythmStartedAt = 0;
         rhythmLastFrame = 0;
         rhythmSpawnTimer = 0;
+        rhythmMenuResult = null;
+        rhythmMenuShowingRules = false;
+        rhythmMenuClosing = false;
+        rhythmMenuEntering = false;
         rhythmHelpText.textContent = `Protège le navire avec ${RHYTHM_LANES.join(', ')}. Tiens jusqu'à la fin sans trop rater.`;
         rhythmStartButton.textContent = 'Lancer la cadence';
         updateRhythmHud();
         renderRhythmBoard();
+        renderRhythmMenu();
     }
 
     function triggerRhythmBoardEffect(effectClass) {
@@ -7667,11 +7879,12 @@ document.addEventListener('DOMContentLoaded', () => {
         stopRhythm();
         rhythmHelpText.textContent = reason === 'misses'
             ? `La coque a trop souffert. Score ${rhythmScore}. Record ${rhythmBestScore}.`
-            : `Traversee termin\u00e9e. Score ${rhythmScore}. Record ${rhythmBestScore}.`;
+            : `Traversée terminée. Score ${rhythmScore}. Record ${rhythmBestScore}.`;
         rhythmStartButton.textContent = 'Relancer la cadence';
-        openGameOverModal(
-            reason === 'misses' ? 'Navire submerge' : 'Fin de cadence',
-            `Score : ${rhythmScore}. Record : ${rhythmBestScore}.`
+        revealRhythmOutcomeMenu(
+            reason === 'misses' ? 'Navire submergé' : 'Fin de cadence',
+            `Score : ${rhythmScore}. Record : ${rhythmBestScore}.`,
+            reason === 'misses' ? 'Coque noyée' : 'Marins fatigués'
         );
     }
 
@@ -8228,9 +8441,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateAimHud();
-        openGameOverModal(
-            'Fin de la bordée',
-            `Tu as inscrit ${aimScore} touches avant la fin de la marée.`
+        revealAimOutcomeMenu(
+            'Bordée terminée',
+            `Tu as inscrit ${aimScore} touches avant la fin de la marée. Record : ${aimBestScore}.`,
+            'Canon calé'
         );
     }
 
@@ -8319,6 +8533,49 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function getAimRulesText() {
+        return 'Clique chaque oursin qui appara\u00eet dans la baie avant qu\u2019il ne disparaisse. Un tir sur l\u2019eau t\u2019enl\u00e8ve des points. Choisis la dur\u00e9e de la bord\u00e9e (20 / 40 / 60 s) et marque le plus de touches avant la fin.';
+    }
+
+    function renderAimMenu() {
+        if (!aimMenuOverlay || !aimTable) return;
+        syncGameMenuOverlayBounds(aimMenuOverlay, aimTable);
+        aimMenuOverlay.classList.toggle('hidden', !aimMenuVisible);
+        aimMenuOverlay.classList.toggle('is-closing', aimMenuClosing);
+        aimMenuOverlay.classList.toggle('is-entering', aimMenuEntering);
+        aimTable.classList.toggle('is-menu-open', aimMenuVisible);
+        if (!aimMenuVisible) return;
+        const hasResult = Boolean(aimMenuResult);
+        if (aimMenuEyebrow) aimMenuEyebrow.textContent = aimMenuShowingRules ? 'R\u00e8gles' : (hasResult ? aimMenuResult.eyebrow : 'Canon de bord');
+        if (aimMenuTitle) aimMenuTitle.textContent = aimMenuShowingRules ? 'Rappel rapide' : (hasResult ? aimMenuResult.title : 'OursAim');
+        if (aimMenuText) aimMenuText.textContent = aimMenuShowingRules ? getAimRulesText() : (hasResult ? aimMenuResult.text : 'Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l\u2019eau te co\u00fbte des points.');
+        if (aimMenuActionButton) aimMenuActionButton.textContent = aimMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la bord\u00e9e' : 'Lancer la bord\u00e9e');
+        if (aimMenuRulesButton) { aimMenuRulesButton.textContent = 'R\u00e8gles'; aimMenuRulesButton.hidden = aimMenuShowingRules; }
+    }
+
+    function closeAimMenu() {
+        aimMenuClosing = true;
+        renderAimMenu();
+        window.setTimeout(() => {
+            aimMenuClosing = false;
+            aimMenuVisible = false;
+            aimMenuShowingRules = false;
+            aimMenuEntering = false;
+            aimMenuResult = null;
+            renderAimMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealAimOutcomeMenu(title, text, eyebrow) {
+        aimMenuVisible = true;
+        aimMenuResult = { title, text, eyebrow };
+        aimMenuShowingRules = false;
+        aimMenuClosing = false;
+        aimMenuEntering = true;
+        renderAimMenu();
+        window.setTimeout(() => { aimMenuEntering = false; renderAimMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeAim() {
         stopAimRound();
         if (aimHitEffectTimeout) {
@@ -8334,10 +8591,15 @@ document.addEventListener('DOMContentLoaded', () => {
         aimScore = 0;
         aimTimeRemaining = aimRoundSeconds;
         aimRoundCompleted = false;
+        aimMenuResult = null;
+        aimMenuShowingRules = false;
+        aimMenuClosing = false;
+        aimMenuEntering = false;
         aimBoard.classList.remove('is-rumbling', 'is-splashing');
         createAimTargets();
         updateAimHud();
         renderAimBoard();
+        renderAimMenu();
     }
 
     function setAimRoundDuration(seconds) {
@@ -11389,6 +11651,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 220);
     }
 
+    function getFlowFreeRulesText() {
+        return 'Clique une bou\u00e9e et trace un cordage color\u00e9 jusqu\u2019\u00e0 sa jumelle sans croiser les autres courants. Remplis toutes les cases du quai pour terminer la carte.';
+    }
+
+    function renderFlowFreeMenu() {
+        if (!flowFreeMenuOverlay || !flowFreeTable) return;
+        syncGameMenuOverlayBounds(flowFreeMenuOverlay, flowFreeTable);
+        flowFreeMenuOverlay.classList.toggle('hidden', !flowFreeMenuVisible);
+        flowFreeMenuOverlay.classList.toggle('is-closing', flowFreeMenuClosing);
+        flowFreeMenuOverlay.classList.toggle('is-entering', flowFreeMenuEntering);
+        flowFreeTable.classList.toggle('is-menu-open', flowFreeMenuVisible);
+        if (!flowFreeMenuVisible) return;
+        const hasResult = Boolean(flowFreeMenuResult);
+        if (flowFreeMenuEyebrow) flowFreeMenuEyebrow.textContent = flowFreeMenuShowingRules ? 'R\u00e8gles' : (hasResult ? flowFreeMenuResult.eyebrow : 'Cordages du quai');
+        if (flowFreeMenuTitle) flowFreeMenuTitle.textContent = flowFreeMenuShowingRules ? 'Rappel rapide' : (hasResult ? flowFreeMenuResult.title : 'Rope Line');
+        if (flowFreeMenuText) flowFreeMenuText.textContent = flowFreeMenuShowingRules ? getFlowFreeRulesText() : (hasResult ? flowFreeMenuResult.text : 'Relie chaque paire de bou\u00e9es avec un cordage color\u00e9 et remplis toutes les cases du quai.');
+        if (flowFreeMenuActionButton) flowFreeMenuActionButton.textContent = flowFreeMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer le trac\u00e9' : 'Lancer le trac\u00e9');
+        if (flowFreeMenuRulesButton) { flowFreeMenuRulesButton.textContent = 'R\u00e8gles'; flowFreeMenuRulesButton.hidden = flowFreeMenuShowingRules; }
+    }
+
+    function closeFlowFreeMenu() {
+        flowFreeMenuClosing = true;
+        renderFlowFreeMenu();
+        window.setTimeout(() => {
+            flowFreeMenuClosing = false;
+            flowFreeMenuVisible = false;
+            flowFreeMenuShowingRules = false;
+            flowFreeMenuEntering = false;
+            flowFreeMenuResult = null;
+            renderFlowFreeMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealFlowFreeOutcomeMenu(title, text, eyebrow) {
+        flowFreeMenuVisible = true;
+        flowFreeMenuResult = { title, text, eyebrow };
+        flowFreeMenuShowingRules = false;
+        flowFreeMenuClosing = false;
+        flowFreeMenuEntering = true;
+        if (flowFreeHelpText) flowFreeHelpText.textContent = text;
+        renderFlowFreeMenu();
+        window.setTimeout(() => { flowFreeMenuEntering = false; renderFlowFreeMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeFlowFree() {
         closeGameOverModal();
         flowFreeLevel = generateFlowFreeLevel();
@@ -11427,6 +11733,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         flowFreeHelpText.textContent = 'Relie chaque paire sans croiser les courants et couvre toutes les cases du plateau.';
+        flowFreeMenuResult = null;
+        flowFreeMenuShowingRules = false;
+        flowFreeMenuClosing = false;
+        flowFreeMenuEntering = false;
+        renderFlowFreeMenu();
         renderFlowFree();
     }
 
@@ -11534,7 +11845,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
                 flowFreeHelpText.textContent = 'Tous les courants sont reliés. Le port est sécurisé.';
                 renderFlowFree();
-                openGameOverModal('Courants reliés', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracés.`);
+                revealFlowFreeOutcomeMenu('Courants reliés', `Toutes les liaisons sont terminées en ${flowFreeMoves} tracés.`, 'Port sécurisé');
                 flowFreePointerDown = false;
                 flowFreeActiveColor = null;
                 flowFreeLastHoverKey = null;
@@ -11979,12 +12290,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
+    function getMagicSortRulesText() {
+        return 'Clique une fiole pour la s\u00e9lectionner, puis une autre pour y verser le liquide du dessus. Tu ne peux verser que sur une couleur identique (ou sur une fiole vide). Termine la carte quand chaque fiole ne contient qu\u2019une seule couleur.';
+    }
+
+    function renderMagicSortMenu() {
+        if (!magicSortMenuOverlay || !magicSortTable) return;
+        syncGameMenuOverlayBounds(magicSortMenuOverlay, magicSortTable);
+        magicSortMenuOverlay.classList.toggle('hidden', !magicSortMenuVisible);
+        magicSortMenuOverlay.classList.toggle('is-closing', magicSortMenuClosing);
+        magicSortMenuOverlay.classList.toggle('is-entering', magicSortMenuEntering);
+        magicSortTable.classList.toggle('is-menu-open', magicSortMenuVisible);
+        if (!magicSortMenuVisible) return;
+        const hasResult = Boolean(magicSortMenuResult);
+        if (magicSortMenuEyebrow) magicSortMenuEyebrow.textContent = magicSortMenuShowingRules ? 'R\u00e8gles' : (hasResult ? magicSortMenuResult.eyebrow : 'Fioles du vieux navigateur');
+        if (magicSortMenuTitle) magicSortMenuTitle.textContent = magicSortMenuShowingRules ? 'Rappel rapide' : (hasResult ? magicSortMenuResult.title : 'Magic Sort');
+        if (magicSortMenuText) magicSortMenuText.textContent = magicSortMenuShowingRules ? getMagicSortRulesText() : (hasResult ? magicSortMenuResult.text : 'Verse les couleurs dans les fioles jusqu\u2019\u00e0 ce que chacune n\u2019en contienne plus qu\u2019une.');
+        if (magicSortMenuActionButton) magicSortMenuActionButton.textContent = magicSortMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer le tri' : 'Lancer le tri');
+        if (magicSortMenuRulesButton) { magicSortMenuRulesButton.textContent = 'R\u00e8gles'; magicSortMenuRulesButton.hidden = magicSortMenuShowingRules; }
+    }
+
+    function closeMagicSortMenu() {
+        magicSortMenuClosing = true;
+        renderMagicSortMenu();
+        window.setTimeout(() => {
+            magicSortMenuClosing = false;
+            magicSortMenuVisible = false;
+            magicSortMenuShowingRules = false;
+            magicSortMenuEntering = false;
+            magicSortMenuResult = null;
+            renderMagicSortMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealMagicSortOutcomeMenu(title, text, eyebrow) {
+        magicSortMenuVisible = true;
+        magicSortMenuResult = { title, text, eyebrow };
+        magicSortMenuShowingRules = false;
+        magicSortMenuClosing = false;
+        magicSortMenuEntering = true;
+        if (magicSortHelpText) magicSortHelpText.textContent = text;
+        renderMagicSortMenu();
+        window.setTimeout(() => { magicSortMenuEntering = false; renderMagicSortMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeMagicSort() {
         closeGameOverModal();
         magicSortTubes = generateMagicSortLevel();
         magicSortSelectedTube = null;
         magicSortMoves = 0;
         magicSortHelpText.textContent = "Verse les couleurs d'un récipient à l'autre pour obtenir des tubes uniformes. Chaque partie mélange les fioles différemment.";
+        magicSortMenuResult = null;
+        magicSortMenuShowingRules = false;
+        magicSortMenuClosing = false;
+        magicSortMenuEntering = false;
+        renderMagicSortMenu();
         renderMagicSort();
     }
 
@@ -12059,7 +12419,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isMagicSortSolved()) {
             magicSortHelpText.textContent = 'Toutes les fioles sont rangées.';
-            openGameOverModal('Tri réussi', `Les couleurs sont rangées en ${magicSortMoves} coups.`);
+            revealMagicSortOutcomeMenu(
+                'Fioles rangées',
+                `Toutes les couleurs ont été triées en ${magicSortMoves} coups.`,
+                'Alchimie réussie'
+            );
         }
     }
 
@@ -12479,6 +12843,90 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function getCandyCrushRulesText() {
+        return 'Fais glisser une pi\u00e8ce vers une case voisine pour former un alignement de 3 tr\u00e9sors identiques ou plus. Chaque alignement casse la ligne et fait tomber la cale. Atteins l\u2019objectif de score avant d\u2019\u00e9puiser tes coups.';
+    }
+
+    function renderCandyCrushMenu() {
+        if (!candyCrushMenuOverlay || !candyCrushTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(candyCrushMenuOverlay, candyCrushTable);
+        candyCrushMenuOverlay.classList.toggle('hidden', !candyCrushMenuVisible);
+        candyCrushMenuOverlay.classList.toggle('is-closing', candyCrushMenuClosing);
+        candyCrushMenuOverlay.classList.toggle('is-entering', candyCrushMenuEntering);
+        candyCrushTable.classList.toggle('is-menu-open', candyCrushMenuVisible);
+
+        if (!candyCrushMenuVisible) {
+            return;
+        }
+
+        const hasResult = Boolean(candyCrushMenuResult);
+
+        if (candyCrushMenuEyebrow) {
+            candyCrushMenuEyebrow.textContent = candyCrushMenuShowingRules
+                ? 'R\u00e8gles'
+                : (hasResult ? candyCrushMenuResult.eyebrow : 'Cale \u00e0 confiseries marines');
+        }
+
+        if (candyCrushMenuTitle) {
+            candyCrushMenuTitle.textContent = candyCrushMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? candyCrushMenuResult.title : 'Coin Crush');
+        }
+
+        if (candyCrushMenuText) {
+            candyCrushMenuText.textContent = candyCrushMenuShowingRules
+                ? getCandyCrushRulesText()
+                : (hasResult
+                    ? candyCrushMenuResult.text
+                    : 'Glisse les tr\u00e9sors marins pour former des alignements de 3 ou plus avant d\u2019\u00e9puiser ta r\u00e9serve de coups.');
+        }
+
+        if (candyCrushMenuActionButton) {
+            candyCrushMenuActionButton.textContent = candyCrushMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Relancer la cale' : 'Lancer la cale');
+        }
+
+        if (candyCrushMenuRulesButton) {
+            candyCrushMenuRulesButton.textContent = 'R\u00e8gles';
+            candyCrushMenuRulesButton.hidden = candyCrushMenuShowingRules;
+        }
+    }
+
+    function closeCandyCrushMenu() {
+        candyCrushMenuClosing = true;
+        renderCandyCrushMenu();
+        window.setTimeout(() => {
+            candyCrushMenuClosing = false;
+            candyCrushMenuVisible = false;
+            candyCrushMenuShowingRules = false;
+            candyCrushMenuEntering = false;
+            candyCrushMenuResult = null;
+            renderCandyCrushMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealCandyCrushOutcomeMenu(title, text, eyebrow) {
+        candyCrushMenuVisible = true;
+        candyCrushMenuResult = { title, text, eyebrow };
+        candyCrushMenuShowingRules = false;
+        candyCrushMenuClosing = false;
+        candyCrushMenuEntering = true;
+
+        if (candyCrushHelpText) {
+            candyCrushHelpText.textContent = text;
+        }
+
+        renderCandyCrushMenu();
+        window.setTimeout(() => {
+            candyCrushMenuEntering = false;
+            renderCandyCrushMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeCandyCrush() {
         closeGameOverModal();
         candyCrushGrid = Array.from({ length: CANDY_CRUSH_SIZE }, () => Array(CANDY_CRUSH_SIZE).fill(null));
@@ -12501,9 +12949,14 @@ document.addEventListener('DOMContentLoaded', () => {
         candyCrushMoves = CANDY_CRUSH_START_MOVES;
         candyCrushAnimating = false;
         candyCrushPointerStart = null;
+        candyCrushMenuResult = null;
+        candyCrushMenuShowingRules = false;
+        candyCrushMenuClosing = false;
+        candyCrushMenuEntering = false;
         ensureCandyCrushPlayable();
-        candyCrushHelpText.textContent = 'Fais glisser une piece vers une voisine pour former des alignements de 3 tresors ou plus.';
+        candyCrushHelpText.textContent = 'Fais glisser une pi\u00e8ce vers une voisine pour former des alignements de 3 tr\u00e9sors ou plus.';
         renderCandyCrush();
+        renderCandyCrushMenu();
     }
 
     function areCandyCellsAdjacent(firstCell, secondCell) {
@@ -12617,12 +13070,20 @@ document.addEventListener('DOMContentLoaded', () => {
         candyCrushAnimating = false;
 
         if (candyCrushScore >= CANDY_CRUSH_TARGET_SCORE) {
-            openGameOverModal('Cale vidée', `Objectif atteint avec ${candyCrushScore} points.`);
+            revealCandyCrushOutcomeMenu(
+                'Cale vidée',
+                `Objectif atteint avec ${candyCrushScore} points. Coups restants : ${candyCrushMoves}.`,
+                'Trésors rassemblés'
+            );
             return;
         }
 
         if (candyCrushMoves <= 0) {
-            openGameOverModal('Fin de reserve', `Plus de coups. Score final : ${candyCrushScore}.`);
+            revealCandyCrushOutcomeMenu(
+                'Réserve épuisée',
+                `Plus de coups disponibles. Score final : ${candyCrushScore}.`,
+                'Cale vide'
+            );
         }
     }
 
@@ -13349,6 +13810,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 250);
     }
 
+    function getCoinClickerRulesText() {
+        return 'Clique la pi\u00e8ce pour ajouter des pi\u00e8ces au coffre du capitaine. D\u00e9pense-les dans la boutique du navire pour augmenter le gain par clic, le multiplicateur et le rendement automatique. Ta fortune est sauvegard\u00e9e ; "Nouvelle fortune" remet tout \u00e0 z\u00e9ro.';
+    }
+
+    function renderCoinClickerMenu() {
+        if (!coinClickerMenuOverlay || !coinClickerTable) {
+            return;
+        }
+
+        syncGameMenuOverlayBounds(coinClickerMenuOverlay, coinClickerTable);
+        coinClickerMenuOverlay.classList.toggle('hidden', !coinClickerMenuVisible);
+        coinClickerMenuOverlay.classList.toggle('is-closing', coinClickerMenuClosing);
+        coinClickerMenuOverlay.classList.toggle('is-entering', coinClickerMenuEntering);
+        coinClickerTable.classList.toggle('is-menu-open', coinClickerMenuVisible);
+
+        if (!coinClickerMenuVisible) {
+            return;
+        }
+
+        if (coinClickerMenuEyebrow) {
+            coinClickerMenuEyebrow.textContent = coinClickerMenuShowingRules
+                ? 'R\u00e8gles'
+                : 'Tr\u00e9sor du capitaine';
+        }
+
+        if (coinClickerMenuTitle) {
+            coinClickerMenuTitle.textContent = coinClickerMenuShowingRules
+                ? 'Rappel rapide'
+                : 'Coin Clicker';
+        }
+
+        if (coinClickerMenuText) {
+            coinClickerMenuText.textContent = coinClickerMenuShowingRules
+                ? getCoinClickerRulesText()
+                : 'Clique sur la pi\u00e8ce pour remplir le coffre, puis automatise ton butin gr\u00e2ce \u00e0 la boutique du navire.';
+        }
+
+        if (coinClickerMenuActionButton) {
+            coinClickerMenuActionButton.textContent = coinClickerMenuShowingRules
+                ? 'Retour'
+                : 'Lancer la fortune';
+        }
+
+        if (coinClickerMenuRulesButton) {
+            coinClickerMenuRulesButton.textContent = 'R\u00e8gles';
+            coinClickerMenuRulesButton.hidden = coinClickerMenuShowingRules;
+        }
+    }
+
+    function closeCoinClickerMenu() {
+        coinClickerMenuClosing = true;
+        renderCoinClickerMenu();
+        window.setTimeout(() => {
+            coinClickerMenuClosing = false;
+            coinClickerMenuVisible = false;
+            coinClickerMenuShowingRules = false;
+            coinClickerMenuEntering = false;
+            renderCoinClickerMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeCoinClicker(reset = false) {
         if (reset) {
             coinClickerState = {
@@ -13360,12 +13882,17 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             saveCoinClickerState();
             coinClickerHelpText.textContent = 'Nouvelle fortune lanc\u00e9e. Clique pour remplir la caisse, puis automatise ton butin.';
+            coinClickerMenuVisible = true;
+            coinClickerMenuShowingRules = false;
+            coinClickerMenuClosing = false;
+            coinClickerMenuEntering = false;
         } else {
             loadCoinClickerState();
         }
 
         coinClickerLastAutoTick = performance.now();
         renderCoinClicker();
+        renderCoinClickerMenu();
     }
 
     function createChessPiece(type, color) {
@@ -17272,8 +17799,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        blockBlastHelpText.textContent = `Le pont est sature. Score final ${blockBlastState.score}. Record ${blockBlastBestScore}.`;
-        openGameOverModal('Maree bloqu\u00e9e', `Score ${blockBlastState.score}. Record ${blockBlastBestScore}.`);
+        blockBlastHelpText.textContent = `Le pont est saturé. Score final ${blockBlastState.score}. Record ${blockBlastBestScore}.`;
+        revealBlockBlastOutcomeMenu(
+            'Pont saturé',
+            `Plus aucune pièce ne rentre. Score final : ${blockBlastState.score}. Record : ${blockBlastBestScore}.`,
+            'Marée bloquée'
+        );
     }
 
     function refillBlockBlastPiecesIfNeeded() {
@@ -17389,6 +17920,50 @@ document.addEventListener('DOMContentLoaded', () => {
         placeBlockBlastPieceAtIndex(blockBlastSelectedPieceIndex, row, col);
     }
 
+    function getBlockBlastRulesText() {
+        return 'Fais glisser une pi\u00e8ce de la r\u00e9serve sur le pont. Remplis une ligne ou une colonne enti\u00e8re pour la nettoyer et faire grimper le combo. La partie s\u2019arr\u00eate d\u00e8s qu\u2019aucune pi\u00e8ce ne peut plus \u00eatre pos\u00e9e.';
+    }
+
+    function renderBlockBlastMenu() {
+        if (!blockBlastMenuOverlay || !blockBlastTable) return;
+        syncGameMenuOverlayBounds(blockBlastMenuOverlay, blockBlastTable);
+        blockBlastMenuOverlay.classList.toggle('hidden', !blockBlastMenuVisible);
+        blockBlastMenuOverlay.classList.toggle('is-closing', blockBlastMenuClosing);
+        blockBlastMenuOverlay.classList.toggle('is-entering', blockBlastMenuEntering);
+        blockBlastTable.classList.toggle('is-menu-open', blockBlastMenuVisible);
+        if (!blockBlastMenuVisible) return;
+        const hasResult = Boolean(blockBlastMenuResult);
+        if (blockBlastMenuEyebrow) blockBlastMenuEyebrow.textContent = blockBlastMenuShowingRules ? 'R\u00e8gles' : (hasResult ? blockBlastMenuResult.eyebrow : 'Ligne de cargaison');
+        if (blockBlastMenuTitle) blockBlastMenuTitle.textContent = blockBlastMenuShowingRules ? 'Rappel rapide' : (hasResult ? blockBlastMenuResult.title : 'Block Line');
+        if (blockBlastMenuText) blockBlastMenuText.textContent = blockBlastMenuShowingRules ? getBlockBlastRulesText() : (hasResult ? blockBlastMenuResult.text : 'Pose les pi\u00e8ces de cargaison sur le pont pour former des lignes et colonnes compl\u00e8tes. Tiens le plus longtemps possible.');
+        if (blockBlastMenuActionButton) blockBlastMenuActionButton.textContent = blockBlastMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la mar\u00e9e' : 'Lancer la mar\u00e9e');
+        if (blockBlastMenuRulesButton) { blockBlastMenuRulesButton.textContent = 'R\u00e8gles'; blockBlastMenuRulesButton.hidden = blockBlastMenuShowingRules; }
+    }
+
+    function closeBlockBlastMenu() {
+        blockBlastMenuClosing = true;
+        renderBlockBlastMenu();
+        window.setTimeout(() => {
+            blockBlastMenuClosing = false;
+            blockBlastMenuVisible = false;
+            blockBlastMenuShowingRules = false;
+            blockBlastMenuEntering = false;
+            blockBlastMenuResult = null;
+            renderBlockBlastMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealBlockBlastOutcomeMenu(title, text, eyebrow) {
+        blockBlastMenuVisible = true;
+        blockBlastMenuResult = { title, text, eyebrow };
+        blockBlastMenuShowingRules = false;
+        blockBlastMenuClosing = false;
+        blockBlastMenuEntering = true;
+        if (blockBlastHelpText) blockBlastHelpText.textContent = text;
+        renderBlockBlastMenu();
+        window.setTimeout(() => { blockBlastMenuEntering = false; renderBlockBlastMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
     function initializeBlockBlast() {
         closeGameOverModal();
         blockBlastState = {
@@ -17402,6 +17977,11 @@ document.addEventListener('DOMContentLoaded', () => {
         clearBlockBlastPreview(false);
         stopBlockBlastDrag();
         blockBlastHelpText.textContent = 'Fais glisser une forme sur le pont. Efface des lignes pour garder la baie dégagée.';
+        blockBlastMenuResult = null;
+        blockBlastMenuShowingRules = false;
+        blockBlastMenuClosing = false;
+        blockBlastMenuEntering = false;
+        renderBlockBlastMenu();
         renderBlockBlast();
     }
 
@@ -18638,6 +19218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'aim') {
+            aimMenuVisible = true;
             initializeAim();
             return;
         }
@@ -18671,6 +19252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'solitaire') {
+            solitaireMenuVisible = true;
             initializeSolitaire();
             return;
         }
@@ -18681,6 +19263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'rhythm') {
+            rhythmMenuVisible = true;
             initializeRhythm();
             return;
         }
@@ -18691,11 +19274,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'flowFree') {
+            flowFreeMenuVisible = true;
             initializeFlowFree();
             return;
         }
 
         if (nextTab === 'magicSort') {
+            magicSortMenuVisible = true;
             initializeMagicSort();
             return;
         }
@@ -18706,6 +19291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'candyCrush') {
+            candyCrushMenuVisible = true;
             initializeCandyCrush();
             return;
         }
@@ -18723,6 +19309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'coinClicker') {
+            coinClickerMenuVisible = true;
             initializeCoinClicker();
             return;
         }
@@ -18760,6 +19347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'blockBlast') {
+            blockBlastMenuVisible = true;
             initializeBlockBlast();
             return;
         }
@@ -19269,6 +19857,22 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
     }, { passive: false });
 
+    aimMenuActionButton?.addEventListener('click', () => {
+        if (aimMenuShowingRules) {
+            aimMenuShowingRules = false;
+            renderAimMenu();
+            return;
+        }
+        initializeAim();
+        closeAimMenu();
+        window.setTimeout(() => { startAimRound(); }, UNO_MENU_CLOSE_DURATION_MS);
+    });
+
+    aimMenuRulesButton?.addEventListener('click', () => {
+        aimMenuShowingRules = true;
+        renderAimMenu();
+    });
+
     aimStartButton.addEventListener('click', () => {
         closeGameOverModal();
         initializeAim();
@@ -19282,6 +19886,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     aimBoard.addEventListener('pointerdown', (event) => {
+        if (aimMenuVisible || aimMenuClosing) return;
         const cellButton = event.target.closest('.aim-cell');
 
         if (!cellButton) {
@@ -19469,6 +20074,21 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPacmanMenu();
     });
 
+    solitaireMenuActionButton?.addEventListener('click', () => {
+        if (solitaireMenuShowingRules) {
+            solitaireMenuShowingRules = false;
+            renderSolitaireMenu();
+            return;
+        }
+        initializeSolitaire();
+        closeSolitaireMenu();
+    });
+
+    solitaireMenuRulesButton?.addEventListener('click', () => {
+        solitaireMenuShowingRules = true;
+        renderSolitaireMenu();
+    });
+
     solitaireRestartButton.addEventListener('click', () => {
         initializeSolitaire();
     });
@@ -19513,6 +20133,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    rhythmMenuActionButton?.addEventListener('click', () => {
+        if (rhythmMenuShowingRules) {
+            rhythmMenuShowingRules = false;
+            renderRhythmMenu();
+            return;
+        }
+        closeRhythmMenu();
+        window.setTimeout(() => { startRhythm(); }, UNO_MENU_CLOSE_DURATION_MS);
+    });
+
+    rhythmMenuRulesButton?.addEventListener('click', () => {
+        rhythmMenuShowingRules = true;
+        renderRhythmMenu();
+    });
+
     rhythmStartButton.addEventListener('click', () => {
         startRhythm();
     });
@@ -19533,9 +20168,39 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFlappyMenu();
     });
 
+    flowFreeMenuActionButton?.addEventListener('click', () => {
+        if (flowFreeMenuShowingRules) {
+            flowFreeMenuShowingRules = false;
+            renderFlowFreeMenu();
+            return;
+        }
+        initializeFlowFree();
+        closeFlowFreeMenu();
+    });
+
+    flowFreeMenuRulesButton?.addEventListener('click', () => {
+        flowFreeMenuShowingRules = true;
+        renderFlowFreeMenu();
+    });
+
     flowFreeRestartButton.addEventListener('click', () => {
         closeGameOverModal();
         initializeFlowFree();
+    });
+
+    magicSortMenuActionButton?.addEventListener('click', () => {
+        if (magicSortMenuShowingRules) {
+            magicSortMenuShowingRules = false;
+            renderMagicSortMenu();
+            return;
+        }
+        initializeMagicSort();
+        closeMagicSortMenu();
+    });
+
+    magicSortMenuRulesButton?.addEventListener('click', () => {
+        magicSortMenuShowingRules = true;
+        renderMagicSortMenu();
     });
 
     magicSortRestartButton.addEventListener('click', () => {
@@ -19622,6 +20287,22 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeCandyCrush();
     });
 
+    candyCrushMenuActionButton?.addEventListener('click', () => {
+        if (candyCrushMenuShowingRules) {
+            candyCrushMenuShowingRules = false;
+            renderCandyCrushMenu();
+            return;
+        }
+
+        initializeCandyCrush();
+        closeCandyCrushMenu();
+    });
+
+    candyCrushMenuRulesButton?.addEventListener('click', () => {
+        candyCrushMenuShowingRules = true;
+        renderCandyCrushMenu();
+    });
+
     harborRunStartButton.addEventListener('click', () => {
         closeGameOverModal();
         startHarborRun();
@@ -19671,6 +20352,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (coinClickerMenuVisible || coinClickerMenuClosing) {
+            return;
+        }
+
         coinClickerState.coins += getCoinClickerCoinsPerClick();
         saveCoinClickerState();
         renderCoinClicker();
@@ -19684,6 +20369,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     coinClickerResetButton?.addEventListener('click', () => {
         initializeCoinClicker(true);
+    });
+
+    coinClickerMenuActionButton?.addEventListener('click', () => {
+        if (coinClickerMenuShowingRules) {
+            coinClickerMenuShowingRules = false;
+            renderCoinClickerMenu();
+            return;
+        }
+
+        closeCoinClickerMenu();
+    });
+
+    coinClickerMenuRulesButton?.addEventListener('click', () => {
+        coinClickerMenuShowingRules = true;
+        renderCoinClickerMenu();
     });
 
     coinClickerShop?.addEventListener('click', (event) => {
@@ -20004,11 +20704,27 @@ document.addEventListener('DOMContentLoaded', () => {
         renderBreakoutMenu();
     });
 
+    blockBlastMenuActionButton?.addEventListener('click', () => {
+        if (blockBlastMenuShowingRules) {
+            blockBlastMenuShowingRules = false;
+            renderBlockBlastMenu();
+            return;
+        }
+        initializeBlockBlast();
+        closeBlockBlastMenu();
+    });
+
+    blockBlastMenuRulesButton?.addEventListener('click', () => {
+        blockBlastMenuShowingRules = true;
+        renderBlockBlastMenu();
+    });
+
     blockBlastStartButton?.addEventListener('click', () => {
         initializeBlockBlast();
     });
 
     blockBlastPieces?.addEventListener('pointerdown', (event) => {
+        if (blockBlastMenuVisible || blockBlastMenuClosing) return;
         const pieceButton = event.target.closest('[data-blockblast-piece]');
         if (!pieceButton || !blockBlastState) {
             return;
@@ -20112,6 +20828,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     blockBlastBoard?.addEventListener('click', (event) => {
+        if (blockBlastMenuVisible || blockBlastMenuClosing) return;
         if (blockBlastSuppressClick) {
             blockBlastSuppressClick = false;
             return;
@@ -20271,6 +20988,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireStock.addEventListener('click', (event) => {
+        if (solitaireMenuVisible || solitaireMenuClosing) return;
         const actionButton = event.target.closest('[data-solitaire-action]');
 
         if (!actionButton) {
@@ -20281,6 +20999,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireWaste.addEventListener('click', (event) => {
+        if (solitaireMenuVisible || solitaireMenuClosing) return;
         const wasteCard = event.target.closest('[data-solitaire-source="waste"]');
 
         if (!wasteCard) {
@@ -20297,6 +21016,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireFoundations.addEventListener('click', (event) => {
+        if (solitaireMenuVisible || solitaireMenuClosing) return;
         const foundationButton = event.target.closest('[data-solitaire-foundation]');
 
         if (!foundationButton) {
@@ -20321,6 +21041,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireTableau.addEventListener('click', (event) => {
+        if (solitaireMenuVisible || solitaireMenuClosing) return;
         const tableauCard = event.target.closest('[data-solitaire-tableau]');
         const columnTarget = event.target.closest('[data-solitaire-column]');
 
@@ -20365,6 +21086,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     rhythmBoard.addEventListener('click', (event) => {
+        if (rhythmMenuVisible || rhythmMenuClosing) return;
         const pad = event.target.closest('[data-rhythm-lane]');
 
         if (!pad) {
@@ -20383,6 +21105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     flowFreeBoard.addEventListener('pointerdown', (event) => {
+        if (flowFreeMenuVisible || flowFreeMenuClosing) return;
         const cellButton = event.target.closest('.flowfree-cell');
         if (!cellButton) {
             return;
@@ -20459,6 +21182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     magicSortBoard.addEventListener('pointerdown', (event) => {
+        if (magicSortMenuVisible || magicSortMenuClosing) return;
         const tubeButton = event.target.closest('[data-magic-sort-tube]');
         if (!tubeButton) {
             return;
@@ -20468,6 +21192,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     candyCrushBoard.addEventListener('pointerdown', (event) => {
+        if (candyCrushMenuVisible || candyCrushMenuClosing) {
+            return;
+        }
         const cellButton = event.target.closest('.candycrush-cell');
         if (!cellButton) {
             return;
@@ -20482,6 +21209,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     candyCrushBoard.addEventListener('pointerup', async (event) => {
+        if (candyCrushMenuVisible || candyCrushMenuClosing) {
+            candyCrushPointerStart = null;
+            return;
+        }
         const cellButton = event.target.closest('.candycrush-cell');
         if (!cellButton || !candyCrushPointerStart) {
             candyCrushPointerStart = null;
@@ -20822,6 +21553,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'rhythm') {
+            if (rhythmMenuVisible || rhythmMenuClosing) return;
             const rhythmLane = {
                 q: 0,
                 Q: 0,
@@ -21099,6 +21831,14 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTetrisMenu();
     renderBattleshipMenu();
     renderHarborRunMenu();
+    renderCoinClickerMenu();
+    renderCandyCrushMenu();
+    renderFlowFreeMenu();
+    renderMagicSortMenu();
+    renderBlockBlastMenu();
+    renderAimMenu();
+    renderRhythmMenu();
+    renderSolitaireMenu();
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     startCoinClickerAutoLoop();
