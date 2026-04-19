@@ -1,24 +1,36 @@
 // Multiplayer lobby — DOM-centric, cleanly extractable pieces.
 // Extracted from script.js during the ES-modules migration.
 //
-// Scope (5 functions):
-//   - copyMultiplayerRoomCode
-//   - leaveMultiplayerRoom
-//   - renderMultiplayerPlayers
-//   - renderMultiplayerChatMessages
-//   - updateMultiplayerChatPanel
+// Scope (11 functions at this step):
+//   Chat + basic lobby:
+//     copyMultiplayerRoomCode, leaveMultiplayerRoom,
+//     renderMultiplayerPlayers, renderMultiplayerChatMessages,
+//     updateMultiplayerChatPanel
+//   Lobby UI orchestrators (unlocked by multiplayer/state.js):
+//     setMultiplayerEntryMode, ensureMultiplayerCreateLeaveButton,
+//     updateMultiplayerGameTileSelection, getSelectedMultiplayerGameLabel,
+//     syncMultiplayerEntryModeAccess, updateMultiplayerLobby
 //
-// DEFERRED to a future step (need a shared multiplayer state module or heavy
-// dependency injection — would violate the "do not modify logic" rule today):
-//   createMultiplayerRoom, joinMultiplayerRoom, toggleMultiplayerReady,
-//   launchMultiplayerGame, updateMultiplayerLobby, syncMultiplayerEntryModeAccess.
-//
-// These pure versions take the active room / socket / activeGameTab as
-// explicit arguments, so they can be called from either script.js (once
-// unplugged) or later module code.
+// Still DEFERRED (need the per-game `syncMultiplayer<Game>State` + initialize
+// functions that still live in script.js): ensureMultiplayerConnection,
+// createMultiplayerRoom, joinMultiplayerRoom, toggleMultiplayerReady,
+// launchMultiplayerGame. They will move after the game modules are extracted.
 
 import { MULTIPLAYER_SUPPORTED_GAMES } from '../core/constants.js';
-import { setMultiplayerStatus, getMultiplayerGameLabel } from './status.js';
+import {
+    setMultiplayerStatus,
+    getMultiplayerGameLabel,
+    getSelectedMultiplayerGame
+} from './status.js';
+import {
+    getMultiplayerActiveRoom,
+    getMultiplayerEntryMode,
+    setMultiplayerEntryMode as setStateEntryMode,
+    getMultiplayerBusy,
+    isCurrentMultiplayerHost,
+    getCurrentMultiplayerPlayer,
+    getMultiplayerSocket
+} from './state.js';
 
 /**
  * Copies the active room code to the clipboard and reports the outcome
@@ -217,4 +229,208 @@ export function updateMultiplayerChatPanel({ activeRoom, socket, activeGameTab }
     }
 
     return renderMultiplayerChatMessages(activeRoom);
+}
+
+/**
+ * Switches the lobby entry between "create" and "join" panels, toggles
+ * the corresponding mode buttons and updates the shared state.
+ */
+export function setMultiplayerEntryMode(mode) {
+    const normalized = mode === 'join' ? 'join' : 'create';
+    setStateEntryMode(normalized);
+
+    const createBtn = document.getElementById('multiplayerCreateModeButton');
+    const joinBtn = document.getElementById('multiplayerJoinModeButton');
+    const createPanel = document.getElementById('multiplayerCreatePanel');
+    const joinPanel = document.getElementById('multiplayerJoinPanel');
+
+    createBtn?.classList.toggle('is-active', normalized === 'create');
+    joinBtn?.classList.toggle('is-active', normalized === 'join');
+    createPanel?.classList.toggle('is-active', normalized === 'create');
+    joinPanel?.classList.toggle('is-active', normalized === 'join');
+}
+
+/**
+ * Ensures the "Quitter le salon" button exists next to the copy button,
+ * creating it lazily on first call. Safe to call repeatedly.
+ *
+ * @param {() => (void|Promise<void>)} onLeave  handler to call on click
+ */
+export function ensureMultiplayerCreateLeaveButton(onLeave) {
+    const existing = document.getElementById('multiplayerCreateLeaveButton');
+    if (existing) {
+        return existing;
+    }
+
+    const copyButton = document.getElementById('multiplayerCopyCodeButton');
+    if (!copyButton?.parentElement) {
+        return null;
+    }
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'multiplayerCreateLeaveButton';
+    button.className = 'secondary-button multiplayer-button-danger';
+    button.textContent = 'Quitter le salon';
+    button.hidden = true;
+    if (typeof onLeave === 'function') {
+        button.addEventListener('click', () => { onLeave(); });
+    }
+    copyButton.parentElement.appendChild(button);
+    return button;
+}
+
+/**
+ * Visually flags the multiplayer-game tile that matches the current
+ * selection (or active room gameId if any).
+ */
+export function updateMultiplayerGameTileSelection() {
+    const tiles = document.querySelectorAll('[data-multiplayer-game-select]');
+    const selected = getSelectedMultiplayerGame();
+    tiles.forEach((tile) => {
+        tile.classList.toggle('is-selected', tile.dataset.multiplayerGameSelect === selected);
+    });
+}
+
+/**
+ * Human-readable label of the currently selected multiplayer game.
+ * Returns "Aucun" when no supported game is selected.
+ */
+export function getSelectedMultiplayerGameLabel() {
+    const gameId = getSelectedMultiplayerGame();
+    return gameId ? MULTIPLAYER_SUPPORTED_GAMES[gameId] : 'Aucun';
+}
+
+/**
+ * Grants/denies access to the create and join tabs depending on whether
+ * the current user is host / guest / not in a room.
+ * Also toggles the "Quitter le salon" button visibility.
+ */
+export function syncMultiplayerEntryModeAccess() {
+    const activeRoom = getMultiplayerActiveRoom();
+    const currentPlayer = getCurrentMultiplayerPlayer();
+    const hasActiveRoom = Boolean(activeRoom?.code && currentPlayer);
+    const isHost = isCurrentMultiplayerHost();
+    const isGuest = hasActiveRoom && !isHost;
+
+    const createBtn = document.getElementById('multiplayerCreateModeButton');
+    const joinBtn = document.getElementById('multiplayerJoinModeButton');
+    if (createBtn) {
+        createBtn.disabled = isGuest;
+    }
+    if (joinBtn) {
+        joinBtn.disabled = isHost;
+    }
+
+    if (hasActiveRoom) {
+        setStateEntryMode(isHost ? 'create' : 'join');
+    }
+
+    const leaveButton = document.getElementById('multiplayerCreateLeaveButton');
+    if (leaveButton) {
+        leaveButton.hidden = !isHost;
+    }
+}
+
+/**
+ * Full lobby UI refresh: buttons enablement, room code display, game tile
+ * highlight, player list, chat panel, and status banner.
+ *
+ * @param {Object} options
+ * @param {boolean} [options.preserveStatus=false]  skip rewriting the status
+ *                                                  banner when the caller has
+ *                                                  already set something more
+ *                                                  specific.
+ * @param {() => (void|Promise<void>)} [options.onLeave]  click handler the
+ *                                                  first-time creation of the
+ *                                                  "Quitter" button wires up.
+ * @param {string} [options.activeGameTab]  active tab so the chat panel can
+ *                                          compare with the room gameId.
+ */
+export function updateMultiplayerLobby({ preserveStatus = false, onLeave, activeGameTab } = {}) {
+    const activeRoom = getMultiplayerActiveRoom();
+    const socket = getMultiplayerSocket();
+    const busy = getMultiplayerBusy();
+
+    ensureMultiplayerCreateLeaveButton(onLeave);
+    syncMultiplayerEntryModeAccess();
+
+    const leaveButton = document.getElementById('multiplayerCreateLeaveButton');
+    if (leaveButton) {
+        leaveButton.disabled = busy;
+    }
+
+    const selectedGame = getSelectedMultiplayerGame();
+    const selectedLabel = getSelectedMultiplayerGameLabel();
+    const canUseMultiplayer = Boolean(selectedGame);
+    const activeRoomGameLabel = activeRoom?.gameId && MULTIPLAYER_SUPPORTED_GAMES[activeRoom.gameId]
+        ? MULTIPLAYER_SUPPORTED_GAMES[activeRoom.gameId]
+        : selectedLabel;
+    const hasActiveRoom = Boolean(activeRoom?.code);
+    const isHost = isCurrentMultiplayerHost();
+
+    const currentRoomCode = document.getElementById('multiplayerCurrentRoomCode');
+    const lobbyPlayersBlock = document.getElementById('multiplayerLobbyPlayersBlock');
+    const createPlayerField = document.getElementById('multiplayerCreatePlayerField');
+    const joinPlayerField = document.getElementById('multiplayerJoinPlayerField');
+    const joinCodeField = document.getElementById('multiplayerJoinCodeField');
+    const createRoomButton = document.getElementById('multiplayerCreateRoomButton');
+    const joinRoomButton = document.getElementById('multiplayerJoinRoomButton');
+    const copyCodeButton = document.getElementById('multiplayerCopyCodeButton');
+
+    if (currentRoomCode) {
+        currentRoomCode.textContent = activeRoom?.code || '-';
+    }
+    lobbyPlayersBlock?.classList.toggle('hidden', !hasActiveRoom);
+    createPlayerField?.classList.toggle('hidden', hasActiveRoom);
+    joinPlayerField?.classList.toggle('hidden', hasActiveRoom);
+    joinCodeField?.classList.toggle('hidden', hasActiveRoom);
+
+    if (createRoomButton) {
+        createRoomButton.disabled = busy
+            || (!hasActiveRoom && !canUseMultiplayer)
+            || (hasActiveRoom && (!isHost || (activeRoom?.playerCount || 0) < 2 || Boolean(activeRoom?.gameLaunched)));
+        createRoomButton.textContent = hasActiveRoom ? 'Lancer le jeu' : 'Creer le salon';
+    }
+    if (joinRoomButton) {
+        joinRoomButton.disabled = busy;
+        joinRoomButton.textContent = hasActiveRoom ? 'Quitter le salon' : 'Rejoindre avec le code';
+        joinRoomButton.classList.toggle('multiplayer-button-success', !hasActiveRoom);
+        joinRoomButton.classList.toggle('multiplayer-button-danger', hasActiveRoom);
+    }
+    if (copyCodeButton) {
+        copyCodeButton.disabled = !hasActiveRoom;
+    }
+
+    updateMultiplayerGameTileSelection();
+    renderMultiplayerPlayers(activeRoom);
+    updateMultiplayerChatPanel({ activeRoom, socket, activeGameTab });
+
+    if (preserveStatus) {
+        return;
+    }
+
+    if (hasActiveRoom) {
+        if ((activeRoom.playerCount || 0) < 2) {
+            setMultiplayerStatus(`Salon ${activeRoom.code} cree. Attends un autre joueur avant de lancer ${activeRoomGameLabel}.`);
+            return;
+        }
+
+        if (!activeRoom.gameLaunched) {
+            setMultiplayerStatus(isHost
+                ? `Salon ${activeRoom.code} prêt. Tu peux lancer ${activeRoomGameLabel} quand tout le monde est là.`
+                : `Salon ${activeRoom.code} prêt. Attends que l'hôte lance ${activeRoomGameLabel}.`);
+            return;
+        }
+
+        setMultiplayerStatus(`${activeRoomGameLabel} est en cours dans le salon ${activeRoom.code}.`);
+        return;
+    }
+
+    if (!canUseMultiplayer) {
+        setMultiplayerStatus('Le multijoueur est pr\u00e9vu pour Bataille, Sea Hockey, Pong, Morpion, Coin 4, \u00c9checs, Dames, Buno et La Bombe.');
+        return;
+    }
+
+    setMultiplayerStatus('Cree un salon prive ou rejoins-en un avec un code.');
 }

@@ -40,8 +40,15 @@ import {
     leaveMultiplayerRoom,
     renderMultiplayerPlayers,
     renderMultiplayerChatMessages,
-    updateMultiplayerChatPanel
+    updateMultiplayerChatPanel,
+    setMultiplayerEntryMode,
+    ensureMultiplayerCreateLeaveButton,
+    updateMultiplayerGameTileSelection,
+    getSelectedMultiplayerGameLabel,
+    syncMultiplayerEntryModeAccess,
+    updateMultiplayerLobby
 } from './multiplayer/lobby.js';
+import * as multiplayerState from './multiplayer/state.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const sanityChecks = [
@@ -78,12 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof leaveMultiplayerRoom === 'function',
         typeof renderMultiplayerPlayers === 'function',
         typeof renderMultiplayerChatMessages === 'function',
-        typeof updateMultiplayerChatPanel === 'function'
+        typeof updateMultiplayerChatPanel === 'function',
+        typeof setMultiplayerEntryMode === 'function',
+        typeof ensureMultiplayerCreateLeaveButton === 'function',
+        typeof updateMultiplayerGameTileSelection === 'function',
+        typeof getSelectedMultiplayerGameLabel === 'function',
+        typeof syncMultiplayerEntryModeAccess === 'function',
+        typeof updateMultiplayerLobby === 'function',
+        multiplayerState.getMultiplayerSocket() === null,
+        multiplayerState.getMultiplayerActiveRoom() === null,
+        multiplayerState.getMultiplayerEntryMode() === 'create',
+        multiplayerState.getMultiplayerBusy() === false
     ];
 
     const allOk = sanityChecks.every(Boolean);
     if (allOk) {
-        console.log('ES Modules OK — core/ + multiplayer/ extracted.');
+        console.log('ES Modules OK — core/ + multiplayer/ (state + lobby extended).');
     } else {
         console.warn('ES Modules : un ou plusieurs imports ont échoué.', sanityChecks);
     }

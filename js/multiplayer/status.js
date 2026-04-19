@@ -1,11 +1,15 @@
 // Multiplayer status + lobby-entry helpers for La Baie des Naufragés.
 // Extracted from script.js during the ES-modules migration.
 //
-// Pure versions: DOM refs are looked up on demand, and any state that
-// script.js holds in its IIFE (selected game id, entry mode) is passed as
-// an explicit argument instead of being closure-captured.
+// Pure versions: DOM refs are looked up on demand. State is fetched from
+// `multiplayer/state.js` by default but can be overridden via arguments for
+// testability.
 
 import { MULTIPLAYER_SUPPORTED_GAMES } from '../core/constants.js';
+import {
+    getMultiplayerSelectedGameId,
+    getMultiplayerEntryMode
+} from './state.js';
 
 /**
  * Prints a short status line in the multiplayer lobby banner.
@@ -32,7 +36,7 @@ export function getMultiplayerGameLabel(gameId) {
  *                                      (script.js holds this in its IIFE as
  *                                      `multiplayerSelectedGameId`.)
  */
-export function getSelectedMultiplayerGame(selectedGameId = null) {
+export function getSelectedMultiplayerGame(selectedGameId = getMultiplayerSelectedGameId()) {
     const tiles = document.querySelectorAll('[data-multiplayer-game-select]');
     const fallbackGameId = tiles[0]?.dataset.multiplayerGameSelect || null;
     const activeGameId = MULTIPLAYER_SUPPORTED_GAMES[selectedGameId]
@@ -46,7 +50,7 @@ export function getSelectedMultiplayerGame(selectedGameId = null) {
  *
  * @param {'create'|'join'} preferredSource
  */
-export function getPreferredMultiplayerPlayerName(preferredSource = 'create') {
+export function getPreferredMultiplayerPlayerName(preferredSource = getMultiplayerEntryMode()) {
     const createInput = document.getElementById('multiplayerCreatePlayerNameInput');
     const joinInput = document.getElementById('multiplayerJoinPlayerNameInput');
     const createName = createInput?.value.trim() || '';

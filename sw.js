@@ -1,4 +1,4 @@
-const CACHE_NAME = 'baie-des-naufrages-v4';
+const CACHE_NAME = 'baie-des-naufrages-v5';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
@@ -10,6 +10,7 @@ const PRECACHE_URLS = [
     '/js/core/session.js',
     '/js/core/modals.js',
     '/js/core/router.js',
+    '/js/multiplayer/state.js',
     '/js/multiplayer/connection.js',
     '/js/multiplayer/status.js',
     '/js/multiplayer/lobby.js',
