@@ -22,6 +22,27 @@ import {
 } from './core/modals.js';
 import { showViewImmediately } from './core/router.js';
 
+import {
+    MULTIPLAYER_SERVER_URL,
+    getMultiplayerServerOrigin,
+    getMultiplayerApiUrl,
+    loadSocketIoClient
+} from './multiplayer/connection.js';
+import {
+    setMultiplayerStatus,
+    getMultiplayerGameLabel,
+    getSelectedMultiplayerGame,
+    getPreferredMultiplayerPlayerName,
+    syncMultiplayerPlayerNames
+} from './multiplayer/status.js';
+import {
+    copyMultiplayerRoomCode,
+    leaveMultiplayerRoom,
+    renderMultiplayerPlayers,
+    renderMultiplayerChatMessages,
+    updateMultiplayerChatPanel
+} from './multiplayer/lobby.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const sanityChecks = [
         Array.isArray(shuffleArray([1, 2, 3])) && shuffleArray([1, 2, 3]).length === 3,
@@ -42,12 +63,27 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof closeLegalNoticeModal === 'function',
         typeof openGameOverModal === 'function',
         typeof closeGameOverModal === 'function',
-        typeof showViewImmediately === 'function'
+        typeof showViewImmediately === 'function',
+        typeof MULTIPLAYER_SERVER_URL === 'string',
+        typeof getMultiplayerServerOrigin === 'function',
+        typeof getMultiplayerApiUrl === 'function' && getMultiplayerApiUrl('/api/health').endsWith('/api/health'),
+        typeof loadSocketIoClient === 'function',
+        typeof setMultiplayerStatus === 'function',
+        getMultiplayerGameLabel('pong') === 'Pong',
+        getMultiplayerGameLabel('invalid') === 'Jeu inconnu',
+        typeof getSelectedMultiplayerGame === 'function',
+        typeof getPreferredMultiplayerPlayerName === 'function',
+        typeof syncMultiplayerPlayerNames === 'function',
+        typeof copyMultiplayerRoomCode === 'function',
+        typeof leaveMultiplayerRoom === 'function',
+        typeof renderMultiplayerPlayers === 'function',
+        typeof renderMultiplayerChatMessages === 'function',
+        typeof updateMultiplayerChatPanel === 'function'
     ];
 
     const allOk = sanityChecks.every(Boolean);
     if (allOk) {
-        console.log('ES Modules OK — core/ extracted (constants, utils, session, modals, router).');
+        console.log('ES Modules OK — core/ + multiplayer/ extracted.');
     } else {
         console.warn('ES Modules : un ou plusieurs imports ont échoué.', sanityChecks);
     }
