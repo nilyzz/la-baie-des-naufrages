@@ -586,6 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unoMenuActionButton = document.getElementById('unoMenuActionButton');
     const unoMenuRulesButton = document.getElementById('unoMenuRulesButton');
     const bombGame = document.getElementById('bombGame');
+    const bombTable = document.getElementById('bombTable');
     const bombSyllableDisplay = document.getElementById('bombSyllableDisplay');
     const bombSpotlightSyllable = document.getElementById('bombSpotlightSyllable');
     const bombTimerDisplay = document.getElementById('bombTimerDisplay');
@@ -599,6 +600,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const bombWordInput = document.getElementById('bombWordInput');
     const bombWordSubmitButton = document.getElementById('bombWordSubmitButton');
     const bombRestartButton = document.getElementById('bombRestartButton');
+    const bombMenuOverlay = document.getElementById('bombMenuOverlay');
+    const bombMenuEyebrow = document.getElementById('bombMenuEyebrow');
+    const bombMenuTitle = document.getElementById('bombMenuTitle');
+    const bombMenuText = document.getElementById('bombMenuText');
+    const bombMenuActionButton = document.getElementById('bombMenuActionButton');
+    const bombMenuRulesButton = document.getElementById('bombMenuRulesButton');
+    const bombMenuModeButtons = document.querySelectorAll('[data-bomb-mode]');
     const mathPanels = document.querySelectorAll('.math-panel');
     const musicPanels = document.querySelectorAll('.music-panel');
     const calculatorDisplay = document.getElementById('calculatorDisplay');
@@ -982,6 +990,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let pongMenuResult = null;
     let bombState = null;
     let bombTimerInterval = null;
+    let bombMenuVisible = true;
+    let bombMenuShowingRules = false;
+    let bombMenuClosing = false;
+    let bombMenuEntering = false;
+    let bombSelectedMode = 'local';
+    let bombLocalState = null;
     let pongBoardMetrics = null;
     let pongRenderMetrics = null;
     const PONG_SERVE_SPEED_X = 388;
@@ -3472,6 +3486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncGameMenuOverlayBounds(aimMenuOverlay, aimTable);
         syncGameMenuOverlayBounds(rhythmMenuOverlay, rhythmTable);
         syncGameMenuOverlayBounds(solitaireMenuOverlay, solitaireTable);
+        syncGameMenuOverlayBounds(bombMenuOverlay, bombTable);
     }
 
     function getBoardMoveAnimationMetadata(lastMove, row, col, flip = false) {
@@ -4407,6 +4422,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'bomb' && nextTab !== 'bomb') {
+            stopBombTimerLoop();
+            bombLocalState = null;
+            bombMenuVisible = true;
             initializeBomb();
         }
     }
@@ -18946,6 +18964,169 @@ document.addEventListener('DOMContentLoaded', () => {
         renderUno();
     }
 
+    const BOMB_LOCAL_SYLLABLES = [
+        'ba', 'be', 'bi', 'bo', 'bu',
+        'ca', 'ce', 'ci', 'co',
+        'da', 'de', 'di', 'do',
+        'fa', 'fe', 'fi', 'fo',
+        'ga', 'ge', 'go',
+        'la', 'le', 'li', 'lo', 'lu',
+        'ma', 'me', 'mi', 'mo', 'mu',
+        'na', 'ne', 'ni', 'no',
+        'pa', 'pe', 'pi', 'po',
+        'ra', 're', 'ri', 'ro',
+        'sa', 'se', 'si', 'so',
+        'ta', 'te', 'ti', 'to',
+        'ou', 'on', 'an', 'eu', 'oi'
+    ];
+    const BOMB_LOCAL_TURN_MS = 12000;
+    const BOMB_LOCAL_MIN_TURN_MS = 5000;
+    const BOMB_LOCAL_TURN_STEP_MS = 280;
+    const BOMB_LOCAL_RANDOM_EXPLOSION_MS = 800;
+    const BOMB_LOCAL_MIN_BEFORE_RANDOM_MS = 2500;
+    const BOMB_LOCAL_WORD_HISTORY_LIMIT = 24;
+
+    function normalizeBombWordLocal(value) {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, '');
+    }
+
+    function pickRandomBombSyllable() {
+        return BOMB_LOCAL_SYLLABLES[Math.floor(Math.random() * BOMB_LOCAL_SYLLABLES.length)];
+    }
+
+    function isBombLocalActive() {
+        return !isMultiplayerBombActive() && Boolean(bombLocalState);
+    }
+
+    function getBombLocalRulesText() {
+        return 'Les deux capitaines partagent le clavier. Tape un mot contenant la syllabe imprim\u00e9e sur la bombe, puis appuie sur Entr\u00e9e ou clique sur Envoyer pour passer la bombe \u00e0 l\u2019autre. La m\u00e8che raccourcit \u00e0 chaque tour et la bombe peut exploser sans pr\u00e9venir. Celui qui la tient au moment du boum a perdu.';
+    }
+
+    function createBombLocalState() {
+        const syllable = pickRandomBombSyllable();
+        const now = Date.now();
+        return {
+            players: [
+                { id: 'local-1', name: 'Capitaine 1', eliminated: false, lives: 1 },
+                { id: 'local-2', name: 'Capitaine 2', eliminated: false, lives: 1 }
+            ],
+            currentPlayerIndex: 0,
+            currentSyllable: syllable,
+            usedWords: [],
+            usedWordsMap: {},
+            winner: null,
+            statusMessage: `Tour du Capitaine 1. Trouve un mot contenant \u00ab ${syllable.toUpperCase()} \u00bb.`,
+            turnCount: 0,
+            round: 1,
+            turnDurationMs: BOMB_LOCAL_TURN_MS,
+            turnDeadlineAt: now + BOMB_LOCAL_TURN_MS,
+            fuseStart: now,
+            lastWord: '',
+            lastWordBy: null
+        };
+    }
+
+    function startBombLocalRound() {
+        bombLocalState = createBombLocalState();
+        bombState = bombLocalState;
+        startBombTimerLoop();
+        renderBomb();
+        window.setTimeout(() => {
+            bombWordInput?.focus();
+        }, 40);
+    }
+
+    function finishBombLocal(loserIndex, reason = 'explosion') {
+        if (!bombLocalState) return;
+        const loser = bombLocalState.players[loserIndex];
+        const winner = bombLocalState.players[(loserIndex + 1) % 2];
+        bombLocalState.winner = winner.id;
+        bombLocalState.turnDeadlineAt = 0;
+        bombLocalState.statusMessage = reason === 'timeout'
+            ? `Temps écoulé. La bombe explose sur ${loser.name}. ${winner.name} remporte le duel.`
+            : `BOUM ! La bombe saute sur ${loser.name}. ${winner.name} tient bon jusqu'à la fin.`;
+        renderBomb();
+        revealBombOutcomeMenu(
+            `${winner.name} s'en sort`,
+            `${loser.name} garde la bombe au moment de l'explosion. ${winner.name} remporte le duel.`,
+            'Duel terminé'
+        );
+    }
+
+    function handleBombLocalSubmit(word) {
+        if (!bombLocalState || bombLocalState.winner) return;
+        const trimmed = String(word || '').trim();
+        if (!trimmed) return;
+        const normalized = normalizeBombWordLocal(trimmed);
+        const normalizedSyllable = normalizeBombWordLocal(bombLocalState.currentSyllable);
+
+        if (normalized.length < 3) {
+            bombLocalState.statusMessage = 'Trouve un mot d\u2019au moins 3 lettres.';
+            renderBomb();
+            return;
+        }
+        if (!normalized.includes(normalizedSyllable)) {
+            bombLocalState.statusMessage = `Le mot doit contenir \u00ab ${bombLocalState.currentSyllable.toUpperCase()} \u00bb.`;
+            renderBomb();
+            return;
+        }
+        if (bombLocalState.usedWordsMap[normalized]) {
+            bombLocalState.statusMessage = 'Ce mot a d\u00e9j\u00e0 \u00e9t\u00e9 utilis\u00e9.';
+            renderBomb();
+            return;
+        }
+
+        const currentPlayer = bombLocalState.players[bombLocalState.currentPlayerIndex];
+        bombLocalState.usedWordsMap[normalized] = true;
+        bombLocalState.usedWords.unshift({
+            value: trimmed.slice(0, 32),
+            normalized,
+            by: currentPlayer.id
+        });
+        if (bombLocalState.usedWords.length > BOMB_LOCAL_WORD_HISTORY_LIMIT) {
+            const removed = bombLocalState.usedWords.pop();
+            if (removed?.normalized) {
+                delete bombLocalState.usedWordsMap[removed.normalized];
+            }
+        }
+        bombLocalState.lastWord = trimmed.slice(0, 32);
+        bombLocalState.lastWordBy = currentPlayer.id;
+
+        bombLocalState.currentPlayerIndex = (bombLocalState.currentPlayerIndex + 1) % 2;
+        bombLocalState.currentSyllable = pickRandomBombSyllable();
+        bombLocalState.turnCount += 1;
+        const nextDuration = Math.max(
+            BOMB_LOCAL_MIN_TURN_MS,
+            BOMB_LOCAL_TURN_MS - bombLocalState.turnCount * BOMB_LOCAL_TURN_STEP_MS
+        );
+        bombLocalState.turnDurationMs = nextDuration;
+        const now = Date.now();
+        bombLocalState.turnDeadlineAt = now + nextDuration;
+        bombLocalState.fuseStart = now;
+        const nextPlayer = bombLocalState.players[bombLocalState.currentPlayerIndex];
+        bombLocalState.statusMessage = `${currentPlayer.name} joue \u00ab ${bombLocalState.lastWord} \u00bb. Tour de ${nextPlayer.name}.`;
+        renderBomb();
+    }
+
+    function tickBombLocal() {
+        if (!bombLocalState || bombLocalState.winner) return;
+        const now = Date.now();
+        if (now >= bombLocalState.turnDeadlineAt) {
+            finishBombLocal(bombLocalState.currentPlayerIndex, 'timeout');
+            return;
+        }
+        const elapsed = now - (bombLocalState.fuseStart || now);
+        if (elapsed >= BOMB_LOCAL_MIN_BEFORE_RANDOM_MS) {
+            if (Math.random() < BOMB_LOCAL_RANDOM_EXPLOSION_MS / 60000) {
+                finishBombLocal(bombLocalState.currentPlayerIndex, 'explosion');
+            }
+        }
+    }
+
     function cloneBombState(state) {
         if (!state) {
             return null;
@@ -18982,6 +19163,9 @@ document.addEventListener('DOMContentLoaded', () => {
         stopBombTimerLoop();
         bombTimerInterval = window.setInterval(() => {
             if (activeGameTab === 'bomb') {
+                if (isBombLocalActive()) {
+                    tickBombLocal();
+                }
                 renderBomb();
             }
         }, 200);
@@ -19002,6 +19186,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function maybeOpenBombOutcomeModal() {
         if (!bombState?.winner) {
             bombLastFinishedStateKey = '';
+            return;
+        }
+        if (isBombLocalActive()) {
             return;
         }
 
@@ -19076,9 +19263,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const isOnline = isMultiplayerBombActive();
+        const isLocal = isBombLocalActive();
         const currentPlayer = getBombCurrentPlayer();
         const you = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
-        const isYourTurn = Boolean(currentPlayer?.id && currentPlayer.id === you?.id);
+        const isYourTurn = isLocal
+            ? Boolean(currentPlayer && !bombState?.winner)
+            : Boolean(currentPlayer?.id && currentPlayer.id === you?.id);
         const secondsLeft = getBombTimerSecondsLeft();
         const waitingForReady = isOnline && !multiplayerActiveRoom?.gameLaunched;
         const winner = bombState?.players?.find((player) => player.id === bombState?.winner) || null;
@@ -19092,19 +19282,108 @@ document.addEventListener('DOMContentLoaded', () => {
             : (currentPlayer ? `${currentPlayer.name} doit répondre maintenant.` : "En attente d'équipage");
         bombStatusBanner.textContent = waitingForReady
             ? "Quand tout le monde est prêt, la bombe s'allume dans la room."
-            : (bombState?.statusMessage || 'Rejoins un salon pour lancer la bombe.');
-        bombHelpText.textContent = isOnline
-            ? (isYourTurn
-                ? `A toi de jouer. Entre un mot avec ${bombState?.currentSyllable?.toUpperCase?.() || '-'} avant l explosion.`
-                : `Observe la manche. ${currentPlayer?.name || 'Un joueur'} tient la bombe.`)
-            : 'Jeu online uniquement. Ecris un mot contenant la syllabe imposee avant l explosion.';
-        bombWordInput.disabled = !isOnline || waitingForReady || !isYourTurn || Boolean(bombState?.winner);
+            : (bombState?.statusMessage || (isLocal ? 'Passe la bombe en envoyant un mot valide.' : 'Rejoins un salon pour lancer la bombe.'));
+        bombHelpText.textContent = isLocal
+            ? (winner
+                ? `Manche terminée. ${winner.name} remporte le duel local.`
+                : `Tour de ${currentPlayer?.name || 'Capitaine'}. Mot avec ${bombState?.currentSyllable?.toUpperCase?.() || '-'} puis Entrée.`)
+            : (isOnline
+                ? (isYourTurn
+                    ? `A toi de jouer. Entre un mot avec ${bombState?.currentSyllable?.toUpperCase?.() || '-'} avant l'explosion.`
+                    : `Observe la manche. ${currentPlayer?.name || 'Un joueur'} tient la bombe.`)
+                : "Duel local ou multijoueur. Choisis ton mode depuis le menu pour lancer la bombe.");
+        bombWordInput.disabled = !((isOnline && !waitingForReady && isYourTurn && !bombState?.winner) || (isLocal && !bombState?.winner));
         bombWordSubmitButton.disabled = bombWordInput.disabled;
-        bombRestartButton.disabled = !isOnline || waitingForReady || !Boolean(bombState?.winner);
+        bombRestartButton.disabled = isOnline
+            ? (waitingForReady || !Boolean(bombState?.winner))
+            : !isLocal;
 
         renderBombPlayers();
         renderBombUsedWords();
         maybeOpenBombOutcomeModal();
+        renderBombMenu();
+    }
+
+    function getBombRulesText() {
+        return getBombLocalRulesText();
+    }
+
+    function renderBombMenu() {
+        if (!bombMenuOverlay || !bombTable) return;
+        syncGameMenuOverlayBounds(bombMenuOverlay, bombTable);
+        bombMenuOverlay.classList.toggle('hidden', !bombMenuVisible);
+        bombMenuOverlay.classList.toggle('is-closing', bombMenuClosing);
+        bombMenuOverlay.classList.toggle('is-entering', bombMenuEntering);
+        bombTable.classList.toggle('is-menu-open', bombMenuVisible);
+
+        bombMenuModeButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.dataset.bombMode === bombSelectedMode);
+        });
+
+        if (!bombMenuVisible) return;
+
+        const hasResult = Boolean(bombState?.winner);
+
+        if (bombMenuEyebrow) {
+            bombMenuEyebrow.textContent = bombMenuShowingRules
+                ? 'R\u00e8gles'
+                : (hasResult ? 'Fin de manche' : 'La Bombe du bord');
+        }
+        if (bombMenuTitle) {
+            bombMenuTitle.textContent = bombMenuShowingRules
+                ? 'Rappel rapide'
+                : (hasResult ? 'Manche terminée' : 'Bombe');
+        }
+        if (bombMenuText) {
+            if (bombMenuShowingRules) {
+                bombMenuText.textContent = getBombRulesText();
+            } else if (hasResult) {
+                const winner = bombState.players.find((player) => player.id === bombState.winner);
+                bombMenuText.textContent = winner
+                    ? `${winner.name} garde son calme et remporte le duel.`
+                    : 'La manche est terminée.';
+            } else {
+                bombMenuText.textContent = bombSelectedMode === 'local'
+                    ? 'Duel local : deux capitaines partagent le clavier. Passe la bombe avant qu\u2019elle n\u2019explose.'
+                    : 'Multijoueur en ligne : rejoins ou cr\u00e9e un salon dans le navire Jeux pour affronter d\u2019autres capitaines.';
+            }
+        }
+        if (bombMenuActionButton) {
+            bombMenuActionButton.textContent = bombMenuShowingRules
+                ? 'Retour'
+                : (hasResult ? 'Rejouer un duel' : (bombSelectedMode === 'local' ? 'Allumer la mèche' : 'Aller au lobby'));
+        }
+        if (bombMenuRulesButton) {
+            bombMenuRulesButton.textContent = 'R\u00e8gles';
+            bombMenuRulesButton.hidden = bombMenuShowingRules;
+        }
+    }
+
+    function closeBombMenu() {
+        bombMenuClosing = true;
+        renderBombMenu();
+        window.setTimeout(() => {
+            bombMenuClosing = false;
+            bombMenuVisible = false;
+            bombMenuShowingRules = false;
+            bombMenuEntering = false;
+            renderBombMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
+    }
+
+    function revealBombOutcomeMenu(title, text, eyebrow) {
+        bombMenuVisible = true;
+        bombMenuShowingRules = false;
+        bombMenuClosing = false;
+        bombMenuEntering = true;
+        renderBombMenu();
+        if (bombMenuEyebrow && eyebrow) bombMenuEyebrow.textContent = eyebrow;
+        if (bombMenuTitle && title) bombMenuTitle.textContent = title;
+        if (bombMenuText && text) bombMenuText.textContent = text;
+        window.setTimeout(() => {
+            bombMenuEntering = false;
+            renderBombMenu();
+        }, UNO_MENU_CLOSE_DURATION_MS);
     }
 
     function syncMultiplayerBombState() {
@@ -19130,7 +19409,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initializeBomb() {
         closeGameOverModal();
+        bombMenuShowingRules = false;
+        bombMenuClosing = false;
+        bombMenuEntering = false;
         if (isMultiplayerBombActive()) {
+            bombLocalState = null;
+            bombMenuVisible = false;
             syncMultiplayerBombState();
             if (bombWordInput && multiplayerActiveRoom?.gameLaunched) {
                 const currentPlayer = getBombCurrentPlayer();
@@ -19143,6 +19427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         stopBombTimerLoop();
+        bombLocalState = null;
         bombState = null;
         renderBomb();
     }
@@ -19358,6 +19643,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'bomb') {
+            bombMenuVisible = true;
             initializeBomb();
             return;
         }
@@ -20941,28 +21227,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bombWordForm?.addEventListener('submit', (event) => {
         event.preventDefault();
-
-        if (!isMultiplayerBombActive()) {
-            setMultiplayerStatus('La Bombe se joue uniquement en ligne.');
+        if (bombMenuVisible || bombMenuClosing) {
             return;
         }
 
         const value = bombWordInput?.value?.trim() || '';
         if (!value) {
-            setMultiplayerStatus("Entre un mot avant d'envoyer.");
             return;
         }
 
-        multiplayerSocket?.emit('bomb:submit-word', { word: value });
-        bombWordInput.value = '';
+        if (isMultiplayerBombActive()) {
+            multiplayerSocket?.emit('bomb:submit-word', { word: value });
+            bombWordInput.value = '';
+            return;
+        }
+
+        if (isBombLocalActive()) {
+            handleBombLocalSubmit(value);
+            bombWordInput.value = '';
+            bombWordInput?.focus();
+            return;
+        }
     });
 
     bombRestartButton?.addEventListener('click', () => {
-        if (!isMultiplayerBombActive()) {
+        if (isMultiplayerBombActive()) {
+            multiplayerSocket?.emit('bomb:restart');
             return;
         }
 
-        multiplayerSocket?.emit('bomb:restart');
+        if (isBombLocalActive() || bombLocalState) {
+            startBombLocalRound();
+        }
+    });
+
+    bombMenuModeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const mode = button.dataset.bombMode;
+            if (mode === 'local' || mode === 'online') {
+                bombSelectedMode = mode;
+                renderBombMenu();
+            }
+        });
+    });
+
+    bombMenuActionButton?.addEventListener('click', () => {
+        if (bombMenuShowingRules) {
+            bombMenuShowingRules = false;
+            renderBombMenu();
+            return;
+        }
+
+        if (bombSelectedMode === 'local') {
+            startBombLocalRound();
+            closeBombMenu();
+            return;
+        }
+
+        bombLocalState = null;
+        bombState = null;
+        stopBombTimerLoop();
+        closeBombMenu();
+        renderBomb();
+    });
+
+    bombMenuRulesButton?.addEventListener('click', () => {
+        bombMenuShowingRules = true;
+        renderBombMenu();
     });
 
     battleshipEnemyBoard.addEventListener('click', (event) => {
@@ -21839,6 +22170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAimMenu();
     renderRhythmMenu();
     renderSolitaireMenu();
+    renderBombMenu();
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     startCoinClickerAutoLoop();

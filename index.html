@@ -1818,8 +1818,23 @@
                             <strong id="bombTurnDisplay" class="bomb-counter-value">-</strong>
                         </div>
                     </div>
-                    <p id="bombHelpText" class="bomb-help">Jeu online uniquement. Écris un mot contenant la syllabe imposée avant l'explosion.</p>
+                    <p id="bombHelpText" class="bomb-help">Duel local ou multijoueur. Écris un mot contenant la syllabe imposée avant que la bombe n'explose.</p>
                     <div id="bombTable" class="bomb-table">
+                        <div id="bombMenuOverlay" class="bomb-menu-overlay">
+                            <div class="bomb-menu-card">
+                                <span id="bombMenuEyebrow" class="bomb-menu-eyebrow">La Bombe du bord</span>
+                                <h3 id="bombMenuTitle" class="bomb-menu-title">Bombe</h3>
+                                <p id="bombMenuText" class="bomb-menu-text">Trouve un mot contenant la syllabe imposée avant que la bombe ne t'explose à la figure. Choisis ton mode de jeu.</p>
+                                <div id="bombMenuModeSwitch" class="bomb-menu-mode-switch" role="group" aria-label="Mode de jeu Bombe">
+                                    <button type="button" class="bomb-menu-mode-button is-active" data-bomb-mode="local">Duel local</button>
+                                    <button type="button" class="bomb-menu-mode-button" data-bomb-mode="online">Multijoueur en ligne</button>
+                                </div>
+                                <div class="bomb-menu-actions">
+                                    <button id="bombMenuActionButton" type="button" class="game-menu-primary-button">Allumer la mèche</button>
+                                    <button id="bombMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="bomb-main-shell">
                             <div class="bomb-stage-card">
                                 <div class="bomb-status-row">
@@ -2153,5 +2168,12 @@
         })();
     </script>
     <script src="script.js?v=2026-04-19-security-1"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => null);
+            });
+        }
+    </script>
 </body>
 </html>
