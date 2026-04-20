@@ -691,6 +691,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const maybePlayCheckersCaptureFx = __ck.maybePlayCheckersCaptureFx;
     const scheduleCheckersMoveAnimationClear = __ck.scheduleCheckersMoveAnimationClear;
 
+    // Bridge ESM — TicTacToe géré par js/games/ticTacToe.js.
+    const __ttt = window.__baie.ticTacToe;
+    const initializeTicTacToe = __ttt.initializeTicTacToe;
+    const renderTicTacToeMenu = __ttt.renderTicTacToeMenu;
+    const closeTicTacToeMenu = __ttt.closeTicTacToeMenu;
+    const showTicTacToeMenu = __ttt.showTicTacToeMenu;
+    const handleTicTacToeMove = __ttt.handleTicTacToeMove;
+    const setTicTacToeMode = __ttt.setTicTacToeMode;
+    const isMultiplayerTicTacToeActive = __ttt.isMultiplayerTicTacToeActive;
+    const syncMultiplayerTicTacToeState = __ttt.syncMultiplayerTicTacToeState;
+
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -1054,19 +1065,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacmanTouchStartY = null;
     let tetrisTouchStartX = null;
     let tetrisTouchStartY = null;
-    let ticTacToeBoardState = Array(9).fill('');
-    let ticTacToeRenderedBoardState = Array(9).fill('');
-    let ticTacToeCurrentPlayer = 'anchor';
-    let ticTacToeScores = { anchor: 0, skull: 0 };
-    let ticTacToeFinished = false;
-    let ticTacToeMode = 'solo';
-    let ticTacToeAiTimeout = null;
-    let ticTacToeMenuVisible = true;
-    let ticTacToeMenuShowingRules = false;
-    let ticTacToeMenuClosing = false;
-    let ticTacToeMenuEntering = false;
-    let ticTacToeMenuResult = null;
-    let ticTacToeOutcomeMenuTimeout = null;
     let battleshipPlayerGrid = [];
     let battleshipEnemyGrid = [];
     let battleshipPlayerRemainingShips = 0;
@@ -4145,530 +4143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateTicTacToeHud() {
-        ticTacToeTurnDisplay.textContent = ticTacToeFinished
-            ? '-'
-            : (ticTacToeCurrentPlayer === 'anchor'
-                ? (ticTacToeMode === 'duo' ? 'Joueur 1' : 'Toi')
-                : (ticTacToeMode === 'duo' ? 'Joueur 2' : 'IA'));
-        ticTacToeScoreDisplay.textContent = ticTacToeMode === 'duo'
-            ? `J1 ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} J2`
-            : `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
-        ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
-            ? 'Mode 2 joueurs : jouez chacun votre tour sur la même grille.'
-            : "Mode 1 joueur: aligne trois symboles contre l'IA pirate.";
-        ticTacToeModeButtons.forEach((button) => {
-            button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
-        });
-    }
-
-    function renderTicTacToeBoard() {
-        const winningLine = getTicTacToeWinner() || [];
-        ticTacToeBoard.innerHTML = ticTacToeBoardState.map((cell, index) => {
-            const isNewMove = Boolean(cell) && ticTacToeRenderedBoardState[index] !== cell;
-            const isWinningCell = winningLine.includes(index);
-            return `
-            <button
-                type="button"
-                class="tictactoe-cell${cell ? ` is-${cell}` : ''}${isNewMove ? ' is-new-move' : ''}${isWinningCell ? ' is-winning-cell' : ''}"
-                data-index="${index}"
-                aria-label="${cell ? (cell === 'anchor' ? 'Case ancre' : 'Case pirate') : 'Case vide'}"
-            >
-                <span aria-hidden="true">${cell === 'anchor' ? '\u2693' : cell === 'skull' ? '\u2620' : ''}</span>
-            </button>
-        `;
-        }).join('');
-        ticTacToeRenderedBoardState = [...ticTacToeBoardState];
-    }
-
-    function getTicTacToeRulesText() {
-        return "Placez chacun votre symbole à tour de rôle. Le premier à aligner trois cases gagne la manche. En solo, tu affrontes l'IA pirate.";
-    }
-
-    function renderTicTacToeMenu() {
-        if (!ticTacToeMenuOverlay || !ticTacToeTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(ticTacToeMenuOverlay, ticTacToeTable);
-        ticTacToeMenuOverlay.classList.toggle('hidden', !ticTacToeMenuVisible);
-        ticTacToeMenuOverlay.classList.toggle('is-closing', ticTacToeMenuClosing);
-        ticTacToeMenuOverlay.classList.toggle('is-entering', ticTacToeMenuEntering);
-        ticTacToeTable.classList.toggle('is-menu-open', ticTacToeMenuVisible);
-
-        if (!ticTacToeMenuVisible) {
-            return;
-        }
-
-        const isOutcome = Boolean(ticTacToeMenuResult);
-
-        if (ticTacToeMenuEyebrow) {
-            ticTacToeMenuEyebrow.textContent = ticTacToeMenuShowingRules
-                ? 'R\u00e8gles'
-                : (isOutcome ? 'Fin de manche' : 'Baie strat\u00e9gique');
-        }
-
-        if (ticTacToeMenuTitle) {
-            ticTacToeMenuTitle.textContent = ticTacToeMenuShowingRules
-                ? 'Rappel rapide'
-                : (ticTacToeMenuResult === 'win'
-                    ? 'Victoire'
-                    : (ticTacToeMenuResult === 'loss'
-                        ? 'D\u00e9faite'
-                        : (ticTacToeMenuResult === 'draw' ? 'Match nul' : 'Morpion')));
-        }
-
-        if (ticTacToeMenuText) {
-            ticTacToeMenuText.textContent = ticTacToeMenuShowingRules
-                ? getTicTacToeRulesText()
-                : (ticTacToeMenuResult === 'win'
-                    ? (ticTacToeMode === 'duo' ? 'Le joueur 1 prend le pont. Relancez une nouvelle manche.' : 'Ton \u00e9quipage tient le pont. Relance une nouvelle manche.')
-                    : (ticTacToeMenuResult === 'loss'
-                        ? (ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont. Relancez une nouvelle manche.' : "L'IA pirate prend le pont. Relance une nouvelle manche.")
-                        : (ticTacToeMenuResult === 'draw'
-                            ? "Personne ne prend l'avantage. Relance une nouvelle manche."
-                            : ((isMultiplayerTicTacToeActive() && !multiplayerActiveRoom?.gameLaunched)
-                                ? 'Quand tous les joueurs sont pr\u00eats, la manche de morpion commence automatiquement.'
-                                : "Aligne trois symboles avant l'\u00e9quipage adverse pour prendre le pont."))));
-        }
-
-        if (ticTacToeMenuActionButton) {
-            ticTacToeMenuActionButton.textContent = ticTacToeMenuShowingRules
-                ? 'Retour'
-                : ((isMultiplayerTicTacToeActive() && !multiplayerActiveRoom?.gameLaunched)
-                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
-                    : (isOutcome ? 'Relancer la partie' : 'Lancer la partie'));
-        }
-
-        if (ticTacToeMenuRulesButton) {
-            ticTacToeMenuRulesButton.textContent = 'R\u00e8gles';
-            ticTacToeMenuRulesButton.hidden = ticTacToeMenuShowingRules;
-        }
-    }
-
-    function closeTicTacToeMenu() {
-        ticTacToeMenuClosing = true;
-        ticTacToeMenuEntering = false;
-        renderTicTacToeMenu();
-        window.setTimeout(() => {
-            ticTacToeMenuClosing = false;
-            ticTacToeMenuVisible = false;
-            ticTacToeMenuShowingRules = false;
-            ticTacToeMenuEntering = false;
-            renderTicTacToeMenu();
-        }, 220);
-    }
-
-    function showTicTacToeMenu() {
-        ticTacToeMenuVisible = true;
-        ticTacToeMenuShowingRules = false;
-        ticTacToeMenuClosing = false;
-        ticTacToeMenuEntering = true;
-        renderTicTacToeMenu();
-        window.setTimeout(() => {
-            ticTacToeMenuEntering = false;
-            renderTicTacToeMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function showTicTacToeMenuWithDelay() {
-        if (ticTacToeOutcomeMenuTimeout) {
-            window.clearTimeout(ticTacToeOutcomeMenuTimeout);
-            ticTacToeOutcomeMenuTimeout = null;
-        }
-
-        ticTacToeMenuVisible = false;
-        ticTacToeMenuShowingRules = false;
-        ticTacToeMenuClosing = false;
-        ticTacToeMenuEntering = false;
-        renderTicTacToeMenu();
-
-        ticTacToeOutcomeMenuTimeout = window.setTimeout(() => {
-            ticTacToeOutcomeMenuTimeout = null;
-            showTicTacToeMenu();
-        }, GRID_OUTCOME_MENU_DELAY_MS);
-    }
-
-    function getTicTacToeWinner() {
-        const lines = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8],
-            [0, 3, 6], [1, 4, 7], [2, 5, 8],
-            [0, 4, 8], [2, 4, 6]
-        ];
-
-        return lines.find(([a, b, c]) => {
-            return ticTacToeBoardState[a]
-                && ticTacToeBoardState[a] === ticTacToeBoardState[b]
-                && ticTacToeBoardState[a] === ticTacToeBoardState[c];
-        }) || null;
-    }
-
-    function getTicTacToeWinnerForBoard(board) {
-        const lines = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8],
-            [0, 3, 6], [1, 4, 7], [2, 5, 8],
-            [0, 4, 8], [2, 4, 6]
-        ];
-
-        return lines.find(([a, b, c]) => (
-            board[a]
-            && board[a] === board[b]
-            && board[a] === board[c]
-        )) || null;
-    }
-
-    function getBestTicTacToeAiMove() {
-        const emptyCells = getTicTacToeEmptyCells();
-        if (!emptyCells.length) {
-            return null;
-        }
-
-        const aiPlayer = 'skull';
-        const humanPlayer = 'anchor';
-        const preferredOrder = [4, 0, 2, 6, 8, 1, 3, 5, 7];
-
-        const findFinishingMove = (player) => emptyCells.find((index) => {
-            const board = [...ticTacToeBoardState];
-            board[index] = player;
-            return Boolean(getTicTacToeWinnerForBoard(board));
-        });
-
-        const winningMove = findFinishingMove(aiPlayer);
-        if (winningMove !== undefined) {
-            return winningMove;
-        }
-
-        const blockingMove = findFinishingMove(humanPlayer);
-        if (blockingMove !== undefined) {
-            return blockingMove;
-        }
-
-        if (emptyCells.includes(4)) {
-            return 4;
-        }
-
-        const forkCandidates = emptyCells.filter((index) => {
-            const board = [...ticTacToeBoardState];
-            board[index] = aiPlayer;
-            const futureWins = emptyCells
-                .filter((candidate) => candidate !== index)
-                .filter((candidate) => {
-                    const nextBoard = [...board];
-                    nextBoard[candidate] = aiPlayer;
-                    return Boolean(getTicTacToeWinnerForBoard(nextBoard));
-                });
-            return futureWins.length >= 2;
-        });
-        if (forkCandidates.length) {
-            return preferredOrder.find((index) => forkCandidates.includes(index)) ?? forkCandidates[0];
-        }
-
-        return preferredOrder.find((index) => emptyCells.includes(index)) ?? emptyCells[0];
-    }
-
-    function isMultiplayerTicTacToeActive() {
-        return multiplayerActiveRoom?.gameId === 'ticTacToe' && Boolean(multiplayerActiveRoom?.gameState);
-    }
-
-    function getMultiplayerTicTacToePlayer() {
-        return multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
-    }
-
-    function getMultiplayerTicTacToeRole() {
-        return getMultiplayerTicTacToePlayer()?.symbol || null;
-    }
-
-    function getMultiplayerTicTacToeTurnLabel() {
-        if (ticTacToeFinished) {
-            return '-';
-        }
-
-        const currentRole = getMultiplayerTicTacToeRole();
-        if (!currentRole) {
-            return ticTacToeCurrentPlayer === 'anchor' ? 'Joueur 1' : 'Joueur 2';
-        }
-
-        return ticTacToeCurrentPlayer === currentRole ? 'Toi' : 'Adversaire';
-    }
-
-    function getMultiplayerTicTacToeScoreLabel() {
-        const currentRole = getMultiplayerTicTacToeRole();
-
-        if (currentRole === 'skull') {
-            return `Toi ${ticTacToeScores.skull} - ${ticTacToeScores.anchor} Adv.`;
-        }
-
-        return `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} Adv.`;
-    }
-
-    function getMultiplayerTicTacToeHelpText() {
-        const playerCount = multiplayerActiveRoom?.playerCount || 0;
-        const currentRole = getMultiplayerTicTacToeRole();
-
-        if (playerCount < 2) {
-            return "En attente d'un adversaire pour lancer la manche.";
-        }
-
-        if (ticTacToeFinished) {
-            if (multiplayerActiveRoom?.gameState?.winner === 'draw') {
-                return 'Match nul. Relance une manche pour vous départager.';
-            }
-
-            if (multiplayerActiveRoom?.gameState?.winner === currentRole) {
-                return 'Victoire. Ton \u00e9quipage tient le pont.';
-            }
-
-            return "D\u00e9faite. L'adversaire prend le pont.";
-        }
-
-        if (!currentRole) {
-            return 'La manche est en cours entre les deux joueurs.';
-        }
-
-        return ticTacToeCurrentPlayer === currentRole
-            ? '\u00c0 toi de jouer.'
-            : "Au tour de l'adversaire.";
-    }
-
-    function syncMultiplayerTicTacToeState() {
-        if (!isMultiplayerTicTacToeActive()) {
-            ticTacToeLastFinishedStateKey = '';
-            if (ticTacToeOutcomeMenuTimeout) {
-                window.clearTimeout(ticTacToeOutcomeMenuTimeout);
-                ticTacToeOutcomeMenuTimeout = null;
-            }
-            return;
-        }
-
-        if (ticTacToeAiTimeout) {
-            window.clearTimeout(ticTacToeAiTimeout);
-            ticTacToeAiTimeout = null;
-        }
-
-        ticTacToeBoardState = Array.isArray(multiplayerActiveRoom.gameState.board)
-            ? [...multiplayerActiveRoom.gameState.board]
-            : Array(9).fill('');
-        ticTacToeCurrentPlayer = multiplayerActiveRoom.gameState.currentPlayer || 'anchor';
-        ticTacToeFinished = Boolean(multiplayerActiveRoom.gameState.finished);
-        ticTacToeScores = {
-            anchor: Number(multiplayerActiveRoom.gameState.scores?.anchor || 0),
-            skull: Number(multiplayerActiveRoom.gameState.scores?.skull || 0)
-        };
-
-        updateTicTacToeHud();
-        renderTicTacToeBoard();
-
-        if (!ticTacToeFinished) {
-            ticTacToeLastFinishedStateKey = '';
-            if (ticTacToeOutcomeMenuTimeout) {
-                window.clearTimeout(ticTacToeOutcomeMenuTimeout);
-                ticTacToeOutcomeMenuTimeout = null;
-            }
-            return;
-        }
-
-        const finishedStateKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner}`;
-        if (finishedStateKey === ticTacToeLastFinishedStateKey) {
-            return;
-        }
-
-        ticTacToeLastFinishedStateKey = finishedStateKey;
-
-        if (activeGameTab !== 'ticTacToe') {
-            return;
-        }
-
-        if (multiplayerActiveRoom.gameState.winner === 'draw') {
-            ticTacToeMenuResult = 'draw';
-        } else if (multiplayerActiveRoom.gameState.winner === getMultiplayerTicTacToeRole()) {
-            ticTacToeMenuResult = 'win';
-        } else {
-            ticTacToeMenuResult = 'loss';
-        }
-
-        showTicTacToeMenuWithDelay();
-    }
-
-    function initializeTicTacToe() {
-        if (ticTacToeAiTimeout) {
-            window.clearTimeout(ticTacToeAiTimeout);
-            ticTacToeAiTimeout = null;
-        }
-        closeGameOverModal();
-        if (ticTacToeOutcomeMenuTimeout) {
-            window.clearTimeout(ticTacToeOutcomeMenuTimeout);
-            ticTacToeOutcomeMenuTimeout = null;
-        }
-        ticTacToeBoardState = Array(9).fill('');
-        ticTacToeRenderedBoardState = Array(9).fill('');
-        ticTacToeCurrentPlayer = 'anchor';
-        ticTacToeFinished = false;
-        ticTacToeHelpText.textContent = "Place tes ancres contre l'IA pirate pour aligner trois symboles.";
-        updateTicTacToeHud();
-        renderTicTacToeBoard();
-    }
-
-    function getTicTacToeEmptyCells() {
-        return ticTacToeBoardState
-            .map((value, index) => value ? null : index)
-            .filter((value) => value !== null);
-    }
-    function updateTicTacToeHud() {
-        if (isMultiplayerTicTacToeActive()) {
-            ticTacToeTurnDisplay.textContent = getMultiplayerTicTacToeTurnLabel();
-            ticTacToeScoreDisplay.textContent = getMultiplayerTicTacToeScoreLabel();
-            ticTacToeHelpText.textContent = getMultiplayerTicTacToeHelpText();
-            ticTacToeModeButtons.forEach((button) => {
-                button.classList.remove('is-active');
-                button.disabled = true;
-            });
-            return;
-        }
-
-        ticTacToeTurnDisplay.textContent = ticTacToeFinished
-            ? '-'
-            : (ticTacToeCurrentPlayer === 'anchor'
-                ? (ticTacToeMode === 'duo' ? 'Joueur 1' : 'Toi')
-                : (ticTacToeMode === 'duo' ? 'Joueur 2' : 'IA'));
-        ticTacToeScoreDisplay.textContent = ticTacToeMode === 'duo'
-            ? `J1 ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} J2`
-            : `Toi ${ticTacToeScores.anchor} - ${ticTacToeScores.skull} IA`;
-        ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
-            ? 'Mode 2 joueurs : jouez chacun votre tour sur la même grille.'
-            : "Mode 1 joueur: aligne trois symboles contre l'IA pirate.";
-        ticTacToeModeButtons.forEach((button) => {
-            button.classList.toggle('is-active', button.dataset.tictactoeMode === ticTacToeMode);
-            button.disabled = false;
-        });
-    }
-
-    function initializeTicTacToe(showMenu = true) {
-        if (isMultiplayerTicTacToeActive()) {
-            closeGameOverModal();
-            ticTacToeMenuVisible = false;
-            ticTacToeMenuShowingRules = false;
-            ticTacToeMenuClosing = false;
-            ticTacToeMenuEntering = false;
-            renderTicTacToeMenu();
-            syncMultiplayerTicTacToeState();
-            return;
-        }
-
-        if (ticTacToeAiTimeout) {
-            window.clearTimeout(ticTacToeAiTimeout);
-            ticTacToeAiTimeout = null;
-        }
-
-        closeGameOverModal();
-        if (ticTacToeOutcomeMenuTimeout) {
-            window.clearTimeout(ticTacToeOutcomeMenuTimeout);
-            ticTacToeOutcomeMenuTimeout = null;
-        }
-        ticTacToeBoardState = Array(9).fill('');
-        ticTacToeCurrentPlayer = 'anchor';
-        ticTacToeFinished = false;
-        ticTacToeMenuResult = null;
-        updateTicTacToeHud();
-        renderTicTacToeBoard();
-        if (showMenu) {
-            showTicTacToeMenu();
-        } else {
-            ticTacToeMenuVisible = false;
-            ticTacToeMenuShowingRules = false;
-            ticTacToeMenuClosing = false;
-            renderTicTacToeMenu();
-        }
-    }
-
-    function finishTicTacToeRound(winner) {
-        ticTacToeFinished = true;
-
-        if (winner === 'anchor') {
-            ticTacToeScores.anchor += 1;
-            ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 1 tient le pont.' : 'Victoire. Ton \u00e9quipage tient le pont.';
-            ticTacToeMenuResult = 'win';
-        } else if (winner === 'skull') {
-            ticTacToeScores.skull += 1;
-            ticTacToeHelpText.textContent = ticTacToeMode === 'duo' ? 'Le joueur 2 prend le pont.' : "D\u00e9faite. L'IA pirate prend le pont.";
-            ticTacToeMenuResult = 'loss';
-        } else {
-            ticTacToeHelpText.textContent = "Match nul. Personne ne prend l'avantage.";
-            ticTacToeMenuResult = 'draw';
-        }
-
-        updateTicTacToeHud();
-        renderTicTacToeBoard();
-        showTicTacToeMenuWithDelay();
-    }
-
-    function handleTicTacToeMove(index, player = 'anchor') {
-        if (isMultiplayerTicTacToeActive()) {
-            if (!multiplayerSocket?.connected) {
-                setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
-                return;
-            }
-
-            multiplayerSocket.emit('tictactoe:move', { index });
-            return;
-        }
-
-        if (ticTacToeFinished || ticTacToeBoardState[index] || ticTacToeCurrentPlayer !== player) {
-            return;
-        }
-
-        ticTacToeBoardState[index] = player;
-        const winningLine = getTicTacToeWinner();
-
-        if (winningLine) {
-            finishTicTacToeRound(player);
-            return;
-        }
-
-        if (ticTacToeBoardState.every(Boolean)) {
-            finishTicTacToeRound('draw');
-            return;
-        }
-
-        ticTacToeCurrentPlayer = player === 'anchor' ? 'skull' : 'anchor';
-        updateTicTacToeHud();
-        renderTicTacToeBoard();
-
-        if (ticTacToeCurrentPlayer === 'skull' && ticTacToeMode === 'solo') {
-            ticTacToeHelpText.textContent = "L'IA pirate prepare sa riposte.";
-            ticTacToeAiTimeout = window.setTimeout(() => {
-                ticTacToeAiTimeout = null;
-                if (ticTacToeFinished) {
-                    return;
-                }
-
-                const chosenIndex = getBestTicTacToeAiMove();
-                if (chosenIndex === null) {
-                    return;
-                }
-
-                handleTicTacToeMove(chosenIndex, 'skull');
-            }, 320);
-        } else if (!ticTacToeFinished) {
-            ticTacToeHelpText.textContent = ticTacToeMode === 'duo'
-                ? (ticTacToeCurrentPlayer === 'anchor' ? 'Au joueur 1 de jouer.' : 'Au joueur 2 de jouer.')
-                : '\u00c0 toi de jouer.';
-        }
-    }
-
-    function setTicTacToeMode(nextMode) {
-        if (isMultiplayerTicTacToeActive()) {
-            setMultiplayerStatus('Le mode est piloté par la room en ligne.');
-            return;
-        }
-
-        if (!['solo', 'duo'].includes(nextMode)) {
-            return;
-        }
-
-        ticTacToeMode = nextMode;
-        ticTacToeScores = { anchor: 0, skull: 0 };
-        initializeTicTacToe();
-    }
 
     function isMultiplayerConnect4Active() {
         return multiplayerActiveRoom?.gameId === 'connect4' && Boolean(multiplayerActiveRoom?.gameState);
@@ -10903,17 +10377,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     ticTacToeMenuActionButton?.addEventListener('click', () => {
-        if (ticTacToeMenuShowingRules) {
-            ticTacToeMenuShowingRules = false;
+        if (__ttt.getTicTacToeMenuShowingRules()) {
+            __ttt.setTicTacToeMenuShowingRules(false);
             renderTicTacToeMenu();
             return;
         }
 
-        if (ticTacToeMenuResult) {
+        if (__ttt.getTicTacToeMenuResult()) {
             if (isMultiplayerTicTacToeActive()) {
                 multiplayerSocket?.emit('tictactoe:restart');
-                ticTacToeMenuVisible = false;
-                ticTacToeMenuResult = null;
+                __ttt.setTicTacToeMenuVisible(false);
+                __ttt.setTicTacToeMenuResult(null);
                 renderTicTacToeMenu();
                 return;
             }
@@ -10927,12 +10401,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        ticTacToeMenuResult = null;
+        __ttt.setTicTacToeMenuResult(null);
         closeTicTacToeMenu();
     });
 
     ticTacToeMenuRulesButton?.addEventListener('click', () => {
-        ticTacToeMenuShowingRules = !ticTacToeMenuShowingRules;
+        __ttt.setTicTacToeMenuShowingRules(!__ttt.getTicTacToeMenuShowingRules());
         renderTicTacToeMenu();
     });
 
@@ -10949,9 +10423,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const mode = __ttt.getTicTacToeMode();
         handleTicTacToeMove(
             Number(cellButton.dataset.index),
-            ticTacToeMode === 'duo' ? ticTacToeCurrentPlayer : 'anchor'
+            mode === 'duo' ? __ttt.getTicTacToeCurrentPlayer() : 'anchor'
         );
     });
 
