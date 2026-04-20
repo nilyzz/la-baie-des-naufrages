@@ -274,3 +274,8 @@ export function setMemoryMenuVisible(visible) {
 export function setMemoryMenuShowingRules(showing) {
     memoryMenuShowingRules = Boolean(showing);
 }
+
+export function getMemoryMenuVisible() { return memoryMenuVisible; }
+export function getMemoryMenuClosing() { return memoryMenuClosing; }
+export function getMemoryMenuShowingRules() { return memoryMenuShowingRules; }
+export function getMemoryMenuResult() { return memoryMenuResult; }

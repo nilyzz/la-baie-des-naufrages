@@ -371,3 +371,5 @@ export function setMinesweeperMenuShowingRules(v) { minesweeperMenuShowingRules 
 export function getMinesweeperMenuVisible() { return minesweeperMenuVisible; }
 export function getMinesweeperGameStarted() { return gameStarted; }
 export function getMinesweeperGameFinished() { return gameFinished; }
+export function getMinesweeperMenuShowingRules() { return minesweeperMenuShowingRules; }
+export function getMinesweeperMenuClosing() { return minesweeperMenuClosing; }

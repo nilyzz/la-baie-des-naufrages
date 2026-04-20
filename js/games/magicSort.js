@@ -346,3 +346,5 @@ export function handleMagicSortTubeClick(index) {
 export function getMagicSortMenuVisible() { return magicSortMenuVisible; }
 export function setMagicSortMenuVisible(v) { magicSortMenuVisible = Boolean(v); }
 export function setMagicSortMenuShowingRules(v) { magicSortMenuShowingRules = Boolean(v); }
+export function getMagicSortMenuShowingRules() { return magicSortMenuShowingRules; }
+export function getMagicSortMenuClosing() { return magicSortMenuClosing; }

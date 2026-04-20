@@ -335,3 +335,5 @@ export function getHarborRunRunning() { return harborRunRunning; }
 export function getHarborRunMenuVisible() { return harborRunMenuVisible; }
 export function setHarborRunMenuVisible(v) { harborRunMenuVisible = Boolean(v); }
 export function setHarborRunMenuShowingRules(v) { harborRunMenuShowingRules = Boolean(v); }
+export function getHarborRunMenuShowingRules() { return harborRunMenuShowingRules; }
+export function getHarborRunMenuClosing() { return harborRunMenuClosing; }
