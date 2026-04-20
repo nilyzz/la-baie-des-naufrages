@@ -605,7 +605,8 @@ export function syncMultiplayerCheckersState() {
             : null
     };
     checkersSelectedSquare = null;
-    checkersMenuVisible = false;
+    // Garde le menu visible tant que tous les joueurs n'ont pas cliqué prêt.
+    checkersMenuVisible = !multiplayerActiveRoom.gameLaunched;
     checkersMenuShowingRules = false;
     checkersMenuClosing = false;
     checkersMenuResult = Boolean(multiplayerActiveRoom.gameState.winner);

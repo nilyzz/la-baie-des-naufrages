@@ -282,7 +282,8 @@ export function syncMultiplayerConnect4State() {
     connect4DropAnimationKey = null;
     connect4DropAnimationState = null;
     connect4OutcomeWinner = room.gameState.winner || null;
-    connect4MenuVisible = false;
+    // Garde le menu visible tant que tous les joueurs n'ont pas cliqué prêt.
+    connect4MenuVisible = !room.gameLaunched;
     connect4MenuShowingRules = false;
     connect4MenuClosing = false;
     connect4MenuResult = connect4Finished;
