@@ -306,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const pacmanLivesDisplay = document.getElementById('pacmanLivesDisplay');
     const pacmanStartButton = document.getElementById('pacmanStartButton');
     const pacmanHelpText = document.getElementById('pacmanHelpText');
-    let pacmanCountdown = document.getElementById('pacmanCountdown');
     const pacmanMenuOverlay = document.getElementById('pacmanMenuOverlay');
     const pacmanMenuEyebrow = document.getElementById('pacmanMenuEyebrow');
     const pacmanMenuTitle = document.getElementById('pacmanMenuTitle');
@@ -512,6 +511,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitMentalMathAnswer = __mm.submitMentalMathAnswer;
     const handleMentalMathKeypadInput = __mm.handleMentalMathKeypadInput;
     const handleMentalMathKeypadAction = __mm.handleMentalMathKeypadAction;
+
+    // Bridge ESM — Snake géré par js/games/snake.js.
+    const __sn = window.__baie.snake;
+    const initializeSnake = __sn.initializeSnake;
+    const renderSnake = __sn.renderSnake;
+    const renderSnakeMenu = __sn.renderSnakeMenu;
+    const closeSnakeMenu = __sn.closeSnakeMenu;
+    const startSnake = __sn.startSnake;
+    const queueSnakeDirectionInput = __sn.queueSnakeDirectionInput;
+    const stopSnake = __sn.stopSnake;
+
+    // Bridge ESM — Tetris géré par js/games/tetris.js.
+    const __tt = window.__baie.tetris;
+    const initializeTetris = __tt.initializeTetris;
+    const renderTetrisMenu = __tt.renderTetrisMenu;
+    const closeTetrisMenu = __tt.closeTetrisMenu;
+    const startTetris = __tt.startTetris;
+    const dropTetrisStep = __tt.dropTetrisStep;
+    const moveTetrisHorizontally = __tt.moveTetrisHorizontally;
+    const rotateTetrisPiece = __tt.rotateTetrisPiece;
+    const hardDropTetrisPiece = __tt.hardDropTetrisPiece;
+
+    // Bridge ESM — 2048 géré par js/games/game2048.js.
+    const __g2 = window.__baie.game2048;
+    const initialize2048 = __g2.initialize2048;
+    const render2048 = __g2.render2048;
+    const render2048Menu = __g2.render2048Menu;
+    const close2048Menu = __g2.close2048Menu;
+    const move2048 = __g2.move2048;
+    const reveal2048OutcomeMenu = __g2.reveal2048OutcomeMenu;
+
+    // Bridge ESM — Flappy géré par js/games/flappy.js.
+    const __fl = window.__baie.flappy;
+    const initializeFlappy = __fl.initializeFlappy;
+    const renderFlappyMenu = __fl.renderFlappyMenu;
+    const startFlappyLaunchSequence = __fl.startFlappyLaunchSequence;
+    const flapFlappyBird = __fl.flapFlappyBird;
+
+    // Bridge ESM — Pacman géré par js/games/pacman.js.
+    const __pm = window.__baie.pacman;
+    const initializePacman = __pm.initializePacman;
+    const renderPacmanMenu = __pm.renderPacmanMenu;
+    const startPacman = __pm.startPacman;
+    const trySetPacmanDirection = __pm.trySetPacmanDirection;
+    const closePacmanMenu = __pm.closePacmanMenu;
+    const renderPacman = __pm.renderPacman;
+    const stopPacman = __pm.stopPacman;
+
+    // Bridge ESM — Breakout géré par js/games/breakout.js.
+    const __bk = window.__baie.breakout;
+    const initializeBreakout = __bk.initializeBreakout;
+    const renderBreakoutMenu = __bk.renderBreakoutMenu;
+    const startBreakoutLaunchSequence = __bk.startBreakoutLaunchSequence;
+    const updateBreakout = __bk.updateBreakout;
+    const drawBreakout = __bk.drawBreakout;
+    const stopBreakout = __bk.stopBreakout;
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -689,13 +744,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const BOARD_SIZE = 14;
     const TOTAL_MINES = 36;
-    const SNAKE_SIZE = 14;
-    const SNAKE_TICK_MS = 165;
-    const SNAKE_BEST_KEY = 'baie-des-naufrages-snake-best';
     const PONG_TARGET_SCORE = 7;
     const SUDOKU_SIZE = 9;
-    const GAME_2048_SIZE = 4;
-    const GAME_2048_BEST_KEY = 'baie-des-naufrages-2048-best';
     const CONNECT4_ROWS = 6;
     const CONNECT4_COLS = 7;
     const MEMORY_ICONS = ['\u2693', '\u{1F980}', '\u{1F419}', '\u{1F991}', '\u{1FAB8}', '\u{1F99E}', '\u{1F420}', '\u{1F9ED}'];
@@ -716,10 +766,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { key: 'pillar', cells: [[0, 0], [0, 1], [0, 2], [0, 3]], color: 'reef' }
     ];
     const BATTLESHIP_SHIPS = [4, 3, 3, 2, 2];
-    const TETRIS_ROWS = 18;
-    const TETRIS_COLS = 10;
-    const TETRIS_TICK_MS = 420;
-    const FLAPPY_BEST_KEY = 'baie-des-naufrages-flappy-best';
     const HARBOR_RUN_BEST_KEY = 'baie-des-naufrages-harbor-run-best';
     const STACKER_BEST_KEY = 'baie-des-naufrages-stacker-best';
     const BAIE_BERRY_BEST_KEY = 'baie-des-naufrages-baieberry-best';
@@ -729,9 +775,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const BAIE_BERRY_COMBO_WINDOW_MS = 1400;
     const BAIE_BERRY_SHAKE_DECAY = 0.9;
     const BAIE_BERRY_DROP_COOLDOWN_MS = 500;
-    const BREAKOUT_BEST_KEY = 'baie-des-naufrages-breakout-best';
-    const BREAKOUT_BALL_SPEED = 320;
-    const BREAKOUT_MAX_STEP_DISTANCE = 4;
     const FLOW_FREE_SIZE = 7;
     const FLOW_FREE_COLORS = [
         '#ef4444',
@@ -799,30 +842,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Perle Marine', radius: 72, color: '#2dd4bf', score: 1120 },
         { name: 'Rubis des Flots', radius: 88, color: '#ef4444', score: 2240 },
         { name: 'Couronne Abyssale', radius: 106, color: '#0f172a', score: 4480 }
-    ];
-    const TETRIS_PIECES = {
-        I: { color: '#38bdf8', shape: [[1, 1, 1, 1]] },
-        O: { color: '#facc15', shape: [[1, 1], [1, 1]] },
-        T: { color: '#a855f7', shape: [[0, 1, 0], [1, 1, 1]] },
-        L: { color: '#fb923c', shape: [[1, 0], [1, 0], [1, 1]] },
-        J: { color: '#3b82f6', shape: [[0, 1], [0, 1], [1, 1]] },
-        S: { color: '#34d399', shape: [[0, 1, 1], [1, 1, 0]] },
-        Z: { color: '#f87171', shape: [[1, 1, 0], [0, 1, 1]] }
-    };
-    const PACMAN_LAYOUT = [
-        '#############',
-        '#...........#',
-        '#.###.###.#.#',
-        '#...........#',
-        '#.###.#.###.#',
-        '#.....#.....#',
-        '###.#.#.#.###',
-        '#...#...#...#',
-        '#.#.#####.#.#',
-        '#...........#',
-        '#.###.#.###.#',
-        '#.....#.....#',
-        '#############'
     ];
     const SOLITAIRE_SUITS = ['spades', 'hearts', 'clubs', 'diamonds'];
     const SOLITAIRE_SUIT_SYMBOLS = {
@@ -970,24 +989,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof window !== 'undefined') {
         window.__baieActiveGameTab = () => activeGameTab;
     }
-    let snake = [];
-    let snakeDirection = { x: 1, y: 0 };
-    let snakeNextDirection = { x: 1, y: 0 };
-    let snakeFoods = [];
-    let snakeScore = 0;
-    let snakeBestScore = Number(window.localStorage.getItem(SNAKE_BEST_KEY)) || 0;
-    let snakeInterval = null;
-    let snakeRunning = false;
-    let snakeJustAte = false;
-    let snakeDirectionQueue = [];
-    let snakeOverlayLayer = null;
-    let snakeSegmentElements = [];
-    let snakeFoodElements = new Map();
-    let snakeMenuVisible = true;
-    let snakeMenuShowingRules = false;
-    let snakeMenuClosing = false;
-    let snakeMenuEntering = false;
-    let snakeMenuResult = null;
     let pongRunning = false;
     let pongAnimationFrame = null;
     let pongLastFrame = 0;
@@ -1047,20 +1048,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let sudokuMenuClosing = false;
     let sudokuMenuEntering = false;
     let sudokuMenuResult = null;
-    let game2048Grid = [];
-    let game2048Tiles = [];
-    let game2048Score = 0;
-    let game2048BestScore = Number(window.localStorage.getItem(GAME_2048_BEST_KEY)) || 0;
-    let game2048TileLayer = null;
-    let game2048TileElements = new Map();
-    let game2048NextTileId = 1;
-    let game2048Animating = false;
-    let game2048AnimationTimeout = null;
-    let game2048QueuedMove = null;
-    let game2048MenuVisible = true;
-    let game2048MenuShowingRules = false;
-    let game2048MenuClosing = false;
-    let game2048MenuResult = false;
     let game2048TouchStartX = null;
     let game2048TouchStartY = null;
     let snakeTouchStartX = null;
@@ -1107,38 +1094,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let battleshipMenuClosing = false;
     let battleshipMenuEntering = false;
     let battleshipMenuResult = null;
-    let tetrisGrid = [];
-    let tetrisPiece = null;
-    let tetrisScore = 0;
-    let tetrisLines = 0;
-    let tetrisRunning = false;
-    let tetrisInterval = null;
-    let tetrisMenuVisible = true;
-    let tetrisMenuShowingRules = false;
-    let tetrisMenuClosing = false;
-    let tetrisMenuEntering = false;
-    let tetrisMenuResult = null;
-    let pacmanGrid = [];
-    let pacmanPosition = { row: 1, col: 1 };
-    let pacmanDirection = { row: 0, col: 0 };
-    let pacmanNextDirection = { row: 0, col: 0 };
-    let pacmanGhosts = [];
-    let pacmanScore = 0;
-    let pacmanLives = 3;
-    let pacmanPellets = 0;
-    let pacmanRunning = false;
-    let pacmanInterval = null;
-    let pacmanCountdownActive = false;
-    let pacmanCountdownTimer = null;
-    let pacmanCountdownCompleteTimer = null;
-    let pacmanCellElements = [];
-    let pacmanHeroElement = null;
-    let pacmanGhostElements = [];
-    let pacmanMenuVisible = true;
-    let pacmanMenuShowingRules = false;
-    let pacmanMenuClosing = false;
-    let pacmanMenuEntering = false;
-    let pacmanMenuResult = null;
     let solitaireStockCards = [];
     let solitaireWasteCards = [];
     let solitaireFoundationsState = { spades: [], hearts: [], clubs: [], diamonds: [] };
@@ -1165,31 +1120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let connect4MenuEntering = false;
     let connect4MenuResult = false;
     let connect4OutcomeMenuTimeout = null;
-    let flappyBirdY = 0;
-    let flappyBirdVelocity = 0;
-    let flappyPipes = [];
-    let flappyScore = 0;
-    let flappyBestScore = Number(window.localStorage.getItem(FLAPPY_BEST_KEY)) || 0;
-    let flappyRunning = false;
-    let flappyAnimationFrame = null;
-    let flappyLastFrame = 0;
-    let flappySpawnTimer = 0;
-    let flappyBackdropOffset = 0;
-    let flappySplashParticles = [];
-    let flappySplashTimeout = null;
-    let flappyMenuVisible = true;
-    let flappyMenuShowingRules = false;
-    let flappyMenuClosing = false;
-    let flappyMenuEntering = false;
-    let flappyMenuResultReason = '';
-    const FLAPPY_BIRD_WIDTH = 46;
-    const FLAPPY_BIRD_HEIGHT = 36;
-    const FLAPPY_PIPE_WIDTH = 86;
-    const FLAPPY_BIRD_OFFSET_X = 0.24;
-    const FLAPPY_BASE_SPAWN_INTERVAL = 1720;
-    const FLAPPY_MIN_SPAWN_INTERVAL = 1240;
-    const FLAPPY_BASE_PIPE_SPEED = 0.176;
-    const FLAPPY_MAX_PIPE_SPEED = 0.244;
     let flowFreeCells = [];
     let flowFreeLevel = null;
     let flowFreePaths = new Map();
@@ -1309,16 +1239,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let baieBerryMenuClosing = false;
     let baieBerryMenuEntering = false;
     let baieBerryMenuResult = false;
-    let breakoutState = null;
-    let breakoutAnimationFrame = null;
-    let breakoutLastFrame = 0;
-    let breakoutKeys = new Set();
-    let breakoutBestScore = Number(window.localStorage.getItem(BREAKOUT_BEST_KEY)) || 0;
-    let breakoutRemainingBricks = 0;
-    let breakoutMenuVisible = true;
-    let breakoutMenuShowingRules = false;
-    let breakoutMenuClosing = false;
-    let breakoutMenuResult = null;
     let blockBlastState = null;
     let blockBlastBestScore = Number(window.localStorage.getItem(BLOCK_BLAST_BEST_KEY)) || 0;
     let blockBlastSelectedPieceIndex = null;
@@ -4241,7 +4161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'snake' && nextTab !== 'snake') {
-            snakeMenuVisible = true;
+            __sn.setSnakeMenuVisible(true);
             stopSnake();
             initializeSnake();
         }
@@ -4279,12 +4199,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'tetris' && nextTab !== 'tetris') {
-            tetrisMenuVisible = true;
+            __tt.setTetrisMenuVisible(true);
             initializeTetris();
         }
 
         if (previousTab === 'pacman' && nextTab !== 'pacman') {
-            pacmanMenuVisible = true;
+            __pm.setPacmanMenuVisible(true);
             initializePacman();
         }
 
@@ -4368,6 +4288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'breakout' && nextTab !== 'breakout') {
+            __bk.setBreakoutMenuVisible(true);
             stopBreakout();
             initializeBreakout();
         }
@@ -6065,803 +5986,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 420);
     }
 
-    function createEmptyTetrisGrid() {
-        return Array.from({ length: TETRIS_ROWS }, () => Array(TETRIS_COLS).fill(''));
-    }
-
-    function updateTetrisHud() {
-        tetrisScoreDisplay.textContent = String(tetrisScore);
-        tetrisLinesDisplay.textContent = String(tetrisLines);
-        tetrisStartButton.textContent = tetrisRunning ? 'Cale en cours' : 'Lancer la cale';
-    }
-
-    function createRandomTetrisPiece() {
-        const types = Object.keys(TETRIS_PIECES);
-        const type = types[Math.floor(Math.random() * types.length)];
-        const piece = TETRIS_PIECES[type];
-
-        return {
-            type,
-            color: piece.color,
-            shape: piece.shape.map((row) => [...row]),
-            row: 0,
-            col: Math.floor((TETRIS_COLS - piece.shape[0].length) / 2)
-        };
-    }
-
-    function rotateTetrisShape(shape) {
-        return shape[0].map((_, colIndex) => shape.map((row) => row[colIndex]).reverse());
-    }
-
-    function canPlaceTetrisPiece(piece, nextRow = piece.row, nextCol = piece.col, nextShape = piece.shape) {
-        return nextShape.every((shapeRow, rowIndex) => shapeRow.every((value, colIndex) => {
-            if (!value) {
-                return true;
-            }
-
-            const boardRow = nextRow + rowIndex;
-            const boardCol = nextCol + colIndex;
-
-            return boardCol >= 0
-                && boardCol < TETRIS_COLS
-                && boardRow >= 0
-                && boardRow < TETRIS_ROWS
-                && !tetrisGrid[boardRow][boardCol];
-        }));
-    }
-
-    function renderTetris() {
-        const displayGrid = tetrisGrid.map((row) => [...row]);
-
-        if (tetrisPiece) {
-            tetrisPiece.shape.forEach((shapeRow, rowIndex) => {
-                shapeRow.forEach((value, colIndex) => {
-                    if (!value) {
-                        return;
-                    }
-
-                    const boardRow = tetrisPiece.row + rowIndex;
-                    const boardCol = tetrisPiece.col + colIndex;
-
-                    if (boardRow >= 0 && boardRow < TETRIS_ROWS && boardCol >= 0 && boardCol < TETRIS_COLS) {
-                        displayGrid[boardRow][boardCol] = tetrisPiece.color;
-                    }
-                });
-            });
-        }
-
-        tetrisBoard.innerHTML = displayGrid.map((row) => row.map((cell) => `
-            <div class="tetris-cell${cell ? ' is-filled' : ''}"${cell ? ` style="--tetris-color:${cell}"` : ''}></div>
-        `).join('')).join('');
-
-        updateTetrisHud();
-    }
-
-    function stopTetris() {
-        if (tetrisInterval) {
-            window.clearInterval(tetrisInterval);
-            tetrisInterval = null;
-        }
-
-        tetrisRunning = false;
-        updateTetrisHud();
-    }
-
-    function clearTetrisLines() {
-        let cleared = 0;
-        tetrisGrid = tetrisGrid.filter((row) => {
-            const complete = row.every(Boolean);
-
-            if (complete) {
-                cleared += 1;
-            }
-
-            return !complete;
-        });
-
-        while (tetrisGrid.length < TETRIS_ROWS) {
-            tetrisGrid.unshift(Array(TETRIS_COLS).fill(''));
-        }
-
-        if (cleared) {
-            tetrisLines += cleared;
-            tetrisScore += [0, 100, 260, 460, 700][cleared] || (cleared * 200);
-            tetrisHelpText.textContent = cleared > 1
-                ? `Belle manœuvre. ${cleared} lignes nettoyées dans la cale.`
-                : 'Une ligne libérée dans la cale.';
-        }
-    }
-
-    function spawnTetrisPiece() {
-        tetrisPiece = createRandomTetrisPiece();
-
-        if (!canPlaceTetrisPiece(tetrisPiece)) {
-            stopTetris();
-            tetrisPiece = null;
-            tetrisHelpText.textContent = 'La cale est pleine. Relance une traversée.';
-            revealTetrisOutcomeMenu(
-                'Cale pleine',
-                `La cargaison a dépassé le pont. Score final : ${tetrisScore}. Lignes nettoyées : ${tetrisLines}.`,
-                'Fin de cargaison'
-            );
-            renderTetris();
-        }
-    }
-
-    function lockTetrisPiece() {
-        tetrisPiece.shape.forEach((shapeRow, rowIndex) => {
-            shapeRow.forEach((value, colIndex) => {
-                if (!value) {
-                    return;
-                }
-
-                const boardRow = tetrisPiece.row + rowIndex;
-                const boardCol = tetrisPiece.col + colIndex;
-
-                if (boardRow >= 0 && boardRow < TETRIS_ROWS && boardCol >= 0 && boardCol < TETRIS_COLS) {
-                    tetrisGrid[boardRow][boardCol] = tetrisPiece.color;
-                }
-            });
-        });
-
-        clearTetrisLines();
-        spawnTetrisPiece();
-    }
-
-    function dropTetrisStep() {
-        if (!tetrisRunning || !tetrisPiece) {
-            return;
-        }
-
-        if (canPlaceTetrisPiece(tetrisPiece, tetrisPiece.row + 1, tetrisPiece.col)) {
-            tetrisPiece.row += 1;
-            renderTetris();
-            return;
-        }
-
-        lockTetrisPiece();
-        renderTetris();
-    }
-
-    function moveTetrisHorizontally(offset) {
-        if (!tetrisRunning || !tetrisPiece) {
-            return;
-        }
-
-        if (canPlaceTetrisPiece(tetrisPiece, tetrisPiece.row, tetrisPiece.col + offset)) {
-            tetrisPiece.col += offset;
-            renderTetris();
-        }
-    }
-
-    function rotateTetrisPiece() {
-        if (!tetrisRunning || !tetrisPiece) {
-            return;
-        }
-
-        const rotatedShape = rotateTetrisShape(tetrisPiece.shape);
-
-        if (canPlaceTetrisPiece(tetrisPiece, tetrisPiece.row, tetrisPiece.col, rotatedShape)) {
-            tetrisPiece.shape = rotatedShape;
-            renderTetris();
-            return;
-        }
-
-        if (canPlaceTetrisPiece(tetrisPiece, tetrisPiece.row, tetrisPiece.col - 1, rotatedShape)) {
-            tetrisPiece.col -= 1;
-            tetrisPiece.shape = rotatedShape;
-            renderTetris();
-            return;
-        }
-
-        if (canPlaceTetrisPiece(tetrisPiece, tetrisPiece.row, tetrisPiece.col + 1, rotatedShape)) {
-            tetrisPiece.col += 1;
-            tetrisPiece.shape = rotatedShape;
-            renderTetris();
-        }
-    }
-
-    function hardDropTetrisPiece() {
-        if (!tetrisRunning || !tetrisPiece) {
-            return;
-        }
-
-        while (canPlaceTetrisPiece(tetrisPiece, tetrisPiece.row + 1, tetrisPiece.col)) {
-            tetrisPiece.row += 1;
-        }
-
-        tetrisScore += 18;
-        lockTetrisPiece();
-        renderTetris();
-    }
-
-    function getTetrisRulesText() {
-        return 'D\u00e9place la caisse qui tombe avec les fl\u00e8ches ou ZQSD. Haut ou Z pour la pivoter, bas ou S pour acc\u00e9l\u00e9rer sa descente, Espace pour la faire chuter d\u2019un coup. Compl\u00e8te une ligne enti\u00e8re pour la nettoyer. Si la pile touche le pont, la cale est pleine.';
-    }
-
-    function renderTetrisMenu() {
-        if (!tetrisMenuOverlay || !tetrisTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(tetrisMenuOverlay, tetrisTable);
-        tetrisMenuOverlay.classList.toggle('hidden', !tetrisMenuVisible);
-        tetrisMenuOverlay.classList.toggle('is-closing', tetrisMenuClosing);
-        tetrisMenuOverlay.classList.toggle('is-entering', tetrisMenuEntering);
-        tetrisTable.classList.toggle('is-menu-open', tetrisMenuVisible);
-
-        if (!tetrisMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(tetrisMenuResult);
-
-        if (tetrisMenuEyebrow) {
-            tetrisMenuEyebrow.textContent = tetrisMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? tetrisMenuResult.eyebrow : 'Cale de cargaison');
-        }
-
-        if (tetrisMenuTitle) {
-            tetrisMenuTitle.textContent = tetrisMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? tetrisMenuResult.title : 'Baietris');
-        }
-
-        if (tetrisMenuText) {
-            tetrisMenuText.textContent = tetrisMenuShowingRules
-                ? getTetrisRulesText()
-                : (hasResult
-                    ? tetrisMenuResult.text
-                    : 'Empile les caisses dans la cale du navire sans laisser la pile atteindre le pont.');
-        }
-
-        if (tetrisMenuActionButton) {
-            tetrisMenuActionButton.textContent = tetrisMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la cale' : 'Lancer la cale');
-        }
-
-        if (tetrisMenuRulesButton) {
-            tetrisMenuRulesButton.textContent = 'R\u00e8gles';
-            tetrisMenuRulesButton.hidden = tetrisMenuShowingRules;
-        }
-    }
-
-    function closeTetrisMenu() {
-        tetrisMenuClosing = true;
-        renderTetrisMenu();
-        window.setTimeout(() => {
-            tetrisMenuClosing = false;
-            tetrisMenuVisible = false;
-            tetrisMenuShowingRules = false;
-            tetrisMenuEntering = false;
-            tetrisMenuResult = null;
-            renderTetrisMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealTetrisOutcomeMenu(title, text, eyebrow) {
-        tetrisMenuVisible = true;
-        tetrisMenuResult = { title, text, eyebrow };
-        tetrisMenuShowingRules = false;
-        tetrisMenuClosing = false;
-        tetrisMenuEntering = true;
-
-        if (tetrisHelpText) {
-            tetrisHelpText.textContent = text;
-        }
-
-        renderTetrisMenu();
-        window.setTimeout(() => {
-            tetrisMenuEntering = false;
-            renderTetrisMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeTetris() {
-        closeGameOverModal();
-        stopTetris();
-        tetrisGrid = createEmptyTetrisGrid();
-        tetrisPiece = createRandomTetrisPiece();
-        tetrisScore = 0;
-        tetrisLines = 0;
-        tetrisMenuResult = null;
-        tetrisMenuShowingRules = false;
-        tetrisMenuClosing = false;
-        tetrisMenuEntering = false;
-        tetrisHelpText.textContent = 'Empile les caisses. Fl\u00e8ches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.';
-        renderTetris();
-        renderTetrisMenu();
-    }
-
-    function startTetris() {
-        closeGameOverModal();
-
-        if (tetrisRunning) {
-            return;
-        }
-
-        if (!tetrisPiece) {
-            initializeTetris();
-        }
-
-        tetrisRunning = true;
-        updateTetrisHud();
-        tetrisInterval = window.setInterval(dropTetrisStep, TETRIS_TICK_MS);
-    }
-
-    function createPacmanGrid() {
-        return PACMAN_LAYOUT.map((row) => row.split('').map((cell) => {
-            if (cell === '#') {
-                return 'wall';
-            }
-
-            if (cell === '.') {
-                return 'pellet';
-            }
-
-            return 'empty';
-        }));
-    }
-
-    function isPacmanWall(row, col) {
-        return pacmanGrid[row]?.[col] === 'wall';
-    }
-
-    function resetPacmanActors() {
-        pacmanPosition = { row: 1, col: 1 };
-        pacmanDirection = { row: 0, col: 0 };
-        pacmanNextDirection = { row: 0, col: 0 };
-        pacmanGhosts = [
-            { row: 7, col: 6, direction: { row: 0, col: -1 }, className: 'ghost-a' },
-            { row: 7, col: 5, direction: { row: 0, col: 1 }, className: 'ghost-b' },
-            { row: 7, col: 7, direction: { row: -1, col: 0 }, className: 'ghost-c' }
-        ];
-    }
-
-    function updatePacmanHud() {
-        pacmanScoreDisplay.textContent = String(pacmanScore);
-        pacmanLivesDisplay.textContent = String(pacmanLives);
-        pacmanStartButton.textContent = (pacmanRunning || pacmanCountdownActive) ? 'Chasse en cours' : 'Lancer la chasse';
-    }
-
-    function getPacmanRotation() {
-        if (pacmanDirection.col === 1) {
-            return '90deg';
-        }
-
-        if (pacmanDirection.col === -1) {
-            return '-90deg';
-        }
-
-        if (pacmanDirection.row === -1) {
-            return '0deg';
-        }
-
-        if (pacmanDirection.row === 1) {
-            return '180deg';
-        }
-
-        return '90deg';
-    }
-
-    function clearPacmanCountdownTimers() {
-        if (pacmanCountdownTimer) {
-            window.clearTimeout(pacmanCountdownTimer);
-            pacmanCountdownTimer = null;
-        }
-
-        if (pacmanCountdownCompleteTimer) {
-            window.clearTimeout(pacmanCountdownCompleteTimer);
-            pacmanCountdownCompleteTimer = null;
-        }
-    }
-
-    function hidePacmanCountdown() {
-        clearPacmanCountdownTimers();
-        pacmanCountdown.textContent = '';
-        pacmanCountdown.classList.add('hidden');
-        pacmanCountdown.setAttribute('aria-hidden', 'true');
-    }
-
-    function showPacmanCountdownValue(label) {
-        pacmanCountdown.textContent = label;
-        pacmanCountdown.classList.remove('hidden');
-        pacmanCountdown.setAttribute('aria-hidden', 'false');
-    }
-
-    function startPacmanCountdown(onComplete) {
-        clearPacmanCountdownTimers();
-        pacmanCountdownActive = true;
-        updatePacmanHud();
-
-        const sequence = ['3', '2', '1', 'Partez'];
-        let stepIndex = 0;
-
-        const runStep = () => {
-            showPacmanCountdownValue(sequence[stepIndex]);
-
-            if (stepIndex === sequence.length - 1) {
-                pacmanCountdownCompleteTimer = window.setTimeout(() => {
-                    hidePacmanCountdown();
-                    pacmanCountdownActive = false;
-                    updatePacmanHud();
-                    onComplete?.();
-                }, 460);
-                return;
-            }
-
-            stepIndex += 1;
-            pacmanCountdownTimer = window.setTimeout(runStep, 620);
-        };
-
-        runStep();
-    }
-
-    function buildPacmanBoard() {
-        const rows = pacmanGrid.length;
-        const cols = pacmanGrid[0].length;
-        pacmanBoard.style.setProperty('--pacman-cols', String(cols));
-        pacmanBoard.innerHTML = `
-            <div id="pacmanCountdown" class="pacman-countdown hidden" aria-hidden="true"></div>
-            <div class="pacman-grid">
-                ${Array.from({ length: rows * cols }, (_, index) => {
-            const row = Math.floor(index / cols);
-            const col = index % cols;
-            const cell = pacmanGrid[row][col];
-
-            return `
-                <div class="pacman-cell pacman-cell-${cell}" data-row="${row}" data-col="${col}">
-                    ${cell === 'pellet' ? '<span class="pacman-pellet" aria-hidden="true"></span>' : ''}
-                </div>
-            `;
-                }).join('')}
-            </div>
-            <div class="pacman-overlay" aria-hidden="true">
-                <span class="pacman-hero"></span>
-                ${pacmanGhosts.map((ghost) => `<span class="pacman-ghost ${ghost.className}"></span>`).join('')}
-            </div>
-        `;
-
-        pacmanCellElements = Array.from(pacmanBoard.querySelectorAll('.pacman-cell'));
-        pacmanCountdown = pacmanBoard.querySelector('#pacmanCountdown');
-        pacmanHeroElement = pacmanBoard.querySelector('.pacman-hero');
-        pacmanGhostElements = Array.from(pacmanBoard.querySelectorAll('.pacman-ghost'));
-        hidePacmanCountdown();
-    }
-
-    function getPacmanGeometry() {
-        const styles = window.getComputedStyle(pacmanBoard);
-        const gap = parseFloat(styles.getPropertyValue('--pacman-gap')) || 4;
-        const padding = parseFloat(styles.getPropertyValue('--pacman-padding')) || 10;
-        const cols = pacmanGrid[0].length;
-        const innerSize = pacmanBoard.clientWidth - (padding * 2);
-        const cellSize = (innerSize - (gap * (cols - 1))) / cols;
-
-        return {
-            gap,
-            padding,
-            cellSize
-        };
-    }
-
-    function placePacmanEntity(element, row, col, geometry) {
-        if (!element) {
-            return;
-        }
-
-        const isGhost = element.classList.contains('pacman-ghost');
-        const sizeMultiplier = isGhost ? 0.76 : 1;
-        const entitySize = geometry.cellSize * sizeMultiplier;
-        const centerOffset = (geometry.cellSize - entitySize) / 2;
-        const offsetX = (col * (geometry.cellSize + geometry.gap)) + centerOffset;
-        const offsetY = (row * (geometry.cellSize + geometry.gap)) + centerOffset;
-        element.style.width = `${entitySize}px`;
-        element.style.height = `${entitySize}px`;
-        element.style.setProperty('--pacman-x', `${offsetX}px`);
-        element.style.setProperty('--pacman-y', `${offsetY}px`);
-    }
-
-    function renderPacman() {
-        if (!pacmanBoard.querySelector('.pacman-grid')) {
-            buildPacmanBoard();
-        }
-
-        pacmanCellElements.forEach((cellElement) => {
-            const row = Number(cellElement.dataset.row);
-            const col = Number(cellElement.dataset.col);
-            const hasPellet = pacmanGrid[row][col] === 'pellet';
-            cellElement.classList.toggle('pacman-cell-empty', pacmanGrid[row][col] === 'empty');
-            cellElement.classList.toggle('pacman-cell-pellet', hasPellet);
-
-            const pellet = cellElement.querySelector('.pacman-pellet');
-
-            if (pellet) {
-                pellet.classList.toggle('hidden', !hasPellet);
-            }
-        });
-
-        const geometry = getPacmanGeometry();
-        placePacmanEntity(pacmanHeroElement, pacmanPosition.row, pacmanPosition.col, geometry);
-        pacmanHeroElement?.style.setProperty('--pacman-rotation', getPacmanRotation());
-        pacmanGhosts.forEach((ghost, index) => {
-            placePacmanEntity(pacmanGhostElements[index], ghost.row, ghost.col, geometry);
-        });
-
-        updatePacmanHud();
-    }
-
-    function stopPacman() {
-        clearPacmanCountdownTimers();
-        pacmanCountdownActive = false;
-        hidePacmanCountdown();
-
-        if (pacmanInterval) {
-            window.clearInterval(pacmanInterval);
-            pacmanInterval = null;
-        }
-
-        pacmanRunning = false;
-        updatePacmanHud();
-    }
-
-    function trySetPacmanDirection(direction) {
-        const nextRow = pacmanPosition.row + direction.row;
-        const nextCol = pacmanPosition.col + direction.col;
-
-        if (!isPacmanWall(nextRow, nextCol)) {
-            pacmanDirection = direction;
-            return true;
-        }
-
-        return false;
-    }
-
-    function movePacmanGhost(ghost) {
-        const options = [
-            ghost.direction,
-            { row: 1, col: 0 },
-            { row: -1, col: 0 },
-            { row: 0, col: 1 },
-            { row: 0, col: -1 }
-        ].filter((direction, index, array) => direction
-            && array.findIndex((candidate) => candidate.row === direction.row && candidate.col === direction.col) === index)
-            .filter((direction) => !isPacmanWall(ghost.row + direction.row, ghost.col + direction.col));
-
-        const preferred = options.find((direction) => ghost.row + direction.row === pacmanPosition.row
-            || ghost.col + direction.col === pacmanPosition.col);
-        const nextDirection = preferred || options[Math.floor(Math.random() * options.length)] || ghost.direction;
-
-        ghost.direction = nextDirection;
-        ghost.row += nextDirection.row;
-        ghost.col += nextDirection.col;
-    }
-
-    function resetPacmanAfterHit() {
-        stopPacman();
-        resetPacmanActors();
-        pacmanHelpText.textContent = pacmanLives > 0
-            ? "Un esprit t'a touché. Relance la chasse pour reprendre la baie."
-            : "Les esprits du brouillard t'ont rattrapé.";
-        renderPacman();
-
-        if (pacmanLives > 0) {
-            startPacmanCountdown(() => {
-                pacmanRunning = true;
-                updatePacmanHud();
-                pacmanInterval = window.setInterval(runPacmanTick, 220);
-            });
-        }
-    }
-
-    function handlePacmanCollision(previousPacmanPosition = pacmanPosition, previousGhostPositions = pacmanGhosts) {
-        const touched = pacmanGhosts.some((ghost, index) => {
-            const previousGhostPosition = previousGhostPositions[index] || ghost;
-            const sameCellNow = ghost.row === pacmanPosition.row && ghost.col === pacmanPosition.col;
-            const crossedPaths = previousGhostPosition.row === pacmanPosition.row
-                && previousGhostPosition.col === pacmanPosition.col
-                && ghost.row === previousPacmanPosition.row
-                && ghost.col === previousPacmanPosition.col;
-
-            return sameCellNow || crossedPaths;
-        });
-
-        if (!touched) {
-            return false;
-        }
-
-        pacmanLives -= 1;
-
-        if (pacmanLives <= 0) {
-            resetPacmanAfterHit();
-            revealPacmanOutcomeMenu(
-                'Chasse terminée',
-                `Les esprits du brouillard t'ont capturé. Perles ramassées : ${pacmanScore}.`,
-                'Cap sur le port'
-            );
-            return true;
-        }
-
-        resetPacmanAfterHit();
-        return true;
-    }
-
-    function runPacmanTick() {
-        if (!pacmanRunning || pacmanCountdownActive) {
-            return;
-        }
-
-        const previousPacmanPosition = { ...pacmanPosition };
-        const previousGhostPositions = pacmanGhosts.map((ghost) => ({ row: ghost.row, col: ghost.col }));
-
-        if (pacmanNextDirection.row !== 0 || pacmanNextDirection.col !== 0) {
-            trySetPacmanDirection(pacmanNextDirection);
-        }
-
-        if (pacmanDirection.row !== 0 || pacmanDirection.col !== 0) {
-            const nextRow = pacmanPosition.row + pacmanDirection.row;
-            const nextCol = pacmanPosition.col + pacmanDirection.col;
-
-            if (!isPacmanWall(nextRow, nextCol)) {
-                pacmanPosition = { row: nextRow, col: nextCol };
-            }
-        }
-
-        if (pacmanGrid[pacmanPosition.row][pacmanPosition.col] === 'pellet') {
-            pacmanGrid[pacmanPosition.row][pacmanPosition.col] = 'empty';
-            pacmanScore += 10;
-            pacmanPellets -= 1;
-        }
-
-        if (handlePacmanCollision(previousPacmanPosition, previousGhostPositions)) {
-            return;
-        }
-
-        pacmanGhosts.forEach((ghost) => {
-            movePacmanGhost(ghost);
-        });
-
-        if (handlePacmanCollision(previousPacmanPosition, previousGhostPositions)) {
-            return;
-        }
-
-        if (pacmanPellets === 0) {
-            stopPacman();
-            pacmanHelpText.textContent = 'La baie est nettoyée. Plus aucune perle à  ramasser.';
-            revealPacmanOutcomeMenu(
-                'Port nettoyé',
-                `Toutes les perles de la baie ont été ramassées. Score final : ${pacmanScore}.`,
-                'Chasse réussie'
-            );
-        }
-
-        renderPacman();
-    }
-
-    function getPacmanRulesText() {
-        return 'D\u00e9place Baie-Man avec les fl\u00e8ches ou ZQSD. Ramasse toutes les perles du labyrinthe pour nettoyer le port. Si un esprit du brouillard te rattrape, tu perds une vie. Trois captures et la chasse s\u2019arr\u00eate.';
-    }
-
-    function renderPacmanMenu() {
-        if (!pacmanMenuOverlay || !pacmanTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(pacmanMenuOverlay, pacmanTable);
-        pacmanMenuOverlay.classList.toggle('hidden', !pacmanMenuVisible);
-        pacmanMenuOverlay.classList.toggle('is-closing', pacmanMenuClosing);
-        pacmanMenuOverlay.classList.toggle('is-entering', pacmanMenuEntering);
-        pacmanTable.classList.toggle('is-menu-open', pacmanMenuVisible);
-
-        if (!pacmanMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(pacmanMenuResult);
-
-        if (pacmanMenuEyebrow) {
-            pacmanMenuEyebrow.textContent = pacmanMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? pacmanMenuResult.eyebrow : 'Labyrinthe du port');
-        }
-
-        if (pacmanMenuTitle) {
-            pacmanMenuTitle.textContent = pacmanMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? pacmanMenuResult.title : 'Baie-Man');
-        }
-
-        if (pacmanMenuText) {
-            pacmanMenuText.textContent = pacmanMenuShowingRules
-                ? getPacmanRulesText()
-                : (hasResult
-                    ? pacmanMenuResult.text
-                    : 'Ramasse toutes les perles de la baie sans te faire attraper par les esprits du brouillard.');
-        }
-
-        if (pacmanMenuActionButton) {
-            pacmanMenuActionButton.textContent = pacmanMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la chasse' : 'Lancer la chasse');
-        }
-
-        if (pacmanMenuRulesButton) {
-            pacmanMenuRulesButton.textContent = 'R\u00e8gles';
-            pacmanMenuRulesButton.hidden = pacmanMenuShowingRules;
-        }
-    }
-
-    function closePacmanMenu() {
-        pacmanMenuClosing = true;
-        renderPacmanMenu();
-        window.setTimeout(() => {
-            pacmanMenuClosing = false;
-            pacmanMenuVisible = false;
-            pacmanMenuShowingRules = false;
-            pacmanMenuEntering = false;
-            pacmanMenuResult = null;
-            renderPacmanMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealPacmanOutcomeMenu(title, text, eyebrow) {
-        pacmanMenuVisible = true;
-        pacmanMenuResult = { title, text, eyebrow };
-        pacmanMenuShowingRules = false;
-        pacmanMenuClosing = false;
-        pacmanMenuEntering = true;
-
-        if (pacmanHelpText) {
-            pacmanHelpText.textContent = text;
-        }
-
-        renderPacmanMenu();
-        window.setTimeout(() => {
-            pacmanMenuEntering = false;
-            renderPacmanMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializePacman() {
-        closeGameOverModal();
-        stopPacman();
-        pacmanGrid = createPacmanGrid();
-        pacmanScore = 0;
-        pacmanLives = 3;
-        pacmanMenuResult = null;
-        pacmanMenuShowingRules = false;
-        pacmanMenuClosing = false;
-        pacmanMenuEntering = false;
-        pacmanHelpText.textContent = 'Ramasse toutes les perles de la baie sans te faire attraper par les esprits du brouillard.';
-        resetPacmanActors();
-        if (pacmanGrid[pacmanPosition.row][pacmanPosition.col] === 'pellet') {
-            pacmanGrid[pacmanPosition.row][pacmanPosition.col] = 'empty';
-        }
-        pacmanPellets = pacmanGrid.flat().filter((cell) => cell === 'pellet').length;
-        buildPacmanBoard();
-        renderPacman();
-        renderPacmanMenu();
-    }
-
-    function startPacman() {
-        closeGameOverModal();
-
-        if (pacmanRunning || pacmanCountdownActive) {
-            return;
-        }
-
-        if (pacmanLives <= 0 || pacmanPellets <= 0) {
-            initializePacman();
-        }
-
-        startPacmanCountdown(() => {
-            pacmanRunning = true;
-            updatePacmanHud();
-            pacmanInterval = window.setInterval(runPacmanTick, 220);
-        });
-    }
-
     function getSolitaireCardColor(suit) {
         return ['hearts', 'diamonds'].includes(suit) ? 'red' : 'black';
     }
@@ -7689,301 +6813,6 @@ document.addEventListener('DOMContentLoaded', () => {
         connect4Mode = nextMode;
         connect4Scores = { player: 0, ai: 0 };
         initializeConnect4();
-    }
-
-    function renderFlappy() {
-        const boardWidth = flappyBoard.clientWidth;
-        const boardHeight = flappyBoard.clientHeight;
-        const birdX = Math.max(42, boardWidth * FLAPPY_BIRD_OFFSET_X);
-        const birdY = Math.max(0, Math.min(boardHeight - FLAPPY_BIRD_HEIGHT, flappyBirdY));
-        const birdRotation = Math.max(-24, Math.min(68, flappyBirdVelocity * 4.4));
-        const farOffset = -(flappyBackdropOffset * 0.18);
-        const nearOffset = -(flappyBackdropOffset * 0.34);
-        const beachOffset = -(flappyBackdropOffset * 0.52);
-        const cloudAOffset = -(flappyBackdropOffset * 0.08);
-        const cloudBOffset = -(flappyBackdropOffset * 0.12);
-
-        flappyBoard.innerHTML = `
-            <div class="flappy-cloud flappy-cloud-a" style="transform:translateX(${cloudAOffset}px);"></div>
-            <div class="flappy-cloud flappy-cloud-b" style="transform:translateX(${cloudBOffset}px);"></div>
-            <div class="flappy-backdrop flappy-backdrop-far" style="transform:translateX(${farOffset}px);"></div>
-            <div class="flappy-backdrop flappy-backdrop-near" style="transform:translateX(${nearOffset}px);"></div>
-            <div class="flappy-cove" style="transform:translateX(${nearOffset}px);"></div>
-            <div class="flappy-rock-arch" style="transform:translateX(${nearOffset}px);"></div>
-            <div class="flappy-beach" style="transform:translateX(${beachOffset}px);"></div>
-            <div class="flappy-palm flappy-palm-left" style="transform:translateX(${beachOffset}px) scale(0.92);"></div>
-            <div class="flappy-palm flappy-palm-right" style="transform:translateX(${beachOffset}px) scale(1.04);"></div>
-            <div class="flappy-bird" style="left:${birdX}px; top:${birdY}px; transform:rotate(${birdRotation}deg);"></div>
-            ${flappyPipes.map((pipe) => `
-                <div class="flappy-pipe flappy-pipe-top" style="left:${pipe.x}px; top:0; height:${pipe.gapTop}px;"></div>
-                <div class="flappy-pipe flappy-pipe-bottom" style="left:${pipe.x}px; bottom:0; height:${boardHeight - pipe.gapBottom}px;"></div>
-            `).join('')}
-            ${flappySplashParticles.map((particle) => `
-                <span
-                    class="flappy-splash"
-                    style="left:${particle.x}px; top:${particle.y}px; width:${particle.size}px; height:${particle.size}px; --flappy-splash-dx:${particle.dx}px; --flappy-splash-dy:${particle.dy}px; --flappy-splash-delay:${particle.delay}ms;"
-                ></span>
-            `).join('')}
-            <div class="flappy-ground"></div>
-        `;
-    }
-
-    function stopFlappy() {
-        flappyRunning = false;
-        if (flappyAnimationFrame) {
-            window.cancelAnimationFrame(flappyAnimationFrame);
-            flappyAnimationFrame = null;
-        }
-    }
-
-    function getFlappyRulesText() {
-        return "Appuie sur espace, clique ou tapote pour battre des ailes. Traverse entre les arches sans toucher le ciel, les obstacles ou l'eau.";
-    }
-
-    function renderFlappyMenu() {
-        if (!flappyMenuOverlay || !flappyTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(flappyMenuOverlay, flappyTable);
-        flappyMenuOverlay.classList.toggle('hidden', !flappyMenuVisible);
-        flappyMenuOverlay.classList.toggle('is-closing', flappyMenuClosing);
-        flappyMenuOverlay.classList.toggle('is-entering', flappyMenuEntering);
-        flappyTable.classList.toggle('is-menu-open', flappyMenuVisible);
-
-        if (!flappyMenuVisible) {
-            return;
-        }
-
-        const hasFlappyResult = Boolean(flappyMenuResultReason);
-
-        if (flappyMenuEyebrow) {
-            flappyMenuEyebrow.textContent = flappyMenuShowingRules ? 'R\u00e8gles' : (hasFlappyResult ? 'Fin de vol' : "Baie d'arcade");
-        }
-        if (flappyMenuTitle) {
-            flappyMenuTitle.textContent = flappyMenuShowingRules
-                ? 'Rappel rapide'
-                : (flappyMenuResultReason === 'water'
-                    ? "Tu t'es noyé"
-                    : (flappyMenuResultReason === 'sky'
-                        ? "C'est perdu"
-                        : (flappyMenuResultReason === 'pipe'
-                        ? "Tu t'es cogné contre une arche"
-                        : (hasFlappyResult ? 'Partie perdue' : 'Baiely Bird'))));
-        }
-        if (flappyMenuText) {
-            flappyMenuText.textContent = flappyMenuShowingRules
-                ? getFlappyRulesText()
-                : (flappyMenuResultReason === 'water'
-                    ? `Ton oiseau a fini dans l'eau. Score ${flappyScore}. Record ${flappyBestScore}.`
-                    : (flappyMenuResultReason === 'sky'
-                        ? `Ton oiseau a perdu le contrôle en touchant le ciel. Score ${flappyScore}. Record ${flappyBestScore}.`
-                        : (flappyMenuResultReason === 'pipe'
-                        ? `Ton oiseau a touché une arche. Score ${flappyScore}. Record ${flappyBestScore}.`
-                        : (hasFlappyResult
-                            ? `Partie termin\u00e9e. Score ${flappyScore}. Record ${flappyBestScore}.`
-                            : 'Prepare ton envol avant de battre des ailes entre les arches.'))));
-        }
-        if (flappyMenuActionButton) {
-            flappyMenuActionButton.textContent = flappyMenuShowingRules
-                ? 'Retour'
-                : (hasFlappyResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-        if (flappyMenuRulesButton) {
-            flappyMenuRulesButton.textContent = 'R\u00e8gles';
-            flappyMenuRulesButton.hidden = flappyMenuShowingRules;
-        }
-    }
-
-    function startFlappyLaunchSequence() {
-        flappyMenuClosing = true;
-        renderFlappyMenu();
-        window.setTimeout(() => {
-            flappyMenuClosing = false;
-            flappyMenuVisible = false;
-            flappyMenuShowingRules = false;
-            flappyMenuEntering = false;
-            flappyMenuResultReason = '';
-            startFlappy(false);
-            renderFlappyMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeFlappy() {
-        stopFlappy();
-        closeGameOverModal();
-        if (flappySplashTimeout) {
-            window.clearTimeout(flappySplashTimeout);
-            flappySplashTimeout = null;
-        }
-        flappySplashParticles = [];
-        flappyBirdY = Math.max(64, flappyBoard.clientHeight * 0.4);
-        flappyBirdVelocity = 0;
-        flappyPipes = [];
-        flappyScore = 0;
-        flappyBackdropOffset = 0;
-        flappyHelpText.textContent = 'Espace, clic ou tap pour faire battre les ailes du perroquet pirate et passer entre les mats.';
-        flappyScoreDisplay.textContent = '0';
-        flappyBestDisplay.textContent = String(flappyBestScore);
-        flappyMenuVisible = true;
-        flappyMenuShowingRules = false;
-        flappyMenuClosing = false;
-        flappyMenuEntering = false;
-        flappyMenuResultReason = '';
-        renderFlappyMenu();
-        renderFlappy();
-    }
-
-    function createFlappySplash(boardWidth, boardHeight, impactY = null) {
-        const waterTop = boardHeight * 0.86;
-        const splashX = Math.max(42, boardWidth * FLAPPY_BIRD_OFFSET_X) + (FLAPPY_BIRD_WIDTH * 0.5);
-        const surfaceImpactY = impactY ?? waterTop;
-        const splashY = Math.max(waterTop - 10, Math.min(waterTop + 6, surfaceImpactY - 3));
-
-        flappySplashParticles = Array.from({ length: 11 }, (_, index) => {
-            const spread = index - 5;
-            return {
-                x: splashX + (spread * 6),
-                y: splashY + Math.abs(spread % 2),
-                dx: spread * 4.5,
-                dy: -18 - (Math.abs(spread) * 2.4),
-                size: 8 + ((index + 1) % 3) * 3,
-                delay: index * 8
-            };
-        });
-
-        if (flappySplashTimeout) {
-            window.clearTimeout(flappySplashTimeout);
-        }
-
-        flappySplashTimeout = window.setTimeout(() => {
-            flappySplashParticles = [];
-            flappySplashTimeout = null;
-            renderFlappy();
-        }, 760);
-    }
-
-    function finishFlappy(reason = 'pipe', impactY = null) {
-        stopFlappy();
-        if (reason === 'water') {
-            createFlappySplash(flappyBoard.clientWidth, flappyBoard.clientHeight, impactY);
-            renderFlappy();
-        }
-        flappyHelpText.textContent = `Crash. Score ${flappyScore}. Record ${flappyBestScore}.`;
-        flappyMenuResultReason = ['water', 'pipe', 'sky'].includes(reason) ? reason : 'other';
-        flappyMenuShowingRules = false;
-        flappyMenuClosing = false;
-        flappyMenuEntering = true;
-        flappyMenuVisible = true;
-        renderFlappyMenu();
-        window.setTimeout(() => {
-            flappyMenuEntering = false;
-            renderFlappyMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function flapFlappyBird() {
-        if (flappyMenuVisible || flappyMenuClosing) {
-            return;
-        }
-
-        if (!flappyRunning) {
-            startFlappy();
-            return;
-        }
-
-        flappyBirdVelocity = -5.2;
-    }
-
-    function startFlappy(shouldReset = true) {
-        if (shouldReset) {
-            initializeFlappy();
-        }
-        flappyRunning = true;
-        flappyLastFrame = performance.now();
-        flappySpawnTimer = 0;
-        flappyBirdVelocity = -5.2;
-
-        const step = (timestamp) => {
-            if (!flappyRunning) {
-                return;
-            }
-
-            const delta = Math.min(32, timestamp - flappyLastFrame);
-            flappyLastFrame = timestamp;
-            const boardWidth = flappyBoard.clientWidth;
-            const boardHeight = flappyBoard.clientHeight;
-            const groundTop = boardHeight * 0.86;
-            const birdX = Math.max(42, boardWidth * FLAPPY_BIRD_OFFSET_X);
-
-            flappyBirdVelocity += delta * 0.0125;
-            flappyBirdY += flappyBirdVelocity * (delta / 16);
-            flappySpawnTimer += delta;
-
-            const spawnInterval = Math.max(FLAPPY_MIN_SPAWN_INTERVAL, FLAPPY_BASE_SPAWN_INTERVAL - (flappyScore * 20));
-
-            if (flappySpawnTimer >= spawnInterval) {
-                flappySpawnTimer = 0;
-                const baseGapSize = Math.max(188, boardHeight * 0.385);
-                const gapReduction = Math.min(78, flappyScore * 5.5);
-                const gapSize = Math.max(118, baseGapSize - gapReduction);
-                const minCenter = boardHeight * 0.24;
-                const maxCenter = boardHeight * 0.62;
-                const gapCenter = minCenter + (Math.random() * (maxCenter - minCenter));
-                flappyPipes.push({
-                    x: boardWidth + 56,
-                    gapTop: Math.max(42, gapCenter - (gapSize / 2)),
-                    gapBottom: Math.min(groundTop - 36, gapCenter + (gapSize / 2)),
-                    scored: false
-                });
-            }
-
-            flappyPipes = flappyPipes.filter((pipe) => pipe.x > -120);
-            const pipeSpeed = Math.min(FLAPPY_MAX_PIPE_SPEED, FLAPPY_BASE_PIPE_SPEED + (flappyScore * 0.0024));
-            flappyPipes.forEach((pipe) => {
-                pipe.x -= delta * pipeSpeed;
-
-                if (!pipe.scored && pipe.x + FLAPPY_PIPE_WIDTH < birdX) {
-                    pipe.scored = true;
-                    flappyScore += 1;
-                    flappyScoreDisplay.textContent = String(flappyScore);
-
-                    if (flappyScore > flappyBestScore) {
-                        flappyBestScore = flappyScore;
-                        flappyBestDisplay.textContent = String(flappyBestScore);
-                        window.localStorage.setItem(FLAPPY_BEST_KEY, String(flappyBestScore));
-                    }
-                }
-            });
-            flappyBackdropOffset += delta * pipeSpeed;
-
-            const hitboxInsetX = 10;
-            const hitboxInsetTop = 7;
-            const hitboxInsetBottom = 9;
-            const pipeInsetX = 8;
-            const birdTop = flappyBirdY + hitboxInsetTop;
-            const birdBottom = flappyBirdY + FLAPPY_BIRD_HEIGHT - hitboxInsetBottom;
-            const birdLeft = birdX + hitboxInsetX;
-            const birdRight = birdX + FLAPPY_BIRD_WIDTH - hitboxInsetX;
-            const hitPipe = flappyPipes.some((pipe) => (
-                birdRight > pipe.x + pipeInsetX
-                && birdLeft < pipe.x + FLAPPY_PIPE_WIDTH - pipeInsetX
-                && (birdTop < pipe.gapTop || birdBottom > pipe.gapBottom)
-            ));
-            const hitSky = flappyBirdY <= 0;
-            const hitWater = flappyBirdY + FLAPPY_BIRD_HEIGHT >= boardHeight;
-
-            if (hitSky || hitWater || hitPipe) {
-                renderFlappy();
-                finishFlappy(hitWater ? 'water' : (hitSky ? 'sky' : 'pipe'), flappyBirdY + FLAPPY_BIRD_HEIGHT);
-                return;
-            }
-
-            renderFlappy();
-            flappyAnimationFrame = window.requestAnimationFrame(step);
-        };
-
-        flappyAnimationFrame = window.requestAnimationFrame(step);
     }
 
     function isMultiplayerPongActive() {
@@ -9464,444 +8293,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSudoku();
     }
 
-    function create2048EmptyGrid() {
-        return Array.from({ length: GAME_2048_SIZE }, () => Array(GAME_2048_SIZE).fill(null));
-    }
-
-    function update2048Hud() {
-        game2048ScoreDisplay.textContent = String(game2048Score);
-        game2048BestScoreDisplay.textContent = String(game2048BestScore);
-    }
-
-    function get2048RulesText() {
-        return 'Flèches ou ZQSD pour faire glisser toutes les tuiles. Quand deux valeurs identiques se rencontrent, elles fusionnent. Atteins 2048 et évite de bloquer toute la grille.';
-    }
-
-    function render2048Menu() {
-        if (!game2048MenuOverlay || !game2048Table) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(game2048MenuOverlay, game2048Table);
-        game2048MenuOverlay.classList.toggle('hidden', !game2048MenuVisible);
-        game2048MenuOverlay.classList.toggle('is-closing', game2048MenuClosing);
-        game2048Table.classList.toggle('is-menu-open', game2048MenuVisible);
-
-        if (!game2048MenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(game2048MenuResult);
-
-        if (game2048MenuEyebrow) {
-            game2048MenuEyebrow.textContent = game2048MenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? 'Maree bloqu\u00e9e' : 'Baie d arcade');
-        }
-
-        if (game2048MenuTitle) {
-            game2048MenuTitle.textContent = game2048MenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? "C'est perdu" : '2048');
-        }
-
-        if (game2048MenuText) {
-            game2048MenuText.textContent = game2048MenuShowingRules
-                ? get2048RulesText()
-                : (hasResult
-                    ? `La mar\u00e9e t'a bloqu\u00e9. Score ${game2048Score}. Record ${game2048BestScore}. Relance une nouvelle mar\u00e9e.`
-                    : 'Fais glisser les tuiles pour fusionner les valeurs et atteindre 2048 sans bloqu\u00e9r la grille.');
-        }
-
-        if (game2048MenuActionButton) {
-            game2048MenuActionButton.textContent = game2048MenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-
-        if (game2048MenuRulesButton) {
-            game2048MenuRulesButton.textContent = 'R\u00e8gles';
-            game2048MenuRulesButton.hidden = game2048MenuShowingRules;
-        }
-    }
-
-    function close2048Menu() {
-        game2048MenuClosing = true;
-        render2048Menu();
-        window.setTimeout(() => {
-            game2048MenuClosing = false;
-            game2048MenuVisible = false;
-            game2048MenuShowingRules = false;
-            game2048MenuResult = false;
-            render2048Menu();
-        }, 220);
-    }
-
-    function reveal2048OutcomeMenu() {
-        game2048MenuVisible = true;
-        game2048MenuResult = true;
-        game2048MenuShowingRules = false;
-        game2048MenuClosing = false;
-        render2048Menu();
-    }
-
-    function ensure2048Board() {
-        if (game2048TileLayer) {
-            return;
-        }
-
-        const background = document.createElement('div');
-        background.className = 'game-2048-background';
-        background.innerHTML = Array.from({ length: GAME_2048_SIZE * GAME_2048_SIZE }, () => (
-            '<div class="game-2048-cell game-2048-empty" aria-hidden="true"></div>'
-        )).join('');
-
-        game2048TileLayer = document.createElement('div');
-        game2048TileLayer.className = 'game-2048-tiles';
-
-        game2048Board.innerHTML = '';
-        game2048Board.append(background, game2048TileLayer);
-    }
-
-    function sync2048Grid() {
-        game2048Grid = create2048EmptyGrid();
-
-        game2048Tiles.forEach((tile) => {
-            game2048Grid[tile.row][tile.col] = tile.id;
-        });
-    }
-
-    function get2048Geometry() {
-        const styles = window.getComputedStyle(game2048Board);
-        const gap = parseFloat(styles.getPropertyValue('--game-2048-gap')) || 10;
-        const padding = parseFloat(styles.getPropertyValue('--game-2048-padding')) || 10;
-        const innerSize = game2048Board.clientWidth - (padding * 2);
-        const cellSize = (innerSize - (gap * (GAME_2048_SIZE - 1))) / GAME_2048_SIZE;
-
-        return {
-            gap,
-            padding,
-            cellSize
-        };
-    }
-
-    function place2048TileElement(element, row, col, geometry) {
-        const offsetX = col * (geometry.cellSize + geometry.gap);
-        const offsetY = row * (geometry.cellSize + geometry.gap);
-
-        element.style.width = `${geometry.cellSize}px`;
-        element.style.height = `${geometry.cellSize}px`;
-        element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-    }
-
-    function get2048EmptyCells() {
-        const emptyCells = [];
-
-        game2048Grid.forEach((row, rowIndex) => {
-            row.forEach((cell, colIndex) => {
-                if (cell === null) {
-                    emptyCells.push({ row: rowIndex, col: colIndex });
-                }
-            });
-        });
-
-        return emptyCells;
-    }
-
-    function create2048Tile(value, row, col, isFresh = false) {
-        return {
-            id: `tile-${game2048NextTileId += 1}`,
-            value,
-            row,
-            col,
-            isFresh
-        };
-    }
-
-    function add2048Tile(isFresh = true) {
-        const emptyCells = get2048EmptyCells();
-
-        if (!emptyCells.length) {
-            return null;
-        }
-
-        const nextCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        const nextTile = create2048Tile(Math.random() < 0.9 ? 2 : 4, nextCell.row, nextCell.col, isFresh);
-        game2048Tiles.push(nextTile);
-        sync2048Grid();
-        return nextTile;
-    }
-
-    function get2048TileClasses(tile) {
-        const classes = ['game-2048-tile', `game-2048-value-${tile.value}`];
-
-        if (tile.value >= 128) {
-            classes.push('game-2048-cell-small');
-        }
-
-        if (tile.value >= 1024) {
-            classes.push('game-2048-cell-xsmall');
-        }
-
-        if (tile.isFresh) {
-            classes.push('game-2048-cell-fresh');
-        }
-
-        return classes.join(' ');
-    }
-
-    function render2048() {
-        ensure2048Board();
-        const geometry = get2048Geometry();
-        const activeIds = new Set();
-
-        game2048Tiles.forEach((tile) => {
-            let tileElement = game2048TileElements.get(tile.id);
-
-            if (!tileElement) {
-                tileElement = document.createElement('div');
-                tileElement.dataset.tileId = tile.id;
-                tileElement.style.transition = 'none';
-                game2048TileElements.set(tile.id, tileElement);
-            }
-
-            tileElement.className = get2048TileClasses(tile);
-            tileElement.textContent = tile.value;
-            place2048TileElement(tileElement, tile.row, tile.col, geometry);
-            
-            if (!tileElement.isConnected) {
-                game2048TileLayer.appendChild(tileElement);
-                window.requestAnimationFrame(() => {
-                    tileElement.style.transition = '';
-                });
-            }
-
-            activeIds.add(tile.id);
-        });
-
-        Array.from(game2048TileElements.keys()).forEach((tileId) => {
-            if (activeIds.has(tileId)) {
-                return;
-            }
-
-            const tileElement = game2048TileElements.get(tileId);
-
-            if (tileElement) {
-                tileElement.remove();
-            }
-
-            game2048TileElements.delete(tileId);
-        });
-
-        game2048Tiles.forEach((tile) => {
-            tile.isFresh = false;
-        });
-    }
-
-    function initialize2048() {
-        closeGameOverModal();
-        if (game2048AnimationTimeout) {
-            window.clearTimeout(game2048AnimationTimeout);
-            game2048AnimationTimeout = null;
-        }
-
-        game2048Animating = false;
-        game2048QueuedMove = null;
-        game2048Tiles = [];
-        game2048Grid = create2048EmptyGrid();
-        game2048TileElements.forEach((element) => element.remove());
-        game2048TileElements.clear();
-        game2048Score = 0;
-        add2048Tile(true);
-        add2048Tile(true);
-        update2048Hud();
-        render2048();
-        game2048MenuVisible = true;
-        game2048MenuShowingRules = false;
-        game2048MenuClosing = false;
-        game2048MenuResult = false;
-        render2048Menu();
-    }
-
-    function get2048TargetPosition(lineIndex, targetIndex, direction) {
-        if (direction === 'left') {
-            return { row: lineIndex, col: targetIndex };
-        }
-
-        if (direction === 'right') {
-            return { row: lineIndex, col: GAME_2048_SIZE - 1 - targetIndex };
-        }
-
-        if (direction === 'up') {
-            return { row: targetIndex, col: lineIndex };
-        }
-
-        return { row: GAME_2048_SIZE - 1 - targetIndex, col: lineIndex };
-    }
-
-    function get2048LineTiles(lineIndex, direction) {
-        const ids = [];
-
-        for (let index = 0; index < GAME_2048_SIZE; index += 1) {
-            let row;
-            let col;
-
-            if (direction === 'left') {
-                row = lineIndex;
-                col = index;
-            } else if (direction === 'right') {
-                row = lineIndex;
-                col = GAME_2048_SIZE - 1 - index;
-            } else if (direction === 'up') {
-                row = index;
-                col = lineIndex;
-            } else {
-                row = GAME_2048_SIZE - 1 - index;
-                col = lineIndex;
-            }
-
-            const tileId = game2048Grid[row][col];
-
-            if (tileId !== null) {
-                ids.push(tileId);
-            }
-        }
-
-        return ids;
-    }
-
-    function move2048(direction) {
-        if (game2048MenuVisible || activeGameTab !== '2048') {
-            return;
-        }
-
-        if (game2048Animating) {
-            game2048QueuedMove = direction;
-            return;
-        }
-
-        ensure2048Board();
-
-        const tileMap = new Map(game2048Tiles.map((tile) => [tile.id, { ...tile }]));
-        const targetById = new Map();
-        const finalTiles = [];
-        let gainedScore = 0;
-        let hasChanged = false;
-
-        for (let lineIndex = 0; lineIndex < GAME_2048_SIZE; lineIndex += 1) {
-            const lineIds = get2048LineTiles(lineIndex, direction);
-            const result = [];
-
-            lineIds.forEach((tileId) => {
-                const tile = tileMap.get(tileId);
-                const last = result[result.length - 1];
-
-                if (last && last.value === tile.value && !last.merged) {
-                    last.ids.push(tileId);
-                    last.merged = true;
-                    gainedScore += tile.value * 2;
-                } else {
-                    result.push({
-                        value: tile.value,
-                        ids: [tileId],
-                        merged: false
-                    });
-                }
-            });
-
-            result.forEach((entry, targetIndex) => {
-                const target = get2048TargetPosition(lineIndex, targetIndex, direction);
-                entry.ids.forEach((tileId) => {
-                    targetById.set(tileId, target);
-                    const tile = tileMap.get(tileId);
-
-                    if (tile.row !== target.row || tile.col !== target.col) {
-                        hasChanged = true;
-                    }
-                });
-
-                if (entry.ids.length === 1) {
-                    const sourceTile = tileMap.get(entry.ids[0]);
-                    finalTiles.push({
-                        ...sourceTile,
-                        row: target.row,
-                        col: target.col,
-                        isFresh: false
-                    });
-                } else {
-                    finalTiles.push(create2048Tile(entry.value * 2, target.row, target.col, true));
-                    hasChanged = true;
-                }
-            });
-        }
-
-        if (!hasChanged) {
-            return;
-        }
-
-        const geometry = get2048Geometry();
-        const tileElements = new Map();
-
-        game2048TileLayer.querySelectorAll('.game-2048-tile').forEach((element) => {
-            tileElements.set(element.dataset.tileId, element);
-        });
-
-        game2048Animating = true;
-
-        tileElements.forEach((element, tileId) => {
-            const target = targetById.get(tileId);
-
-            if (!target) {
-                return;
-            }
-
-            place2048TileElement(element, target.row, target.col, geometry);
-        });
-
-        game2048AnimationTimeout = window.setTimeout(() => {
-            game2048Score += gainedScore;
-
-            if (game2048Score > game2048BestScore) {
-                game2048BestScore = game2048Score;
-                window.localStorage.setItem(GAME_2048_BEST_KEY, String(game2048BestScore));
-            }
-
-            game2048Tiles = finalTiles;
-            sync2048Grid();
-            add2048Tile(true);
-            update2048Hud();
-            render2048();
-            game2048Animating = false;
-            game2048AnimationTimeout = null;
-
-            const hasMovesLeft = game2048Tiles.length < GAME_2048_SIZE * GAME_2048_SIZE
-                || game2048Tiles.some((tile) => (
-                    game2048Tiles.some((otherTile) => (
-                        otherTile.id !== tile.id
-                        && otherTile.value === tile.value
-                        && (
-                            (otherTile.row === tile.row && Math.abs(otherTile.col - tile.col) === 1)
-                            || (otherTile.col === tile.col && Math.abs(otherTile.row - tile.row) === 1)
-                        )
-                    ))
-                ));
-
-            if (!hasMovesLeft) {
-                openGameOverModal("C'est perdu", "La marée t'a bloqué. Plus aucun coup possible.");
-                game2048QueuedMove = null;
-                return;
-            }
-
-            if (game2048QueuedMove) {
-                const queuedMove = game2048QueuedMove;
-                game2048QueuedMove = null;
-                window.requestAnimationFrame(() => {
-                    move2048(queuedMove);
-                });
-            }
-        }, 120);
-    }
-
     function createEmptyBoard() {
         return Array.from({ length: BOARD_SIZE }, (_, row) => (
             Array.from({ length: BOARD_SIZE }, (_, col) => ({
@@ -10108,413 +8499,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeGameOverModal() {
         gameOverModal.classList.add('hidden');
         gameOverModal.setAttribute('aria-hidden', 'true');
-    }
-
-    function stopSnake() {
-        if (snakeInterval) {
-            window.clearInterval(snakeInterval);
-            snakeInterval = null;
-        }
-
-        snakeRunning = false;
-    }
-
-    function getSnakeRulesText() {
-        return 'Utilise les flèches ou ZQSD pour tourner. Chaque lanterne ramassée allonge le serpent. Évite les bords et ta propre queue pour garder le cap.';
-    }
-
-    function renderSnakeMenu() {
-        if (!snakeMenuOverlay || !snakeTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(snakeMenuOverlay, snakeTable);
-        snakeMenuOverlay.classList.toggle('hidden', !snakeMenuVisible);
-        snakeMenuOverlay.classList.toggle('is-closing', snakeMenuClosing);
-        snakeMenuOverlay.classList.toggle('is-entering', snakeMenuEntering);
-        snakeTable.classList.toggle('is-menu-open', snakeMenuVisible);
-
-        if (!snakeMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(snakeMenuResult);
-
-        if (snakeMenuEyebrow) {
-            snakeMenuEyebrow.textContent = snakeMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? snakeMenuResult.eyebrow : 'Serpent de mer');
-        }
-
-        if (snakeMenuTitle) {
-            snakeMenuTitle.textContent = snakeMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? snakeMenuResult.title : 'Snake');
-        }
-
-        if (snakeMenuText) {
-            snakeMenuText.textContent = snakeMenuShowingRules
-                ? getSnakeRulesText()
-                : (hasResult
-                    ? snakeMenuResult.text
-                    : 'Glisse entre les courants, ramasse les lanternes et allonge ton serpent sans heurter la coque.');
-        }
-
-        if (snakeMenuActionButton) {
-            snakeMenuActionButton.textContent = snakeMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-
-        if (snakeMenuRulesButton) {
-            snakeMenuRulesButton.textContent = 'R\u00e8gles';
-            snakeMenuRulesButton.hidden = snakeMenuShowingRules;
-        }
-    }
-
-    function closeSnakeMenu() {
-        snakeMenuClosing = true;
-        renderSnakeMenu();
-        window.setTimeout(() => {
-            snakeMenuClosing = false;
-            snakeMenuVisible = false;
-            snakeMenuShowingRules = false;
-            snakeMenuEntering = false;
-            snakeMenuResult = null;
-            renderSnakeMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealSnakeOutcomeMenu(title, text, eyebrow) {
-        snakeMenuVisible = true;
-        snakeMenuResult = { title, text, eyebrow };
-        snakeMenuShowingRules = false;
-        snakeMenuClosing = false;
-        snakeMenuEntering = true;
-
-        if (snakeHelpText) {
-            snakeHelpText.textContent = text;
-        }
-
-        renderSnakeMenu();
-        window.setTimeout(() => {
-            snakeMenuEntering = false;
-            renderSnakeMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function updateSnakeHud() {
-        snakeScoreDisplay.textContent = String(snakeScore);
-        snakeBestScoreDisplay.textContent = String(snakeBestScore);
-        snakeStartButton.textContent = snakeRunning ? 'Changer de cap' : 'Lancer la traversée';
-    }
-
-    function queueSnakeDirectionInput(nextDirection) {
-        if (!nextDirection) {
-            return;
-        }
-
-        const lastQueuedDirection = snakeDirectionQueue[snakeDirectionQueue.length - 1];
-        const referenceDirection = lastQueuedDirection || snakeNextDirection || snakeDirection;
-        const isOpposite = referenceDirection.x + nextDirection.x === 0
-            && referenceDirection.y + nextDirection.y === 0;
-        const isSameDirection = referenceDirection.x === nextDirection.x
-            && referenceDirection.y === nextDirection.y;
-
-        if (isOpposite || isSameDirection || snakeDirectionQueue.length >= 2) {
-            return;
-        }
-
-        snakeDirectionQueue.push(nextDirection);
-    }
-
-    function getRandomSnakeFood(existingFoods = []) {
-        const freeCells = [];
-
-        for (let row = 0; row < SNAKE_SIZE; row += 1) {
-            for (let col = 0; col < SNAKE_SIZE; col += 1) {
-                const occupiedBySnake = snake.some((segment) => segment.row === row && segment.col === col);
-                const occupiedByFood = existingFoods.some((food) => food.row === row && food.col === col);
-
-                if (!occupiedBySnake && !occupiedByFood) {
-                    freeCells.push({ row, col });
-                }
-            }
-        }
-
-        if (!freeCells.length) {
-            return null;
-        }
-
-        return freeCells[Math.floor(Math.random() * freeCells.length)];
-    }
-
-    function refillSnakeFoods() {
-        while (snakeFoods.length < 10) {
-            const nextFood = getRandomSnakeFood(snakeFoods);
-
-            if (!nextFood) {
-                break;
-            }
-
-            snakeFoods.push(nextFood);
-        }
-    }
-
-    function ensureSnakeBoard() {
-        snakeBoard?.style.setProperty('--snake-size', String(SNAKE_SIZE));
-
-        if (snakeOverlayLayer) {
-            const grid = snakeBoard?.querySelector('.snake-grid');
-            const expectedCells = SNAKE_SIZE * SNAKE_SIZE;
-            if (grid?.children.length === expectedCells) {
-                return;
-            }
-        }
-
-        const grid = document.createElement('div');
-        grid.className = 'snake-grid';
-        grid.innerHTML = Array.from({ length: SNAKE_SIZE * SNAKE_SIZE }, (_, index) => {
-            const row = Math.floor(index / SNAKE_SIZE);
-            const col = index % SNAKE_SIZE;
-            const classes = ['snake-bg-cell'];
-
-            if ((row + col) % 2 === 1) {
-                classes.push('snake-bg-cell-alt');
-            }
-
-            return `<div class="${classes.join(' ')}" aria-hidden="true"></div>`;
-        }).join('');
-
-        snakeOverlayLayer = document.createElement('div');
-        snakeOverlayLayer.className = 'snake-overlay';
-
-        snakeBoard.innerHTML = '';
-        snakeBoard.append(grid, snakeOverlayLayer);
-    }
-
-    function getSnakeGeometry() {
-        const styles = window.getComputedStyle(snakeBoard);
-        const gap = parseFloat(styles.getPropertyValue('--snake-gap')) || 4;
-        const padding = parseFloat(styles.getPropertyValue('--snake-padding')) || 10;
-        const innerSize = snakeBoard.clientWidth - (padding * 2);
-        const cellSize = (innerSize - (gap * (SNAKE_SIZE - 1))) / SNAKE_SIZE;
-
-        return {
-            gap,
-            padding,
-            cellSize
-        };
-    }
-
-    function placeSnakeEntity(element, row, col, geometry) {
-        const offsetX = col * (geometry.cellSize + geometry.gap);
-        const offsetY = row * (geometry.cellSize + geometry.gap);
-
-        element.style.width = `${geometry.cellSize}px`;
-        element.style.height = `${geometry.cellSize}px`;
-        element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-    }
-
-    function getSnakeHeadRotation() {
-        if (snakeDirection.x === 1) {
-            return 'rotate(90deg)';
-        }
-
-        if (snakeDirection.x === -1) {
-            return 'rotate(-90deg)';
-        }
-
-        if (snakeDirection.y === 1) {
-            return 'rotate(180deg)';
-        }
-
-        return 'rotate(0deg)';
-    }
-
-    function renderSnake() {
-        ensureSnakeBoard();
-
-        if (!snakeOverlayLayer) {
-            return;
-        }
-
-        const geometry = getSnakeGeometry();
-
-        while (snakeSegmentElements.length < snake.length) {
-            const segmentElement = document.createElement('div');
-            segmentElement.className = 'snake-entity snake-entity-body';
-            snakeOverlayLayer.append(segmentElement);
-            snakeSegmentElements.push(segmentElement);
-        }
-
-        while (snakeSegmentElements.length > snake.length) {
-            const segmentElement = snakeSegmentElements.pop();
-            segmentElement?.remove();
-        }
-
-        snakeSegmentElements.forEach((segmentElement, index) => {
-            const segment = snake[index];
-
-            segmentElement.classList.toggle('snake-entity-head', index === 0);
-            segmentElement.classList.toggle('snake-entity-body', index !== 0);
-            placeSnakeEntity(segmentElement, segment.row, segment.col, geometry);
-            segmentElement.style.setProperty('--snake-head-rotation', index === 0 ? getSnakeHeadRotation() : 'rotate(0deg)');
-        });
-
-        const nextFoodKeys = new Set();
-
-        snakeFoods.forEach((food) => {
-            const key = `${food.row}-${food.col}`;
-            nextFoodKeys.add(key);
-
-            let foodElement = snakeFoodElements.get(key);
-
-            if (!foodElement) {
-                foodElement = document.createElement('div');
-                foodElement.className = 'snake-entity snake-entity-food';
-                if (snakeJustAte) {
-                    foodElement.classList.add('snake-cell-food-pop');
-                }
-
-                snakeOverlayLayer.append(foodElement);
-                snakeFoodElements.set(key, foodElement);
-            }
-
-            placeSnakeEntity(foodElement, food.row, food.col, geometry);
-        });
-
-        snakeFoodElements.forEach((foodElement, key) => {
-            if (nextFoodKeys.has(key)) {
-                return;
-            }
-
-            foodElement.remove();
-            snakeFoodElements.delete(key);
-        });
-
-        snakeJustAte = false;
-    }
-
-    function initializeSnake() {
-        const centerRow = Math.floor(SNAKE_SIZE / 2);
-        const centerCol = Math.floor(SNAKE_SIZE / 2);
-        stopSnake();
-        snakeMenuResult = null;
-        snakeMenuShowingRules = false;
-        snakeMenuClosing = false;
-        snakeMenuEntering = false;
-        snakeFoodElements.forEach((element) => element.remove());
-        snakeFoodElements.clear();
-        snake = [
-            { row: centerRow, col: centerCol },
-            { row: centerRow, col: centerCol - 1 },
-            { row: centerRow, col: centerCol - 2 }
-        ];
-        snakeDirection = { x: 1, y: 0 };
-        snakeNextDirection = { x: 1, y: 0 };
-        snakeDirectionQueue = [];
-        snakeFoods = [];
-        refillSnakeFoods();
-        snakeScore = 0;
-        snakeJustAte = false;
-        if (snakeHelpText) {
-            snakeHelpText.textContent = 'Fl\u00e8ches ou ZQSD pour tourner. Attrape les lanternes sans percuter la coque.';
-        }
-        updateSnakeHud();
-        renderSnake();
-        renderSnakeMenu();
-    }
-
-    function finishSnakeRun() {
-        stopSnake();
-
-        if (snakeScore > snakeBestScore) {
-            snakeBestScore = snakeScore;
-            window.localStorage.setItem(SNAKE_BEST_KEY, String(snakeBestScore));
-        }
-
-        updateSnakeHud();
-        revealSnakeOutcomeMenu(
-            'Coque heurtée',
-            `Le serpent a percuté la coque. Score final : ${snakeScore}.`,
-            'Fin de traversée'
-        );
-    }
-
-    function moveSnake() {
-        while (snakeDirectionQueue.length) {
-            const queuedDirection = snakeDirectionQueue.shift();
-            const isOpposite = snakeDirection.x + queuedDirection.x === 0
-                && snakeDirection.y + queuedDirection.y === 0;
-
-            if (isOpposite) {
-                continue;
-            }
-
-            snakeNextDirection = queuedDirection;
-            break;
-        }
-
-        snakeDirection = { ...snakeNextDirection };
-        const head = snake[0];
-        const nextHead = {
-            row: head.row + snakeDirection.y,
-            col: head.col + snakeDirection.x
-        };
-        const eatenFoodIndex = snakeFoods.findIndex((food) => food.row === nextHead.row && food.col === nextHead.col);
-        const willGrow = eatenFoodIndex >= 0;
-
-        const hitsWall = nextHead.row < 0
-            || nextHead.row >= SNAKE_SIZE
-            || nextHead.col < 0
-            || nextHead.col >= SNAKE_SIZE;
-
-        const bodyToCheck = willGrow ? snake : snake.slice(0, -1);
-        const hitsSelf = bodyToCheck.some((segment) => segment.row === nextHead.row && segment.col === nextHead.col);
-
-        if (hitsWall || hitsSelf) {
-            finishSnakeRun();
-            return;
-        }
-
-        snake.unshift(nextHead);
-
-        if (eatenFoodIndex >= 0) {
-            snakeScore += 1;
-            snakeFoods.splice(eatenFoodIndex, 1);
-            refillSnakeFoods();
-            snakeJustAte = true;
-
-            if (!snakeFoods.length) {
-                if (snakeScore > snakeBestScore) {
-                    snakeBestScore = snakeScore;
-                    window.localStorage.setItem(SNAKE_BEST_KEY, String(snakeBestScore));
-                }
-
-                stopSnake();
-                updateSnakeHud();
-                revealSnakeOutcomeMenu(
-                    'Mer nettoyée',
-                    `Toutes les lanternes ont été ramassées. Score final : ${snakeScore}.`,
-                    'Traversée parfaite'
-                );
-                return;
-            }
-        } else {
-            snake.pop();
-        }
-
-        updateSnakeHud();
-        renderSnake();
-    }
-
-    function startSnake() {
-        closeGameOverModal();
-        initializeSnake();
-        snakeRunning = true;
-        updateSnakeHud();
-        snakeInterval = window.setInterval(moveSnake, SNAKE_TICK_MS);
     }
 
     function startTimer() {
@@ -11565,76 +9549,6 @@ document.addEventListener('DOMContentLoaded', () => {
         flowFreeCatchupFrame = window.requestAnimationFrame(processFlowFreePendingPath);
     }
 
-    function setBreakoutBallVelocity(directionX, directionY) {
-        const magnitude = Math.hypot(directionX, directionY) || 1;
-        breakoutState.ball.vx = (directionX / magnitude) * BREAKOUT_BALL_SPEED;
-        breakoutState.ball.vy = (directionY / magnitude) * BREAKOUT_BALL_SPEED;
-    }
-
-    function resetBreakoutBall() {
-        breakoutState.ball.x = breakoutCanvas.width / 2;
-        breakoutState.ball.y = breakoutCanvas.height * 0.68;
-        setBreakoutBallVelocity(0.45, -1);
-    }
-
-    function resolveBreakoutBrickCollision(brick, previousX, previousY) {
-        const { ball } = breakoutState;
-        const radius = ball.radius;
-        const crossedFromLeft = previousX + radius <= brick.x;
-        const crossedFromRight = previousX - radius >= brick.x + brick.width;
-        const crossedFromTop = previousY + radius <= brick.y;
-        const crossedFromBottom = previousY - radius >= brick.y + brick.height;
-
-        if (crossedFromLeft) {
-            ball.x = brick.x - radius;
-            ball.vx = -Math.abs(ball.vx);
-            return;
-        }
-
-        if (crossedFromRight) {
-            ball.x = brick.x + brick.width + radius;
-            ball.vx = Math.abs(ball.vx);
-            return;
-        }
-
-        if (crossedFromTop) {
-            ball.y = brick.y - radius;
-            ball.vy = -Math.abs(ball.vy);
-            return;
-        }
-
-        if (crossedFromBottom) {
-            ball.y = brick.y + brick.height + radius;
-            ball.vy = Math.abs(ball.vy);
-            return;
-        }
-
-        const overlapLeft = ball.x + radius - brick.x;
-        const overlapRight = brick.x + brick.width - (ball.x - radius);
-        const overlapTop = ball.y + radius - brick.y;
-        const overlapBottom = brick.y + brick.height - (ball.y - radius);
-        const horizontalOverlap = Math.min(overlapLeft, overlapRight);
-        const verticalOverlap = Math.min(overlapTop, overlapBottom);
-
-        if (horizontalOverlap < verticalOverlap) {
-            if (overlapLeft < overlapRight) {
-                ball.x = brick.x - radius;
-                ball.vx = -Math.abs(ball.vx);
-            } else {
-                ball.x = brick.x + brick.width + radius;
-                ball.vx = Math.abs(ball.vx);
-            }
-            return;
-        }
-
-        if (overlapTop < overlapBottom) {
-            ball.y = brick.y - radius;
-            ball.vy = -Math.abs(ball.vy);
-        } else {
-            ball.y = brick.y + brick.height + radius;
-            ball.vy = Math.abs(ball.vy);
-        }
-    }
 
     function updateMagicSortHud() {
         const solvedTubes = magicSortTubes.filter((tube) => (
@@ -16017,423 +13931,6 @@ document.addEventListener('DOMContentLoaded', () => {
         baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
     }
 
-    function drawBreakoutRoundedRect(context, x, y, width, height, radius) {
-        const clampedRadius = Math.min(radius, width / 2, height / 2);
-        context.beginPath();
-        context.moveTo(x + clampedRadius, y);
-        context.lineTo(x + width - clampedRadius, y);
-        context.quadraticCurveTo(x + width, y, x + width, y + clampedRadius);
-        context.lineTo(x + width, y + height - clampedRadius);
-        context.quadraticCurveTo(x + width, y + height, x + width - clampedRadius, y + height);
-        context.lineTo(x + clampedRadius, y + height);
-        context.quadraticCurveTo(x, y + height, x, y + height - clampedRadius);
-        context.lineTo(x, y + clampedRadius);
-        context.quadraticCurveTo(x, y, x + clampedRadius, y);
-        context.closePath();
-    }
-
-    function createBreakoutBricks() {
-        const rows = 5;
-        const cols = 8;
-        const sidePadding = 38;
-        const topOffset = 28;
-        const gapX = 10;
-        const gapY = 8;
-        const brickWidth = ((breakoutCanvas.width - (sidePadding * 2)) - (gapX * (cols - 1))) / cols;
-        const brickHeight = 16;
-        const rowThemes = [
-            { top: '#facc15', bottom: '#d97706' },
-            { top: '#fb7185', bottom: '#be123c' },
-            { top: '#38bdf8', bottom: '#2563eb' },
-            { top: '#34d399', bottom: '#0f766e' },
-            { top: '#c084fc', bottom: '#7c3aed' }
-        ];
-
-        return Array.from({ length: rows }, (_, row) => (
-            Array.from({ length: cols }, (_, col) => ({
-                x: sidePadding + col * (brickWidth + gapX),
-                y: topOffset + row * (brickHeight + gapY),
-                width: brickWidth,
-                height: brickHeight,
-                alive: true,
-                theme: rowThemes[row % rowThemes.length]
-            }))
-        )).flat();
-    }
-
-    function drawBreakoutBackdrop() {
-        const skyGradient = breakoutContext.createLinearGradient(0, 0, 0, breakoutCanvas.height);
-        skyGradient.addColorStop(0, '#7dd3fc');
-        skyGradient.addColorStop(0.48, '#38bdf8');
-        skyGradient.addColorStop(0.72, '#0f766e');
-        skyGradient.addColorStop(1, '#082f49');
-        breakoutContext.fillStyle = skyGradient;
-        breakoutContext.fillRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
-
-        const sunGlow = breakoutContext.createRadialGradient(118, 88, 12, 118, 88, 92);
-        sunGlow.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
-        sunGlow.addColorStop(0.4, 'rgba(251, 191, 36, 0.42)');
-        sunGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
-        breakoutContext.fillStyle = sunGlow;
-        breakoutContext.beginPath();
-        breakoutContext.arc(118, 88, 92, 0, Math.PI * 2);
-        breakoutContext.fill();
-
-        breakoutContext.fillStyle = 'rgba(255, 255, 255, 0.68)';
-        breakoutContext.beginPath();
-        breakoutContext.ellipse(154, 74, 28, 14, 0, 0, Math.PI * 2);
-        breakoutContext.ellipse(186, 72, 34, 18, 0, 0, Math.PI * 2);
-        breakoutContext.ellipse(216, 78, 24, 12, 0, 0, Math.PI * 2);
-        breakoutContext.fill();
-
-        breakoutContext.fillStyle = 'rgba(15, 23, 42, 0.26)';
-        breakoutContext.beginPath();
-        breakoutContext.moveTo(0, breakoutCanvas.height * 0.68);
-        breakoutContext.lineTo(86, breakoutCanvas.height * 0.54);
-        breakoutContext.lineTo(148, breakoutCanvas.height * 0.62);
-        breakoutContext.lineTo(222, breakoutCanvas.height * 0.48);
-        breakoutContext.lineTo(304, breakoutCanvas.height * 0.67);
-        breakoutContext.lineTo(0, breakoutCanvas.height * 0.67);
-        breakoutContext.closePath();
-        breakoutContext.fill();
-
-        breakoutContext.fillStyle = 'rgba(15, 23, 42, 0.38)';
-        breakoutContext.beginPath();
-        breakoutContext.moveTo(breakoutCanvas.width * 0.58, breakoutCanvas.height * 0.68);
-        breakoutContext.lineTo(breakoutCanvas.width * 0.68, breakoutCanvas.height * 0.56);
-        breakoutContext.lineTo(breakoutCanvas.width * 0.78, breakoutCanvas.height * 0.61);
-        breakoutContext.lineTo(breakoutCanvas.width * 0.88, breakoutCanvas.height * 0.5);
-        breakoutContext.lineTo(breakoutCanvas.width, breakoutCanvas.height * 0.68);
-        breakoutContext.closePath();
-        breakoutContext.fill();
-
-        breakoutContext.strokeStyle = 'rgba(255,255,255,0.18)';
-        breakoutContext.lineWidth = 2;
-        for (let wave = 0; wave < 5; wave += 1) {
-            const waveY = breakoutCanvas.height - 86 + wave * 13;
-            breakoutContext.beginPath();
-            breakoutContext.moveTo(0, waveY);
-            for (let x = 0; x <= breakoutCanvas.width; x += 36) {
-                breakoutContext.quadraticCurveTo(x + 18, waveY - 8, x + 36, waveY);
-            }
-            breakoutContext.stroke();
-        }
-    }
-
-    function drawBreakoutBrick(brick) {
-        const gradient = breakoutContext.createLinearGradient(brick.x, brick.y, brick.x, brick.y + brick.height);
-        gradient.addColorStop(0, brick.theme.top);
-        gradient.addColorStop(1, brick.theme.bottom);
-
-        drawBreakoutRoundedRect(breakoutContext, brick.x, brick.y, brick.width, brick.height, 6);
-        breakoutContext.fillStyle = gradient;
-        breakoutContext.fill();
-        breakoutContext.strokeStyle = 'rgba(255, 248, 220, 0.28)';
-        breakoutContext.lineWidth = 1;
-        breakoutContext.stroke();
-
-        breakoutContext.fillStyle = 'rgba(255, 255, 255, 0.18)';
-        breakoutContext.fillRect(brick.x + 7, brick.y + 3, brick.width - 14, 3);
-    }
-
-    function drawBreakoutPaddle() {
-        const { paddle } = breakoutState;
-        const hullGradient = breakoutContext.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
-        hullGradient.addColorStop(0, '#f59e0b');
-        hullGradient.addColorStop(1, '#7c2d12');
-
-        drawBreakoutRoundedRect(breakoutContext, paddle.x, paddle.y, paddle.width, paddle.height, 8);
-        breakoutContext.fillStyle = hullGradient;
-        breakoutContext.fill();
-
-        breakoutContext.fillStyle = 'rgba(255, 248, 220, 0.9)';
-        breakoutContext.fillRect(paddle.x + paddle.width * 0.48, paddle.y - 14, 3, 14);
-        breakoutContext.beginPath();
-        breakoutContext.moveTo(paddle.x + paddle.width * 0.5, paddle.y - 14);
-        breakoutContext.lineTo(paddle.x + paddle.width * 0.7, paddle.y - 6);
-        breakoutContext.lineTo(paddle.x + paddle.width * 0.5, paddle.y + 2);
-        breakoutContext.closePath();
-        breakoutContext.fill();
-    }
-
-    function drawBreakoutBall() {
-        const { ball } = breakoutState;
-        const ballGradient = breakoutContext.createRadialGradient(ball.x - 2, ball.y - 2, 2, ball.x, ball.y, ball.radius + 2);
-        ballGradient.addColorStop(0, '#fef3c7');
-        ballGradient.addColorStop(0.42, '#facc15');
-        ballGradient.addColorStop(1, '#b45309');
-
-        breakoutContext.beginPath();
-        breakoutContext.fillStyle = ballGradient;
-        breakoutContext.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-        breakoutContext.fill();
-        breakoutContext.strokeStyle = 'rgba(120, 53, 15, 0.52)';
-        breakoutContext.lineWidth = 1.2;
-        breakoutContext.stroke();
-    }
-
-    function drawBreakout() {
-        if (!breakoutContext || !breakoutState) {
-            return;
-        }
-
-        breakoutContext.clearRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
-        drawBreakoutBackdrop();
-
-        breakoutState.bricks.forEach((brick) => {
-            if (!brick.alive) {
-                return;
-            }
-            drawBreakoutBrick(brick);
-        });
-
-        drawBreakoutPaddle();
-        drawBreakoutBall();
-    }
-
-    function getBreakoutRulesText() {
-        return 'Déplace la raquette avec Q, D ou les flèches. La balle rebondit selon la zone touchée sur le bateau. Casse toutes les briques sans perdre tes trois vies.';
-    }
-
-    function renderBreakoutMenu() {
-        if (!breakoutMenuOverlay || !breakoutTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(breakoutMenuOverlay, breakoutTable);
-        breakoutMenuOverlay.classList.toggle('hidden', !breakoutMenuVisible);
-        breakoutMenuOverlay.classList.toggle('is-closing', breakoutMenuClosing);
-        breakoutTable.classList.toggle('is-menu-open', breakoutMenuVisible);
-
-        if (!breakoutMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(breakoutMenuResult);
-
-        if (breakoutMenuEyebrow) {
-            breakoutMenuEyebrow.textContent = breakoutMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? breakoutMenuResult.eyebrow : 'Baie d arcade');
-        }
-        if (breakoutMenuTitle) {
-            breakoutMenuTitle.textContent = breakoutMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? breakoutMenuResult.title : 'Break It');
-        }
-        if (breakoutMenuText) {
-            breakoutMenuText.textContent = breakoutMenuShowingRules
-                ? getBreakoutRulesText()
-                : (hasResult
-                    ? breakoutMenuResult.text
-                    : "Prépare ta traversée avant d'envoyer la balle sur les briques.");
-        }
-        if (breakoutMenuActionButton) {
-            breakoutMenuActionButton.textContent = breakoutMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-        if (breakoutMenuRulesButton) {
-            breakoutMenuRulesButton.textContent = 'R\u00e8gles';
-            breakoutMenuRulesButton.hidden = breakoutMenuShowingRules;
-        }
-    }
-
-    function startBreakoutLaunchSequence() {
-        breakoutMenuClosing = true;
-        renderBreakoutMenu();
-        window.setTimeout(() => {
-            breakoutMenuClosing = false;
-            breakoutMenuVisible = false;
-            breakoutMenuShowingRules = false;
-            breakoutMenuResult = null;
-            if (breakoutState) {
-                breakoutState.running = true;
-            }
-            if (!breakoutAnimationFrame) {
-                breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
-            }
-            renderBreakoutMenu();
-            drawBreakout();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeBreakout() {
-        const paddleWidth = 92;
-        const paddleHeight = 11;
-        closeGameOverModal();
-        stopBreakout();
-        breakoutState = {
-            score: 0,
-            lives: 3,
-            running: false,
-            paddle: {
-                x: (breakoutCanvas.width - paddleWidth) / 2,
-                y: breakoutCanvas.height - 34,
-                width: paddleWidth,
-                height: paddleHeight
-            },
-            ball: {
-                x: breakoutCanvas.width / 2,
-                y: breakoutCanvas.height * 0.62,
-                vx: 0,
-                vy: 0,
-                radius: 7
-            },
-            bricks: createBreakoutBricks()
-        };
-        breakoutRemainingBricks = breakoutState.bricks.length;
-        resetBreakoutBall();
-        breakoutScoreDisplay.textContent = '0';
-        breakoutLivesDisplay.textContent = '3';
-        breakoutHelpText.textContent = `Record actuel: ${breakoutBestScore}. Lance la balle quand tu veux.`;
-        breakoutMenuVisible = true;
-        breakoutMenuShowingRules = false;
-        breakoutMenuClosing = false;
-        breakoutMenuResult = null;
-        renderBreakoutMenu();
-        drawBreakout();
-
-    }
-
-    function revealBreakoutOutcomeMenu(title, text, eyebrow) {
-        breakoutMenuVisible = true;
-        breakoutMenuShowingRules = false;
-        breakoutMenuClosing = false;
-        breakoutMenuResult = { title, text, eyebrow };
-        renderBreakoutMenu();
-    }
-
-    function stopBreakout() {
-        if (breakoutAnimationFrame) {
-            window.cancelAnimationFrame(breakoutAnimationFrame);
-            breakoutAnimationFrame = null;
-        }
-        breakoutLastFrame = 0;
-    }
-
-    function updateBreakout(timestamp) {
-        if (!breakoutState) {
-            return;
-        }
-
-        if (!breakoutLastFrame) {
-            breakoutLastFrame = timestamp;
-        }
-
-        const delta = Math.min(0.032, (timestamp - breakoutLastFrame) / 1000);
-        breakoutLastFrame = timestamp;
-
-        if (breakoutState.running) {
-            const speed = 360;
-            if (breakoutKeys.has('arrowleft') || breakoutKeys.has('q')) {
-                breakoutState.paddle.x -= speed * delta;
-            }
-            if (breakoutKeys.has('arrowright') || breakoutKeys.has('d')) {
-                breakoutState.paddle.x += speed * delta;
-            }
-            breakoutState.paddle.x = Math.max(0, Math.min(breakoutCanvas.width - breakoutState.paddle.width, breakoutState.paddle.x));
-
-            const maxDistance = Math.max(
-                Math.abs(breakoutState.ball.vx),
-                Math.abs(breakoutState.ball.vy)
-            ) * delta;
-            const stepCount = Math.max(1, Math.ceil(maxDistance / BREAKOUT_MAX_STEP_DISTANCE));
-            const stepDelta = delta / stepCount;
-
-            for (let stepIndex = 0; stepIndex < stepCount; stepIndex += 1) {
-                const previousX = breakoutState.ball.x;
-                const previousY = breakoutState.ball.y;
-
-                breakoutState.ball.x += breakoutState.ball.vx * stepDelta;
-                breakoutState.ball.y += breakoutState.ball.vy * stepDelta;
-
-                if (breakoutState.ball.x <= breakoutState.ball.radius) {
-                    breakoutState.ball.x = breakoutState.ball.radius;
-                    breakoutState.ball.vx = Math.abs(breakoutState.ball.vx);
-                } else if (breakoutState.ball.x >= breakoutCanvas.width - breakoutState.ball.radius) {
-                    breakoutState.ball.x = breakoutCanvas.width - breakoutState.ball.radius;
-                    breakoutState.ball.vx = -Math.abs(breakoutState.ball.vx);
-                }
-
-                if (breakoutState.ball.y <= breakoutState.ball.radius) {
-                    breakoutState.ball.y = breakoutState.ball.radius;
-                    breakoutState.ball.vy = Math.abs(breakoutState.ball.vy);
-                }
-
-                if (breakoutState.ball.y + breakoutState.ball.radius >= breakoutState.paddle.y
-                    && breakoutState.ball.y - breakoutState.ball.radius <= breakoutState.paddle.y + breakoutState.paddle.height
-                    && breakoutState.ball.x + breakoutState.ball.radius >= breakoutState.paddle.x
-                    && breakoutState.ball.x - breakoutState.ball.radius <= breakoutState.paddle.x + breakoutState.paddle.width
-                    && breakoutState.ball.vy > 0) {
-                    breakoutState.ball.y = breakoutState.paddle.y - breakoutState.ball.radius;
-                    const normalizedOffset = Math.max(-1, Math.min(1, (
-                        breakoutState.ball.x - (breakoutState.paddle.x + breakoutState.paddle.width / 2)
-                    ) / (breakoutState.paddle.width / 2)));
-                    const bounceAngle = normalizedOffset * (Math.PI / 3);
-                    setBreakoutBallVelocity(Math.sin(bounceAngle), -Math.cos(bounceAngle));
-                }
-
-                const collidedBrick = breakoutState.bricks.find((brick) => (
-                    brick.alive
-                    && breakoutState.ball.x + breakoutState.ball.radius > brick.x
-                    && breakoutState.ball.x - breakoutState.ball.radius < brick.x + brick.width
-                    && breakoutState.ball.y + breakoutState.ball.radius > brick.y
-                    && breakoutState.ball.y - breakoutState.ball.radius < brick.y + brick.height
-                ));
-
-                if (collidedBrick) {
-                    collidedBrick.alive = false;
-                    breakoutRemainingBricks = Math.max(0, breakoutRemainingBricks - 1);
-                    resolveBreakoutBrickCollision(collidedBrick, previousX, previousY);
-                    breakoutState.score += 25;
-                    breakoutScoreDisplay.textContent = String(breakoutState.score);
-                    if (breakoutState.score > breakoutBestScore) {
-                        breakoutBestScore = breakoutState.score;
-                        window.localStorage.setItem(BREAKOUT_BEST_KEY, String(breakoutBestScore));
-                    }
-                }
-
-                if (breakoutState.ball.y - breakoutState.ball.radius > breakoutCanvas.height) {
-                    breakoutState.lives -= 1;
-                    breakoutLivesDisplay.textContent = String(breakoutState.lives);
-                    breakoutState.running = false;
-                    resetBreakoutBall();
-                    breakoutHelpText.textContent = breakoutState.lives > 0 ? 'Balle perdue. Clique relancer.' : `Partie termin\u00e9e. Score ${breakoutState.score}.`;
-                    if (breakoutState.lives <= 0) {
-                        revealBreakoutOutcomeMenu(
-                            'Partie termin\u00e9e',
-                            `Score ${breakoutState.score}. Record ${breakoutBestScore}.`,
-                            'Pont en cale seche'
-                        );
-                    }
-                    stopBreakout();
-                    drawBreakout();
-                    break;
-                }
-
-                if (breakoutRemainingBricks === 0) {
-                    breakoutState.running = false;
-                    breakoutHelpText.textContent = `Victoire ! Score ${breakoutState.score}.`;
-                    revealBreakoutOutcomeMenu(
-                        'Victoire',
-                        `Toutes les briques sont tombees. Score ${breakoutState.score}. Record ${breakoutBestScore}.`,
-                        'Pont en liesse'
-                    );
-                    stopBreakout();
-                    drawBreakout();
-                    break;
-                }
-            }
-        }
-
-        drawBreakout();
-        if (breakoutState.running) {
-            breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
-        } else {
-            breakoutAnimationFrame = null;
-        }
-    }
 
     function createBlockBlastPiece(template) {
         return {
@@ -18299,7 +15796,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showGamePanel(nextTab);
 
         if (nextTab === 'snake') {
-            snakeMenuVisible = true;
+            __sn.setSnakeMenuVisible(true);
             initializeSnake();
             closeGameOverModal();
             return;
@@ -18345,13 +15842,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'tetris') {
-            tetrisMenuVisible = true;
+            __tt.setTetrisMenuVisible(true);
             initializeTetris();
             return;
         }
 
         if (nextTab === 'pacman') {
-            pacmanMenuVisible = true;
+            __pm.setPacmanMenuVisible(true);
             initializePacman();
             return;
         }
@@ -18649,8 +16146,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     snakeMenuActionButton?.addEventListener('click', () => {
-        if (snakeMenuShowingRules) {
-            snakeMenuShowingRules = false;
+        if (__sn.getSnakeMenuShowingRules()) {
+            __sn.setSnakeMenuShowingRules(false);
             renderSnakeMenu();
             return;
         }
@@ -18660,7 +16157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     snakeMenuRulesButton?.addEventListener('click', () => {
-        snakeMenuShowingRules = true;
+        __sn.setSnakeMenuShowingRules(true);
         renderSnakeMenu();
     });
 
@@ -18743,13 +16240,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     game2048MenuActionButton?.addEventListener('click', () => {
-        if (game2048MenuShowingRules) {
-            game2048MenuShowingRules = false;
+        if (__g2.get2048MenuShowingRules()) {
+            __g2.set2048MenuShowingRules(false);
             render2048Menu();
             return;
         }
 
-        if (game2048MenuResult) {
+        if (__g2.get2048MenuResult()) {
             initialize2048();
             close2048Menu();
             return;
@@ -18759,12 +16256,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     game2048MenuRulesButton?.addEventListener('click', () => {
-        game2048MenuShowingRules = !game2048MenuShowingRules;
+        __g2.set2048MenuShowingRules(!__g2.get2048MenuShowingRules());
         render2048Menu();
     });
 
     game2048Board?.addEventListener('touchstart', (event) => {
-        if (game2048MenuVisible || activeGameTab !== '2048') {
+        if (__g2.get2048MenuVisible() || activeGameTab !== '2048') {
             return;
         }
 
@@ -18778,7 +16275,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     game2048Board?.addEventListener('touchend', (event) => {
-        if (game2048MenuVisible || activeGameTab !== '2048') {
+        if (__g2.get2048MenuVisible() || activeGameTab !== '2048') {
             game2048TouchStartX = null;
             game2048TouchStartY = null;
             return;
@@ -18863,7 +16360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: false });
 
     pacmanBoard?.addEventListener('touchstart', (event) => {
-        if (activeGameTab !== 'pacman' || pacmanMenuVisible || pacmanMenuClosing) {
+        if (activeGameTab !== 'pacman' || __pm.getPacmanMenuVisible() || __pm.getPacmanMenuClosing()) {
             return;
         }
 
@@ -18877,7 +16374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     pacmanBoard?.addEventListener('touchend', (event) => {
-        if (activeGameTab !== 'pacman' || pacmanMenuVisible || pacmanMenuClosing) {
+        if (activeGameTab !== 'pacman' || __pm.getPacmanMenuVisible() || __pm.getPacmanMenuClosing()) {
             pacmanTouchStartX = null;
             pacmanTouchStartY = null;
             return;
@@ -18903,14 +16400,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        pacmanNextDirection = absX > absY
+        __pm.setPacmanNextDirection(absX > absY
             ? (deltaX > 0 ? { row: 0, col: 1 } : { row: 0, col: -1 })
-            : (deltaY > 0 ? { row: 1, col: 0 } : { row: -1, col: 0 });
+            : (deltaY > 0 ? { row: 1, col: 0 } : { row: -1, col: 0 }));
         event.preventDefault();
     }, { passive: false });
 
     tetrisBoard?.addEventListener('touchstart', (event) => {
-        if (activeGameTab !== 'tetris' || tetrisMenuVisible || tetrisMenuClosing) {
+        if (activeGameTab !== 'tetris' || __tt.getTetrisMenuVisible() || __tt.getTetrisMenuClosing()) {
             return;
         }
 
@@ -18924,7 +16421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     tetrisBoard?.addEventListener('touchend', (event) => {
-        if (activeGameTab !== 'tetris' || tetrisMenuVisible || tetrisMenuClosing) {
+        if (activeGameTab !== 'tetris' || __tt.getTetrisMenuVisible() || __tt.getTetrisMenuClosing()) {
             tetrisTouchStartX = null;
             tetrisTouchStartY = null;
             return;
@@ -19139,8 +16636,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     tetrisMenuActionButton?.addEventListener('click', () => {
-        if (tetrisMenuShowingRules) {
-            tetrisMenuShowingRules = false;
+        if (__tt.getTetrisMenuShowingRules()) {
+            __tt.setTetrisMenuShowingRules(false);
             renderTetrisMenu();
             return;
         }
@@ -19153,7 +16650,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     tetrisMenuRulesButton?.addEventListener('click', () => {
-        tetrisMenuShowingRules = true;
+        __tt.setTetrisMenuShowingRules(true);
         renderTetrisMenu();
     });
 
@@ -19162,8 +16659,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     pacmanMenuActionButton?.addEventListener('click', () => {
-        if (pacmanMenuShowingRules) {
-            pacmanMenuShowingRules = false;
+        if (__pm.getPacmanMenuShowingRules()) {
+            __pm.setPacmanMenuShowingRules(false);
             renderPacmanMenu();
             return;
         }
@@ -19176,7 +16673,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     pacmanMenuRulesButton?.addEventListener('click', () => {
-        pacmanMenuShowingRules = true;
+        __pm.setPacmanMenuShowingRules(true);
         renderPacmanMenu();
     });
 
@@ -19259,8 +16756,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     flappyMenuActionButton?.addEventListener('click', () => {
-        if (flappyMenuShowingRules) {
-            flappyMenuShowingRules = false;
+        if (__fl.getFlappyMenuShowingRules()) {
+            __fl.setFlappyMenuShowingRules(false);
             renderFlappyMenu();
             return;
         }
@@ -19270,7 +16767,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     flappyMenuRulesButton?.addEventListener('click', () => {
-        flappyMenuShowingRules = !flappyMenuShowingRules;
+        __fl.setFlappyMenuShowingRules(!__fl.getFlappyMenuShowingRules());
         renderFlappyMenu();
     });
 
@@ -19756,15 +17253,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     breakoutMenuActionButton?.addEventListener('click', () => {
-        if (breakoutMenuShowingRules) {
-            breakoutMenuShowingRules = false;
+        if (__bk.getBreakoutMenuShowingRules()) {
+            __bk.setBreakoutMenuShowingRules(false);
             renderBreakoutMenu();
-            return;
-        }
-
-        if (breakoutMenuResult) {
-            initializeBreakout();
-            startBreakoutLaunchSequence();
             return;
         }
 
@@ -19773,7 +17264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     breakoutMenuRulesButton?.addEventListener('click', () => {
-        breakoutMenuShowingRules = !breakoutMenuShowingRules;
+        __bk.setBreakoutMenuShowingRules(!__bk.getBreakoutMenuShowingRules());
         renderBreakoutMenu();
     });
 
@@ -20216,7 +17707,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     flappyBoard.addEventListener('pointerdown', (event) => {
         event.preventDefault();
-        if (flappyMenuVisible || flappyMenuClosing) {
+        if (__fl.getFlappyMenuVisible() || __fl.getFlappyMenuClosing()) {
             return;
         }
         flapFlappyBird();
@@ -20609,7 +18100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'tetris') {
-            if (tetrisMenuVisible || tetrisMenuClosing) {
+            if (__tt.getTetrisMenuVisible() || __tt.getTetrisMenuClosing()) {
                 return;
             }
             if (['ArrowLeft', 'q', 'Q'].includes(event.key)) {
@@ -20644,7 +18135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'pacman') {
-            if (pacmanMenuVisible || pacmanMenuClosing) {
+            if (__pm.getPacmanMenuVisible() || __pm.getPacmanMenuClosing()) {
                 return;
             }
             const pacmanDirections = {
@@ -20665,7 +18156,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (nextPacmanDirection) {
                 event.preventDefault();
-                pacmanNextDirection = nextPacmanDirection;
+                __pm.setPacmanNextDirection(nextPacmanDirection);
                 return;
             }
         }
@@ -20733,19 +18224,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const normalizedKey = event.key.toLowerCase();
             if (['q', 'd', 'arrowleft', 'arrowright'].includes(normalizedKey)) {
                 event.preventDefault();
-                breakoutKeys.add(normalizedKey);
+                __bk.getBreakoutKeys().add(normalizedKey);
                 return;
             }
 
             if (event.code === 'Space') {
                 event.preventDefault();
-                if (!breakoutState || breakoutState.lives <= 0) {
-                    initializeBreakout();
-                }
-                breakoutState.running = true;
-                if (!breakoutAnimationFrame) {
-                    breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
-                }
+                __bk.resumeBreakoutLoop();
                 return;
             }
         }
@@ -20840,7 +18325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeGameTab === 'airHockey' && isMultiplayerAirHockeyActive()) {
             pushMultiplayerAirHockeyInput();
         }
-        breakoutKeys.delete(event.key.toLowerCase());
+        __bk.getBreakoutKeys().delete(event.key.toLowerCase());
     });
 
     window.addEventListener('resize', () => {

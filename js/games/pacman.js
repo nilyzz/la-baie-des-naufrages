@@ -527,3 +527,5 @@ export function getPacmanRunning() { return pacmanRunning; }
 export function getPacmanMenuVisible() { return pacmanMenuVisible; }
 export function setPacmanMenuVisible(v) { pacmanMenuVisible = Boolean(v); }
 export function setPacmanMenuShowingRules(v) { pacmanMenuShowingRules = Boolean(v); }
+export function getPacmanMenuShowingRules() { return pacmanMenuShowingRules; }
+export function getPacmanMenuClosing() { return pacmanMenuClosing; }

@@ -545,3 +545,16 @@ export function setBreakoutMenuShowingRules(v) { breakoutMenuShowingRules = Bool
 export function getBreakoutMenuShowingRules() { return breakoutMenuShowingRules; }
 export function getBreakoutMenuResult() { return breakoutMenuResult; }
 export function setBreakoutMenuResult(v) { breakoutMenuResult = v; }
+export function getBreakoutMenuClosing() { return breakoutMenuClosing; }
+
+// Reprend la boucle d'animation après un Space — équivalent du vieux bloc
+// dans script.js. Initialise si besoin et garantit qu'une seule RAF tourne.
+export function resumeBreakoutLoop() {
+    if (!breakoutState || breakoutState.lives <= 0) {
+        initializeBreakout();
+    }
+    breakoutState.running = true;
+    if (!breakoutAnimationFrame) {
+        breakoutAnimationFrame = window.requestAnimationFrame(updateBreakout);
+    }
+}

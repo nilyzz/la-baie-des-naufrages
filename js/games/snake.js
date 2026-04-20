@@ -387,3 +387,4 @@ export function setSnakeMenuShowingRules(v) { snakeMenuShowingRules = Boolean(v)
 export function getSnakeMenuVisible() { return snakeMenuVisible; }
 export function getSnakeMenuClosing() { return snakeMenuClosing; }
 export function getSnakeRunning() { return snakeRunning; }
+export function getSnakeMenuShowingRules() { return snakeMenuShowingRules; }

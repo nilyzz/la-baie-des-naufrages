@@ -298,3 +298,5 @@ export function setTetrisMenuVisible(v) { tetrisMenuVisible = Boolean(v); }
 export function setTetrisMenuShowingRules(v) { tetrisMenuShowingRules = Boolean(v); }
 export function getTetrisMenuVisible() { return tetrisMenuVisible; }
 export function getTetrisRunning() { return tetrisRunning; }
+export function getTetrisMenuShowingRules() { return tetrisMenuShowingRules; }
+export function getTetrisMenuClosing() { return tetrisMenuClosing; }

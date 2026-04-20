@@ -366,3 +366,5 @@ export function set2048MenuVisible(v) { game2048MenuVisible = Boolean(v); }
 export function set2048MenuShowingRules(v) { game2048MenuShowingRules = Boolean(v); }
 export function get2048MenuVisible() { return game2048MenuVisible; }
 export function get2048MenuResult() { return game2048MenuResult; }
+export function get2048MenuShowingRules() { return game2048MenuShowingRules; }
+export function get2048MenuClosing() { return game2048MenuClosing; }

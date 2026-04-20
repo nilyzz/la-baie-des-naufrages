@@ -331,3 +331,5 @@ export function setFlappyMenuVisible(v) { flappyMenuVisible = Boolean(v); }
 export function setFlappyMenuShowingRules(v) { flappyMenuShowingRules = Boolean(v); }
 export function getFlappyMenuVisible() { return flappyMenuVisible; }
 export function getFlappyRunning() { return flappyRunning; }
+export function getFlappyMenuShowingRules() { return flappyMenuShowingRules; }
+export function getFlappyMenuClosing() { return flappyMenuClosing; }
