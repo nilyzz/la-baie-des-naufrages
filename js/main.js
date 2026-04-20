@@ -59,8 +59,62 @@ import {
     syncAllGameMenuOverlayBounds,
     GAME_MENU_OVERLAY_PAIRS
 } from './games/_shared/menu-overlay.js';
+import * as boardHelpers from './games/_shared/board-helpers.js';
+
+import * as game2048 from './games/game2048.js';
+import * as aimModule from './games/aim.js';
+import * as airHockey from './games/airHockey.js';
+import * as baieBerry from './games/baieBerry.js';
+import * as battleship from './games/battleship.js';
+import * as blockBlast from './games/blockBlast.js';
+import * as bomb from './games/bomb.js';
+import * as breakout from './games/breakout.js';
+import * as candyCrush from './games/candyCrush.js';
+import * as checkers from './games/checkers.js';
+import * as chess from './games/chess.js';
+import * as coinClicker from './games/coinClicker.js';
+import * as connect4 from './games/connect4.js';
+import * as flappy from './games/flappy.js';
+import * as flowFree from './games/flowFree.js';
+import * as harborRun from './games/harborRun.js';
+import * as magicSort from './games/magicSort.js';
+import * as memoryGame from './games/memory.js';
+import * as mentalMath from './games/mentalMath.js';
+import * as minesweeper from './games/minesweeper.js';
+import * as pacman from './games/pacman.js';
+import * as pong from './games/pong.js';
+import * as reaction from './games/reaction.js';
+import * as rhythm from './games/rhythm.js';
+import * as snake from './games/snake.js';
+import * as solitaire from './games/solitaire.js';
+import * as stacker from './games/stacker.js';
+import * as sudoku from './games/sudoku.js';
+import * as tetris from './games/tetris.js';
+import * as ticTacToe from './games/ticTacToe.js';
+import * as uno from './games/uno.js';
+
+const GAME_MODULES = {
+    game2048, aim: aimModule, airHockey, baieBerry, battleship, blockBlast,
+    bomb, breakout, candyCrush, checkers, chess, coinClicker, connect4,
+    flappy, flowFree, harborRun, magicSort, memory: memoryGame, mentalMath,
+    minesweeper, pacman, pong, reaction, rhythm, snake, solitaire, stacker,
+    sudoku, tetris, ticTacToe, uno
+};
+
+function injectActiveGameTabAccessors() {
+    const accessor = () => (typeof window !== 'undefined' ? window.__baieActiveGameTab?.() ?? null : null);
+    for (const mod of Object.values(GAME_MODULES)) {
+        for (const [key, value] of Object.entries(mod)) {
+            if (typeof value === 'function' && /^set[A-Z].*ActiveGameTabAccessor$/.test(key)) {
+                value(accessor);
+            }
+        }
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+    injectActiveGameTabAccessors();
+
     const sanityChecks = [
         Array.isArray(shuffleArray([1, 2, 3])) && shuffleArray([1, 2, 3]).length === 3,
         formatMathNumber(1.234567, 2) === '1,23',
@@ -121,12 +175,47 @@ document.addEventListener('DOMContentLoaded', () => {
         cinemaModule.DEFAULT_POSTER_URL.startsWith('https://'),
         typeof syncGameMenuOverlayBounds === 'function',
         typeof syncAllGameMenuOverlayBounds === 'function',
-        Array.isArray(GAME_MENU_OVERLAY_PAIRS) && GAME_MENU_OVERLAY_PAIRS.length === 31
+        Array.isArray(GAME_MENU_OVERLAY_PAIRS) && GAME_MENU_OVERLAY_PAIRS.length === 31,
+        typeof boardHelpers.isInsideGameGrid === 'function',
+        typeof boardHelpers.getBoardMoveAnimationMetadata === 'function',
+        boardHelpers.CHESS_SIZE === 8,
+        Object.keys(GAME_MODULES).length === 31,
+        typeof game2048.update2048Hud === 'function',
+        typeof aimModule.AIM_GRID_SIZE === 'number',
+        typeof airHockey.initializeAirHockey === 'function',
+        typeof baieBerry.initializeBaieBerry === 'function' || typeof baieBerry.renderBaieBerry === 'function',
+        typeof battleship.initializeBattleship === 'function',
+        typeof blockBlast.initializeBlockBlast === 'function' || typeof blockBlast.renderBlockBlast === 'function',
+        typeof bomb.initializeBomb === 'function',
+        typeof breakout.initializeBreakout === 'function' || typeof breakout.renderBreakout === 'function',
+        typeof candyCrush.initializeCandyCrush === 'function' || typeof candyCrush.renderCandyCrush === 'function',
+        typeof checkers.initializeCheckers === 'function',
+        typeof chess.initializeChess === 'function',
+        typeof coinClicker.initializeCoinClicker === 'function',
+        typeof connect4.isMultiplayerConnect4Active === 'function',
+        typeof flappy.initializeFlappy === 'function' || typeof flappy.renderFlappy === 'function',
+        typeof flowFree.initializeFlowFree === 'function' || typeof flowFree.renderFlowFree === 'function',
+        typeof harborRun.initializeHarborRun === 'function' || typeof harborRun.renderHarborRun === 'function',
+        typeof magicSort.initializeMagicSort === 'function' || typeof magicSort.renderMagicSort === 'function',
+        typeof memoryGame.initializeMemory === 'function' || typeof memoryGame.renderMemory === 'function',
+        typeof mentalMath.initializeMentalMath === 'function' || typeof mentalMath.renderMentalMath === 'function',
+        typeof minesweeper.initializeMinesweeper === 'function' || typeof minesweeper.renderMinesweeper === 'function',
+        typeof pacman.initializePacman === 'function' || typeof pacman.renderPacman === 'function',
+        typeof pong.initializePong === 'function',
+        typeof reaction.initializeReaction === 'function' || typeof reaction.renderReaction === 'function',
+        typeof rhythm.initializeRhythm === 'function',
+        typeof snake.initializeSnake === 'function' || typeof snake.renderSnake === 'function',
+        typeof solitaire.initializeSolitaire === 'function' || typeof solitaire.renderSolitaire === 'function',
+        typeof stacker.initializeStacker === 'function' || typeof stacker.renderStacker === 'function',
+        typeof sudoku.initializeSudoku === 'function' || typeof sudoku.renderSudoku === 'function',
+        typeof tetris.initializeTetris === 'function' || typeof tetris.renderTetris === 'function',
+        typeof ticTacToe.isMultiplayerTicTacToeActive === 'function',
+        typeof uno.initializeUno === 'function'
     ];
 
     const allOk = sanityChecks.every(Boolean);
     if (allOk) {
-        console.log('ES Modules OK — core/ + multiplayer/ + navires/ + games/_shared extracted.');
+        console.log(`ES Modules OK — ${Object.keys(GAME_MODULES).length} jeux extraits + core/ + multiplayer/ + navires/ + games/_shared.`);
     } else {
         console.warn('ES Modules : un ou plusieurs imports ont échoué.', sanityChecks);
     }

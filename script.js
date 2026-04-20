@@ -947,6 +947,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let minesweeperMenuResult = null;
     let sessionTimeout = null;
     let activeGameTab = 'home';
+    // Bridge pour les modules ESM : expose l'onglet actif courant.
+    if (typeof window !== 'undefined') {
+        window.__baieActiveGameTab = () => activeGameTab;
+    }
     let snake = [];
     let snakeDirection = { x: 1, y: 0 };
     let snakeNextDirection = { x: 1, y: 0 };
