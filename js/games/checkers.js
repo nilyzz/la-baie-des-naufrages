@@ -626,3 +626,4 @@ export function getCheckersMenuShowingRules() { return checkersMenuShowingRules;
 export function setCheckersMenuShowingRules(v) { checkersMenuShowingRules = Boolean(v); }
 export function getCheckersMenuResult() { return checkersMenuResult; }
 export function setCheckersMenuResult(v) { checkersMenuResult = Boolean(v); }
+export function getCheckersMenuClosing() { return checkersMenuClosing; }

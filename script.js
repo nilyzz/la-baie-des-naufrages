@@ -677,6 +677,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const scheduleFlowFreeRender = __ff.scheduleFlowFreeRender;
     const flushFlowFreePendingTarget = __ff.flushFlowFreePendingTarget;
 
+    // Bridge ESM — Checkers géré par js/games/checkers.js.
+    const __ck = window.__baie.checkers;
+    const initializeCheckers = __ck.initializeCheckers;
+    const renderCheckersMenu = __ck.renderCheckersMenu;
+    const startCheckersLaunchSequence = __ck.startCheckersLaunchSequence;
+    const handleCheckersCellClick = __ck.handleCheckersCellClick;
+    const setCheckersMode = __ck.setCheckersMode;
+    const isMultiplayerCheckersActive = __ck.isMultiplayerCheckersActive;
+    const syncMultiplayerCheckersState = __ck.syncMultiplayerCheckersState;
+    const renderCheckers = __ck.renderCheckers;
+    const maybeOpenCheckersOutcomeModal = __ck.maybeOpenCheckersOutcomeModal;
+    const maybePlayCheckersCaptureFx = __ck.maybePlayCheckersCaptureFx;
+    const scheduleCheckersMoveAnimationClear = __ck.scheduleCheckersMoveAnimationClear;
+
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -859,7 +873,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const UNO_COLORS = ['red', 'yellow', 'green', 'blue'];
     const BATTLESHIP_SHIPS = [4, 3, 3, 2, 2];
     const CHESS_SIZE = 8;
-    const CHECKERS_SIZE = 8;
     const AIR_HOCKEY_GOAL_SCORE = 5;
     const AIR_HOCKEY_SPEED = 340;
     const AIR_HOCKEY_CENTER_GAP = 8;
@@ -873,10 +886,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bishop: { white: '\u2657', black: '\u265D' },
         queen: { white: '\u2655', black: '\u265B' },
         king: { white: '\u2654', black: '\u265A' }
-    };
-    const CHECKERS_DIRECTIONS = {
-        red: [[-1, -1], [-1, 1]],
-        black: [[1, -1], [1, 1]]
     };
     const PIANO_NOTES = [
         { id: 'c4', key: 'a', keyLabel: 'A', note: 'C4', frequency: 261.63, type: 'white' },
@@ -983,12 +992,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let connect4LastFinishedStateKey = '';
     let connect4LastMoveAnimationKey = '';
     let chessLastMoveAnimationKey = '';
-    let checkersLastMoveAnimationKey = '';
     let chessLastFinishedStateKey = '';
-    let checkersLastFinishedStateKey = '';
     let bombLastFinishedStateKey = '';
     let chessLastCaptureFxKey = '';
-    let checkersLastCaptureFxKey = '';
     let chessMenuVisible = true;
     let chessMenuShowingRules = false;
     let chessMenuClosing = false;
@@ -1098,16 +1104,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let chessSuppressNextClick = false;
     let chessAiTimeout = null;
     let chessLastMoveResetTimer = null;
-    let checkersState = null;
-    let checkersSelectedSquare = null;
-    let checkersMode = 'solo';
-    let checkersAiTimeout = null;
-    let checkersLastMoveResetTimer = null;
-    let checkersMenuVisible = true;
-    let checkersMenuShowingRules = false;
-    let checkersMenuClosing = false;
-    let checkersMenuEntering = false;
-    let checkersMenuResult = false;
     let airHockeyMode = 'solo';
     let airHockeyState = null;
     let airHockeyDisplayState = null;
@@ -3306,24 +3302,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 360);
     }
 
-    function scheduleCheckersMoveAnimationClear() {
-        if (checkersLastMoveResetTimer) {
-            window.clearTimeout(checkersLastMoveResetTimer);
-        }
-
-        if (!checkersState?.lastMove) {
-            return;
-        }
-
-        checkersLastMoveResetTimer = window.setTimeout(() => {
-            checkersLastMoveResetTimer = null;
-            if (!checkersState?.lastMove) {
-                return;
-            }
-            checkersState.lastMove = null;
-            renderCheckers();
-        }, 360);
-    }
 
     function spawnBoardCaptureParticles(boardElement, row, col, tone = 'light', positionMapper = null) {
         if (!boardElement) {
@@ -3379,23 +3357,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function maybePlayCheckersCaptureFx() {
-        const move = checkersState?.lastMove;
-        if (!move?.capture) {
-            checkersLastCaptureFxKey = '';
-            return;
-        }
-
-        const fxKey = `${move.fromRow}:${move.fromCol}:${move.toRow}:${move.toCol}:${move.capture.row}:${move.capture.col}:${move.captureColor || 'none'}`;
-        if (fxKey === checkersLastCaptureFxKey) {
-            return;
-        }
-
-        checkersLastCaptureFxKey = fxKey;
-        window.requestAnimationFrame(() => {
-            spawnBoardCaptureParticles(checkersBoard, move.capture.row, move.capture.col, move.captureColor === 'black' ? 'dark' : 'red');
-        });
-    }
 
     function getChessAttackMoves(state, row, col) {
         const piece = state?.board?.[row]?.[col];
@@ -3497,21 +3458,6 @@ document.addEventListener('DOMContentLoaded', () => {
         revealChessOutcomeMenuWithDelay();
     }
 
-    function maybeOpenCheckersOutcomeModal() {
-        if (!checkersState?.winner) {
-            checkersLastFinishedStateKey = '';
-            return;
-        }
-
-        const move = checkersState.lastMove;
-        const finishedKey = `solo:${checkersState.winner}:${move?.fromRow ?? '-'}:${move?.fromCol ?? '-'}:${move?.toRow ?? '-'}:${move?.toCol ?? '-'}`;
-        if (finishedKey === checkersLastFinishedStateKey) {
-            return;
-        }
-
-        checkersLastFinishedStateKey = finishedKey;
-        revealCheckersOutcomeMenu();
-    }
 
     function updateMultiplayerLobby(preserveStatus = false) {
         ensureMultiplayerCreateLeaveButton();
@@ -3693,7 +3639,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ticTacToeLastFinishedStateKey = '';
                 battleshipLastFinishedStateKey = '';
                 chessLastFinishedStateKey = '';
-                checkersLastFinishedStateKey = '';
                 unoLastWinnerKey = '';
                 bombLastFinishedStateKey = '';
                 bombState = null;
@@ -7937,563 +7882,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeChess();
     }
 
-    function createInitialCheckersBoard() {
-        const board = Array.from({ length: CHECKERS_SIZE }, () => Array.from({ length: CHECKERS_SIZE }, () => null));
-
-        for (let row = 0; row < CHECKERS_SIZE; row += 1) {
-            for (let col = 0; col < CHECKERS_SIZE; col += 1) {
-                if ((row + col) % 2 === 0) {
-                    continue;
-                }
-                if (row < 3) {
-                    board[row][col] = { color: 'black', king: false };
-                } else if (row > 4) {
-                    board[row][col] = { color: 'red', king: false };
-                }
-            }
-        }
-
-        return board;
-    }
-
-    function initializeCheckers() {
-        if (isMultiplayerCheckersActive()) {
-            syncMultiplayerCheckersState();
-            return;
-        }
-
-        checkersLastMoveAnimationKey = '';
-        checkersLastCaptureFxKey = '';
-        if (checkersLastMoveResetTimer) {
-            window.clearTimeout(checkersLastMoveResetTimer);
-            checkersLastMoveResetTimer = null;
-        }
-        if (checkersAiTimeout) {
-            window.clearTimeout(checkersAiTimeout);
-            checkersAiTimeout = null;
-        }
-        checkersState = {
-            board: createInitialCheckersBoard(),
-            turn: 'red',
-            winner: null,
-            lastMove: null
-        };
-        checkersSelectedSquare = null;
-        checkersMenuVisible = true;
-        checkersMenuShowingRules = false;
-        checkersMenuClosing = false;
-        checkersMenuEntering = false;
-        checkersMenuResult = false;
-        renderCheckers();
-    }
-
-    function isCheckersAiTurn() {
-        return checkersMode === 'solo' && checkersState && !checkersState.winner && checkersState.turn === 'black';
-    }
-
-    function getCheckersMoves(row, col) {
-        const piece = checkersState?.board[row][col];
-
-        if (!piece || piece.color !== checkersState.turn || checkersState.winner) {
-            return [];
-        }
-
-        const directions = piece.king ? [...CHECKERS_DIRECTIONS.red, ...CHECKERS_DIRECTIONS.black] : CHECKERS_DIRECTIONS[piece.color];
-        const moves = [];
-
-        directions.forEach(([rowStep, colStep]) => {
-            const nextRow = row + rowStep;
-            const nextCol = col + colStep;
-            if (!isInsideGameGrid(nextRow, nextCol, CHECKERS_SIZE)) {
-                return;
-            }
-
-            const target = checkersState.board[nextRow][nextCol];
-            if (!target) {
-                moves.push({ row: nextRow, col: nextCol, capture: null });
-                return;
-            }
-
-            if (target.color === piece.color) {
-                return;
-            }
-
-            const jumpRow = nextRow + rowStep;
-            const jumpCol = nextCol + colStep;
-            if (isInsideGameGrid(jumpRow, jumpCol, CHECKERS_SIZE) && !checkersState.board[jumpRow][jumpCol]) {
-                moves.push({ row: jumpRow, col: jumpCol, capture: { row: nextRow, col: nextCol } });
-            }
-        });
-
-        return moves;
-    }
-
-    function renderCheckers() {
-        const legalMoves = checkersSelectedSquare ? getCheckersMoves(checkersSelectedSquare.row, checkersSelectedSquare.col) : [];
-        const blackCount = checkersState.board.flat().filter((piece) => piece?.color === 'black').length;
-        const redCount = checkersState.board.flat().filter((piece) => piece?.color === 'red').length;
-        const nextAnimationKey = getBoardMoveAnimationKey(checkersState.lastMove);
-        const shouldAnimateLastMove = Boolean(checkersState.lastMove) && nextAnimationKey !== checkersLastMoveAnimationKey;
-        checkersTurnDisplay.textContent = checkersState.winner
-            ? '-'
-            : (isMultiplayerCheckersActive()
-                ? (checkersState.turn === getMultiplayerCheckersRole() ? 'Toi' : 'Adversaire')
-                : (checkersState.turn === 'red' ? (checkersMode === 'solo' ? 'Toi' : 'Rouges') : (checkersMode === 'solo' ? 'IA' : 'Noirs')));
-        checkersCountDisplay.textContent = `${blackCount}/${redCount}`;
-        checkersHelpText.textContent = isMultiplayerCheckersActive()
-            ? (checkersState.winner
-                ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Tu remportes la partie.' : "L'adversaire remporte la partie.")
-                : (checkersState.turn === getMultiplayerCheckersRole() ? '\u00c0 toi de jouer.' : "Au tour de l'adversaire."))
-            : (checkersMode === 'solo'
-                ? 'Mode 1 joueur : rouges contre IA. Roi à la promotion.'
-                : 'Mode 2 joueurs : rouges et noirs en tour par tour. Roi à la promotion.');
-        checkersModeButtons.forEach((button) => {
-            button.classList.toggle('is-active', button.dataset.checkersMode === checkersMode);
-            button.disabled = isMultiplayerCheckersActive();
-        });
-        checkersBoard.innerHTML = checkersState.board.map((rowItems, row) => rowItems.map((piece, col) => {
-            const dark = (row + col) % 2 === 1;
-            const selected = checkersSelectedSquare?.row === row && checkersSelectedSquare?.col === col;
-            const playable = legalMoves.some((move) => move.row === row && move.col === col);
-            const captureHit = isBoardCaptureCell(checkersState.lastMove, row, col);
-            const pieceAnimation = getBoardMoveAnimationMetadata(shouldAnimateLastMove ? checkersState.lastMove : null, row, col);
-            return `
-                <button type="button" class="checkers-cell ${dark ? 'is-dark' : 'is-light'} ${selected ? 'is-selected' : ''} ${playable ? 'is-move' : ''} ${captureHit ? 'is-capture-hit' : ''}" data-checkers-cell="${row}-${col}">
-                    ${piece ? `<span class="checkers-piece ${piece.color === 'red' ? 'is-red' : 'is-black'} ${piece.king ? 'is-king' : ''} ${pieceAnimation.className}" ${pieceAnimation.style}></span>` : ''}
-                </button>
-            `;
-        }).join('')).join('');
-
-        if (checkersState.lastMove && shouldAnimateLastMove) {
-            scheduleCheckersMoveAnimationClear();
-        }
-        checkersLastMoveAnimationKey = nextAnimationKey;
-        maybePlayCheckersCaptureFx();
-        maybeOpenCheckersOutcomeModal();
-        renderCheckersMenu();
-    }
-
-    function getCheckersRulesText() {
-        return 'Déplace tes pions en diagonale. Capture en sautant par-dessus un pion adverse, et un pion promu devient roi quand il atteint le bout du plateau.';
-    }
-
-    function renderCheckersMenu() {
-        if (!checkersMenuOverlay || !checkersTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(checkersMenuOverlay, checkersTable);
-        checkersMenuOverlay.classList.toggle('hidden', !checkersMenuVisible);
-        checkersMenuOverlay.classList.toggle('is-closing', checkersMenuClosing);
-        checkersMenuOverlay.classList.toggle('is-entering', checkersMenuEntering);
-        checkersTable.classList.toggle('is-menu-open', checkersMenuVisible);
-
-        if (!checkersMenuVisible) {
-            return;
-        }
-
-        const multiplayerCheckers = isMultiplayerCheckersActive();
-        const hasResult = checkersMenuResult && Boolean(checkersState?.winner);
-        if (checkersMenuEyebrow) {
-            checkersMenuEyebrow.textContent = checkersMenuShowingRules ? 'R\u00e8gles' : (hasResult ? 'Fin de partie' : 'Baie strat\u00e9gique');
-        }
-        if (checkersMenuTitle) {
-            checkersMenuTitle.textContent = checkersMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult
-                    ? (multiplayerCheckers
-                        ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Victoire' : "C'est perdu")
-                        : (checkersMode === 'solo'
-                            ? (checkersState.winner === 'red' ? 'Victoire' : "C'est perdu")
-                            : `${checkersState.winner === 'red' ? 'Rouges' : 'Noirs'} gagnent`))
-                    : 'Dames');
-        }
-        if (checkersMenuText) {
-            checkersMenuText.textContent = checkersMenuShowingRules
-                ? getCheckersRulesText()
-                : (hasResult
-                    ? (multiplayerCheckers
-                        ? (checkersState.winner === getMultiplayerCheckersRole() ? 'Tu remportes cette partie de dames en ligne.' : "L'adversaire remporte cette partie de dames.")
-                        : (checkersMode === 'solo'
-                            ? (checkersState.winner === 'red' ? 'Tu remportes la partie de dames.' : "L'IA remporte la partie de dames.")
-                            : `${checkersState.winner === 'red' ? 'Les Rouges' : 'Les Noirs'} remportent la partie de dames.`))
-                    : ((multiplayerCheckers && !multiplayerActiveRoom?.gameLaunched)
-                        ? 'Quand tous les joueurs sont pr\u00eats, la partie de dames commence automatiquement.'
-                        : "Installe les pions et choisis ton mode avant d'engager la partie."));
-        }
-        if (checkersMenuActionButton) {
-            checkersMenuActionButton.textContent = checkersMenuShowingRules
-                ? 'Retour'
-                : ((multiplayerCheckers && !multiplayerActiveRoom?.gameLaunched)
-                    ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
-                    : (hasResult ? 'Relancer la partie' : 'Lancer la partie'));
-        }
-        if (checkersMenuRulesButton) {
-            checkersMenuRulesButton.textContent = 'R\u00e8gles';
-            checkersMenuRulesButton.hidden = checkersMenuShowingRules;
-        }
-    }
-
-    function startCheckersLaunchSequence() {
-        checkersMenuClosing = true;
-        renderCheckersMenu();
-        window.setTimeout(() => {
-            checkersMenuClosing = false;
-            checkersMenuVisible = false;
-            checkersMenuShowingRules = false;
-            checkersMenuEntering = false;
-            checkersMenuResult = false;
-            renderCheckersMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealCheckersOutcomeMenu() {
-        checkersMenuShowingRules = false;
-        checkersMenuClosing = false;
-        checkersMenuEntering = true;
-        checkersMenuVisible = true;
-        checkersMenuResult = true;
-        renderCheckersMenu();
-        window.setTimeout(() => {
-            checkersMenuEntering = false;
-            renderCheckersMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function handleCheckersCellClick(row, col) {
-        if (checkersMenuVisible || checkersMenuClosing) {
-            return;
-        }
-
-        if (isMultiplayerCheckersActive()) {
-            if (checkersState.winner || checkersState.turn !== getMultiplayerCheckersRole()) {
-                return;
-            }
-
-            const piece = checkersState.board[row][col];
-            if (piece && piece.color === checkersState.turn) {
-                checkersSelectedSquare = { row, col };
-                renderCheckers();
-                return;
-            }
-
-            if (!checkersSelectedSquare) {
-                return;
-            }
-
-            const move = getCheckersMoves(checkersSelectedSquare.row, checkersSelectedSquare.col).find((candidate) => candidate.row === row && candidate.col === col);
-            if (!move) {
-                checkersSelectedSquare = null;
-                renderCheckers();
-                return;
-            }
-
-            multiplayerSocket?.emit('checkers:move', {
-                fromRow: checkersSelectedSquare.row,
-                fromCol: checkersSelectedSquare.col,
-                toRow: row,
-                toCol: col
-            });
-            return;
-        }
-
-        if (checkersState.winner || isCheckersAiTurn()) {
-            return;
-        }
-
-        const piece = checkersState.board[row][col];
-        if (piece && piece.color === checkersState.turn) {
-            checkersSelectedSquare = { row, col };
-            renderCheckers();
-            return;
-        }
-
-        if (!checkersSelectedSquare) {
-            return;
-        }
-
-        const move = getCheckersMoves(checkersSelectedSquare.row, checkersSelectedSquare.col).find((candidate) => candidate.row === row && candidate.col === col);
-        if (!move) {
-            checkersSelectedSquare = null;
-            renderCheckers();
-            return;
-        }
-
-        applyCheckersMove(checkersSelectedSquare.row, checkersSelectedSquare.col, row, col);
-    }
-
-    function applyCheckersMove(fromRow, fromCol, toRow, toCol) {
-        const movingPiece = checkersState.board[fromRow][fromCol];
-        if (!movingPiece || movingPiece.color !== checkersState.turn || checkersState.winner) {
-            return false;
-        }
-
-        const move = getCheckersMoves(fromRow, fromCol).find((candidate) => candidate.row === toRow && candidate.col === toCol);
-        if (!move) {
-            return false;
-        }
-
-        const nextPiece = { ...movingPiece };
-        const capturedPiece = move.capture ? checkersState.board[move.capture.row][move.capture.col] : null;
-        checkersState.board[fromRow][fromCol] = null;
-        checkersState.board[toRow][toCol] = nextPiece;
-
-        if (move.capture) {
-            checkersState.board[move.capture.row][move.capture.col] = null;
-        }
-
-        if ((nextPiece.color === 'red' && toRow === 0) || (nextPiece.color === 'black' && toRow === CHECKERS_SIZE - 1)) {
-            nextPiece.king = true;
-        }
-
-        checkersState.lastMove = {
-            fromRow,
-            fromCol,
-            toRow,
-            toCol,
-            pieceType: movingPiece.king ? 'king' : 'checker',
-            capture: move.capture ? { ...move.capture } : null,
-            captureColor: capturedPiece?.color || null
-        };
-
-        const redCount = checkersState.board.flat().filter((item) => item?.color === 'red').length;
-        const blackCount = checkersState.board.flat().filter((item) => item?.color === 'black').length;
-
-        if (!redCount || !blackCount) {
-            checkersState.winner = redCount ? 'red' : 'black';
-        } else {
-            checkersState.turn = checkersState.turn === 'red' ? 'black' : 'red';
-            if (!getCheckersAllMoves(checkersState.turn).length) {
-                checkersState.winner = nextPiece.color;
-            }
-        }
-
-        checkersSelectedSquare = null;
-        renderCheckers();
-        maybePlayCheckersAi();
-        return true;
-    }
-
-    function getCheckersAllMoves(color) {
-        const moves = [];
-
-        for (let row = 0; row < CHECKERS_SIZE; row += 1) {
-            for (let col = 0; col < CHECKERS_SIZE; col += 1) {
-                const piece = checkersState.board[row][col];
-                if (!piece || piece.color !== color) {
-                    continue;
-                }
-
-                getCheckersMoves(row, col).forEach((move) => {
-                    moves.push({
-                        fromRow: row,
-                        fromCol: col,
-                        ...move,
-                        piece
-                    });
-                });
-            }
-        }
-
-        return moves;
-    }
-
-    function maybePlayCheckersAi() {
-        if (!isCheckersAiTurn()) {
-            return;
-        }
-
-        if (checkersAiTimeout) {
-            window.clearTimeout(checkersAiTimeout);
-        }
-
-        checkersAiTimeout = window.setTimeout(() => {
-            checkersAiTimeout = null;
-
-            if (!isCheckersAiTurn()) {
-                return;
-            }
-
-            const moves = getCheckersAllMoves('black');
-            if (!moves.length) {
-                checkersState.winner = 'red';
-                renderCheckers();
-                return;
-            }
-
-            let bestScore = -Infinity;
-            let bestMoves = [];
-
-            moves.forEach((move) => {
-                let score = Math.random() * 0.3;
-                if (move.capture) {
-                    score += 10;
-                }
-                if (!move.piece.king && move.row === CHECKERS_SIZE - 1) {
-                    score += 6;
-                }
-                score += move.row * 0.25;
-                if (move.col >= 2 && move.col <= 5) {
-                    score += 0.6;
-                }
-
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMoves = [move];
-                } else if (Math.abs(score - bestScore) < 0.001) {
-                    bestMoves.push(move);
-                }
-            });
-
-            const selectedMove = bestMoves[Math.floor(Math.random() * bestMoves.length)];
-            applyCheckersMove(selectedMove.fromRow, selectedMove.fromCol, selectedMove.row, selectedMove.col);
-        }, 420);
-    }
-
-    function setCheckersMode(nextMode) {
-        if (isMultiplayerCheckersActive()) {
-            setMultiplayerStatus('Le mode est piloté par le salon en ligne.');
-            return;
-        }
-
-        if (!nextMode || nextMode === checkersMode) {
-            return;
-        }
-
-        checkersMode = nextMode;
-        initializeCheckers();
-    }
-
-    function isMultiplayerChessActive() {
-        return multiplayerActiveRoom?.gameId === 'chess' && Boolean(multiplayerActiveRoom?.gameState);
-    }
-
-    function getMultiplayerChessRole() {
-        return multiplayerActiveRoom?.players?.find((player) => player.isYou)?.symbol || null;
-    }
-
-    function syncMultiplayerChessState() {
-        if (!isMultiplayerChessActive()) {
-            chessLastMoveAnimationKey = '';
-            chessLastFinishedStateKey = '';
-            chessLastCaptureFxKey = '';
-            return;
-        }
-
-        if (chessLastMoveResetTimer) {
-            window.clearTimeout(chessLastMoveResetTimer);
-            chessLastMoveResetTimer = null;
-        }
-        if (chessOutcomeMenuTimer) {
-            window.clearTimeout(chessOutcomeMenuTimer);
-            chessOutcomeMenuTimer = null;
-        }
-        if (chessOutcomeMenuEnterTimer) {
-            window.clearTimeout(chessOutcomeMenuEnterTimer);
-            chessOutcomeMenuEnterTimer = null;
-        }
-        if (chessAiTimeout) {
-            window.clearTimeout(chessAiTimeout);
-            chessAiTimeout = null;
-        }
-
-        chessState = {
-            board: multiplayerActiveRoom.gameState.board.map((row) => row.map((piece) => (piece ? { ...piece } : null))),
-            turn: multiplayerActiveRoom.gameState.turn,
-            winner: multiplayerActiveRoom.gameState.winner,
-            lastMove: multiplayerActiveRoom.gameState.lastMove
-                ? {
-                    ...multiplayerActiveRoom.gameState.lastMove,
-                    capture: multiplayerActiveRoom.gameState.lastMove.capture
-                        ? { ...multiplayerActiveRoom.gameState.lastMove.capture }
-                        : null
-                }
-                : null
-        };
-        chessSelectedSquare = null;
-        renderChessMenu();
-        renderChess();
-
-        const nextFinishedKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner || 'none'}`;
-        if (!multiplayerActiveRoom.gameState.winner) {
-            chessLastFinishedStateKey = '';
-            chessMenuEntering = false;
-            closeGameOverModal();
-            return;
-        }
-
-        if (nextFinishedKey === chessLastFinishedStateKey || activeGameTab !== 'chess') {
-            return;
-        }
-
-        chessLastFinishedStateKey = nextFinishedKey;
-        revealChessOutcomeMenuWithDelay();
-    }
-
-    function isMultiplayerCheckersActive() {
-        return multiplayerActiveRoom?.gameId === 'checkers' && Boolean(multiplayerActiveRoom?.gameState);
-    }
-
-    function getMultiplayerCheckersRole() {
-        return multiplayerActiveRoom?.players?.find((player) => player.isYou)?.symbol || null;
-    }
-
-    function syncMultiplayerCheckersState() {
-        if (!isMultiplayerCheckersActive()) {
-            checkersLastFinishedStateKey = '';
-            checkersLastMoveAnimationKey = '';
-            checkersLastCaptureFxKey = '';
-            return;
-        }
-
-        if (checkersLastMoveResetTimer) {
-            window.clearTimeout(checkersLastMoveResetTimer);
-            checkersLastMoveResetTimer = null;
-        }
-        if (checkersAiTimeout) {
-            window.clearTimeout(checkersAiTimeout);
-            checkersAiTimeout = null;
-        }
-
-        checkersState = {
-            board: multiplayerActiveRoom.gameState.board.map((row) => row.map((piece) => (piece ? { ...piece } : null))),
-            turn: multiplayerActiveRoom.gameState.turn,
-            winner: multiplayerActiveRoom.gameState.winner,
-            lastMove: multiplayerActiveRoom.gameState.lastMove
-                ? {
-                    ...multiplayerActiveRoom.gameState.lastMove,
-                    capture: multiplayerActiveRoom.gameState.lastMove.capture
-                        ? { ...multiplayerActiveRoom.gameState.lastMove.capture }
-                        : null
-                }
-                : null
-        };
-        checkersSelectedSquare = null;
-        checkersMenuVisible = false;
-        checkersMenuShowingRules = false;
-        checkersMenuClosing = false;
-        checkersMenuResult = Boolean(multiplayerActiveRoom.gameState.winner);
-        if (!checkersState.lastMove) {
-            checkersLastMoveAnimationKey = '';
-        }
-        renderCheckers();
-
-        const nextFinishedKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner || 'none'}`;
-        if (!multiplayerActiveRoom.gameState.winner) {
-            checkersLastFinishedStateKey = '';
-            checkersMenuEntering = false;
-            checkersMenuResult = false;
-            closeGameOverModal();
-            return;
-        }
-
-        if (nextFinishedKey === checkersLastFinishedStateKey || activeGameTab !== 'checkers') {
-            return;
-        }
-
-        checkersLastFinishedStateKey = nextFinishedKey;
-        revealCheckersOutcomeMenu();
-    }
 
     function isMultiplayerBattleshipActive() {
         return multiplayerActiveRoom?.gameId === 'battleship' && Boolean(multiplayerActiveRoom?.gameState);
@@ -12051,8 +11439,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     checkersMenuActionButton?.addEventListener('click', () => {
-        if (checkersMenuShowingRules) {
-            checkersMenuShowingRules = false;
+        if (__ck.getCheckersMenuShowingRules()) {
+            __ck.setCheckersMenuShowingRules(false);
             renderCheckersMenu();
             return;
         }
@@ -12069,8 +11457,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             multiplayerSocket.emit('checkers:restart');
-            checkersMenuVisible = false;
-            checkersMenuResult = false;
+            __ck.setCheckersMenuVisible(false);
+            __ck.setCheckersMenuResult(false);
             renderCheckersMenu();
             return;
         }
@@ -12080,7 +11468,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     checkersMenuRulesButton?.addEventListener('click', () => {
-        checkersMenuShowingRules = !checkersMenuShowingRules;
+        __ck.setCheckersMenuShowingRules(!__ck.getCheckersMenuShowingRules());
         renderCheckersMenu();
     });
 
