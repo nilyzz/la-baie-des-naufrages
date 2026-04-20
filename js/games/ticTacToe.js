@@ -387,6 +387,16 @@ export function syncMultiplayerTicTacToeState() {
         skull: Number(room.gameState.scores?.skull || 0)
     };
 
+    // Ferme automatiquement le menu « Mettre prêt » quand le serveur a
+    // effectivement lancé la partie (tous les joueurs prêts).
+    if (room.gameLaunched && ticTacToeMenuVisible && !ticTacToeMenuResult) {
+        ticTacToeMenuVisible = false;
+        ticTacToeMenuClosing = false;
+        renderTicTacToeMenu();
+    } else {
+        renderTicTacToeMenu();
+    }
+
     updateTicTacToeHud();
     renderTicTacToeBoard();
 
@@ -424,7 +434,11 @@ export function syncMultiplayerTicTacToeState() {
 export function initializeTicTacToe(showMenu = true) {
     if (isMultiplayerTicTacToeActive()) {
         closeGameOverModal();
-        ticTacToeMenuVisible = false;
+        const room = getMultiplayerActiveRoom();
+        // Tant que la partie n'est pas lancée (gameLaunched=false), garde le
+        // menu visible pour que les joueurs puissent cliquer « Mettre prêt ».
+        const waitingForReady = !room?.gameLaunched;
+        ticTacToeMenuVisible = waitingForReady;
         ticTacToeMenuShowingRules = false;
         ticTacToeMenuClosing = false;
         ticTacToeMenuEntering = false;
