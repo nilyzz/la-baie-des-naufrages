@@ -101,6 +101,13 @@ const GAME_MODULES = {
     sudoku, tetris, ticTacToe, uno
 };
 
+// Pont ESM → script.js : exposé au top-level pour que l'IIFE classique de script.js
+// (chargée avec defer, donc après ce module) puisse appeler window.__baie.coinClicker.xxx()
+// sans attendre DOMContentLoaded.
+if (typeof window !== 'undefined') {
+    window.__baie = Object.assign(window.__baie || {}, GAME_MODULES);
+}
+
 function injectActiveGameTabAccessors() {
     const accessor = () => (typeof window !== 'undefined' ? window.__baieActiveGameTab?.() ?? null : null);
     for (const mod of Object.values(GAME_MODULES)) {

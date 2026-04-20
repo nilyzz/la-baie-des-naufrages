@@ -463,6 +463,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const coinClickerMenuText = document.getElementById('coinClickerMenuText');
     const coinClickerMenuActionButton = document.getElementById('coinClickerMenuActionButton');
     const coinClickerMenuRulesButton = document.getElementById('coinClickerMenuRulesButton');
+
+    // Bridge ESM — Coin Clicker est maintenant géré par js/games/coinClicker.js.
+    // Ces alias permettent au reste de script.js (listeners, tab-switch, bootstrap)
+    // d'appeler le module sans réécrire chaque identifiant.
+    const __cc = window.__baie.coinClicker;
+    const COIN_CLICKER_UPGRADES = __cc.COIN_CLICKER_UPGRADES;
+    const saveCoinClickerState = __cc.saveCoinClickerState;
+    const getCoinClickerUpgradeCost = __cc.getCoinClickerUpgradeCost;
+    const getCoinClickerCoinsPerClick = __cc.getCoinClickerCoinsPerClick;
+    const renderCoinClicker = __cc.renderCoinClicker;
+    const startCoinClickerAutoLoop = __cc.startCoinClickerAutoLoop;
+    const renderCoinClickerMenu = __cc.renderCoinClickerMenu;
+    const closeCoinClickerMenu = __cc.closeCoinClickerMenu;
+    const initializeCoinClicker = __cc.initializeCoinClicker;
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -687,7 +701,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const FLAPPY_BEST_KEY = 'baie-des-naufrages-flappy-best';
     const HARBOR_RUN_BEST_KEY = 'baie-des-naufrages-harbor-run-best';
     const STACKER_BEST_KEY = 'baie-des-naufrages-stacker-best';
-    const COIN_CLICKER_STORAGE_KEY = 'baie-des-naufrages-coin-clicker';
     const REACTION_BEST_KEY = 'baie-des-naufrages-reaction-best';
     const BAIE_BERRY_BEST_KEY = 'baie-des-naufrages-baieberry-best';
     const BAIE_BERRY_DANGER_LINE_Y = 74;
@@ -750,14 +763,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const HARBOR_RUN_LANES = [18, 50, 82];
     const STACKER_TARGET_LAYERS = 12;
-    const COIN_CLICKER_UPGRADES = [
-        { id: 'captain', label: 'Capitaine', baseCost: 15, effectType: 'click', bonus: 1, description: '+1 par clic' },
-        { id: 'hook', label: 'Crochet en or', baseCost: 60, effectType: 'multiplier', bonus: 0.2, description: '+0,20 multiplicateur' },
-        { id: 'parrot', label: 'Perroquet mousse', baseCost: 110, effectType: 'auto', bonus: 1, description: '+1 pièce / sec' },
-        { id: 'harbor', label: 'Port marchand', baseCost: 260, effectType: 'auto', bonus: 4, description: '+4 pièces / sec' },
-        { id: 'fleet', label: 'Flotte dorée', baseCost: 420, effectType: 'click', bonus: 8, description: '+8 par clic' },
-        { id: 'treasury', label: 'Trésor royal', baseCost: 760, effectType: 'multiplier', bonus: 0.5, description: '+0,50 multiplicateur' }
-    ];
     const CHESS_PIECES = {
         pawn: { white: '\u2659', black: '\u265F' },
         rook: { white: '\u2656', black: '\u265C' },
@@ -1286,19 +1291,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let stackerMenuClosing = false;
     let stackerMenuEntering = false;
     let stackerMenuResult = null;
-    let coinClickerMenuVisible = true;
-    let coinClickerMenuShowingRules = false;
-    let coinClickerMenuClosing = false;
-    let coinClickerMenuEntering = false;
-    let coinClickerState = {
-        coins: 0,
-        clickPower: 1,
-        multiplier: 1,
-        autoPower: 0,
-        upgrades: Object.fromEntries(COIN_CLICKER_UPGRADES.map((upgrade) => [upgrade.id, 0]))
-    };
-    let coinClickerAutoTimer = null;
-    let coinClickerLastAutoTick = performance.now();
     let chessState = null;
     let chessSelectedSquare = null;
     let chessMode = 'solo';
@@ -4386,7 +4378,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (previousTab === 'coinClicker' && nextTab !== 'coinClicker') {
             saveCoinClickerState();
-            coinClickerMenuVisible = true;
+            __cc.setCoinClickerMenuVisible(true);
         }
 
         if (previousTab === 'chess' && nextTab !== 'chess') {
@@ -13750,173 +13742,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderStacker();
     }
 
-    function loadCoinClickerState() {
-        try {
-            const storedState = JSON.parse(window.localStorage.getItem(COIN_CLICKER_STORAGE_KEY) || 'null');
-
-            if (!storedState) {
-                return;
-            }
-
-            coinClickerState.coins = Number(storedState.coins) || 0;
-            coinClickerState.clickPower = Number(storedState.clickPower) || 1;
-            coinClickerState.multiplier = Math.max(1, Number(storedState.multiplier) || 1);
-            coinClickerState.autoPower = Math.max(0, Number(storedState.autoPower) || 0);
-            COIN_CLICKER_UPGRADES.forEach((upgrade) => {
-                coinClickerState.upgrades[upgrade.id] = Number(storedState.upgrades?.[upgrade.id]) || 0;
-            });
-        } catch (error) {
-            console.error('Impossible de relire Coin Clicker.', error);
-        }
-    }
-
-    function saveCoinClickerState() {
-        window.localStorage.setItem(COIN_CLICKER_STORAGE_KEY, JSON.stringify(coinClickerState));
-    }
-
-    function getCoinClickerUpgradeCost(upgrade) {
-        return Math.round(upgrade.baseCost * (1.7 ** (coinClickerState.upgrades[upgrade.id] || 0)));
-    }
-
-    function getCoinClickerCoinsPerClick() {
-        return coinClickerState.clickPower * coinClickerState.multiplier;
-    }
-
-    function getCoinClickerCoinsPerSecond() {
-        return coinClickerState.autoPower * coinClickerState.multiplier;
-    }
-
-    function renderCoinClicker() {
-        coinClickerScoreDisplay.textContent = Math.floor(coinClickerState.coins).toLocaleString('fr-FR');
-        coinClickerPowerDisplay.textContent = getCoinClickerCoinsPerClick().toLocaleString('fr-FR', {
-            minimumFractionDigits: getCoinClickerCoinsPerClick() % 1 === 0 ? 0 : 1,
-            maximumFractionDigits: 1
-        });
-        coinClickerMultiplierDisplay.textContent = `x${coinClickerState.multiplier.toFixed(2)}`;
-        coinClickerAutoDisplay.textContent = getCoinClickerCoinsPerSecond().toLocaleString('fr-FR', {
-            minimumFractionDigits: getCoinClickerCoinsPerSecond() % 1 === 0 ? 0 : 1,
-            maximumFractionDigits: 1
-        });
-        coinClickerShop.innerHTML = COIN_CLICKER_UPGRADES.map((upgrade) => {
-            const cost = getCoinClickerUpgradeCost(upgrade);
-            const level = coinClickerState.upgrades[upgrade.id] || 0;
-            return `
-                <button type="button" class="coinclicker-upgrade ${coinClickerState.coins < cost ? 'is-disabled' : ''}" data-coin-upgrade="${upgrade.id}">
-                    <span class="coinclicker-upgrade-title">${upgrade.label}</span>
-                    <strong class="coinclicker-upgrade-bonus">${upgrade.description}</strong>
-                    <span class="coinclicker-upgrade-meta">Niveau ${level} Â· ${cost} pieces</span>
-                </button>
-            `;
-        }).join('');
-    }
-
-    function startCoinClickerAutoLoop() {
-        if (coinClickerAutoTimer) {
-            return;
-        }
-
-        coinClickerLastAutoTick = performance.now();
-        coinClickerAutoTimer = window.setInterval(() => {
-            const now = performance.now();
-            const deltaSeconds = (now - coinClickerLastAutoTick) / 1000;
-            coinClickerLastAutoTick = now;
-            const passiveGain = getCoinClickerCoinsPerSecond() * deltaSeconds;
-
-            if (passiveGain <= 0) {
-                return;
-            }
-
-            coinClickerState.coins += passiveGain;
-            saveCoinClickerState();
-            renderCoinClicker();
-        }, 250);
-    }
-
-    function getCoinClickerRulesText() {
-        return 'Clique la pi\u00e8ce pour ajouter des pi\u00e8ces au coffre du capitaine. D\u00e9pense-les dans la boutique du navire pour augmenter le gain par clic, le multiplicateur et le rendement automatique. Ta fortune est sauvegard\u00e9e ; "Nouvelle fortune" remet tout \u00e0 z\u00e9ro.';
-    }
-
-    function renderCoinClickerMenu() {
-        if (!coinClickerMenuOverlay || !coinClickerTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(coinClickerMenuOverlay, coinClickerTable);
-        coinClickerMenuOverlay.classList.toggle('hidden', !coinClickerMenuVisible);
-        coinClickerMenuOverlay.classList.toggle('is-closing', coinClickerMenuClosing);
-        coinClickerMenuOverlay.classList.toggle('is-entering', coinClickerMenuEntering);
-        coinClickerTable.classList.toggle('is-menu-open', coinClickerMenuVisible);
-
-        if (!coinClickerMenuVisible) {
-            return;
-        }
-
-        if (coinClickerMenuEyebrow) {
-            coinClickerMenuEyebrow.textContent = coinClickerMenuShowingRules
-                ? 'R\u00e8gles'
-                : 'Tr\u00e9sor du capitaine';
-        }
-
-        if (coinClickerMenuTitle) {
-            coinClickerMenuTitle.textContent = coinClickerMenuShowingRules
-                ? 'Rappel rapide'
-                : 'Coin Clicker';
-        }
-
-        if (coinClickerMenuText) {
-            coinClickerMenuText.textContent = coinClickerMenuShowingRules
-                ? getCoinClickerRulesText()
-                : 'Clique sur la pi\u00e8ce pour remplir le coffre, puis automatise ton butin gr\u00e2ce \u00e0 la boutique du navire.';
-        }
-
-        if (coinClickerMenuActionButton) {
-            coinClickerMenuActionButton.textContent = coinClickerMenuShowingRules
-                ? 'Retour'
-                : 'Lancer la fortune';
-        }
-
-        if (coinClickerMenuRulesButton) {
-            coinClickerMenuRulesButton.textContent = 'R\u00e8gles';
-            coinClickerMenuRulesButton.hidden = coinClickerMenuShowingRules;
-        }
-    }
-
-    function closeCoinClickerMenu() {
-        coinClickerMenuClosing = true;
-        renderCoinClickerMenu();
-        window.setTimeout(() => {
-            coinClickerMenuClosing = false;
-            coinClickerMenuVisible = false;
-            coinClickerMenuShowingRules = false;
-            coinClickerMenuEntering = false;
-            renderCoinClickerMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeCoinClicker(reset = false) {
-        if (reset) {
-            coinClickerState = {
-                coins: 0,
-                clickPower: 1,
-                multiplier: 1,
-                autoPower: 0,
-                upgrades: Object.fromEntries(COIN_CLICKER_UPGRADES.map((upgrade) => [upgrade.id, 0]))
-            };
-            saveCoinClickerState();
-            coinClickerHelpText.textContent = 'Nouvelle fortune lanc\u00e9e. Clique pour remplir la caisse, puis automatise ton butin.';
-            coinClickerMenuVisible = true;
-            coinClickerMenuShowingRules = false;
-            coinClickerMenuClosing = false;
-            coinClickerMenuEntering = false;
-        } else {
-            loadCoinClickerState();
-        }
-
-        coinClickerLastAutoTick = performance.now();
-        renderCoinClicker();
-        renderCoinClickerMenu();
-    }
-
     function createChessPiece(type, color) {
         return { type, color, hasMoved: false };
     }
@@ -19598,7 +19423,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'coinClicker') {
-            coinClickerMenuVisible = true;
+            __cc.setCoinClickerMenuVisible(true);
             initializeCoinClicker();
             return;
         }
@@ -20642,11 +20467,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (coinClickerMenuVisible || coinClickerMenuClosing) {
+        if (__cc.getCoinClickerMenuVisible() || __cc.getCoinClickerMenuClosing()) {
             return;
         }
 
-        coinClickerState.coins += getCoinClickerCoinsPerClick();
+        const state = __cc.getCoinClickerState();
+        state.coins += getCoinClickerCoinsPerClick();
         saveCoinClickerState();
         renderCoinClicker();
     });
@@ -20662,8 +20488,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     coinClickerMenuActionButton?.addEventListener('click', () => {
-        if (coinClickerMenuShowingRules) {
-            coinClickerMenuShowingRules = false;
+        if (__cc.getCoinClickerMenuShowingRules()) {
+            __cc.setCoinClickerMenuShowingRules(false);
             renderCoinClickerMenu();
             return;
         }
@@ -20672,7 +20498,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     coinClickerMenuRulesButton?.addEventListener('click', () => {
-        coinClickerMenuShowingRules = true;
+        __cc.setCoinClickerMenuShowingRules(true);
         renderCoinClickerMenu();
     });
 
@@ -20690,19 +20516,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const cost = getCoinClickerUpgradeCost(upgrade);
+        const state = __cc.getCoinClickerState();
 
-        if (coinClickerState.coins < cost) {
+        if (state.coins < cost) {
             return;
         }
 
-        coinClickerState.coins -= cost;
-        coinClickerState.upgrades[upgrade.id] += 1;
+        state.coins -= cost;
+        state.upgrades[upgrade.id] += 1;
         if (upgrade.effectType === 'click') {
-            coinClickerState.clickPower += upgrade.bonus;
+            state.clickPower += upgrade.bonus;
         } else if (upgrade.effectType === 'multiplier') {
-            coinClickerState.multiplier += upgrade.bonus;
+            state.multiplier += upgrade.bonus;
         } else if (upgrade.effectType === 'auto') {
-            coinClickerState.autoPower += upgrade.bonus;
+            state.autoPower += upgrade.bonus;
         }
         coinClickerHelpText.textContent = upgrade.effectType === 'auto'
             ? 'Le butin tombe maintenant tout seul dans la cale.'
