@@ -1,4 +1,4 @@
-const CACHE_NAME = 'baie-des-naufrages-v25';
+const CACHE_NAME = 'baie-des-naufrages-v26';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
@@ -48,6 +48,7 @@ const PRECACHE_URLS = [
     '/js/games/battleship.js',
     '/js/games/uno.js',
     '/js/games/bomb.js',
+    '/js/games/coinClicker.js',
     '/site.webmanifest',
     '/assets/branding/logo-baie-cartoon.svg',
     '/assets/navires/navire-cinema.svg',
