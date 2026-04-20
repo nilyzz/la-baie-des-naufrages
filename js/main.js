@@ -106,6 +106,32 @@ const GAME_MODULES = {
 // sans attendre DOMContentLoaded.
 if (typeof window !== 'undefined') {
     window.__baie = Object.assign(window.__baie || {}, GAME_MODULES);
+    // Bridge ESM → script.js : expose aussi tout ce que les modules core/multiplayer/navires/_shared
+    // fournissent, pour que les identifiants référencés dans script.js (qui étaient définis
+    // localement avant extraction) continuent de résoudre via la chaîne de scope globale.
+    Object.assign(window, {
+        LEGAL_NOTICE_ANIMATION_MS, SESSION_KEY, SESSION_TIMEOUT_MS,
+        EXCEL_FILE_CANDIDATES, MULTIPLAYER_SUPPORTED_GAMES, GAME_FILTER_TAGS,
+        UNO_MENU_CLOSE_DURATION_MS, GRID_OUTCOME_MENU_DELAY_MS,
+        shuffleArray, formatMathNumber, normalizeBombWord,
+        loadSession, saveSession, clearSession,
+        openLegalNoticeModal, closeLegalNoticeModal,
+        openGameOverModal, closeGameOverModal,
+        showViewImmediately,
+        MULTIPLAYER_SERVER_URL, getMultiplayerServerOrigin, getMultiplayerApiUrl, loadSocketIoClient,
+        setMultiplayerStatus, getMultiplayerGameLabel, getSelectedMultiplayerGame,
+        getPreferredMultiplayerPlayerName, syncMultiplayerPlayerNames,
+        copyMultiplayerRoomCode, leaveMultiplayerRoom, renderMultiplayerPlayers,
+        renderMultiplayerChatMessages, updateMultiplayerChatPanel, setMultiplayerEntryMode,
+        ensureMultiplayerCreateLeaveButton, updateMultiplayerGameTileSelection,
+        getSelectedMultiplayerGameLabel, syncMultiplayerEntryModeAccess, updateMultiplayerLobby,
+        syncGameMenuOverlayBounds, syncAllGameMenuOverlayBounds, GAME_MENU_OVERLAY_PAIRS
+    });
+    window.__baie.multiplayerState = multiplayerState;
+    window.__baie.music = musicModule;
+    window.__baie.math = mathModule;
+    window.__baie.cinema = cinemaModule;
+    window.__baie.boardHelpers = boardHelpers;
 }
 
 function injectActiveGameTabAccessors() {
