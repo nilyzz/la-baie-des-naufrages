@@ -802,6 +802,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const pausePong = __pg.pausePong;
     const resumePong = __pg.resumePong;
 
+    // Bridge ESM — js/multiplayer/state.js est la source de vérité que lisent
+    // les 9 modules games/ (getMultiplayerActiveRoom / getMultiplayerSocket).
+    // script.js garde ses variables locales, il faut donc propager chaque
+    // mutation au module pour que isMultiplayer<Game>Active() voie la room.
+    const __mpState = window.__baie.multiplayerState;
+    function syncMultiplayerStateBridge() {
+        __mpState.setMultiplayerSocket(multiplayerSocket);
+        __mpState.setMultiplayerActiveRoom(multiplayerActiveRoom);
+        __mpState.setMultiplayerSelectedGameId(multiplayerSelectedGameId);
+        __mpState.setMultiplayerEntryMode(multiplayerEntryMode);
+        __mpState.setMultiplayerBusy(multiplayerBusy);
+    }
+
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -3344,9 +3357,11 @@ document.addEventListener('DOMContentLoaded', () => {
             multiplayerSocket = ioFactory(getMultiplayerServerOrigin(), {
                 transports: ['websocket', 'polling']
             });
+            syncMultiplayerStateBridge();
 
             multiplayerSocket.on('connect', () => {
                 setMultiplayerStatus('Connexion multijoueur etablie.');
+                syncMultiplayerStateBridge();
             });
 
             multiplayerSocket.on('room:joined', (room) => {
@@ -3355,6 +3370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     multiplayerSelectedGameId = room.gameId;
                 }
                 multiplayerEntryMode = isCurrentMultiplayerHost() ? 'create' : 'join';
+                syncMultiplayerStateBridge();
                 syncMultiplayerAirHockeyState();
                 syncMultiplayerBattleshipState();
                 syncMultiplayerPongState();
@@ -3376,6 +3392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     multiplayerSelectedGameId = room.gameId;
                 }
                 multiplayerEntryMode = isCurrentMultiplayerHost() ? 'create' : 'join';
+                syncMultiplayerStateBridge();
                 syncMultiplayerAirHockeyState();
                 syncMultiplayerBattleshipState();
                 syncMultiplayerPongState();
@@ -3400,6 +3417,7 @@ document.addEventListener('DOMContentLoaded', () => {
             multiplayerSocket.on('room:left', () => {
                 multiplayerActiveRoom = null;
                 multiplayerEntryMode = 'create';
+                syncMultiplayerStateBridge();
                 __ah.resetAirHockeyMultiplayerTrackers();
                 ticTacToeLastFinishedStateKey = '';
                 __bm.setBombState(null);
