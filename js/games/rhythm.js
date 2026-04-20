@@ -378,3 +378,7 @@ export function getRhythmMenuVisible() {
 export function getRhythmMenuClosing() {
     return rhythmMenuClosing;
 }
+
+export function getRhythmMenuShowingRules() {
+    return rhythmMenuShowingRules;
+}

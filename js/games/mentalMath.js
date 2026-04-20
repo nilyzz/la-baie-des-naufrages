@@ -273,3 +273,6 @@ export function handleMentalMathKeypadAction(action) {
 export function setMentalMathMenuVisible(v) { mentalMathMenuVisible = Boolean(v); }
 export function setMentalMathMenuShowingRules(v) { mentalMathMenuShowingRules = Boolean(v); }
 export function getMentalMathRoundRunning() { return mentalMathRoundRunning; }
+export function getMentalMathMenuVisible() { return mentalMathMenuVisible; }
+export function getMentalMathMenuClosing() { return mentalMathMenuClosing; }
+export function getMentalMathMenuShowingRules() { return mentalMathMenuShowingRules; }

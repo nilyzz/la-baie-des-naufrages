@@ -219,3 +219,7 @@ export function getReactionMenuVisible() {
 export function getReactionMenuClosing() {
     return reactionMenuClosing;
 }
+
+export function getReactionMenuShowingRules() {
+    return reactionMenuShowingRules;
+}

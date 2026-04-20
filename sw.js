@@ -1,9 +1,9 @@
-const CACHE_NAME = 'baie-des-naufrages-v29';
+const CACHE_NAME = 'baie-des-naufrages-v30';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
     '/style.css?v=2026-04-19-audit-1',
-    '/script.js?v=2026-04-20-bridge-1',
+    '/script.js?v=2026-04-20-bridge-2',
     '/js/main.js?v=2026-04-20-esm-1',
     '/js/core/constants.js',
     '/js/core/utils.js',

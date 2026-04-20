@@ -302,3 +302,4 @@ export function setAimMenuVisible(v) { aimMenuVisible = Boolean(v); }
 export function setAimMenuShowingRules(v) { aimMenuShowingRules = Boolean(v); }
 export function getAimMenuVisible() { return aimMenuVisible; }
 export function getAimMenuClosing() { return aimMenuClosing; }
+export function getAimMenuShowingRules() { return aimMenuShowingRules; }

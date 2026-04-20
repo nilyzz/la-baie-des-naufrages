@@ -477,6 +477,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCoinClickerMenu = __cc.renderCoinClickerMenu;
     const closeCoinClickerMenu = __cc.closeCoinClickerMenu;
     const initializeCoinClicker = __cc.initializeCoinClicker;
+
+    // Bridge ESM — Rythme géré par js/games/rhythm.js.
+    const __rh = window.__baie.rhythm;
+    const renderRhythmMenu = __rh.renderRhythmMenu;
+    const closeRhythmMenu = __rh.closeRhythmMenu;
+    const startRhythm = __rh.startRhythm;
+    const handleRhythmHit = __rh.handleRhythmHit;
+    const initializeRhythm = __rh.initializeRhythm;
+
+    // Bridge ESM — Reaction géré par js/games/reaction.js.
+    const __rx = window.__baie.reaction;
+    const initializeReaction = __rx.initializeReaction;
+    const renderReactionMenu = __rx.renderReactionMenu;
+    const closeReactionMenu = __rx.closeReactionMenu;
+    const startReactionRound = __rx.startReactionRound;
+    const handleReactionAttempt = __rx.handleReactionAttempt;
+
+    // Bridge ESM — OursAim géré par js/games/aim.js.
+    const __am = window.__baie.aim;
+    const initializeAim = __am.initializeAim;
+    const renderAimMenu = __am.renderAimMenu;
+    const closeAimMenu = __am.closeAimMenu;
+    const startAimRound = __am.startAimRound;
+    const handleAimTargetHit = __am.handleAimTargetHit;
+    const handleAimMiss = __am.handleAimMiss;
+    const setAimRoundDuration = __am.setAimRoundDuration;
+
+    // Bridge ESM — MentalMath géré par js/games/mentalMath.js.
+    const __mm = window.__baie.mentalMath;
+    const initializeMentalMath = __mm.initializeMentalMath;
+    const renderMentalMathMenu = __mm.renderMentalMathMenu;
+    const startMentalMathLaunchSequence = __mm.startMentalMathLaunchSequence;
+    const submitMentalMathAnswer = __mm.submitMentalMathAnswer;
+    const handleMentalMathKeypadInput = __mm.handleMentalMathKeypadInput;
+    const handleMentalMathKeypadAction = __mm.handleMentalMathKeypadAction;
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -661,12 +696,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const SUDOKU_SIZE = 9;
     const GAME_2048_SIZE = 4;
     const GAME_2048_BEST_KEY = 'baie-des-naufrages-2048-best';
-    const AIM_GRID_SIZE = 6;
-    const AIM_TARGET_COUNT = 5;
-    const AIM_DEFAULT_ROUND_SECONDS = 20;
-    const AIM_HIT_SCORE = 12;
-    const AIM_MISS_SCORE = 5;
-    const AIM_BEST_KEY = 'baie-des-naufrages-aim-best';
     const CONNECT4_ROWS = 6;
     const CONNECT4_COLS = 7;
     const MEMORY_ICONS = ['\u2693', '\u{1F980}', '\u{1F419}', '\u{1F991}', '\u{1FAB8}', '\u{1F99E}', '\u{1F420}', '\u{1F9ED}'];
@@ -690,18 +719,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const TETRIS_ROWS = 18;
     const TETRIS_COLS = 10;
     const TETRIS_TICK_MS = 420;
-    const RHYTHM_LANES = ['Q', 'S', 'D'];
-    const RHYTHM_DURATION_MS = 30000;
-    const RHYTHM_MAX_MISSES = 10;
-    const RHYTHM_BEST_KEY = 'baie-des-naufrages-rhythm-best';
-    const RHYTHM_NOTE_START_Y = 14;
-    const RHYTHM_HIT_Y = 348;
-    const RHYTHM_MISS_Y = 410;
-    const RHYTHM_BURST_Y = 324;
     const FLAPPY_BEST_KEY = 'baie-des-naufrages-flappy-best';
     const HARBOR_RUN_BEST_KEY = 'baie-des-naufrages-harbor-run-best';
     const STACKER_BEST_KEY = 'baie-des-naufrages-stacker-best';
-    const REACTION_BEST_KEY = 'baie-des-naufrages-reaction-best';
     const BAIE_BERRY_BEST_KEY = 'baie-des-naufrages-baieberry-best';
     const BAIE_BERRY_DANGER_LINE_Y = 74;
     const BAIE_BERRY_DANGER_DURATION_MS = 1600;
@@ -736,12 +756,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAGIC_SORT_TUBE_CAPACITY = 4;
     const MAGIC_SORT_FILLED_TUBES = 6;
     const MAGIC_SORT_EMPTY_TUBES = 2;
-    const MENTAL_MATH_START_TIME_MS = 15000;
-    const MENTAL_MATH_TICK_MS = 100;
-    const MENTAL_MATH_BASE_REWARD_MS = 1800;
-    const MENTAL_MATH_FAST_REWARD_MS = 1200;
-    const MENTAL_MATH_FAST_WINDOW_MS = 4000;
-    const MENTAL_MATH_MAX_TIME_MS = 30000;
     const CHESS_SIZE = 8;
     const CHECKERS_SIZE = 8;
     const AIR_HOCKEY_GOAL_SCORE = 5;
@@ -1055,23 +1069,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacmanTouchStartY = null;
     let tetrisTouchStartX = null;
     let tetrisTouchStartY = null;
-    let aimMenuVisible = true;
-    let aimMenuShowingRules = false;
-    let aimMenuClosing = false;
-    let aimMenuEntering = false;
-    let aimMenuResult = null;
-    let aimTargets = [];
-    let aimScore = 0;
-    let aimBestScore = Number(window.localStorage.getItem(AIM_BEST_KEY)) || 0;
-    let aimRoundSeconds = AIM_DEFAULT_ROUND_SECONDS;
-    let aimTimeRemaining = AIM_DEFAULT_ROUND_SECONDS;
-    let aimRoundRunning = false;
-    let aimRoundCompleted = false;
-    let aimTimerInterval = null;
-    let aimHitEffectKey = null;
-    let aimHitEffectTimeout = null;
-    let aimSpawnEffectKey = null;
-    let aimSpawnEffectTimeout = null;
     let memoryCards = [];
     let memoryFlippedIndices = [];
     let memoryMatchedPairs = 0;
@@ -1168,24 +1165,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let connect4MenuEntering = false;
     let connect4MenuResult = false;
     let connect4OutcomeMenuTimeout = null;
-    let rhythmMenuVisible = true;
-    let rhythmMenuShowingRules = false;
-    let rhythmMenuClosing = false;
-    let rhythmMenuEntering = false;
-    let rhythmMenuResult = null;
-    let rhythmNotes = [];
-    let rhythmScore = 0;
-    let rhythmStreak = 0;
-    let rhythmMisses = 0;
-    let rhythmBestScore = Number(window.localStorage.getItem(RHYTHM_BEST_KEY)) || 0;
-    let rhythmRunning = false;
-    let rhythmStartedAt = 0;
-    let rhythmLastFrame = 0;
-    let rhythmSpawnTimer = 0;
-    let rhythmAnimationFrame = null;
-    let rhythmPadHighlightTimeout = null;
-    let rhythmBoardEffectTimeout = null;
-    let rhythmBursts = [];
     let flappyBirdY = 0;
     let flappyBirdVelocity = 0;
     let flappyPipes = [];
@@ -1240,17 +1219,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let magicSortMenuClosing = false;
     let magicSortMenuEntering = false;
     let magicSortMenuResult = null;
-    let mentalMathScore = 0;
-    let mentalMathCurrentQuestion = null;
-    let mentalMathTimeRemainingMs = MENTAL_MATH_START_TIME_MS;
-    let mentalMathTimerInterval = null;
-    let mentalMathRoundRunning = false;
-    let mentalMathQuestionStartedAt = 0;
-    let mentalMathMenuVisible = true;
-    let mentalMathMenuShowingRules = false;
-    let mentalMathMenuClosing = false;
-    let mentalMathMenuEntering = false;
-    let mentalMathMenuResult = false;
     let candyCrushGrid = [];
     let candyCrushSelectedCell = null;
     let candyCrushScore = 0;
@@ -1328,15 +1296,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let airHockeyMenuClosing = false;
     let airHockeyMenuEntering = false;
     let airHockeyMenuResult = null;
-    let reactionState = 'idle';
-    let reactionBestTime = Number(window.localStorage.getItem(REACTION_BEST_KEY)) || null;
-    let reactionStartTime = 0;
-    let reactionTimeout = null;
-    let reactionMenuVisible = true;
-    let reactionMenuShowingRules = false;
-    let reactionMenuClosing = false;
-    let reactionMenuEntering = false;
-    let reactionMenuResult = null;
     let baieBerryState = null;
     let baieBerryAnimationFrame = null;
     let baieBerryLastFrame = 0;
@@ -4302,7 +4261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'aim' && nextTab !== 'aim') {
-            aimMenuVisible = true;
+            __am.setAimMenuVisible(true);
             initializeAim();
         }
 
@@ -4339,7 +4298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'rhythm' && nextTab !== 'rhythm') {
-            rhythmMenuVisible = true;
+            __rh.setRhythmMenuVisible(true);
             initializeRhythm();
         }
 
@@ -4399,7 +4358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'reaction' && nextTab !== 'reaction') {
-            reactionMenuVisible = true;
+            __rx.setReactionMenuVisible(true);
             initializeReaction();
         }
 
@@ -7732,300 +7691,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeConnect4();
     }
 
-    function updateRhythmHud(timeRemainingMs = RHYTHM_DURATION_MS) {
-        rhythmScoreDisplay.textContent = String(rhythmScore);
-        rhythmStreakDisplay.textContent = String(rhythmStreak);
-        rhythmMissesDisplay.textContent = `${rhythmMisses} / ${RHYTHM_MAX_MISSES}`;
-        rhythmTimerDisplay.textContent = String(Math.max(0, Math.ceil(timeRemainingMs / 1000)));
-    }
-
-    function renderRhythmBoard() {
-        rhythmBoard.innerHTML = `
-            <div class="rhythm-sky-glow"></div>
-            <div class="rhythm-moon"></div>
-            <div class="rhythm-island rhythm-island-left"></div>
-            <div class="rhythm-island rhythm-island-right"></div>
-            <div class="rhythm-sea"></div>
-            <div class="rhythm-lanes" style="grid-template-columns: repeat(${RHYTHM_LANES.length}, minmax(0, 1fr));">${RHYTHM_LANES.map(() => '<div class="rhythm-lane"></div>').join('')}</div>
-            <div class="rhythm-target-band" aria-hidden="true"></div>
-            <div class="rhythm-notes"></div>
-            <div class="rhythm-feedback"></div>
-            <div class="rhythm-pads" style="grid-template-columns: repeat(${RHYTHM_LANES.length}, minmax(0, 1fr));">${RHYTHM_LANES.map((key, index) => `<button type="button" class="rhythm-pad" data-rhythm-lane="${index}">${key}</button>`).join('')}</div>
-        `;
-    }
-
-    function stopRhythm() {
-        rhythmRunning = false;
-        if (rhythmAnimationFrame) {
-            window.cancelAnimationFrame(rhythmAnimationFrame);
-            rhythmAnimationFrame = null;
-        }
-        if (rhythmPadHighlightTimeout) {
-            window.clearTimeout(rhythmPadHighlightTimeout);
-            rhythmPadHighlightTimeout = null;
-        }
-    }
-
-    function getRhythmRulesText() {
-        return `Appuie sur ${RHYTHM_LANES.join(', ')} au bon moment quand la note croise la ligne d\u2019impact. Encha\u00eene les touches parfaites pour faire monter la s\u00e9rie. Au-del\u00e0 de 10 fautes, la cadence s\u2019arr\u00eate.`;
-    }
-
-    function renderRhythmMenu() {
-        if (!rhythmMenuOverlay || !rhythmTable) return;
-        syncGameMenuOverlayBounds(rhythmMenuOverlay, rhythmTable);
-        rhythmMenuOverlay.classList.toggle('hidden', !rhythmMenuVisible);
-        rhythmMenuOverlay.classList.toggle('is-closing', rhythmMenuClosing);
-        rhythmMenuOverlay.classList.toggle('is-entering', rhythmMenuEntering);
-        rhythmTable.classList.toggle('is-menu-open', rhythmMenuVisible);
-        if (!rhythmMenuVisible) return;
-        const hasResult = Boolean(rhythmMenuResult);
-        if (rhythmMenuEyebrow) rhythmMenuEyebrow.textContent = rhythmMenuShowingRules ? 'R\u00e8gles' : (hasResult ? rhythmMenuResult.eyebrow : 'Cadence des marins');
-        if (rhythmMenuTitle) rhythmMenuTitle.textContent = rhythmMenuShowingRules ? 'Rappel rapide' : (hasResult ? rhythmMenuResult.title : 'Rythme');
-        if (rhythmMenuText) rhythmMenuText.textContent = rhythmMenuShowingRules ? getRhythmRulesText() : (hasResult ? rhythmMenuResult.text : 'Garde le tempo avec Q, S et D pour accompagner la chanson des marins. Trop de fautes et la cadence s\u2019arr\u00eate.');
-        if (rhythmMenuActionButton) rhythmMenuActionButton.textContent = rhythmMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la cadence' : 'Lancer la cadence');
-        if (rhythmMenuRulesButton) { rhythmMenuRulesButton.textContent = 'R\u00e8gles'; rhythmMenuRulesButton.hidden = rhythmMenuShowingRules; }
-    }
-
-    function closeRhythmMenu() {
-        rhythmMenuClosing = true;
-        renderRhythmMenu();
-        window.setTimeout(() => {
-            rhythmMenuClosing = false;
-            rhythmMenuVisible = false;
-            rhythmMenuShowingRules = false;
-            rhythmMenuEntering = false;
-            rhythmMenuResult = null;
-            renderRhythmMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealRhythmOutcomeMenu(title, text, eyebrow) {
-        rhythmMenuVisible = true;
-        rhythmMenuResult = { title, text, eyebrow };
-        rhythmMenuShowingRules = false;
-        rhythmMenuClosing = false;
-        rhythmMenuEntering = true;
-        if (rhythmHelpText) rhythmHelpText.textContent = text;
-        renderRhythmMenu();
-        window.setTimeout(() => { rhythmMenuEntering = false; renderRhythmMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeRhythm() {
-        stopRhythm();
-        closeGameOverModal();
-        rhythmNotes = [];
-        rhythmScore = 0;
-        rhythmStreak = 0;
-        rhythmMisses = 0;
-        rhythmBursts = [];
-        rhythmStartedAt = 0;
-        rhythmLastFrame = 0;
-        rhythmSpawnTimer = 0;
-        rhythmMenuResult = null;
-        rhythmMenuShowingRules = false;
-        rhythmMenuClosing = false;
-        rhythmMenuEntering = false;
-        rhythmHelpText.textContent = `Protège le navire avec ${RHYTHM_LANES.join(', ')}. Tiens jusqu'à la fin sans trop rater.`;
-        rhythmStartButton.textContent = 'Lancer la cadence';
-        updateRhythmHud();
-        renderRhythmBoard();
-        renderRhythmMenu();
-    }
-
-    function triggerRhythmBoardEffect(effectClass) {
-        if (!rhythmBoard) {
-            return;
-        }
-
-        rhythmBoard.classList.remove('is-hit-flash', 'is-miss-flash');
-        void rhythmBoard.offsetWidth;
-        rhythmBoard.classList.add(effectClass);
-
-        if (rhythmBoardEffectTimeout) {
-            window.clearTimeout(rhythmBoardEffectTimeout);
-        }
-
-        rhythmBoardEffectTimeout = window.setTimeout(() => {
-            rhythmBoard.classList.remove('is-hit-flash', 'is-miss-flash');
-            rhythmBoardEffectTimeout = null;
-        }, 280);
-    }
-
-    function highlightRhythmPad(lane, state = 'active') {
-        const pads = rhythmBoard.querySelectorAll('.rhythm-pad');
-        pads.forEach((element) => element.classList.remove('is-active', 'is-success', 'is-fail'));
-        const pad = rhythmBoard.querySelector(`[data-rhythm-lane="${lane}"]`);
-        pad?.classList.add('is-active');
-        if (state === 'success') {
-            pad?.classList.add('is-success');
-        } else if (state === 'fail') {
-            pad?.classList.add('is-fail');
-        }
-        if (rhythmPadHighlightTimeout) {
-            window.clearTimeout(rhythmPadHighlightTimeout);
-        }
-        rhythmPadHighlightTimeout = window.setTimeout(() => {
-            rhythmBoard.querySelectorAll('.rhythm-pad').forEach((element) => element.classList.remove('is-active', 'is-success', 'is-fail'));
-        }, 110);
-    }
-
-    function renderRhythmNotes() {
-        const notesLayer = rhythmBoard.querySelector('.rhythm-notes');
-        const feedbackLayer = rhythmBoard.querySelector('.rhythm-feedback');
-        if (!notesLayer) {
-            return;
-        }
-
-        notesLayer.innerHTML = rhythmNotes.map((note) => {
-            const laneCenter = ((note.lane + 0.5) * 100) / RHYTHM_LANES.length;
-            return `<div class="rhythm-note lane-${note.lane}" style="left:${laneCenter}%; top:${note.y}px"></div>`;
-        }).join('');
-
-        if (feedbackLayer) {
-            feedbackLayer.innerHTML = rhythmBursts.map((burst) => {
-                const laneCenter = ((burst.lane + 0.5) * 100) / RHYTHM_LANES.length;
-                return `<div class="rhythm-burst ${burst.type}" style="left:${laneCenter}%; top:${burst.y}px">${burst.label}</div>`;
-            }).join('');
-        }
-    }
-
-    function finishRhythm(reason = 'time') {
-        stopRhythm();
-        rhythmHelpText.textContent = reason === 'misses'
-            ? `La coque a trop souffert. Score ${rhythmScore}. Record ${rhythmBestScore}.`
-            : `Traversée terminée. Score ${rhythmScore}. Record ${rhythmBestScore}.`;
-        rhythmStartButton.textContent = 'Relancer la cadence';
-        revealRhythmOutcomeMenu(
-            reason === 'misses' ? 'Navire submergé' : 'Fin de cadence',
-            `Score : ${rhythmScore}. Record : ${rhythmBestScore}.`,
-            reason === 'misses' ? 'Coque noyée' : 'Marins fatigués'
-        );
-    }
-
-    function startRhythm() {
-        initializeRhythm();
-        rhythmRunning = true;
-        rhythmStartedAt = performance.now();
-        rhythmLastFrame = rhythmStartedAt;
-        rhythmStartButton.textContent = 'Cadence en cours';
-
-        const step = (timestamp) => {
-            if (!rhythmRunning) {
-                return;
-            }
-
-            const delta = timestamp - rhythmLastFrame;
-            rhythmLastFrame = timestamp;
-            rhythmSpawnTimer += delta;
-
-            const spawnInterval = Math.max(320, 620 - Math.min(220, rhythmScore * 1.4));
-            if (rhythmSpawnTimer >= spawnInterval) {
-                rhythmSpawnTimer = 0;
-                rhythmNotes.push({
-                    id: `${timestamp}-${Math.random()}`,
-                    lane: Math.floor(Math.random() * RHYTHM_LANES.length),
-                    y: RHYTHM_NOTE_START_Y
-                });
-            }
-
-            rhythmNotes = rhythmNotes.filter((note) => {
-                note.y += (delta * 0.31) + Math.min(0.16, rhythmScore * 0.0006 * delta);
-                if (note.y > RHYTHM_MISS_Y) {
-                    rhythmStreak = 0;
-                    rhythmMisses += 1;
-                    rhythmBursts.push({
-                        id: `${note.id}-miss`,
-                        lane: note.lane,
-                        y: RHYTHM_BURST_Y,
-                        label: 'RATE',
-                        type: 'is-miss'
-                    });
-                    return false;
-                }
-                return true;
-            });
-
-            rhythmBursts = rhythmBursts.filter((burst) => {
-                burst.y -= delta * 0.05;
-                burst.life = (burst.life || 420) - delta;
-                return burst.life > 0;
-            });
-
-            renderRhythmNotes();
-            const timeRemaining = RHYTHM_DURATION_MS - (timestamp - rhythmStartedAt);
-            updateRhythmHud(timeRemaining);
-
-            if (rhythmScore > rhythmBestScore) {
-                rhythmBestScore = rhythmScore;
-                window.localStorage.setItem(RHYTHM_BEST_KEY, String(rhythmBestScore));
-            }
-
-            if (rhythmMisses >= RHYTHM_MAX_MISSES) {
-                finishRhythm('misses');
-                return;
-            }
-
-            if (timeRemaining <= 0) {
-                finishRhythm('time');
-                return;
-            }
-
-            rhythmAnimationFrame = window.requestAnimationFrame(step);
-        };
-
-        rhythmAnimationFrame = window.requestAnimationFrame(step);
-    }
-
-    function handleRhythmHit(lane) {
-        if (!rhythmRunning) {
-            highlightRhythmPad(lane, 'active');
-            startRhythm();
-            return;
-        }
-
-        const noteIndex = rhythmNotes.findIndex((note) => note.lane === lane && Math.abs(note.y - RHYTHM_HIT_Y) <= 44);
-
-        if (noteIndex !== -1) {
-            const note = rhythmNotes[noteIndex];
-            const distance = Math.abs(note.y - RHYTHM_HIT_Y);
-            rhythmNotes.splice(noteIndex, 1);
-            rhythmStreak += 1;
-            const isPerfect = distance <= 16;
-            rhythmScore += (isPerfect ? 18 : 10) + (Math.min(rhythmStreak, 12) * 2);
-            highlightRhythmPad(lane, 'success');
-            triggerRhythmBoardEffect('is-hit-flash');
-            rhythmBursts.push({
-                id: `${note.id}-hit`,
-                lane,
-                y: RHYTHM_BURST_Y,
-                label: isPerfect ? 'PARFAIT' : 'BIEN',
-                type: isPerfect ? 'is-perfect' : 'is-good'
-            });
-            renderRhythmNotes();
-        } else {
-            rhythmStreak = 0;
-            rhythmMisses += 1;
-            highlightRhythmPad(lane, 'fail');
-            triggerRhythmBoardEffect('is-miss-flash');
-            rhythmBursts.push({
-                id: `mistap-${performance.now()}`,
-                lane,
-                y: RHYTHM_BURST_Y,
-                label: 'RATE',
-                type: 'is-miss'
-            });
-        }
-
-        if (rhythmMisses >= RHYTHM_MAX_MISSES) {
-            updateRhythmHud(RHYTHM_DURATION_MS - (performance.now() - rhythmStartedAt));
-            renderRhythmNotes();
-            finishRhythm('misses');
-            return;
-        }
-
-        updateRhythmHud(RHYTHM_DURATION_MS - (performance.now() - rhythmStartedAt));
-    }
-
     function renderFlappy() {
         const boardWidth = flappyBoard.clientWidth;
         const boardHeight = flappyBoard.clientHeight;
@@ -8319,310 +7984,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         flappyAnimationFrame = window.requestAnimationFrame(step);
-    }
-
-    function updateAimHud() {
-        aimScoreDisplay.textContent = String(aimScore);
-        aimTimerDisplay.textContent = String(aimTimeRemaining);
-        aimBestScoreDisplay.textContent = String(aimBestScore);
-        aimStartButton.textContent = aimRoundRunning ? 'Bordée en cours' : 'Nouvelle bordée';
-    }
-
-    function getAimFreeCells(excludedKey = null) {
-        const occupied = new Set(
-            aimTargets
-                .filter((target) => `${target.row}-${target.col}` !== excludedKey)
-                .map((target) => `${target.row}-${target.col}`)
-        );
-        const freeCells = [];
-
-        for (let row = 0; row < AIM_GRID_SIZE; row += 1) {
-            for (let col = 0; col < AIM_GRID_SIZE; col += 1) {
-                const key = `${row}-${col}`;
-
-                if (key !== excludedKey && !occupied.has(key)) {
-                    freeCells.push({ row, col });
-                }
-            }
-        }
-
-        return freeCells;
-    }
-
-    function pickRandomAimCell(excludedKey = null) {
-        const freeCells = getAimFreeCells(excludedKey);
-
-        if (!freeCells.length) {
-            return null;
-        }
-
-        return freeCells[Math.floor(Math.random() * freeCells.length)];
-    }
-
-    function createAimTargets() {
-        aimTargets = [];
-
-        while (aimTargets.length < AIM_TARGET_COUNT) {
-            const nextCell = pickRandomAimCell();
-
-            if (!nextCell) {
-                break;
-            }
-
-            aimTargets.push({
-                id: crypto.randomUUID(),
-                row: nextCell.row,
-                col: nextCell.col
-            });
-        }
-    }
-
-    function renderAimBoard() {
-        aimBoard.innerHTML = Array.from({ length: AIM_GRID_SIZE * AIM_GRID_SIZE }, (_, index) => {
-            const row = Math.floor(index / AIM_GRID_SIZE);
-            const col = index % AIM_GRID_SIZE;
-            const target = aimTargets.find((item) => item.row === row && item.col === col);
-            const effectKey = `${row}-${col}`;
-            const hitEffect = aimHitEffectKey === effectKey;
-            const spawnEffect = aimSpawnEffectKey === effectKey;
-            const shouldRenderTarget = Boolean(target) || hitEffect;
-            const targetClasses = [
-                'aim-target',
-                spawnEffect ? 'is-spawning' : '',
-                hitEffect && !target ? 'is-dispersing' : ''
-            ].filter(Boolean).join(' ');
-
-            return `
-                <button
-                    type="button"
-                    class="aim-cell${target ? ' aim-cell-has-target' : ''}${hitEffect ? ' is-hit-effect' : ''}"
-                    data-row="${row}"
-                    data-col="${col}"
-                    ${target ? `data-target-id="${target.id}"` : ''}
-                    aria-label="${target ? 'Oursin à toucher' : "Case d'eau"}"
-                >
-                    ${shouldRenderTarget ? `<span class="${targetClasses}" aria-hidden="true"></span>` : ''}
-                    ${hitEffect ? `
-                        <span class="aim-hit-particle aim-hit-particle-a" aria-hidden="true"></span>
-                        <span class="aim-hit-particle aim-hit-particle-b" aria-hidden="true"></span>
-                        <span class="aim-hit-particle aim-hit-particle-c" aria-hidden="true"></span>
-                        <span class="aim-hit-particle aim-hit-particle-d" aria-hidden="true"></span>
-                        <span class="aim-hit-particle aim-hit-particle-e" aria-hidden="true"></span>
-                    ` : ''}
-                </button>
-            `;
-        }).join('');
-    }
-
-    function stopAimRound() {
-        if (aimTimerInterval) {
-            window.clearInterval(aimTimerInterval);
-            aimTimerInterval = null;
-        }
-
-        aimRoundRunning = false;
-        updateAimHud();
-    }
-
-    function initializeAim() {
-        stopAimRound();
-        if (aimHitEffectTimeout) {
-            window.clearTimeout(aimHitEffectTimeout);
-            aimHitEffectTimeout = null;
-        }
-        if (aimSpawnEffectTimeout) {
-            window.clearTimeout(aimSpawnEffectTimeout);
-            aimSpawnEffectTimeout = null;
-        }
-        aimHitEffectKey = null;
-        aimSpawnEffectKey = null;
-        aimScore = 0;
-        aimTimeRemaining = aimRoundSeconds;
-        aimRoundCompleted = false;
-        aimBoard.classList.remove('is-rumbling', 'is-splashing');
-        createAimTargets();
-        updateAimHud();
-        renderAimBoard();
-    }
-
-    function finishAimRound() {
-        stopAimRound();
-        aimRoundCompleted = true;
-
-        if (aimScore > aimBestScore) {
-            aimBestScore = aimScore;
-            window.localStorage.setItem(AIM_BEST_KEY, String(aimBestScore));
-        }
-
-        updateAimHud();
-        revealAimOutcomeMenu(
-            'Bordée terminée',
-            `Tu as inscrit ${aimScore} touches avant la fin de la marée. Record : ${aimBestScore}.`,
-            'Canon calé'
-        );
-    }
-
-    function startAimRound() {
-        closeGameOverModal();
-        aimRoundRunning = true;
-        updateAimHud();
-
-        aimTimerInterval = window.setInterval(() => {
-            aimTimeRemaining -= 1;
-            updateAimHud();
-
-            if (aimTimeRemaining <= 0) {
-                finishAimRound();
-            }
-        }, 1000);
-    }
-
-    function handleAimTargetHit(targetId) {
-        if (aimRoundCompleted || aimTimeRemaining <= 0) {
-            return;
-        }
-
-        if (!aimRoundRunning) {
-            startAimRound();
-        }
-
-        const target = aimTargets.find((item) => item.id === targetId);
-
-        if (!target) {
-            return;
-        }
-
-        aimScore += AIM_HIT_SCORE;
-        aimHitEffectKey = `${target.row}-${target.col}`;
-        const nextCell = pickRandomAimCell(`${target.row}-${target.col}`);
-
-        if (nextCell) {
-            target.row = nextCell.row;
-            target.col = nextCell.col;
-            aimSpawnEffectKey = `${target.row}-${target.col}`;
-        }
-
-        updateAimHud();
-        renderAimBoard();
-        if (aimHitEffectTimeout) {
-            window.clearTimeout(aimHitEffectTimeout);
-        }
-        aimHitEffectTimeout = window.setTimeout(() => {
-            aimHitEffectKey = null;
-            renderAimBoard();
-        }, 320);
-        if (aimSpawnEffectTimeout) {
-            window.clearTimeout(aimSpawnEffectTimeout);
-        }
-        aimSpawnEffectTimeout = window.setTimeout(() => {
-            aimSpawnEffectKey = null;
-            if (!aimHitEffectKey) {
-                renderAimBoard();
-            }
-        }, 280);
-        aimBoard.classList.remove('is-splashing');
-        void aimBoard.offsetWidth;
-        aimBoard.classList.add('is-splashing');
-    }
-
-    function handleAimMiss() {
-        if (!aimRoundRunning || aimRoundCompleted || aimTimeRemaining <= 0) {
-            return;
-        }
-
-        aimScore = Math.max(0, aimScore - AIM_MISS_SCORE);
-        updateAimHud();
-        aimBoard.classList.remove('is-rumbling');
-        void aimBoard.offsetWidth;
-        aimBoard.classList.add('is-rumbling');
-    }
-
-    function updateAimHud() {
-        aimScoreDisplay.textContent = String(aimScore);
-        aimTimerDisplay.textContent = String(aimTimeRemaining);
-        aimBestScoreDisplay.textContent = String(aimBestScore);
-        aimStartButton.textContent = aimRoundRunning ? 'Bordée en cours' : 'Nouvelle bordée';
-        aimDurationButtons.forEach((button) => {
-            button.classList.toggle('is-active', Number(button.dataset.aimDuration) === aimRoundSeconds);
-        });
-    }
-
-    function getAimRulesText() {
-        return 'Clique chaque oursin qui appara\u00eet dans la baie avant qu\u2019il ne disparaisse. Un tir sur l\u2019eau t\u2019enl\u00e8ve des points. Choisis la dur\u00e9e de la bord\u00e9e (20 / 40 / 60 s) et marque le plus de touches avant la fin.';
-    }
-
-    function renderAimMenu() {
-        if (!aimMenuOverlay || !aimTable) return;
-        syncGameMenuOverlayBounds(aimMenuOverlay, aimTable);
-        aimMenuOverlay.classList.toggle('hidden', !aimMenuVisible);
-        aimMenuOverlay.classList.toggle('is-closing', aimMenuClosing);
-        aimMenuOverlay.classList.toggle('is-entering', aimMenuEntering);
-        aimTable.classList.toggle('is-menu-open', aimMenuVisible);
-        if (!aimMenuVisible) return;
-        const hasResult = Boolean(aimMenuResult);
-        if (aimMenuEyebrow) aimMenuEyebrow.textContent = aimMenuShowingRules ? 'R\u00e8gles' : (hasResult ? aimMenuResult.eyebrow : 'Canon de bord');
-        if (aimMenuTitle) aimMenuTitle.textContent = aimMenuShowingRules ? 'Rappel rapide' : (hasResult ? aimMenuResult.title : 'OursAim');
-        if (aimMenuText) aimMenuText.textContent = aimMenuShowingRules ? getAimRulesText() : (hasResult ? aimMenuResult.text : 'Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l\u2019eau te co\u00fbte des points.');
-        if (aimMenuActionButton) aimMenuActionButton.textContent = aimMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la bord\u00e9e' : 'Lancer la bord\u00e9e');
-        if (aimMenuRulesButton) { aimMenuRulesButton.textContent = 'R\u00e8gles'; aimMenuRulesButton.hidden = aimMenuShowingRules; }
-    }
-
-    function closeAimMenu() {
-        aimMenuClosing = true;
-        renderAimMenu();
-        window.setTimeout(() => {
-            aimMenuClosing = false;
-            aimMenuVisible = false;
-            aimMenuShowingRules = false;
-            aimMenuEntering = false;
-            aimMenuResult = null;
-            renderAimMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealAimOutcomeMenu(title, text, eyebrow) {
-        aimMenuVisible = true;
-        aimMenuResult = { title, text, eyebrow };
-        aimMenuShowingRules = false;
-        aimMenuClosing = false;
-        aimMenuEntering = true;
-        renderAimMenu();
-        window.setTimeout(() => { aimMenuEntering = false; renderAimMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeAim() {
-        stopAimRound();
-        if (aimHitEffectTimeout) {
-            window.clearTimeout(aimHitEffectTimeout);
-            aimHitEffectTimeout = null;
-        }
-        if (aimSpawnEffectTimeout) {
-            window.clearTimeout(aimSpawnEffectTimeout);
-            aimSpawnEffectTimeout = null;
-        }
-        aimHitEffectKey = null;
-        aimSpawnEffectKey = null;
-        aimScore = 0;
-        aimTimeRemaining = aimRoundSeconds;
-        aimRoundCompleted = false;
-        aimMenuResult = null;
-        aimMenuShowingRules = false;
-        aimMenuClosing = false;
-        aimMenuEntering = false;
-        aimBoard.classList.remove('is-rumbling', 'is-splashing');
-        createAimTargets();
-        updateAimHud();
-        renderAimBoard();
-        renderAimMenu();
-    }
-
-    function setAimRoundDuration(seconds) {
-        if (![20, 40, 60].includes(seconds) || aimRoundSeconds === seconds) {
-            return;
-        }
-
-        aimRoundSeconds = seconds;
-        initializeAim();
     }
 
     function isMultiplayerPongActive() {
@@ -12441,237 +11802,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateMentalMathHud() {
-        mentalMathScoreDisplay.textContent = String(mentalMathScore);
-        mentalMathRoundDisplay.textContent = `${Math.max(0, mentalMathTimeRemainingMs / 1000).toFixed(1)}s`;
-    }
-
-    function generateMentalMathQuestion(score) {
-        const difficulty = Math.min(4, Math.floor(score / 4));
-        const operationRoll = Math.floor(Math.random() * 4);
-
-        if (operationRoll === 0) {
-            const a = 12 + Math.floor(Math.random() * (18 + (difficulty * 10)));
-            const b = 4 + Math.floor(Math.random() * (14 + (difficulty * 8)));
-            return { prompt: `${a} + ${b}`, answer: a + b };
-        }
-
-        if (operationRoll === 1) {
-            const a = 30 + Math.floor(Math.random() * (25 + (difficulty * 12)));
-            const b = 8 + Math.floor(Math.random() * (18 + (difficulty * 6)));
-            return { prompt: `${a} - ${b}`, answer: a - b };
-        }
-
-        if (operationRoll === 2) {
-            const a = 3 + Math.floor(Math.random() * (5 + difficulty));
-            const b = 4 + Math.floor(Math.random() * (7 + difficulty));
-            return { prompt: `${a} x ${b}`, answer: a * b };
-        }
-
-        const divisor = 2 + Math.floor(Math.random() * (5 + difficulty));
-        const quotient = 3 + Math.floor(Math.random() * (6 + difficulty));
-        return { prompt: `${divisor * quotient} / ${divisor}`, answer: quotient };
-    }
-
-    function renderMentalMathQuestion() {
-        updateMentalMathHud();
-        mentalMathQuestion.textContent = mentalMathCurrentQuestion?.prompt || '--';
-        mentalMathAnswerInput.value = '';
-        mentalMathAnswerInput.disabled = !mentalMathRoundRunning;
-        mentalMathSubmitButton.disabled = !mentalMathRoundRunning;
-        mentalMathKeypadButtons.forEach((button) => {
-            button.disabled = !mentalMathRoundRunning;
-        });
-        if (activeGameTab === 'mentalMath' && mentalMathRoundRunning) {
-            mentalMathAnswerInput.blur();
-        }
-    }
-
-    function getMentalMathRulesText() {
-        return 'Le chrono descend en continu. Réponds juste et vite pour gagner du temps, enchaîner les calculs et faire grimper ton score avant la fin.';
-    }
-
-    function renderMentalMathMenu() {
-        if (!mentalMathMenuOverlay || !mentalMathTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(mentalMathMenuOverlay, mentalMathTable);
-        mentalMathMenuOverlay.classList.toggle('hidden', !mentalMathMenuVisible);
-        mentalMathMenuOverlay.classList.toggle('is-closing', mentalMathMenuClosing);
-        mentalMathMenuOverlay.classList.toggle('is-entering', mentalMathMenuEntering);
-        mentalMathTable.classList.toggle('is-menu-open', mentalMathMenuVisible);
-
-        if (!mentalMathMenuVisible) {
-            return;
-        }
-
-        if (mentalMathMenuEyebrow) {
-            mentalMathMenuEyebrow.textContent = mentalMathMenuShowingRules ? 'R\u00e8gles' : (mentalMathMenuResult ? 'Fin de partie' : "Baie d'arcade");
-        }
-        if (mentalMathMenuTitle) {
-            mentalMathMenuTitle.textContent = mentalMathMenuShowingRules
-                ? 'Rappel rapide'
-                : (mentalMathMenuResult ? 'Temps ecoule' : 'Jeu Calcul');
-        }
-        if (mentalMathMenuText) {
-            mentalMathMenuText.textContent = mentalMathMenuShowingRules
-                ? getMentalMathRulesText()
-                : (mentalMathMenuResult
-                    ? `Tu as enchaine ${mentalMathScore} bonne${mentalMathScore > 1 ? 's' : ''} r\u00e9ponse${mentalMathScore > 1 ? 's' : ''}.`
-                    : 'Prepare-toi a enchainer les calculs avant que le chrono ne te rattrape.');
-        }
-        if (mentalMathMenuActionButton) {
-            mentalMathMenuActionButton.textContent = mentalMathMenuShowingRules
-                ? 'Retour'
-                : (mentalMathMenuResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-        if (mentalMathMenuRulesButton) {
-            mentalMathMenuRulesButton.textContent = 'R\u00e8gles';
-            mentalMathMenuRulesButton.hidden = mentalMathMenuShowingRules;
-        }
-    }
-
-    function startMentalMathLaunchSequence() {
-        mentalMathMenuClosing = true;
-        renderMentalMathMenu();
-        window.setTimeout(() => {
-            mentalMathMenuClosing = false;
-            mentalMathMenuVisible = false;
-            mentalMathMenuShowingRules = false;
-            mentalMathMenuEntering = false;
-            mentalMathMenuResult = false;
-            startMentalMathRound();
-            renderMentalMathMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealMentalMathOutcomeMenu() {
-        mentalMathMenuShowingRules = false;
-        mentalMathMenuClosing = false;
-        mentalMathMenuEntering = true;
-        mentalMathMenuVisible = true;
-        mentalMathMenuResult = true;
-        renderMentalMathMenu();
-        window.setTimeout(() => {
-            mentalMathMenuEntering = false;
-            renderMentalMathMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function stopMentalMathTimer() {
-        if (mentalMathTimerInterval) {
-            window.clearInterval(mentalMathTimerInterval);
-            mentalMathTimerInterval = null;
-        }
-    }
-
-    function finishMentalMathRound() {
-        stopMentalMathTimer();
-        mentalMathRoundRunning = false;
-        mentalMathTimeRemainingMs = 0;
-        mentalMathFeedback.textContent = `Temps ecoule. Score final : ${mentalMathScore}.`;
-        mentalMathHelpText.textContent = "La mar\u00e9e s'est retir\u00e9e. Relance une partie pour tenter de battre ton score.";
-        renderMentalMathQuestion();
-        revealMentalMathOutcomeMenu();
-    }
-
-    function startMentalMathTimer() {
-        stopMentalMathTimer();
-        mentalMathTimerInterval = window.setInterval(() => {
-            mentalMathTimeRemainingMs = Math.max(0, mentalMathTimeRemainingMs - MENTAL_MATH_TICK_MS);
-            updateMentalMathHud();
-
-            if (mentalMathTimeRemainingMs <= 0) {
-                finishMentalMathRound();
-            }
-        }, MENTAL_MATH_TICK_MS);
-    }
-
-    function advanceMentalMathQuestion() {
-        mentalMathCurrentQuestion = generateMentalMathQuestion(mentalMathScore);
-        mentalMathQuestionStartedAt = performance.now();
-        renderMentalMathQuestion();
-    }
-
-    function startMentalMathRound() {
-        mentalMathRoundRunning = true;
-        mentalMathQuestionStartedAt = performance.now();
-        mentalMathFeedback.textContent = '';
-        mentalMathHelpText.textContent = 'Le chrono file. Réponds vite et juste pour regagner du temps.';
-        renderMentalMathQuestion();
-        startMentalMathTimer();
-    }
-
-    function initializeMentalMath() {
-        closeGameOverModal();
-        stopMentalMathTimer();
-        mentalMathScore = 0;
-        mentalMathCurrentQuestion = generateMentalMathQuestion(0);
-        mentalMathTimeRemainingMs = MENTAL_MATH_START_TIME_MS;
-        mentalMathRoundRunning = false;
-        mentalMathQuestionStartedAt = performance.now();
-        mentalMathMenuVisible = true;
-        mentalMathMenuShowingRules = false;
-        mentalMathMenuClosing = false;
-        mentalMathMenuEntering = false;
-        mentalMathMenuResult = false;
-        mentalMathFeedback.textContent = '';
-        mentalMathHelpText.textContent = 'Le chrono descend. Réponds juste et vite pour regagner un peu de temps et pousser ton score au plus haut.';
-        renderMentalMathQuestion();
-        renderMentalMathMenu();
-    }
-
-    function submitMentalMathAnswer() {
-        if (!mentalMathCurrentQuestion || !mentalMathRoundRunning) {
-            return;
-        }
-
-        const userAnswer = Number(mentalMathAnswerInput.value);
-        if (Number.isNaN(userAnswer)) {
-            mentalMathFeedback.textContent = 'Entre une r\u00e9ponse avant de valider.';
-            return;
-        }
-
-        if (userAnswer === mentalMathCurrentQuestion.answer) {
-            const responseTimeMs = Math.max(0, performance.now() - mentalMathQuestionStartedAt);
-            const fastRewardRatio = Math.max(0, (MENTAL_MATH_FAST_WINDOW_MS - responseTimeMs) / MENTAL_MATH_FAST_WINDOW_MS);
-            const timeReward = MENTAL_MATH_BASE_REWARD_MS + (MENTAL_MATH_FAST_REWARD_MS * fastRewardRatio);
-            mentalMathScore += 1;
-            mentalMathTimeRemainingMs = Math.min(MENTAL_MATH_MAX_TIME_MS, mentalMathTimeRemainingMs + timeReward);
-            mentalMathFeedback.textContent = `Bonne r\u00e9ponse. +${(timeReward / 1000).toFixed(1)}s`;
-            mentalMathHelpText.textContent = 'Belle r\u00e9ponse. Encha\u00eene pour garder la mar\u00e9e avec toi.';
-        } else {
-            mentalMathFeedback.textContent = `Presque. Il fallait ${mentalMathCurrentQuestion.answer}.`;
-            mentalMathHelpText.textContent = 'Pas de bonus cette fois. Repars vite sur le calcul suivant.';
-        }
-
-        advanceMentalMathQuestion();
-    }
-
-    function handleMentalMathKeypadInput(value) {
-        if (!mentalMathRoundRunning || !mentalMathAnswerInput) {
-            return;
-        }
-
-        mentalMathAnswerInput.value = `${mentalMathAnswerInput.value}${value}`.slice(0, 6);
-    }
-
-    function handleMentalMathKeypadAction(action) {
-        if (!mentalMathRoundRunning || !mentalMathAnswerInput) {
-            return;
-        }
-
-        if (action === 'backspace') {
-            mentalMathAnswerInput.value = mentalMathAnswerInput.value.slice(0, -1);
-            return;
-        }
-
-        if (action === 'clear') {
-            mentalMathAnswerInput.value = '';
-        }
-    }
-
     function getRandomCandyType() {
         return CANDY_CRUSH_TYPES[Math.floor(Math.random() * CANDY_CRUSH_TYPES.length)];
     }
@@ -16114,145 +15244,6 @@ document.addEventListener('DOMContentLoaded', () => {
         airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
     }
 
-    function initializeReaction() {
-        reactionState = 'idle';
-        reactionStartTime = 0;
-        window.clearTimeout(reactionTimeout);
-        reactionLantern.classList.remove('is-armed', 'is-lit');
-        reactionTable?.classList.remove('is-armed', 'is-lit', 'is-extinguishing');
-        reactionBestDisplay.textContent = reactionBestTime ? `${reactionBestTime} ms` : '-';
-        reactionHelpText.textContent = "Attends que la lanterne s'allume, puis clique le plus vite possible.";
-        reactionMenuResult = null;
-        reactionMenuShowingRules = false;
-        reactionMenuClosing = false;
-        reactionMenuEntering = false;
-        renderReactionMenu();
-    }
-
-    function getReactionRulesText() {
-        return "Lance une veille puis attends que la lanterne s'allume. Clique uniquement au bon moment. Un clic trop tôt annule la manche.";
-    }
-
-    function getReactionPerformanceCopy(reactionTime, isRecord) {
-        if (isRecord || reactionTime <= 220) {
-            return {
-                eyebrow: isRecord ? 'Meilleur temps' : 'Réflexe légendaire',
-                title: isRecord ? 'Nouveau record' : 'Réflexe légendaire',
-                text: `Réflexe éclair en ${reactionTime} ms. Le phare n'a même pas eu le temps de trembler.`
-            };
-        }
-
-        if (reactionTime <= 300) {
-            return {
-                eyebrow: 'Tres bon temps',
-                title: 'Veille termin\u00e9e',
-                text: `Belle r\u00e9ponse en ${reactionTime} ms. Tu tiens bien la veille du pont.`
-            };
-        }
-
-        if (reactionTime <= 420) {
-            return {
-                eyebrow: 'Reflexe valide',
-                title: 'Veille termin\u00e9e',
-                text: `Reflexe enregistre en ${reactionTime} ms. Relance pour aller chercher un meilleur temps.`
-            };
-        }
-
-        return {
-            eyebrow: 'Peut mieux faire',
-            title: 'Veille termin\u00e9e',
-            text: `Temps releve a ${reactionTime} ms. La prochaine lanterne peut tomber plus vite.`
-        };
-    }
-
-    function renderReactionMenu() {
-        if (!reactionMenuOverlay || !reactionTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(reactionMenuOverlay, reactionTable);
-        reactionMenuOverlay.classList.toggle('hidden', !reactionMenuVisible);
-        reactionMenuOverlay.classList.toggle('is-closing', reactionMenuClosing);
-        reactionMenuOverlay.classList.toggle('is-entering', reactionMenuEntering);
-        reactionTable.classList.toggle('is-menu-open', reactionMenuVisible);
-
-        if (!reactionMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(reactionMenuResult);
-        if (reactionMenuEyebrow) {
-            reactionMenuEyebrow.textContent = reactionMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? reactionMenuResult.eyebrow : 'Veille au phare');
-        }
-        if (reactionMenuTitle) {
-            reactionMenuTitle.textContent = reactionMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? reactionMenuResult.title : 'R\u00e9action');
-        }
-        if (reactionMenuText) {
-            reactionMenuText.textContent = reactionMenuShowingRules
-                ? getReactionRulesText()
-                : (hasResult
-                    ? reactionMenuResult.text
-                    : "Reste calme sur le pont et clique dès que la lanterne s'allume pour signer le meilleur réflexe.");
-        }
-        if (reactionMenuActionButton) {
-            reactionMenuActionButton.textContent = reactionMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la veille' : 'Lancer la veille');
-        }
-        if (reactionMenuRulesButton) {
-            reactionMenuRulesButton.textContent = 'R\u00e8gles';
-            reactionMenuRulesButton.hidden = reactionMenuShowingRules;
-        }
-    }
-
-    function closeReactionMenu() {
-        reactionMenuClosing = true;
-        renderReactionMenu();
-        window.setTimeout(() => {
-            reactionMenuClosing = false;
-            reactionMenuVisible = false;
-            reactionMenuShowingRules = false;
-            reactionMenuEntering = false;
-            reactionMenuResult = null;
-            renderReactionMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealReactionOutcomeMenu(title, text, eyebrow) {
-        reactionMenuVisible = true;
-        reactionMenuResult = { title, text, eyebrow };
-        reactionMenuShowingRules = false;
-        reactionMenuClosing = false;
-        reactionMenuEntering = true;
-        reactionHelpText.textContent = text;
-        renderReactionMenu();
-        window.setTimeout(() => {
-            reactionMenuEntering = false;
-            renderReactionMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function startReactionRound() {
-        initializeReaction();
-        reactionState = 'armed';
-        reactionLantern.classList.add('is-armed');
-        reactionTable?.classList.add('is-armed');
-        reactionHelpText.textContent = "Patiente... la lanterne va s'allumer.";
-        reactionTimeout = window.setTimeout(() => {
-            reactionState = 'lit';
-            reactionLantern.classList.remove('is-armed');
-            reactionLantern.classList.add('is-lit');
-            reactionTable?.classList.remove('is-armed');
-            reactionTable?.classList.add('is-lit');
-            reactionStartTime = performance.now();
-            reactionHelpText.textContent = 'Clique vite, la lanterne est allumée.';
-        }, 1200 + Math.random() * 2400);
-    }
-
     function getRandomBaieBerryIndex() {
         return Math.floor(Math.random() * Math.min(4, BAIE_BERRY_FRUITS.length));
     }
@@ -19332,7 +18323,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'aim') {
-            aimMenuVisible = true;
+            __am.setAimMenuVisible(true);
             initializeAim();
             return;
         }
@@ -19377,7 +18368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'rhythm') {
-            rhythmMenuVisible = true;
+            __rh.setRhythmMenuVisible(true);
             initializeRhythm();
             return;
         }
@@ -19445,7 +18436,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'reaction') {
-            reactionMenuVisible = true;
+            __rx.setReactionMenuVisible(true);
             initializeReaction();
             return;
         }
@@ -19973,8 +18964,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: false });
 
     aimMenuActionButton?.addEventListener('click', () => {
-        if (aimMenuShowingRules) {
-            aimMenuShowingRules = false;
+        if (__am.getAimMenuShowingRules()) {
+            __am.setAimMenuShowingRules(false);
             renderAimMenu();
             return;
         }
@@ -19984,7 +18975,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     aimMenuRulesButton?.addEventListener('click', () => {
-        aimMenuShowingRules = true;
+        __am.setAimMenuShowingRules(true);
         renderAimMenu();
     });
 
@@ -20001,7 +18992,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     aimBoard.addEventListener('pointerdown', (event) => {
-        if (aimMenuVisible || aimMenuClosing) return;
+        if (__am.getAimMenuVisible() || __am.getAimMenuClosing()) return;
         const cellButton = event.target.closest('.aim-cell');
 
         if (!cellButton) {
@@ -20249,8 +19240,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     rhythmMenuActionButton?.addEventListener('click', () => {
-        if (rhythmMenuShowingRules) {
-            rhythmMenuShowingRules = false;
+        if (__rh.getRhythmMenuShowingRules()) {
+            __rh.setRhythmMenuShowingRules(false);
             renderRhythmMenu();
             return;
         }
@@ -20259,7 +19250,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     rhythmMenuRulesButton?.addEventListener('click', () => {
-        rhythmMenuShowingRules = true;
+        __rh.setRhythmMenuShowingRules(true);
         renderRhythmMenu();
     });
 
@@ -20324,8 +19315,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     mentalMathMenuActionButton?.addEventListener('click', () => {
-        if (mentalMathMenuShowingRules) {
-            mentalMathMenuShowingRules = false;
+        if (__mm.getMentalMathMenuShowingRules()) {
+            __mm.setMentalMathMenuShowingRules(false);
             renderMentalMathMenu();
             return;
         }
@@ -20335,7 +19326,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     mentalMathMenuRulesButton?.addEventListener('click', () => {
-        mentalMathMenuShowingRules = !mentalMathMenuShowingRules;
+        __mm.setMentalMathMenuShowingRules(!__mm.getMentalMathMenuShowingRules());
         renderMentalMathMenu();
     });
 
@@ -20365,11 +19356,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (event) => {
-        if (activeGameTab !== 'mentalMath' || mentalMathMenuVisible || mentalMathMenuClosing) {
+        if (activeGameTab !== 'mentalMath' || __mm.getMentalMathMenuVisible() || __mm.getMentalMathMenuClosing()) {
             return;
         }
 
-        if (!mentalMathRoundRunning) {
+        if (!__mm.getMentalMathRoundRunning()) {
             return;
         }
 
@@ -20696,8 +19687,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     reactionMenuActionButton?.addEventListener('click', () => {
-        if (reactionMenuShowingRules) {
-            reactionMenuShowingRules = false;
+        if (__rx.getReactionMenuShowingRules()) {
+            __rx.setReactionMenuShowingRules(false);
             renderReactionMenu();
             return;
         }
@@ -20707,44 +19698,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     reactionMenuRulesButton?.addEventListener('click', () => {
-        reactionMenuShowingRules = true;
+        __rx.setReactionMenuShowingRules(true);
         renderReactionMenu();
     });
-
-    function handleReactionAttempt() {
-        if (reactionState === 'armed') {
-            window.clearTimeout(reactionTimeout);
-            initializeReaction();
-            revealReactionOutcomeMenu(
-                'Faux départ',
-                "Trop tôt. Attends vraiment l'allumage de la lanterne avant de cliquer.",
-                'Veille annulée'
-            );
-            return;
-        }
-
-        if (reactionState !== 'lit') {
-            return;
-        }
-
-        const reactionTime = Math.round(performance.now() - reactionStartTime);
-        reactionState = 'done';
-        reactionLantern.classList.remove('is-lit');
-        reactionTable?.classList.remove('is-lit');
-        reactionTable?.classList.add('is-extinguishing');
-        window.setTimeout(() => {
-            reactionTable?.classList.remove('is-extinguishing');
-        }, 430);
-        reactionLastDisplay.textContent = `${reactionTime} ms`;
-        const isRecord = !reactionBestTime || reactionTime < reactionBestTime;
-        if (!reactionBestTime || reactionTime < reactionBestTime) {
-            reactionBestTime = reactionTime;
-            window.localStorage.setItem(REACTION_BEST_KEY, String(reactionBestTime));
-        }
-        reactionBestDisplay.textContent = reactionBestTime ? `${reactionBestTime} ms` : '-';
-        const reactionCopy = getReactionPerformanceCopy(reactionTime, isRecord);
-        revealReactionOutcomeMenu(reactionCopy.title, reactionCopy.text, reactionCopy.eyebrow);
-    }
 
     reactionLantern?.addEventListener('click', (event) => {
         event.stopPropagation();
@@ -20752,7 +19708,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     reactionTable?.addEventListener('click', (event) => {
-        if (reactionMenuVisible || reactionMenuClosing) {
+        if (__rx.getReactionMenuVisible() || __rx.getReactionMenuClosing()) {
             return;
         }
 
@@ -21248,7 +20204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     rhythmBoard.addEventListener('click', (event) => {
-        if (rhythmMenuVisible || rhythmMenuClosing) return;
+        if (__rh.getRhythmMenuVisible() || __rh.getRhythmMenuClosing()) return;
         const pad = event.target.closest('[data-rhythm-lane]');
 
         if (!pad) {
@@ -21715,7 +20671,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'rhythm') {
-            if (rhythmMenuVisible || rhythmMenuClosing) return;
+            if (__rh.getRhythmMenuVisible() || __rh.getRhythmMenuClosing()) return;
             const rhythmLane = {
                 q: 0,
                 Q: 0,
