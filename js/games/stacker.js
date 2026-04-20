@@ -420,3 +420,8 @@ export function setStackerMenuVisible(visible) {
 export function setStackerMenuShowingRules(showing) {
     stackerMenuShowingRules = Boolean(showing);
 }
+
+export function getStackerMenuVisible() { return stackerMenuVisible; }
+export function getStackerMenuClosing() { return stackerMenuClosing; }
+export function getStackerMenuShowingRules() { return stackerMenuShowingRules; }
+export function getStackerRunning() { return stackerRunning; }

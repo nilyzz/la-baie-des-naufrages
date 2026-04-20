@@ -904,3 +904,6 @@ function processFlowFreePendingPath() {
 export function getFlowFreeMenuVisible() { return flowFreeMenuVisible; }
 export function setFlowFreeMenuVisible(v) { flowFreeMenuVisible = Boolean(v); }
 export function setFlowFreeMenuShowingRules(v) { flowFreeMenuShowingRules = Boolean(v); }
+export function getFlowFreeMenuShowingRules() { return flowFreeMenuShowingRules; }
+export function getFlowFreeMenuClosing() { return flowFreeMenuClosing; }
+export function getFlowFreePointerDown() { return flowFreePointerDown; }

@@ -460,3 +460,5 @@ export function setBlockBlastSuppressClick(v) { blockBlastSuppressClick = Boolea
 export function getBlockBlastMenuVisible() { return blockBlastMenuVisible; }
 export function setBlockBlastMenuVisible(v) { blockBlastMenuVisible = Boolean(v); }
 export function setBlockBlastMenuShowingRules(v) { blockBlastMenuShowingRules = Boolean(v); }
+export function getBlockBlastMenuShowingRules() { return blockBlastMenuShowingRules; }
+export function getBlockBlastMenuClosing() { return blockBlastMenuClosing; }

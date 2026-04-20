@@ -567,6 +567,116 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateBreakout = __bk.updateBreakout;
     const drawBreakout = __bk.drawBreakout;
     const stopBreakout = __bk.stopBreakout;
+
+    // Bridge ESM — Memory géré par js/games/memory.js.
+    const __mem = window.__baie.memory;
+    const initializeMemory = __mem.initializeMemory;
+    const renderMemoryMenu = __mem.renderMemoryMenu;
+    const startMemoryLaunchSequence = __mem.startMemoryLaunchSequence;
+    const handleMemoryCardFlip = __mem.handleMemoryCardFlip;
+
+    // Bridge ESM — Magic Sort géré par js/games/magicSort.js.
+    const __ms = window.__baie.magicSort;
+    const initializeMagicSort = __ms.initializeMagicSort;
+    const renderMagicSortMenu = __ms.renderMagicSortMenu;
+    const closeMagicSortMenu = __ms.closeMagicSortMenu;
+    const handleMagicSortTubeClick = __ms.handleMagicSortTubeClick;
+
+    // Bridge ESM — HarborRun géré par js/games/harborRun.js.
+    const __hr = window.__baie.harborRun;
+    const initializeHarborRun = __hr.initializeHarborRun;
+    const renderHarborRunMenu = __hr.renderHarborRunMenu;
+    const closeHarborRunMenu = __hr.closeHarborRunMenu;
+    const startHarborRun = __hr.startHarborRun;
+    const moveHarborRun = __hr.moveHarborRun;
+    const renderHarborRun = __hr.renderHarborRun;
+
+    // Bridge ESM — Minesweeper géré par js/games/minesweeper.js.
+    const __mw = window.__baie.minesweeper;
+    const initializeGame = __mw.initializeGame;
+    const renderMinesweeperMenu = __mw.renderMinesweeperMenu;
+    const closeMinesweeperMenu = __mw.closeMinesweeperMenu;
+    const revealCell = __mw.revealCell;
+    const toggleFlag = __mw.toggleFlag;
+
+    // Bridge ESM — Stacker géré par js/games/stacker.js.
+    const __st = window.__baie.stacker;
+    const initializeStacker = __st.initializeStacker;
+    const renderStackerMenu = __st.renderStackerMenu;
+    const closeStackerMenu = __st.closeStackerMenu;
+    const startStacker = __st.startStacker;
+    const dropStackerLayer = __st.dropStackerLayer;
+
+    // Bridge ESM — Solitaire géré par js/games/solitaire.js.
+    const __sol = window.__baie.solitaire;
+    const initializeSolitaire = __sol.initializeSolitaire;
+    const renderSolitaire = __sol.renderSolitaire;
+    const renderSolitaireMenu = __sol.renderSolitaireMenu;
+    const closeSolitaireMenu = __sol.closeSolitaireMenu;
+    const drawSolitaireCard = __sol.drawSolitaireCard;
+    const selectSolitaireSource = __sol.selectSolitaireSource;
+    const moveSelectedSolitaireToFoundation = __sol.moveSelectedSolitaireToFoundation;
+    const moveSelectedSolitaireToTableau = __sol.moveSelectedSolitaireToTableau;
+    const clearSolitaireSelection = __sol.clearSolitaireSelection;
+
+    // Bridge ESM — Sudoku géré par js/games/sudoku.js.
+    const __su = window.__baie.sudoku;
+    const initializeSudoku = __su.initializeSudoku;
+    const renderSudokuMenu = __su.renderSudokuMenu;
+    const closeSudokuMenu = __su.closeSudokuMenu;
+    const renderSudoku = __su.renderSudoku;
+    const updateSudokuCell = __su.updateSudokuCell;
+    const setSudokuSelectedCell = __su.setSudokuSelectedCell;
+    const cycleSudokuDifficulty = __su.cycleSudokuDifficulty;
+    const startSudokuTimer = __su.startSudokuTimer;
+    const stopSudokuTimer = __su.stopSudokuTimer;
+
+    // Bridge ESM — BlockBlast géré par js/games/blockBlast.js.
+    const __bb = window.__baie.blockBlast;
+    const initializeBlockBlast = __bb.initializeBlockBlast;
+    const renderBlockBlast = __bb.renderBlockBlast;
+    const renderBlockBlastMenu = __bb.renderBlockBlastMenu;
+    const closeBlockBlastMenu = __bb.closeBlockBlastMenu;
+    const placeBlockBlastPiece = __bb.placeBlockBlastPiece;
+    const placeBlockBlastPieceAtIndex = __bb.placeBlockBlastPieceAtIndex;
+    const updateBlockBlastPreview = __bb.updateBlockBlastPreview;
+    const clearBlockBlastPreview = __bb.clearBlockBlastPreview;
+    const getBlockBlastAnchorFromPoint = __bb.getBlockBlastAnchorFromPoint;
+    const stopBlockBlastDrag = __bb.stopBlockBlastDrag;
+    const canPlaceBlockBlastPiece = __bb.canPlaceBlockBlastPiece;
+    const renderBlockBlastPieces = __bb.renderBlockBlastPieces;
+
+    // Bridge ESM — CandyCrush géré par js/games/candyCrush.js.
+    const __cc2 = window.__baie.candyCrush;
+    const initializeCandyCrush = __cc2.initializeCandyCrush;
+    const renderCandyCrush = __cc2.renderCandyCrush;
+    const renderCandyCrushMenu = __cc2.renderCandyCrushMenu;
+    const closeCandyCrushMenu = __cc2.closeCandyCrushMenu;
+    const tryCandyCrushSwap = __cc2.tryCandyCrushSwap;
+
+    // Bridge ESM — BaieBerry géré par js/games/baieBerry.js.
+    const __bb2 = window.__baie.baieBerry;
+    const initializeBaieBerry = __bb2.initializeBaieBerry;
+    const renderBaieBerryMenu = __bb2.renderBaieBerryMenu;
+    const startBaieBerryLaunchSequence = __bb2.startBaieBerryLaunchSequence;
+    const drawBaieBerry = __bb2.drawBaieBerry;
+    const updateBaieBerry = __bb2.updateBaieBerry;
+    const dropBaieBerryAt = __bb2.dropBaieBerryAt;
+    const updateBaieBerryDropGuide = __bb2.updateBaieBerryDropGuide;
+    const stopBaieBerry = __bb2.stopBaieBerry;
+
+    // Bridge ESM — FlowFree géré par js/games/flowFree.js.
+    const __ff = window.__baie.flowFree;
+    const initializeFlowFree = __ff.initializeFlowFree;
+    const renderFlowFree = __ff.renderFlowFree;
+    const renderFlowFreeMenu = __ff.renderFlowFreeMenu;
+    const closeFlowFreeMenu = __ff.closeFlowFreeMenu;
+    const startFlowFreePath = __ff.startFlowFreePath;
+    const extendFlowFreePath = __ff.extendFlowFreePath;
+    const stopFlowFreePath = __ff.stopFlowFreePath;
+    const scheduleFlowFreeRender = __ff.scheduleFlowFreeRender;
+    const flushFlowFreePendingTarget = __ff.flushFlowFreePendingTarget;
+
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -742,63 +852,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const pianoResetButton = document.getElementById('pianoResetButton');
     const pianoHelpText = document.getElementById('pianoHelpText');
 
-    const BOARD_SIZE = 14;
-    const TOTAL_MINES = 36;
     const PONG_TARGET_SCORE = 7;
-    const SUDOKU_SIZE = 9;
     const CONNECT4_ROWS = 6;
     const CONNECT4_COLS = 7;
-    const MEMORY_ICONS = ['\u2693', '\u{1F980}', '\u{1F419}', '\u{1F991}', '\u{1FAB8}', '\u{1F99E}', '\u{1F420}', '\u{1F9ED}'];
     const BATTLESHIP_SIZE = 8;
-    const BLOCK_BLAST_SIZE = 8;
-    const BLOCK_BLAST_BEST_KEY = 'baie-des-naufrages-block-blast-best';
     const UNO_COLORS = ['red', 'yellow', 'green', 'blue'];
-    const BLOCK_BLAST_SHAPES = [
-        { key: 'single', cells: [[0, 0]], color: 'sun' },
-        { key: 'domino', cells: [[0, 0], [1, 0]], color: 'lagoon' },
-        { key: 'trio', cells: [[0, 0], [1, 0], [2, 0]], color: 'gold' },
-        { key: 'quad', cells: [[0, 0], [1, 0], [2, 0], [3, 0]], color: 'reef' },
-        { key: 'square', cells: [[0, 0], [1, 0], [0, 1], [1, 1]], color: 'sand' },
-        { key: 'l-small', cells: [[0, 0], [0, 1], [1, 1]], color: 'coral' },
-        { key: 'l-tall', cells: [[0, 0], [0, 1], [0, 2], [1, 2]], color: 'sun' },
-        { key: 't-small', cells: [[0, 0], [1, 0], [2, 0], [1, 1]], color: 'gold' },
-        { key: 'zig', cells: [[0, 0], [1, 0], [1, 1], [2, 1]], color: 'lagoon' },
-        { key: 'pillar', cells: [[0, 0], [0, 1], [0, 2], [0, 3]], color: 'reef' }
-    ];
     const BATTLESHIP_SHIPS = [4, 3, 3, 2, 2];
-    const HARBOR_RUN_BEST_KEY = 'baie-des-naufrages-harbor-run-best';
-    const STACKER_BEST_KEY = 'baie-des-naufrages-stacker-best';
-    const BAIE_BERRY_BEST_KEY = 'baie-des-naufrages-baieberry-best';
-    const BAIE_BERRY_DANGER_LINE_Y = 74;
-    const BAIE_BERRY_DANGER_DURATION_MS = 1600;
-    const BAIE_BERRY_DANGER_GRACE_MS = 700;
-    const BAIE_BERRY_COMBO_WINDOW_MS = 1400;
-    const BAIE_BERRY_SHAKE_DECAY = 0.9;
-    const BAIE_BERRY_DROP_COOLDOWN_MS = 500;
-    const FLOW_FREE_SIZE = 7;
-    const FLOW_FREE_COLORS = [
-        '#ef4444',
-        '#2563eb',
-        '#f59e0b',
-        '#16a34a',
-        '#7c3aed',
-        '#ea580c',
-        '#db2777',
-        '#0891b2',
-        '#f8fafc',
-        '#65a30d'
-    ];
-    const MAGIC_SORT_COLORS = {
-        pink: '#f472b6',
-        gold: '#facc15',
-        mint: '#34d399',
-        sky: '#38bdf8',
-        coral: '#fb7185',
-        violet: '#a78bfa'
-    };
-    const MAGIC_SORT_TUBE_CAPACITY = 4;
-    const MAGIC_SORT_FILLED_TUBES = 6;
-    const MAGIC_SORT_EMPTY_TUBES = 2;
     const CHESS_SIZE = 8;
     const CHECKERS_SIZE = 8;
     const AIR_HOCKEY_GOAL_SCORE = 5;
@@ -807,19 +866,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const AIR_HOCKEY_PADDLE_RADIUS = 34;
     const AIR_HOCKEY_PUCK_RADIUS = 22;
     const AIR_HOCKEY_PUCK_MAX_SPEED = 700;
-    const CANDY_CRUSH_SIZE = 8;
-    const CANDY_CRUSH_TARGET_SCORE = 4000;
-    const CANDY_CRUSH_START_MOVES = 35;
-    const CANDY_CRUSH_TYPES = ['coral', 'lagoon', 'sun', 'mint', 'shell'];
-    const CANDY_CRUSH_COLORS = {
-        coral: 'linear-gradient(180deg, #fb7185, #be123c)',
-        lagoon: 'linear-gradient(180deg, #38bdf8, #1d4ed8)',
-        sun: 'linear-gradient(180deg, #facc15, #d97706)',
-        mint: 'linear-gradient(180deg, #34d399, #0f766e)',
-        shell: 'linear-gradient(180deg, #c084fc, #7c3aed)'
-    };
-    const HARBOR_RUN_LANES = [18, 50, 82];
-    const STACKER_TARGET_LAYERS = 12;
     const CHESS_PIECES = {
         pawn: { white: '\u2659', black: '\u265F' },
         rook: { white: '\u2656', black: '\u265C' },
@@ -832,29 +878,6 @@ document.addEventListener('DOMContentLoaded', () => {
         red: [[-1, -1], [-1, 1]],
         black: [[1, -1], [1, 1]]
     };
-    const BAIE_BERRY_FRUITS = [
-        { name: 'Myrtille', radius: 16, color: '#60a5fa', score: 10 },
-        { name: 'Framboise', radius: 21, color: '#fb7185', score: 24 },
-        { name: 'Groseille', radius: 28, color: '#f97316', score: 56 },
-        { name: 'Mure', radius: 36, color: '#a78bfa', score: 120 },
-        { name: 'Cassis', radius: 46, color: '#4338ca', score: 260 },
-        { name: 'Baie Royale', radius: 58, color: '#facc15', score: 560 },
-        { name: 'Perle Marine', radius: 72, color: '#2dd4bf', score: 1120 },
-        { name: 'Rubis des Flots', radius: 88, color: '#ef4444', score: 2240 },
-        { name: 'Couronne Abyssale', radius: 106, color: '#0f172a', score: 4480 }
-    ];
-    const SOLITAIRE_SUITS = ['spades', 'hearts', 'clubs', 'diamonds'];
-    const SOLITAIRE_SUIT_SYMBOLS = {
-        spades: '\u2660',
-        hearts: '\u2665',
-        clubs: '\u2663',
-        diamonds: '\u2666'
-    };
-    const SUDOKU_DIFFICULTIES = [
-        { difficulty: 'Moussaillon', removals: 38 },
-        { difficulty: 'Pirate', removals: 46 },
-        { difficulty: 'Capitaine', removals: 52 }
-    ];
     const PIANO_NOTES = [
         { id: 'c4', key: 'a', keyLabel: 'A', note: 'C4', frequency: 261.63, type: 'white' },
         { id: 'cs4', note: 'C#4', frequency: 277.18, type: 'black', anchor: 0.7, keyLabel: 'W' },
@@ -972,17 +995,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let chessMenuEntering = false;
     let chessOutcomeMenuTimer = null;
     let chessOutcomeMenuEnterTimer = null;
-    let gameBoard = [];
-    let flagsPlaced = 0;
-    let timer = 0;
-    let timerInterval = null;
-    let gameStarted = false;
-    let gameFinished = false;
-    let minesweeperMenuVisible = true;
-    let minesweeperMenuShowingRules = false;
-    let minesweeperMenuClosing = false;
-    let minesweeperMenuEntering = false;
-    let minesweeperMenuResult = null;
     let sessionTimeout = null;
     let activeGameTab = 'home';
     // Bridge pour les modules ESM : expose l'onglet actif courant.
@@ -1028,26 +1040,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const PONG_FIRST_RETURN_Y_MULTIPLIER = 1.6;
     const PONG_RALLY_SPEED_INCREMENT = 20;
     const PONG_MAX_STEP_SECONDS = 1 / 120;
-    let sudokuPuzzle = null;
-    let sudokuBoardState = [];
-    let sudokuSelectedCell = null;
-    let sudokuSolved = false;
-    let sudokuFailed = false;
-    let sudokuScore = 0;
-    let sudokuMistakes = 0;
-    let sudokuCombo = 0;
-    let sudokuElapsedSeconds = 0;
-    let sudokuTimerInterval = null;
-    let sudokuTimerStarted = false;
-    let sudokuFeedbackCell = null;
-    let sudokuFeedbackTimeout = null;
-    let sudokuStatusTimeout = null;
-    let sudokuDifficultyIndex = 0;
-    let sudokuMenuVisible = true;
-    let sudokuMenuShowingRules = false;
-    let sudokuMenuClosing = false;
-    let sudokuMenuEntering = false;
-    let sudokuMenuResult = null;
     let game2048TouchStartX = null;
     let game2048TouchStartY = null;
     let snakeTouchStartX = null;
@@ -1056,17 +1048,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacmanTouchStartY = null;
     let tetrisTouchStartX = null;
     let tetrisTouchStartY = null;
-    let memoryCards = [];
-    let memoryFlippedIndices = [];
-    let memoryMatchedPairs = 0;
-    let memoryMoves = 0;
-    let memoryLockBoard = false;
-    let memoryMismatchTimeout = null;
-    let memoryMenuVisible = true;
-    let memoryMenuShowingRules = false;
-    let memoryMenuClosing = false;
-    let memoryMenuEntering = false;
-    let memoryMenuResult = false;
     let ticTacToeBoardState = Array(9).fill('');
     let ticTacToeRenderedBoardState = Array(9).fill('');
     let ticTacToeCurrentPlayer = 'anchor';
@@ -1094,16 +1075,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let battleshipMenuClosing = false;
     let battleshipMenuEntering = false;
     let battleshipMenuResult = null;
-    let solitaireStockCards = [];
-    let solitaireWasteCards = [];
-    let solitaireFoundationsState = { spades: [], hearts: [], clubs: [], diamonds: [] };
-    let solitaireTableauColumns = [];
-    let solitaireSelectedSource = null;
-    let solitaireMenuVisible = true;
-    let solitaireMenuShowingRules = false;
-    let solitaireMenuClosing = false;
-    let solitaireMenuEntering = false;
-    let solitaireMenuResult = null;
     let connect4BoardState = [];
     let connect4CurrentPlayer = 'player';
     let connect4Scores = { player: 0, ai: 0 };
@@ -1120,75 +1091,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let connect4MenuEntering = false;
     let connect4MenuResult = false;
     let connect4OutcomeMenuTimeout = null;
-    let flowFreeCells = [];
-    let flowFreeLevel = null;
-    let flowFreePaths = new Map();
-    let flowFreeCompleted = new Set();
-    let flowFreeMoves = 0;
-    let flowFreeMenuVisible = true;
-    let flowFreeMenuShowingRules = false;
-    let flowFreeMenuClosing = false;
-    let flowFreeMenuEntering = false;
-    let flowFreeMenuResult = null;
-    let flowFreeActiveColor = null;
-    let flowFreePointerDown = false;
-    let flowFreeRenderFrame = null;
-    let flowFreeLastHoverKey = null;
-    let flowFreePendingTarget = null;
-    let flowFreeCatchupFrame = null;
-    let flowFreeCompletionAnimationToken = 0;
-    let flowFreeSpawning = new Set();
-    let flowFreeSpawnTimers = new Map();
-    let flowFreeDespawning = new Map();
-    let flowFreeDespawnTimer = null;
-    let magicSortTubes = [];
-    let magicSortSelectedTube = null;
-    let magicSortMoves = 0;
-    let magicSortMenuVisible = true;
-    let magicSortMenuShowingRules = false;
-    let magicSortMenuClosing = false;
-    let magicSortMenuEntering = false;
-    let magicSortMenuResult = null;
-    let candyCrushGrid = [];
-    let candyCrushSelectedCell = null;
-    let candyCrushScore = 0;
-    let candyCrushMoves = 18;
-    let candyCrushAnimating = false;
-    let candyCrushPointerStart = null;
-    let candyCrushMenuVisible = true;
-    let candyCrushMenuShowingRules = false;
-    let candyCrushMenuClosing = false;
-    let candyCrushMenuEntering = false;
-    let candyCrushMenuResult = null;
-    let harborRunLane = 1;
-    let harborRunVisualLane = 1;
-    let harborRunObstacles = [];
-    let harborRunScore = 0;
-    let harborRunBestScore = Number(window.localStorage.getItem(HARBOR_RUN_BEST_KEY)) || 0;
-    let harborRunRunning = false;
-    let harborRunAnimationFrame = null;
-    let harborRunLastFrame = 0;
-    let harborRunSpawnTimer = 0;
-    let harborRunSafeLane = 1;
-    let harborRunBackdropOffset = 0;
-    let harborRunMenuVisible = true;
-    let harborRunMenuShowingRules = false;
-    let harborRunMenuClosing = false;
-    let harborRunMenuEntering = false;
-    let harborRunMenuResult = null;
-    let stackerLayers = [];
-    let stackerCurrentLayer = null;
-    let stackerFragments = [];
-    let stackerScore = 0;
-    let stackerBestScore = Number(window.localStorage.getItem(STACKER_BEST_KEY)) || 0;
-    let stackerRunning = false;
-    let stackerAnimationFrame = null;
-    let stackerLastFrame = 0;
-    let stackerMenuVisible = true;
-    let stackerMenuShowingRules = false;
-    let stackerMenuClosing = false;
-    let stackerMenuEntering = false;
-    let stackerMenuResult = null;
     let chessState = null;
     let chessSelectedSquare = null;
     let chessMode = 'solo';
@@ -1226,30 +1128,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let airHockeyMenuClosing = false;
     let airHockeyMenuEntering = false;
     let airHockeyMenuResult = null;
-    let baieBerryState = null;
-    let baieBerryAnimationFrame = null;
-    let baieBerryLastFrame = 0;
-    let baieBerryBestScore = Number(window.localStorage.getItem(BAIE_BERRY_BEST_KEY)) || 0;
-    let baieBerryNextFruitId = 1;
-    let baieBerryLastPointerX = null;
-    let baieBerryDropLineTimer = null;
-    let baieBerryLastDropAt = 0;
-    let baieBerryMenuVisible = true;
-    let baieBerryMenuShowingRules = false;
-    let baieBerryMenuClosing = false;
-    let baieBerryMenuEntering = false;
-    let baieBerryMenuResult = false;
-    let blockBlastState = null;
-    let blockBlastBestScore = Number(window.localStorage.getItem(BLOCK_BLAST_BEST_KEY)) || 0;
-    let blockBlastSelectedPieceIndex = null;
-    let blockBlastPreview = null;
-    let blockBlastDragState = null;
-    let blockBlastSuppressClick = false;
-    let blockBlastMenuVisible = true;
-    let blockBlastMenuShowingRules = false;
-    let blockBlastMenuClosing = false;
-    let blockBlastMenuEntering = false;
-    let blockBlastMenuResult = null;
     let unoMode = 'solo';
     let unoState = null;
     let unoAiTimeout = null;
@@ -1566,7 +1444,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showGames() {
-        if (!gameBoard.length) {
+        if (!__mw.isMinesweeperInitialized()) {
             initializeGame();
         }
 
@@ -4156,7 +4034,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const previousTab = activeGameTab;
 
         if (previousTab === 'minesweeper' && nextTab !== 'minesweeper') {
-            minesweeperMenuVisible = true;
+            __mw.setMinesweeperMenuVisible(true);
             initializeGame();
         }
 
@@ -4172,7 +4050,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'sudoku' && nextTab !== 'sudoku') {
-            sudokuMenuVisible = true;
+            __su.setSudokuMenuVisible(true);
             initializeSudoku(false);
         }
 
@@ -4209,7 +4087,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'solitaire' && nextTab !== 'solitaire') {
-            solitaireMenuVisible = true;
+            __sol.setSolitaireMenuVisible(true);
             initializeSolitaire();
         }
 
@@ -4227,12 +4105,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'flowFree' && nextTab !== 'flowFree') {
-            flowFreeMenuVisible = true;
+            __ff.setFlowFreeMenuVisible(true);
             initializeFlowFree();
         }
 
         if (previousTab === 'magicSort' && nextTab !== 'magicSort') {
-            magicSortMenuVisible = true;
+            __ms.setMagicSortMenuVisible(true);
             initializeMagicSort();
         }
 
@@ -4241,17 +4119,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'candyCrush' && nextTab !== 'candyCrush') {
-            candyCrushMenuVisible = true;
+            __cc2.setCandyCrushMenuVisible(true);
             initializeCandyCrush();
         }
 
         if (previousTab === 'harborRun' && nextTab !== 'harborRun') {
-            harborRunMenuVisible = true;
+            __hr.setHarborRunMenuVisible(true);
             initializeHarborRun();
         }
 
         if (previousTab === 'stacker' && nextTab !== 'stacker') {
-            stackerMenuVisible = true;
+            __st.setStackerMenuVisible(true);
             initializeStacker();
         }
 
@@ -4320,425 +4198,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Promise((resolve) => {
             window.setTimeout(resolve, duration);
         });
-    }
-
-    function createFlowFreeBasePath(size) {
-        return Array.from({ length: size }, (_, rowIndex) => (
-            Array.from({ length: size }, (_, stepIndex) => ({
-                row: rowIndex,
-                col: rowIndex % 2 === 0 ? stepIndex : (size - 1 - stepIndex)
-            }))
-        )).flat();
-    }
-
-    function transformFlowFreePath(path, size) {
-        const transpose = Math.random() < 0.5;
-        const flipX = Math.random() < 0.5;
-        const flipY = Math.random() < 0.5;
-        const reversed = Math.random() < 0.5;
-
-        const transformed = path.map((cell) => {
-            let row = cell.row;
-            let col = cell.col;
-
-            if (transpose) {
-                [row, col] = [col, row];
-            }
-
-            if (flipY) {
-                row = size - 1 - row;
-            }
-
-            if (flipX) {
-                col = size - 1 - col;
-            }
-
-            return { row, col };
-        });
-
-        return reversed ? transformed.reverse() : transformed;
-    }
-
-    function generateFlowFreeSegmentLengths(totalCells) {
-        const lengths = [];
-        let remaining = totalCells;
-
-        while (remaining > 0) {
-            const remainingSlots = Math.ceil(remaining / 9);
-            const minLength = lengths.length >= 4 ? 5 : 6;
-            const maxLength = Math.min(10, remaining - ((remainingSlots - 1) * 4));
-            let nextLength = Math.min(maxLength, minLength + Math.floor(Math.random() * Math.max(1, maxLength - minLength + 1)));
-
-            if (remaining - nextLength > 0 && remaining - nextLength < 4) {
-                nextLength = remaining;
-            }
-
-            lengths.push(nextLength);
-            remaining -= nextLength;
-        }
-
-        if (lengths[lengths.length - 1] < 4 && lengths.length > 1) {
-            const deficit = 4 - lengths[lengths.length - 1];
-            lengths[lengths.length - 2] -= deficit;
-            lengths[lengths.length - 1] += deficit;
-        }
-
-        return lengths;
-    }
-
-    function generateFlowFreeLevel() {
-        const basePath = createFlowFreeBasePath(FLOW_FREE_SIZE);
-        const fullPath = transformFlowFreePath(basePath, FLOW_FREE_SIZE);
-        const segmentLengths = generateFlowFreeSegmentLengths(fullPath.length);
-        const colorPool = shuffleArray(FLOW_FREE_COLORS).slice(0, segmentLengths.length);
-        let offset = 0;
-
-        return {
-            size: FLOW_FREE_SIZE,
-            pairs: segmentLengths.map((length, index) => {
-                const cells = fullPath.slice(offset, offset + length);
-                offset += length;
-
-                return {
-                    color: colorPool[index],
-                    start: { ...cells[0] },
-                    end: { ...cells[cells.length - 1] },
-                    solution: cells.map((cell) => ({ ...cell }))
-                };
-            })
-        };
-    }
-
-    function getMagicSortValidMoves(tubes) {
-        const moves = [];
-
-        tubes.forEach((fromTube, fromIndex) => {
-            if (!fromTube.length) {
-                return;
-            }
-
-            const movingColor = fromTube[fromTube.length - 1];
-            let contiguousCount = 0;
-
-            for (let cursor = fromTube.length - 1; cursor >= 0; cursor -= 1) {
-                if (fromTube[cursor] !== movingColor) {
-                    break;
-                }
-                contiguousCount += 1;
-            }
-
-            tubes.forEach((toTube, toIndex) => {
-                if (fromIndex === toIndex || toTube.length >= 4) {
-                    return;
-                }
-
-                const topTarget = toTube[toTube.length - 1];
-                if (topTarget && topTarget !== movingColor) {
-                    return;
-                }
-
-                const amount = Math.min(contiguousCount, 4 - toTube.length);
-                if (!amount) {
-                    return;
-                }
-
-                moves.push({ fromIndex, toIndex, amount });
-            });
-        });
-
-        return moves;
-    }
-
-    function applyMagicSortMove(tubes, move) {
-        const fromTube = tubes[move.fromIndex];
-        const toTube = tubes[move.toIndex];
-
-        for (let step = 0; step < move.amount; step += 1) {
-            toTube.push(fromTube.pop());
-        }
-    }
-
-    function generateMagicSortLevel() {
-        const colorKeys = shuffleArray(Object.keys(MAGIC_SORT_COLORS)).slice(0, MAGIC_SORT_FILLED_TUBES);
-
-        function getTubeTopInfo(tube) {
-            if (!tube.length) {
-                return null;
-            }
-
-            const color = tube[tube.length - 1];
-            let count = 1;
-
-            for (let cursor = tube.length - 2; cursor >= 0; cursor -= 1) {
-                if (tube[cursor] !== color) {
-                    break;
-                }
-                count += 1;
-            }
-
-            return { color, count };
-        }
-
-        function getMixedTubeCount(tubes) {
-            return tubes.filter((tube) => tube.length > 1 && !tube.every((color) => color === tube[0])).length;
-        }
-
-        for (let attempt = 0; attempt < 24; attempt += 1) {
-            const tubes = colorKeys.map((color) => Array(MAGIC_SORT_TUBE_CAPACITY).fill(color));
-            tubes.push(...Array.from({ length: MAGIC_SORT_EMPTY_TUBES }, () => []));
-
-            const reverseMoves = 32 + Math.floor(Math.random() * 20);
-
-            for (let moveIndex = 0; moveIndex < reverseMoves; moveIndex += 1) {
-                const sourceOptions = tubes
-                    .map((tube, index) => ({ tube, index, top: getTubeTopInfo(tube) }))
-                    .filter(({ top }) => Boolean(top));
-
-                if (!sourceOptions.length) {
-                    break;
-                }
-
-                const { index: sourceIndex, top } = sourceOptions[Math.floor(Math.random() * sourceOptions.length)];
-                const destinationOptions = tubes
-                    .map((tube, index) => ({ tube, index }))
-                    .filter(({ tube, index }) => index !== sourceIndex && tube.length < MAGIC_SORT_TUBE_CAPACITY);
-
-                if (!destinationOptions.length) {
-                    continue;
-                }
-
-                const { index: destinationIndex, tube: destinationTube } = destinationOptions[Math.floor(Math.random() * destinationOptions.length)];
-                const movableCount = Math.min(top.count, MAGIC_SORT_TUBE_CAPACITY - destinationTube.length);
-                const amount = 1 + Math.floor(Math.random() * movableCount);
-
-                for (let step = 0; step < amount; step += 1) {
-                    destinationTube.push(tubes[sourceIndex].pop());
-                }
-            }
-
-            if (getMixedTubeCount(tubes) >= 3) {
-                return tubes.map((tube) => [...tube]);
-            }
-        }
-
-        const fallbackColors = colorKeys.slice(0, 4);
-        return [
-            [fallbackColors[0], fallbackColors[1], fallbackColors[2], fallbackColors[3]],
-            [fallbackColors[2], fallbackColors[3], fallbackColors[1], fallbackColors[0]],
-            [fallbackColors[1], fallbackColors[0], fallbackColors[3], fallbackColors[2]],
-            [fallbackColors[3], fallbackColors[2], fallbackColors[0], fallbackColors[1]],
-            [],
-            [],
-            [],
-            []
-        ];
-    }
-
-    function updateMemoryHud() {
-        memoryPairsDisplay.textContent = `${memoryMatchedPairs} / 8`;
-        memoryMovesDisplay.textContent = String(memoryMoves);
-        if (memoryHelpText && !memoryMenuResult) {
-            memoryHelpText.textContent = 'Retourne les cartes du pont et retrouve toutes les paires marines.';
-        }
-    }
-
-    function getMemoryRulesText() {
-        return "Retourne deux cartes à la fois pour retrouver chaque paire. Quand les deux symboles correspondent, ils restent visibles jusqu'à vider tout le pont.";
-    }
-
-    function renderMemoryMenu() {
-        if (!memoryMenuOverlay || !memoryTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(memoryMenuOverlay, memoryTable);
-        memoryMenuOverlay.classList.toggle('hidden', !memoryMenuVisible);
-        memoryMenuOverlay.classList.toggle('is-closing', memoryMenuClosing);
-        memoryMenuOverlay.classList.toggle('is-entering', memoryMenuEntering);
-        memoryTable.classList.toggle('is-menu-open', memoryMenuVisible);
-
-        if (!memoryMenuVisible) {
-            return;
-        }
-
-        const hasResult = memoryMenuResult;
-        if (memoryMenuEyebrow) {
-            memoryMenuEyebrow.textContent = memoryMenuShowingRules ? 'R\u00e8gles' : (hasResult ? 'Fin de r\u00e9colte' : 'Pont des souvenirs');
-        }
-        if (memoryMenuTitle) {
-            memoryMenuTitle.textContent = memoryMenuShowingRules ? 'Rappel rapide' : (hasResult ? 'Memory termin\u00e9' : 'Memory');
-        }
-        if (memoryMenuText) {
-            memoryMenuText.textContent = memoryMenuShowingRules
-                ? getMemoryRulesText()
-                : (hasResult
-                    ? `Toutes les paires ont \u00e9t\u00e9 retrouv\u00e9es en ${memoryMoves} coups.`
-                    : 'Retourne les cartes du pont et retrouve toutes les paires marines.');
-        }
-        if (memoryMenuActionButton) {
-            memoryMenuActionButton.textContent = memoryMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-        if (memoryMenuRulesButton) {
-            memoryMenuRulesButton.textContent = 'R\u00e8gles';
-            memoryMenuRulesButton.hidden = memoryMenuShowingRules;
-        }
-    }
-
-    function startMemoryLaunchSequence() {
-        memoryMenuClosing = true;
-        renderMemoryMenu();
-        window.setTimeout(() => {
-            memoryMenuClosing = false;
-            memoryMenuVisible = false;
-            memoryMenuShowingRules = false;
-            memoryMenuEntering = false;
-            memoryMenuResult = false;
-            renderMemoryMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealMemoryOutcomeMenu() {
-        memoryMenuVisible = true;
-        memoryMenuResult = true;
-        memoryMenuShowingRules = false;
-        memoryMenuClosing = false;
-        memoryMenuEntering = true;
-        if (memoryHelpText) {
-            memoryHelpText.textContent = `Toutes les paires ont \u00e9t\u00e9 retrouv\u00e9es en ${memoryMoves} coups.`;
-        }
-        renderMemoryMenu();
-        window.setTimeout(() => {
-            memoryMenuEntering = false;
-            renderMemoryMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function renderMemoryBoard() {
-        memoryBoard.innerHTML = memoryCards.map((card, index) => {
-            const isRevealed = card.isMatched || card.isFlipped;
-
-            return `
-                <button
-                    type="button"
-                    class="memory-card-tile${isRevealed ? ' is-revealed' : ''}${card.isMatched ? ' is-matched' : ''}${card.isRevealing ? ' is-revealing' : ''}${card.isReturning ? ' is-returning' : ''}"
-                    data-index="${index}"
-                    aria-label="${isRevealed ? `Carte ${card.icon}` : 'Carte retourn\u00e9e'}"
-                >
-                    <div class="memory-card-inner" aria-hidden="true">
-                        <div class="memory-card-face memory-card-front">${card.icon}</div>
-                        <div class="memory-card-face memory-card-back"><span class="card-back-emblem"></span></div>
-                    </div>
-                </button>
-            `;
-        }).join('');
-        renderMemoryMenu();
-    }
-
-    function initializeMemory() {
-        if (memoryMismatchTimeout) {
-            window.clearTimeout(memoryMismatchTimeout);
-            memoryMismatchTimeout = null;
-        }
-
-        const deck = shuffleArray([...MEMORY_ICONS, ...MEMORY_ICONS]).map((icon, index) => ({
-            id: `${icon}-${index}`,
-            icon,
-            isFlipped: false,
-            isMatched: false,
-            isRevealing: false,
-            isReturning: false
-        }));
-
-        memoryCards = deck;
-        memoryFlippedIndices = [];
-        memoryMatchedPairs = 0;
-        memoryMoves = 0;
-        memoryLockBoard = false;
-        memoryMenuVisible = true;
-        memoryMenuShowingRules = false;
-        memoryMenuClosing = false;
-        memoryMenuEntering = false;
-        memoryMenuResult = false;
-        updateMemoryHud();
-        renderMemoryBoard();
-    }
-
-    function finishMemory() {
-        revealMemoryOutcomeMenu();
-    }
-
-    function handleMemoryCardFlip(index) {
-        if (memoryLockBoard || memoryMenuVisible || memoryMenuClosing) {
-            return;
-        }
-
-        const card = memoryCards[index];
-
-        if (!card || card.isMatched || card.isFlipped) {
-            return;
-        }
-
-        card.isReturning = false;
-        card.isRevealing = true;
-        card.isFlipped = true;
-        memoryFlippedIndices.push(index);
-        renderMemoryBoard();
-
-        window.setTimeout(() => {
-            if (!memoryCards[index]) {
-                return;
-            }
-
-            memoryCards[index].isRevealing = false;
-            renderMemoryBoard();
-        }, 340);
-
-        if (memoryFlippedIndices.length < 2) {
-            return;
-        }
-
-        memoryMoves += 1;
-        const [firstIndex, secondIndex] = memoryFlippedIndices;
-        const firstCard = memoryCards[firstIndex];
-        const secondCard = memoryCards[secondIndex];
-
-        if (firstCard.icon === secondCard.icon) {
-            firstCard.isMatched = true;
-            secondCard.isMatched = true;
-            firstCard.isRevealing = false;
-            secondCard.isRevealing = false;
-            memoryMatchedPairs += 1;
-            memoryFlippedIndices = [];
-            updateMemoryHud();
-            renderMemoryBoard();
-
-            if (memoryMatchedPairs === MEMORY_ICONS.length) {
-                finishMemory();
-            }
-            return;
-        }
-
-        updateMemoryHud();
-        memoryLockBoard = true;
-        memoryMismatchTimeout = window.setTimeout(() => {
-            firstCard.isFlipped = false;
-            secondCard.isFlipped = false;
-            firstCard.isRevealing = false;
-            secondCard.isRevealing = false;
-            firstCard.isReturning = true;
-            secondCard.isReturning = true;
-            renderMemoryBoard();
-
-            memoryMismatchTimeout = window.setTimeout(() => {
-                firstCard.isReturning = false;
-                secondCard.isReturning = false;
-                memoryFlippedIndices = [];
-                memoryLockBoard = false;
-                renderMemoryBoard();
-            }, 340);
-        }, 720);
     }
 
     function updateTicTacToeHud() {
@@ -5986,310 +5445,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 420);
     }
 
-    function getSolitaireCardColor(suit) {
-        return ['hearts', 'diamonds'].includes(suit) ? 'red' : 'black';
-    }
-
-    function getSolitaireCardLabel(card) {
-        const rankMap = {
-            1: 'A',
-            11: 'V',
-            12: 'D',
-            13: 'R'
-        };
-
-        return `${rankMap[card.rank] || card.rank}${SOLITAIRE_SUIT_SYMBOLS[card.suit]}`;
-    }
-
-    function createSolitaireDeck() {
-        return shuffleArray(SOLITAIRE_SUITS.flatMap((suit) => Array.from({ length: 13 }, (_, index) => ({
-            id: crypto.randomUUID(),
-            suit,
-            rank: index + 1,
-            faceUp: false
-        }))));
-    }
-
-    function updateSolitaireHud() {
-        const foundationCount = SOLITAIRE_SUITS.reduce((total, suit) => total + solitaireFoundationsState[suit].length, 0);
-        solitaireStockDisplay.textContent = String(solitaireStockCards.length);
-        solitaireFoundationsDisplay.textContent = `${foundationCount} / 52`;
-    }
-
-    function isValidSolitaireRun(column, startIndex) {
-        for (let index = startIndex; index < column.length - 1; index += 1) {
-            const current = column[index];
-            const next = column[index + 1];
-
-            if (!current.faceUp || !next.faceUp) {
-                return false;
-            }
-
-            if (getSolitaireCardColor(current.suit) === getSolitaireCardColor(next.suit) || current.rank !== next.rank + 1) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    function getSolitaireMovableCards(source) {
-        if (!source) {
-            return [];
-        }
-
-        if (source.type === 'waste') {
-            return solitaireWasteCards.length ? [solitaireWasteCards[solitaireWasteCards.length - 1]] : [];
-        }
-
-        if (source.type === 'foundation') {
-            const pile = solitaireFoundationsState[source.suit];
-            return pile.length ? [pile[pile.length - 1]] : [];
-        }
-
-        if (source.type === 'tableau') {
-            const column = solitaireTableauColumns[source.col] || [];
-            const cards = column.slice(source.index);
-            return isValidSolitaireRun(column, source.index) ? cards : [];
-        }
-
-        return [];
-    }
-
-    function removeSolitaireSourceCards(source, count) {
-        if (source.type === 'waste') {
-            solitaireWasteCards.splice(-count, count);
-            return;
-        }
-
-        if (source.type === 'foundation') {
-            solitaireFoundationsState[source.suit].splice(-count, count);
-            return;
-        }
-
-        if (source.type === 'tableau') {
-            solitaireTableauColumns[source.col].splice(source.index, count);
-            const column = solitaireTableauColumns[source.col];
-
-            if (column.length && !column[column.length - 1].faceUp) {
-                column[column.length - 1].faceUp = true;
-            }
-        }
-    }
-
-    function canPlaceSolitaireOnFoundation(card, suit) {
-        const pile = solitaireFoundationsState[suit];
-        const expectedRank = pile.length + 1;
-        return card.suit === suit && card.rank === expectedRank;
-    }
-
-    function canPlaceSolitaireOnTableau(cards, col) {
-        const firstCard = cards[0];
-        const column = solitaireTableauColumns[col];
-        const targetCard = column[column.length - 1];
-
-        if (!targetCard) {
-            return firstCard.rank === 13;
-        }
-
-        return targetCard.faceUp
-            && getSolitaireCardColor(targetCard.suit) !== getSolitaireCardColor(firstCard.suit)
-            && targetCard.rank === firstCard.rank + 1;
-    }
-
-    function clearSolitaireSelection() {
-        solitaireSelectedSource = null;
-    }
-
-    function checkSolitaireWin() {
-        const foundationCount = SOLITAIRE_SUITS.reduce((total, suit) => total + solitaireFoundationsState[suit].length, 0);
-
-        if (foundationCount === 52) {
-            solitaireHelpText.textContent = 'Le pont est rangé. Toutes les fondations sont complètes.';
-            revealSolitaireOutcomeMenu(
-                'Fondations complètes',
-                'Les 52 cartes sont rangées sur les fondations. Belle traversée, capitaine.',
-                'Cabine rangée'
-            );
-        }
-    }
-
-    function renderSolitaire() {
-        updateSolitaireHud();
-
-        solitaireStock.innerHTML = solitaireStockCards.length
-            ? '<button type="button" class="solitaire-playing-card-back" data-solitaire-action="draw"><span class="card-back-emblem"></span></button>'
-            : '<button type="button" class="solitaire-playing-card-placeholder" data-solitaire-action="recycle">â†º</button>';
-
-        const wasteTopCard = solitaireWasteCards[solitaireWasteCards.length - 1];
-        solitaireWaste.innerHTML = wasteTopCard
-            ? `<button type="button" class="solitaire-playing-card${solitaireSelectedSource?.type === 'waste' ? ' is-selected' : ''} ${getSolitaireCardColor(wasteTopCard.suit)}" data-solitaire-source="waste">${getSolitaireCardLabel(wasteTopCard)}</button>`
-            : '<div class="solitaire-playing-card-placeholder">Défausse</div>';
-
-        solitaireFoundations.innerHTML = SOLITAIRE_SUITS.map((suit) => {
-            const topCard = solitaireFoundationsState[suit][solitaireFoundationsState[suit].length - 1];
-            const isSelected = solitaireSelectedSource?.type === 'foundation' && solitaireSelectedSource.suit === suit;
-
-            return topCard
-                ? `<button type="button" class="solitaire-playing-card${isSelected ? ' is-selected' : ''} ${getSolitaireCardColor(topCard.suit)}" data-solitaire-foundation="${suit}">${getSolitaireCardLabel(topCard)}</button>`
-                : `<button type="button" class="solitaire-playing-card-placeholder foundation-${suit}" data-solitaire-foundation="${suit}">${SOLITAIRE_SUIT_SYMBOLS[suit]}</button>`;
-        }).join('');
-
-        solitaireTableau.innerHTML = solitaireTableauColumns.map((column, colIndex) => `
-            <div class="solitaire-column" data-solitaire-column="${colIndex}">
-                ${column.length ? column.map((card, cardIndex) => {
-                    const isSelectable = card.faceUp;
-                    const isSelected = solitaireSelectedSource?.type === 'tableau'
-                        && solitaireSelectedSource.col === colIndex
-                        && solitaireSelectedSource.index === cardIndex;
-
-                    return `
-                        <button
-                            type="button"
-                            class="solitaire-playing-card${card.faceUp ? ` ${getSolitaireCardColor(card.suit)}` : ' is-hidden'}${isSelected ? ' is-selected' : ''}"
-                            style="top:${cardIndex * 28}px"
-                            ${isSelectable ? `data-solitaire-tableau="${colIndex}" data-solitaire-index="${cardIndex}"` : ''}
-                        >${card.faceUp ? getSolitaireCardLabel(card) : '<span class="card-back-emblem"></span>'}</button>
-                    `;
-                }).join('') : '<button type="button" class="solitaire-playing-card-placeholder solitaire-column-empty" data-solitaire-column-target="true"></button>'}
-            </div>
-        `).join('');
-    }
-
-    function drawSolitaireCard() {
-        closeGameOverModal();
-
-        if (solitaireStockCards.length) {
-            const card = solitaireStockCards.pop();
-            card.faceUp = true;
-            solitaireWasteCards.push(card);
-        } else if (solitaireWasteCards.length) {
-            solitaireStockCards = solitaireWasteCards.reverse().map((card) => ({
-                ...card,
-                faceUp: false
-            }));
-            solitaireWasteCards = [];
-        }
-
-        clearSolitaireSelection();
-        renderSolitaire();
-    }
-
-    function selectSolitaireSource(source) {
-        const movableCards = getSolitaireMovableCards(source);
-
-        if (!movableCards.length) {
-            clearSolitaireSelection();
-            renderSolitaire();
-            return;
-        }
-
-        solitaireSelectedSource = source;
-        renderSolitaire();
-    }
-
-    function moveSelectedSolitaireToFoundation(suit) {
-        const movableCards = getSolitaireMovableCards(solitaireSelectedSource);
-
-        if (movableCards.length !== 1 || !canPlaceSolitaireOnFoundation(movableCards[0], suit)) {
-            return false;
-        }
-
-        removeSolitaireSourceCards(solitaireSelectedSource, 1);
-        solitaireFoundationsState[suit].push(movableCards[0]);
-        clearSolitaireSelection();
-        solitaireHelpText.textContent = 'Carte placée sur une fondation.';
-        renderSolitaire();
-        checkSolitaireWin();
-        return true;
-    }
-
-    function moveSelectedSolitaireToTableau(col) {
-        const movableCards = getSolitaireMovableCards(solitaireSelectedSource);
-
-        if (!movableCards.length || !canPlaceSolitaireOnTableau(movableCards, col)) {
-            return false;
-        }
-
-        removeSolitaireSourceCards(solitaireSelectedSource, movableCards.length);
-        solitaireTableauColumns[col].push(...movableCards);
-        clearSolitaireSelection();
-        solitaireHelpText.textContent = 'Pile déplacée sur une colonne du pont.';
-        renderSolitaire();
-        checkSolitaireWin();
-        return true;
-    }
-
-    function getSolitaireRulesText() {
-        return 'Clique une carte pour la s\u00e9lectionner puis clique sa destination. Sur les colonnes, alterne couleurs rouge/noir en descendant. Monte les quatre fondations de l\u2019As au Roi par couleur. La pioche se recycle quand elle est \u00e9puis\u00e9e.';
-    }
-
-    function renderSolitaireMenu() {
-        if (!solitaireMenuOverlay || !solitaireTable) return;
-        syncGameMenuOverlayBounds(solitaireMenuOverlay, solitaireTable);
-        solitaireMenuOverlay.classList.toggle('hidden', !solitaireMenuVisible);
-        solitaireMenuOverlay.classList.toggle('is-closing', solitaireMenuClosing);
-        solitaireMenuOverlay.classList.toggle('is-entering', solitaireMenuEntering);
-        solitaireTable.classList.toggle('is-menu-open', solitaireMenuVisible);
-        if (!solitaireMenuVisible) return;
-        const hasResult = Boolean(solitaireMenuResult);
-        if (solitaireMenuEyebrow) solitaireMenuEyebrow.textContent = solitaireMenuShowingRules ? 'R\u00e8gles' : (hasResult ? solitaireMenuResult.eyebrow : 'Cabine du capitaine');
-        if (solitaireMenuTitle) solitaireMenuTitle.textContent = solitaireMenuShowingRules ? 'Rappel rapide' : (hasResult ? solitaireMenuResult.title : 'Solitaire');
-        if (solitaireMenuText) solitaireMenuText.textContent = solitaireMenuShowingRules ? getSolitaireRulesText() : (hasResult ? solitaireMenuResult.text : 'Trie les cartes du capitaine dans les quatre fondations en suivant couleurs et valeurs.');
-        if (solitaireMenuActionButton) solitaireMenuActionButton.textContent = solitaireMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la donne' : 'Lancer la donne');
-        if (solitaireMenuRulesButton) { solitaireMenuRulesButton.textContent = 'R\u00e8gles'; solitaireMenuRulesButton.hidden = solitaireMenuShowingRules; }
-    }
-
-    function closeSolitaireMenu() {
-        solitaireMenuClosing = true;
-        renderSolitaireMenu();
-        window.setTimeout(() => {
-            solitaireMenuClosing = false;
-            solitaireMenuVisible = false;
-            solitaireMenuShowingRules = false;
-            solitaireMenuEntering = false;
-            solitaireMenuResult = null;
-            renderSolitaireMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealSolitaireOutcomeMenu(title, text, eyebrow) {
-        solitaireMenuVisible = true;
-        solitaireMenuResult = { title, text, eyebrow };
-        solitaireMenuShowingRules = false;
-        solitaireMenuClosing = false;
-        solitaireMenuEntering = true;
-        if (solitaireHelpText) solitaireHelpText.textContent = text;
-        renderSolitaireMenu();
-        window.setTimeout(() => { solitaireMenuEntering = false; renderSolitaireMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeSolitaire() {
-        closeGameOverModal();
-        const deck = createSolitaireDeck();
-        solitaireStockCards = [];
-        solitaireWasteCards = [];
-        solitaireFoundationsState = { spades: [], hearts: [], clubs: [], diamonds: [] };
-        solitaireTableauColumns = Array.from({ length: 7 }, () => []);
-        clearSolitaireSelection();
-
-        for (let col = 0; col < 7; col += 1) {
-            for (let depth = 0; depth <= col; depth += 1) {
-                const card = deck.pop();
-                card.faceUp = depth === col;
-                solitaireTableauColumns[col].push(card);
-            }
-        }
-
-        solitaireStockCards = deck.map((card) => ({ ...card, faceUp: false }));
-        solitaireHelpText.textContent = 'Clique une carte pour la sélectionner puis clique sa destination. La pioche se recycle quand elle est vide.';
-        solitaireMenuResult = null;
-        solitaireMenuShowingRules = false;
-        solitaireMenuClosing = false;
-        solitaireMenuEntering = false;
-        renderSolitaire();
-        renderSolitaireMenu();
-    }
 
     function updateConnect4Hud() {
         if (isMultiplayerConnect4Active()) {
@@ -7696,1056 +6851,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pongAnimationFrame = window.requestAnimationFrame(updatePongFrame);
     }
 
-    function countSudokuFilledCells() {
-        return sudokuBoardState.flat().filter((value) => value !== 0).length;
-    }
 
-    function stopSudokuTimer() {
-        if (sudokuTimerInterval) {
-            window.clearInterval(sudokuTimerInterval);
-            sudokuTimerInterval = null;
-        }
-
-        sudokuTimerStarted = false;
-    }
-
-    function startSudokuTimer() {
-        stopSudokuTimer();
-        sudokuTimerStarted = true;
-        sudokuTimerInterval = window.setInterval(() => {
-            sudokuElapsedSeconds += 1;
-            refreshSudokuHud();
-        }, 1000);
-    }
-
-    function getSudokuDefaultHelpText() {
-        return 'Clique une case vide puis tape de 1 à 9. Suppr ou retour arrière pour effacer.';
-    }
-
-    function clearSudokuStatusMessage() {
-        if (sudokuStatusTimeout) {
-            window.clearTimeout(sudokuStatusTimeout);
-            sudokuStatusTimeout = null;
-        }
-    }
-
-    function setSudokuStatusMessage(message, durationMs = 1200) {
-        if (!sudokuHelpText) {
-            return;
-        }
-
-        clearSudokuStatusMessage();
-        sudokuHelpText.textContent = message;
-
-        if (durationMs <= 0 || sudokuSolved || sudokuFailed) {
-            return;
-        }
-
-        sudokuStatusTimeout = window.setTimeout(() => {
-            sudokuStatusTimeout = null;
-            if (!sudokuSolved && !sudokuFailed && sudokuHelpText) {
-                sudokuHelpText.textContent = getSudokuDefaultHelpText();
-            }
-        }, durationMs);
-    }
-
-    function clearSudokuFeedback(shouldRender = true) {
-        if (sudokuFeedbackTimeout) {
-            window.clearTimeout(sudokuFeedbackTimeout);
-            sudokuFeedbackTimeout = null;
-        }
-
-        sudokuFeedbackCell = null;
-
-        if (shouldRender) {
-            renderSudoku();
-        }
-    }
-
-    function setSudokuFeedback(row, col, type) {
-        if (sudokuFeedbackTimeout) {
-            window.clearTimeout(sudokuFeedbackTimeout);
-        }
-
-        sudokuFeedbackCell = { row, col, type };
-        sudokuFeedbackTimeout = window.setTimeout(() => {
-            sudokuFeedbackCell = null;
-            sudokuFeedbackTimeout = null;
-            renderSudoku();
-        }, 320);
-    }
-
-    function getSudokuDifficultyBaseScore() {
-        const scoreByDifficulty = {
-            Moussaillon: 10,
-            Pirate: 14,
-            Capitaine: 18
-        };
-
-        return scoreByDifficulty[sudokuPuzzle?.difficulty] || 10;
-    }
-
-    function getSudokuRulesText() {
-        return "Chaque ligne, chaque colonne et chaque carré de 3 par 3 doit contenir les chiffres de 1 à 9 une seule fois. Clique une case vide puis tape un chiffre. Trois erreurs et la traversée s'arrête.";
-    }
-
-    function renderSudokuMenu() {
-        if (!sudokuMenuOverlay || !sudokuTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(sudokuMenuOverlay, sudokuTable);
-        sudokuMenuOverlay.classList.toggle('hidden', !sudokuMenuVisible);
-        sudokuMenuOverlay.classList.toggle('is-closing', sudokuMenuClosing);
-        sudokuMenuOverlay.classList.toggle('is-entering', sudokuMenuEntering);
-        sudokuTable.classList.toggle('is-menu-open', sudokuMenuVisible);
-
-        if (!sudokuMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(sudokuMenuResult);
-
-        if (sudokuMenuEyebrow) {
-            sudokuMenuEyebrow.textContent = sudokuMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? sudokuMenuResult.eyebrow : 'Carte de navigation');
-        }
-
-        if (sudokuMenuTitle) {
-            sudokuMenuTitle.textContent = sudokuMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? sudokuMenuResult.title : 'Sudoku');
-        }
-
-        if (sudokuMenuText) {
-            sudokuMenuText.textContent = sudokuMenuShowingRules
-                ? getSudokuRulesText()
-                : (hasResult
-                    ? sudokuMenuResult.text
-                    : 'Compl\u00e8te la carte sans r\u00e9p\u00e9ter de chiffre sur une ligne, une colonne ou un carr\u00e9 de 3 par 3.');
-        }
-
-        if (sudokuMenuActionButton) {
-            sudokuMenuActionButton.textContent = sudokuMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-
-        if (sudokuMenuRulesButton) {
-            sudokuMenuRulesButton.textContent = 'R\u00e8gles';
-            sudokuMenuRulesButton.hidden = sudokuMenuShowingRules;
-        }
-    }
-
-    function closeSudokuMenu() {
-        sudokuMenuClosing = true;
-        renderSudokuMenu();
-        window.setTimeout(() => {
-            sudokuMenuClosing = false;
-            sudokuMenuVisible = false;
-            sudokuMenuShowingRules = false;
-            sudokuMenuEntering = false;
-            sudokuMenuResult = null;
-            renderSudokuMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealSudokuOutcomeMenu(title, text, eyebrow) {
-        sudokuMenuVisible = true;
-        sudokuMenuResult = { title, text, eyebrow };
-        sudokuMenuShowingRules = false;
-        sudokuMenuClosing = false;
-        sudokuMenuEntering = true;
-
-        if (sudokuHelpText) {
-            sudokuHelpText.textContent = text;
-        }
-
-        renderSudokuMenu();
-        window.setTimeout(() => {
-            sudokuMenuEntering = false;
-            renderSudokuMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function calculateSudokuPoints() {
-        const baseScore = getSudokuDifficultyBaseScore();
-        const streakMultiplier = 1 + (Math.min(sudokuCombo, 6) * 0.18);
-        const timeMultiplier = Math.max(0.65, 1.45 - (sudokuElapsedSeconds / 240));
-
-        return Math.round(baseScore * streakMultiplier * timeMultiplier);
-    }
-
-    function shuffleArray(values) {
-        const nextValues = [...values];
-
-        for (let index = nextValues.length - 1; index > 0; index -= 1) {
-            const swapIndex = Math.floor(Math.random() * (index + 1));
-            [nextValues[index], nextValues[swapIndex]] = [nextValues[swapIndex], nextValues[index]];
-        }
-
-        return nextValues;
-    }
-
-    function createSudokuEmptyBoard() {
-        return Array.from({ length: SUDOKU_SIZE }, () => Array(SUDOKU_SIZE).fill(0));
-    }
-
-    function cloneSudokuBoard(board) {
-        return board.map((row) => [...row]);
-    }
-
-    function getSudokuBoxStart(index) {
-        return Math.floor(index / 3) * 3;
-    }
-
-    function isSudokuPrefilled(row, col) {
-        return sudokuPuzzle?.puzzle[(row * SUDOKU_SIZE) + col] !== '.';
-    }
-
-    function getSudokuValue(row, col) {
-        return sudokuBoardState[row]?.[col] || 0;
-    }
-
-    function getSudokuSelectedValue() {
-        if (!sudokuSelectedCell) {
-            return 0;
-        }
-
-        return getSudokuValue(sudokuSelectedCell.row, sudokuSelectedCell.col);
-    }
-
-    function getSudokuCandidates(board, row, col) {
-        if (board[row][col] !== 0) {
-            return [];
-        }
-
-        const usedValues = new Set();
-
-        for (let index = 0; index < SUDOKU_SIZE; index += 1) {
-            usedValues.add(board[row][index]);
-            usedValues.add(board[index][col]);
-        }
-
-        const boxRow = getSudokuBoxStart(row);
-        const boxCol = getSudokuBoxStart(col);
-
-        for (let rowIndex = boxRow; rowIndex < boxRow + 3; rowIndex += 1) {
-            for (let colIndex = boxCol; colIndex < boxCol + 3; colIndex += 1) {
-                usedValues.add(board[rowIndex][colIndex]);
-            }
-        }
-
-        return shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9].filter((value) => !usedValues.has(value)));
-    }
-
-    function findSudokuBestCell(board) {
-        let bestCell = null;
-        let bestCandidates = null;
-
-        for (let row = 0; row < SUDOKU_SIZE; row += 1) {
-            for (let col = 0; col < SUDOKU_SIZE; col += 1) {
-                if (board[row][col] !== 0) {
-                    continue;
-                }
-
-                const candidates = getSudokuCandidates(board, row, col);
-
-                if (!bestCandidates || candidates.length < bestCandidates.length) {
-                    bestCell = { row, col };
-                    bestCandidates = candidates;
-                }
-
-                if (bestCandidates?.length === 1) {
-                    return {
-                        ...bestCell,
-                        candidates: bestCandidates
-                    };
-                }
-            }
-        }
-
-        if (!bestCell || !bestCandidates) {
-            return null;
-        }
-
-        return {
-            ...bestCell,
-            candidates: bestCandidates
-        };
-    }
-
-    function solveSudokuBoard(board) {
-        const nextCell = findSudokuBestCell(board);
-
-        if (!nextCell) {
-            return true;
-        }
-
-        if (!nextCell.candidates.length) {
-            return false;
-        }
-
-        for (const candidate of nextCell.candidates) {
-            board[nextCell.row][nextCell.col] = candidate;
-
-            if (solveSudokuBoard(board)) {
-                return true;
-            }
-        }
-
-        board[nextCell.row][nextCell.col] = 0;
-        return false;
-    }
-
-    function countSudokuSolutions(board, limit = 2) {
-        const nextCell = findSudokuBestCell(board);
-
-        if (!nextCell) {
-            return 1;
-        }
-
-        if (!nextCell.candidates.length) {
-            return 0;
-        }
-
-        let solutionCount = 0;
-
-        for (const candidate of nextCell.candidates) {
-            board[nextCell.row][nextCell.col] = candidate;
-            solutionCount += countSudokuSolutions(board, limit);
-
-            if (solutionCount >= limit) {
-                board[nextCell.row][nextCell.col] = 0;
-                return solutionCount;
-            }
-        }
-
-        board[nextCell.row][nextCell.col] = 0;
-        return solutionCount;
-    }
-
-    function generateSudokuPuzzle() {
-        const difficultyConfig = SUDOKU_DIFFICULTIES[sudokuDifficultyIndex] || SUDOKU_DIFFICULTIES[0];
-        const solutionBoard = createSudokuEmptyBoard();
-        solveSudokuBoard(solutionBoard);
-
-        const puzzleBoard = cloneSudokuBoard(solutionBoard);
-        const positions = shuffleArray(Array.from({ length: SUDOKU_SIZE * SUDOKU_SIZE }, (_, index) => index));
-        let removedCells = 0;
-
-        positions.forEach((position) => {
-            if (removedCells >= difficultyConfig.removals) {
-                return;
-            }
-
-            const row = Math.floor(position / SUDOKU_SIZE);
-            const col = position % SUDOKU_SIZE;
-            const previousValue = puzzleBoard[row][col];
-
-            puzzleBoard[row][col] = 0;
-
-            const solutionCount = countSudokuSolutions(cloneSudokuBoard(puzzleBoard), 2);
-
-            if (solutionCount !== 1) {
-                puzzleBoard[row][col] = previousValue;
-                return;
-            }
-
-            removedCells += 1;
-        });
-
-        return {
-            difficulty: difficultyConfig.difficulty,
-            puzzle: puzzleBoard.flat().map((value) => value || '.').join(''),
-            solution: solutionBoard.flat().join('')
-        };
-    }
-
-    function isSudokuRelated(row, col, activeRow, activeCol) {
-        if (activeRow === null || activeCol === null) {
-            return false;
-        }
-
-        if (row === activeRow || col === activeCol) {
-            return true;
-        }
-
-        return getSudokuBoxStart(row) === getSudokuBoxStart(activeRow)
-            && getSudokuBoxStart(col) === getSudokuBoxStart(activeCol);
-    }
-
-    function isSudokuConflict(row, col) {
-        const value = getSudokuValue(row, col);
-
-        if (!value) {
-            return false;
-        }
-
-        for (let index = 0; index < SUDOKU_SIZE; index += 1) {
-            if (index !== col && getSudokuValue(row, index) === value) {
-                return true;
-            }
-
-            if (index !== row && getSudokuValue(index, col) === value) {
-                return true;
-            }
-        }
-
-        const boxRow = getSudokuBoxStart(row);
-        const boxCol = getSudokuBoxStart(col);
-
-        for (let rowIndex = boxRow; rowIndex < boxRow + 3; rowIndex += 1) {
-            for (let colIndex = boxCol; colIndex < boxCol + 3; colIndex += 1) {
-                if ((rowIndex !== row || colIndex !== col) && getSudokuValue(rowIndex, colIndex) === value) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    function isSudokuSolved() {
-        if (!sudokuPuzzle) {
-            return false;
-        }
-
-        return sudokuBoardState.every((row, rowIndex) => row.every((value, colIndex) => {
-            const solutionValue = Number(sudokuPuzzle.solution[(rowIndex * SUDOKU_SIZE) + colIndex]);
-            return value === solutionValue;
-        }));
-    }
-
-    function updateSudokuHud() {
-        sudokuFilledDisplay.textContent = String(sudokuScore);
-        sudokuMistakesDisplay.textContent = `${sudokuMistakes} / 3`;
-        sudokuTimerDisplay.textContent = `${sudokuElapsedSeconds}s`;
-        if (sudokuDifficultyButton) {
-            sudokuDifficultyButton.textContent = `Difficulte : ${sudokuPuzzle?.difficulty || SUDOKU_DIFFICULTIES[sudokuDifficultyIndex]?.difficulty || 'Moussaillon'}`;
-        }
-        sudokuRestartButton.textContent = sudokuSolved ? 'Nouvelle grille' : 'Nouvelle grille';
-    }
-
-    function refreshSudokuHud() {
-        sudokuFilledDisplay.textContent = String(sudokuScore);
-        sudokuMistakesDisplay.textContent = `${sudokuMistakes} / 3`;
-        sudokuTimerDisplay.textContent = `${sudokuElapsedSeconds}s`;
-        if (sudokuDifficultyButton) {
-            sudokuDifficultyButton.textContent = `Difficulte : ${sudokuPuzzle?.difficulty || SUDOKU_DIFFICULTIES[sudokuDifficultyIndex]?.difficulty || 'Moussaillon'}`;
-        }
-        sudokuRestartButton.textContent = 'Nouvelle grille';
-    }
-
-    function renderSudoku() {
-        if (!sudokuPuzzle) {
-            return;
-        }
-
-        const activeRow = sudokuSelectedCell?.row ?? null;
-        const activeCol = sudokuSelectedCell?.col ?? null;
-        const selectedValue = getSudokuSelectedValue();
-
-        sudokuBoard.innerHTML = sudokuBoardState.map((row, rowIndex) => row.map((value, colIndex) => {
-            const classes = ['sudoku-cell'];
-
-            if (isSudokuPrefilled(rowIndex, colIndex)) {
-                classes.push('is-prefilled');
-            }
-
-            if (isSudokuRelated(rowIndex, colIndex, activeRow, activeCol)) {
-                classes.push('is-related');
-            }
-
-            if (activeRow === rowIndex && activeCol === colIndex) {
-                classes.push('is-selected');
-            }
-
-            if (selectedValue && value === selectedValue && !(activeRow === rowIndex && activeCol === colIndex)) {
-                classes.push('is-matching-value');
-            }
-
-            if (isSudokuConflict(rowIndex, colIndex)) {
-                classes.push('is-conflict');
-            }
-
-            if (sudokuSolved) {
-                classes.push('is-solved');
-            }
-
-            if (sudokuFeedbackCell?.row === rowIndex && sudokuFeedbackCell?.col === colIndex) {
-                classes.push(sudokuFeedbackCell.type === 'correct' ? 'is-correct' : 'is-wrong');
-            }
-
-            if (colIndex === 2 || colIndex === 5) {
-                classes.push('is-border-right');
-            }
-
-            if (rowIndex === 2 || rowIndex === 5) {
-                classes.push('is-border-bottom');
-            }
-
-            return `
-                <button
-                    type="button"
-                    class="${classes.join(' ')}"
-                    data-row="${rowIndex}"
-                    data-col="${colIndex}"
-                    aria-label="Case Sudoku ${rowIndex + 1}-${colIndex + 1}"
-                >${value || ''}</button>
-            `;
-        }).join('')).join('');
-
-        refreshSudokuHud();
-    }
-
-    function initializeSudoku(startTimerImmediately = false) {
-        closeGameOverModal();
-        stopSudokuTimer();
-        clearSudokuFeedback(false);
-        clearSudokuStatusMessage();
-        sudokuMenuResult = null;
-        sudokuMenuShowingRules = false;
-        sudokuMenuClosing = false;
-        sudokuMenuEntering = false;
-        sudokuSolved = false;
-        sudokuFailed = false;
-        sudokuSelectedCell = null;
-        sudokuScore = 0;
-        sudokuMistakes = 0;
-        sudokuCombo = 0;
-        sudokuElapsedSeconds = 0;
-        sudokuPuzzle = generateSudokuPuzzle();
-        sudokuBoardState = Array.from({ length: SUDOKU_SIZE }, (_, rowIndex) => (
-            Array.from({ length: SUDOKU_SIZE }, (_, colIndex) => {
-                const rawValue = sudokuPuzzle.puzzle[(rowIndex * SUDOKU_SIZE) + colIndex];
-                return rawValue === '.' ? 0 : Number(rawValue);
-            })
-        ));
-        if (sudokuHelpText) {
-            sudokuHelpText.textContent = getSudokuDefaultHelpText();
-        }
-        renderSudoku();
-        renderSudokuMenu();
-        if (startTimerImmediately) {
-            startSudokuTimer();
-        }
-    }
-
-    function updateSudokuCell(row, col, nextValue) {
-        if (!sudokuPuzzle || sudokuSolved || sudokuFailed || isSudokuPrefilled(row, col)) {
-            return;
-        }
-
-        if (nextValue === 0) {
-            sudokuBoardState[row][col] = 0;
-            sudokuCombo = 0;
-            renderSudoku();
-            return;
-        }
-
-        const solutionValue = Number(sudokuPuzzle.solution[(row * SUDOKU_SIZE) + col]);
-
-        if (nextValue !== solutionValue) {
-            sudokuMistakes += 1;
-            sudokuCombo = 0;
-            setSudokuFeedback(row, col, 'wrong');
-            setSudokuStatusMessage('Mauvais chiffre');
-            renderSudoku();
-
-            if (sudokuMistakes >= 3) {
-                sudokuFailed = true;
-                stopSudokuTimer();
-                revealSudokuOutcomeMenu(
-                    'Carte égarée',
-                    "Trois erreurs. Le navire s'est perdu dans le brouillard.",
-                    'Cap manqué'
-                );
-            }
-
-            return;
-        }
-
-        if (sudokuBoardState[row][col] === nextValue) {
-            return;
-        }
-
-        sudokuBoardState[row][col] = nextValue;
-        sudokuCombo += 1;
-        const gainedPoints = calculateSudokuPoints();
-        sudokuScore += gainedPoints;
-        sudokuSolved = isSudokuSolved();
-        setSudokuFeedback(row, col, 'correct');
-        setSudokuStatusMessage(
-            sudokuCombo > 1 ? `+${gainedPoints} â€¢ x${sudokuCombo}` : `+${gainedPoints}`
-        );
-
-        if (sudokuSolved) {
-            stopSudokuTimer();
-            revealSudokuOutcomeMenu(
-                'Carte complète',
-                `Grille résolue. Cap ${sudokuPuzzle?.difficulty || 'Moussaillon'} terminé en ${sudokuElapsedSeconds}s.`,
-                'Route tracée'
-            );
-        }
-
-        renderSudoku();
-    }
-
-    function createEmptyBoard() {
-        return Array.from({ length: BOARD_SIZE }, (_, row) => (
-            Array.from({ length: BOARD_SIZE }, (_, col) => ({
-                row,
-                col,
-                isMine: false,
-                isRevealed: false,
-                isFlagged: false,
-                adjacentMines: 0,
-                justRevealed: false
-            }))
-        ));
-    }
-
-    function clearRevealHighlights(shouldRender = false) {
-        gameBoard.forEach((row) => {
-            row.forEach((cell) => {
-                cell.justRevealed = false;
-            });
-        });
-
-        if (shouldRender) {
-            renderBoard();
-        }
-    }
-
-    function getCell(row, col) {
-        return gameBoard[row]?.[col] || null;
-    }
-
-    function getNeighbors(row, col) {
-        const neighbors = [];
-
-        for (let rowOffset = -1; rowOffset <= 1; rowOffset += 1) {
-            for (let colOffset = -1; colOffset <= 1; colOffset += 1) {
-                if (rowOffset === 0 && colOffset === 0) {
-                    continue;
-                }
-
-                const neighbor = getCell(row + rowOffset, col + colOffset);
-
-                if (neighbor) {
-                    neighbors.push(neighbor);
-                }
-            }
-        }
-
-        return neighbors;
-    }
-
-    function getSafeZone(firstRow, firstCol) {
-        const safeCells = new Set();
-
-        for (let rowOffset = -1; rowOffset <= 1; rowOffset += 1) {
-            for (let colOffset = -1; colOffset <= 1; colOffset += 1) {
-                const row = firstRow + rowOffset;
-                const col = firstCol + colOffset;
-                const cell = getCell(row, col);
-
-                if (cell) {
-                    safeCells.add(`${row}-${col}`);
-                }
-            }
-        }
-
-        return safeCells;
-    }
-
-    function placeMines(firstRow, firstCol) {
-        let minesPlaced = 0;
-        const safeZone = getSafeZone(firstRow, firstCol);
-
-        while (minesPlaced < TOTAL_MINES) {
-            const row = Math.floor(Math.random() * BOARD_SIZE);
-            const col = Math.floor(Math.random() * BOARD_SIZE);
-            const cell = getCell(row, col);
-
-            if (!cell || cell.isMine || safeZone.has(`${row}-${col}`)) {
-                continue;
-            }
-
-            cell.isMine = true;
-            minesPlaced += 1;
-        }
-
-        gameBoard.forEach((row) => {
-            row.forEach((cell) => {
-                cell.adjacentMines = cell.isMine
-                    ? 0
-                    : getNeighbors(cell.row, cell.col).filter((neighbor) => neighbor.isMine).length;
-            });
-        });
-    }
-
-    function updateCounters() {
-        mineCountDisplay.textContent = String(TOTAL_MINES - flagsPlaced);
-        timerDisplay.textContent = String(timer);
-    }
-
-    function getMinesweeperRulesText() {
-        return "Clique sur une case pour révéler le récif. Les chiffres indiquent combien de mines touchent la case. Clique droit pour poser un drapeau et ouvre toutes les cases sûres pour gagner.";
-    }
-
-    function renderMinesweeperMenu() {
-        if (!minesweeperMenuOverlay || !minesweeperTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(minesweeperMenuOverlay, minesweeperTable);
-        minesweeperMenuOverlay.classList.toggle('hidden', !minesweeperMenuVisible);
-        minesweeperMenuOverlay.classList.toggle('is-closing', minesweeperMenuClosing);
-        minesweeperMenuOverlay.classList.toggle('is-entering', minesweeperMenuEntering);
-        minesweeperTable.classList.toggle('is-menu-open', minesweeperMenuVisible);
-
-        if (!minesweeperMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(minesweeperMenuResult);
-
-        if (minesweeperMenuEyebrow) {
-            minesweeperMenuEyebrow.textContent = minesweeperMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? minesweeperMenuResult.eyebrow : 'Champ de mines du r\u00e9cif');
-        }
-
-        if (minesweeperMenuTitle) {
-            minesweeperMenuTitle.textContent = minesweeperMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? minesweeperMenuResult.title : 'D\u00e9mineur');
-        }
-
-        if (minesweeperMenuText) {
-            minesweeperMenuText.textContent = minesweeperMenuShowingRules
-                ? getMinesweeperRulesText()
-                : (hasResult
-                    ? minesweeperMenuResult.text
-                    : 'Rep\u00e8re les zones s\u00fbres du r\u00e9cif, pose tes drapeaux et traverse sans toucher une mine.');
-        }
-
-        if (minesweeperMenuActionButton) {
-            minesweeperMenuActionButton.textContent = minesweeperMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-
-        if (minesweeperMenuRulesButton) {
-            minesweeperMenuRulesButton.textContent = 'R\u00e8gles';
-            minesweeperMenuRulesButton.hidden = minesweeperMenuShowingRules;
-        }
-    }
-
-    function closeMinesweeperMenu() {
-        minesweeperMenuClosing = true;
-        renderMinesweeperMenu();
-        window.setTimeout(() => {
-            minesweeperMenuClosing = false;
-            minesweeperMenuVisible = false;
-            minesweeperMenuShowingRules = false;
-            minesweeperMenuEntering = false;
-            minesweeperMenuResult = null;
-            renderMinesweeperMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealMinesweeperOutcomeMenu(title, text, eyebrow) {
-        minesweeperMenuVisible = true;
-        minesweeperMenuResult = { title, text, eyebrow };
-        minesweeperMenuShowingRules = false;
-        minesweeperMenuClosing = false;
-        minesweeperMenuEntering = true;
-
-        if (minesweeperHelpText) {
-            minesweeperHelpText.textContent = text;
-        }
-
-        renderMinesweeperMenu();
-        window.setTimeout(() => {
-            minesweeperMenuEntering = false;
-            renderMinesweeperMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function updateFace(label) {
-        restartGameButton.textContent = label;
-    }
-
-    function updateRestartButtonLabel() {
-        updateFace(gameStarted ? 'Changer de cap' : 'Aller en mer');
-    }
-
-    function openGameOverModal(title = "C'est perdu", text = "Le joueur s'est noyé.") {
-        if (activeGameTab === '2048') {
-            reveal2048OutcomeMenu();
-            return;
-        }
-
-        gameOverTitle.textContent = title;
-        gameOverText.textContent = text;
-        gameOverModal.classList.remove('hidden');
-        gameOverModal.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeGameOverModal() {
-        gameOverModal.classList.add('hidden');
-        gameOverModal.setAttribute('aria-hidden', 'true');
-    }
-
-    function startTimer() {
-        if (timerInterval) {
-            return;
-        }
-
-        timerInterval = window.setInterval(() => {
-            timer += 1;
-            timerDisplay.textContent = String(timer);
-        }, 1000);
-    }
-
-    function stopTimer() {
-        if (timerInterval) {
-            window.clearInterval(timerInterval);
-            timerInterval = null;
-        }
-    }
-
-    function initializeGame() {
-        stopTimer();
-        gameBoard = createEmptyBoard();
-        flagsPlaced = 0;
-        timer = 0;
-        gameStarted = false;
-        gameFinished = false;
-        minesweeperBoard.classList.remove('is-shaking');
-        minesweeperBoard.classList.remove('is-rumbling');
-        closeGameOverModal();
-        minesweeperMenuResult = null;
-        minesweeperMenuShowingRules = false;
-        minesweeperMenuClosing = false;
-        minesweeperMenuEntering = false;
-        if (minesweeperHelpText) {
-            minesweeperHelpText.textContent = 'Clic gauche pour révéler. Clic droit pour poser un drapeau.';
-        }
-        updateRestartButtonLabel();
-        updateCounters();
-        renderBoard();
-        renderMinesweeperMenu();
-    }
-
-    function revealAllMines(explodedCell = null) {
-        gameBoard.forEach((row) => {
-            row.forEach((cell) => {
-                if (cell.isMine) {
-                    cell.isRevealed = true;
-                }
-            });
-        });
-
-        if (explodedCell) {
-            explodedCell.isExploded = true;
-        }
-    }
-
-    function revealAdjacentEmptyCells(startCell) {
-        const queue = [startCell];
-        const revealedCells = [];
-
-        while (queue.length) {
-            const currentCell = queue.shift();
-
-            if (!currentCell || currentCell.isRevealed || currentCell.isFlagged) {
-                continue;
-            }
-
-            currentCell.isRevealed = true;
-            currentCell.justRevealed = true;
-            revealedCells.push(currentCell);
-
-            if (currentCell.adjacentMines !== 0) {
-                continue;
-            }
-
-            getNeighbors(currentCell.row, currentCell.col).forEach((neighbor) => {
-                if (!neighbor.isRevealed && !neighbor.isMine && !neighbor.isFlagged) {
-                    queue.push(neighbor);
-                }
-            });
-        }
-
-        return revealedCells;
-    }
-
-    function checkWin() {
-        const hasWon = gameBoard.every((row) => row.every((cell) => (
-            cell.isMine || cell.isRevealed
-        )));
-
-        if (!hasWon) {
-            return;
-        }
-
-        gameFinished = true;
-        stopTimer();
-        updateRestartButtonLabel();
-
-        gameBoard.forEach((row) => {
-            row.forEach((cell) => {
-                if (cell.isMine && !cell.isFlagged) {
-                    cell.isFlagged = true;
-                }
-            });
-        });
-
-        flagsPlaced = TOTAL_MINES;
-        updateCounters();
-        renderBoard();
-        revealMinesweeperOutcomeMenu(
-            'Récif traversé',
-            `Toutes les zones sûres ont été dégagées en ${timer} secondes.`,
-            'Traversée réussie'
-        );
-    }
-
-    function toggleFlag(row, col) {
-        if (gameFinished) {
-            return;
-        }
-
-        const cell = getCell(row, col);
-
-        if (!cell || cell.isRevealed) {
-            return;
-        }
-
-        if (!cell.isFlagged && flagsPlaced >= TOTAL_MINES) {
-            return;
-        }
-
-        clearRevealHighlights();
-        cell.isFlagged = !cell.isFlagged;
-        flagsPlaced += cell.isFlagged ? 1 : -1;
-        updateCounters();
-        renderBoard();
-    }
-
-    function revealCell(row, col) {
-        const cell = getCell(row, col);
-        let newlyRevealedCells = [];
-
-        if (!cell || cell.isRevealed || cell.isFlagged || gameFinished) {
-            return;
-        }
-
-        clearRevealHighlights();
-
-        if (!gameStarted) {
-            placeMines(row, col);
-            gameStarted = true;
-            startTimer();
-            updateRestartButtonLabel();
-        }
-
-        if (cell.isMine) {
-            cell.isRevealed = true;
-            gameFinished = true;
-            stopTimer();
-            revealAllMines(cell);
-            updateRestartButtonLabel();
-            minesweeperBoard.classList.remove('is-rumbling');
-            minesweeperBoard.classList.remove('is-shaking');
-            void minesweeperBoard.offsetWidth;
-            minesweeperBoard.classList.add('is-shaking');
-            renderBoard();
-            revealMinesweeperOutcomeMenu(
-                'Mine déclenchée',
-                `La traversée s'arrête après ${timer} secondes. Repars avec un nouveau tracé.`,
-                'Récif en alerte'
-            );
-            return;
-        }
-
-        if (cell.adjacentMines === 0) {
-            newlyRevealedCells = revealAdjacentEmptyCells(cell);
-        } else {
-            cell.isRevealed = true;
-            cell.justRevealed = true;
-            newlyRevealedCells = [cell];
-        }
-
-        if (newlyRevealedCells.length >= 6) {
-            minesweeperBoard.classList.remove('is-rumbling');
-            void minesweeperBoard.offsetWidth;
-            minesweeperBoard.classList.add('is-rumbling');
-        }
-
-        renderBoard();
-        window.setTimeout(() => {
-            clearRevealHighlights();
-        }, 120);
-        checkWin();
-    }
-
-    function renderBoard() {
-        minesweeperBoard.innerHTML = gameBoard.map((row) => row.map((cell) => {
-            const classes = ['minesweeper-cell'];
-            let label = '';
-            let particles = '';
-
-            if (cell.isRevealed) {
-                classes.push('is-revealed');
-
-                if (cell.justRevealed) {
-                    classes.push('is-newly-revealed');
-                }
-
-                if (cell.isMine) {
-                    classes.push('is-mine');
-                    label = '&#9760;';
-                } else if (cell.adjacentMines > 0) {
-                    classes.push(`minesweeper-cell-value-${cell.adjacentMines}`);
-                    label = String(cell.adjacentMines);
-                }
-
-                if (cell.justRevealed && !cell.isMine) {
-                    particles = `
-                        <span class="reveal-particle reveal-particle-a" aria-hidden="true"></span>
-                        <span class="reveal-particle reveal-particle-b" aria-hidden="true"></span>
-                        <span class="reveal-particle reveal-particle-c" aria-hidden="true"></span>
-                        <span class="reveal-particle reveal-particle-d" aria-hidden="true"></span>
-                    `;
-                }
-            } else if (cell.isFlagged) {
-                classes.push('is-flagged');
-                label = '&#127988;&#8205;&#9760;&#65039;';
-            } else if ((cell.row + cell.col) % 2 === 1) {
-                classes.push('is-pattern-alt');
-            }
-
-            if (cell.isExploded) {
-                classes.push('is-exploded');
-            }
-
-            return `
-                <button
-                    type="button"
-                    class="${classes.join(' ')}"
-                    data-row="${cell.row}"
-                    data-col="${cell.col}"
-                    aria-label="Case ${cell.row + 1}-${cell.col + 1}"
-                >${particles}<span class="minesweeper-cell-label">${label}</span></button>
-            `;
-        }).join('')).join('');
-    }
 
     loginForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -8806,1985 +6912,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         loginForm.querySelector('button[type="submit"]')?.focus();
     });
-
-    function getFlowFreePairByColor(color) {
-        return flowFreeLevel?.pairs.find((pair) => pair.color === color) || null;
-    }
-
-    function updateFlowFreeHud() {
-        flowFreePairsDisplay.textContent = `${flowFreeCompleted.size} / ${flowFreeLevel?.pairs.length || 0}`;
-        flowFreeMovesDisplay.textContent = String(flowFreeMoves);
-    }
-
-    function setFlowFreePath(color, nextPath) {
-        const previousPath = flowFreePaths.get(color) || [];
-        const previousKeys = new Set(previousPath.map((cell) => `${cell.row}-${cell.col}`));
-
-        flowFreeCells.forEach((row) => {
-            row.forEach((cell) => {
-                if (cell.color === color && !cell.isAnchor) {
-                    cell.color = null;
-                }
-            });
-        });
-
-        nextPath.forEach((cell, index) => {
-            if (index === 0) {
-                return;
-            }
-
-            const boardCell = flowFreeCells[cell.row][cell.col];
-            if (!boardCell.isAnchor) {
-                boardCell.color = color;
-                const key = `${cell.row}-${cell.col}`;
-                if (!previousKeys.has(key)) {
-                    flowFreeSpawning.add(key);
-
-                    const existingTimer = flowFreeSpawnTimers.get(key);
-                    if (existingTimer) {
-                        window.clearTimeout(existingTimer);
-                    }
-
-                    const timer = window.setTimeout(() => {
-                        flowFreeSpawning.delete(key);
-                        flowFreeSpawnTimers.delete(key);
-                        scheduleFlowFreeRender();
-                    }, 180);
-
-                    flowFreeSpawnTimers.set(key, timer);
-                }
-            }
-        });
-
-        flowFreePaths.set(color, nextPath.map((cell) => ({ ...cell })));
-    }
-
-    function renderFlowFree() {
-        flowFreeRenderFrame = null;
-        updateFlowFreeHud();
-        const connectionMap = new Map();
-
-        flowFreePaths.forEach((path, color) => {
-            path.forEach((cell, index) => {
-                const key = `${cell.row}-${cell.col}`;
-                const connections = connectionMap.get(key) || { top: 0, right: 0, bottom: 0, left: 0, color };
-                const previousCell = path[index - 1];
-                const nextCell = path[index + 1];
-
-                [previousCell, nextCell].forEach((linkedCell) => {
-                    if (!linkedCell) {
-                        return;
-                    }
-
-                    if (linkedCell.row === cell.row - 1 && linkedCell.col === cell.col) {
-                        connections.top = 1;
-                    } else if (linkedCell.row === cell.row + 1 && linkedCell.col === cell.col) {
-                        connections.bottom = 1;
-                    } else if (linkedCell.row === cell.row && linkedCell.col === cell.col - 1) {
-                        connections.left = 1;
-                    } else if (linkedCell.row === cell.row && linkedCell.col === cell.col + 1) {
-                        connections.right = 1;
-                    }
-                });
-
-                connectionMap.set(key, connections);
-            });
-        });
-
-        flowFreeDespawning.forEach((connection, key) => {
-            connectionMap.set(key, connection);
-        });
-
-        flowFreeBoard.innerHTML = flowFreeCells.map((row, rowIndex) => row.map((cell, colIndex) => {
-            const classes = ['flowfree-cell'];
-
-            if (cell.isAnchor) {
-                classes.push('is-anchor');
-            }
-
-            if (cell.color) {
-                classes.push('is-filled');
-            }
-
-            if (flowFreeActiveColor && cell.color === flowFreeActiveColor) {
-                classes.push('is-selected');
-            }
-
-            const connectionKey = `${rowIndex}-${colIndex}`;
-            const connection = connectionMap.get(connectionKey) || { top: 0, right: 0, bottom: 0, left: 0 };
-            const despawnConnection = flowFreeDespawning.get(connectionKey);
-            const top = connection.top;
-            const right = connection.right;
-            const bottom = connection.bottom;
-            const left = connection.left;
-
-            if (despawnConnection) {
-                classes.push('is-despawning');
-            }
-
-            if (flowFreeSpawning.has(connectionKey) && !despawnConnection) {
-                classes.push('is-spawning');
-            }
-
-            return `
-                <button
-                    type="button"
-                    class="${classes.join(' ')}"
-                    data-flow-row="${rowIndex}"
-                    data-flow-col="${colIndex}"
-                    style="
-                        --flow-color: ${(despawnConnection?.color || cell.color) || 'transparent'};
-                        --flow-top: ${top};
-                        --flow-right: ${right};
-                        --flow-bottom: ${bottom};
-                        --flow-left: ${left};
-                    "
-                ></button>
-            `;
-        }).join('')).join('');
-    }
-
-    function scheduleFlowFreeRender() {
-        if (flowFreeRenderFrame !== null) {
-            return;
-        }
-
-        flowFreeRenderFrame = window.requestAnimationFrame(() => {
-            renderFlowFree();
-        });
-    }
-
-    function buildFlowFreeConnectionMap(path, color) {
-        const connectionMap = new Map();
-
-        path.forEach((cell, index) => {
-            const key = `${cell.row}-${cell.col}`;
-            const connections = connectionMap.get(key) || { top: 0, right: 0, bottom: 0, left: 0, color };
-            const previousCell = path[index - 1];
-            const nextCell = path[index + 1];
-
-            [previousCell, nextCell].forEach((linkedCell) => {
-                if (!linkedCell) {
-                    return;
-                }
-
-                if (linkedCell.row === cell.row - 1 && linkedCell.col === cell.col) {
-                    connections.top = 1;
-                } else if (linkedCell.row === cell.row + 1 && linkedCell.col === cell.col) {
-                    connections.bottom = 1;
-                } else if (linkedCell.row === cell.row && linkedCell.col === cell.col - 1) {
-                    connections.left = 1;
-                } else if (linkedCell.row === cell.row && linkedCell.col === cell.col + 1) {
-                    connections.right = 1;
-                }
-            });
-
-            connectionMap.set(key, connections);
-        });
-
-        return connectionMap;
-    }
-
-    function despawnFlowFreePath(color) {
-        const path = flowFreePaths.get(color) || [];
-        if (path.length <= 1) {
-            return;
-        }
-
-        if (flowFreeDespawnTimer) {
-            window.clearTimeout(flowFreeDespawnTimer);
-            flowFreeDespawnTimer = null;
-        }
-
-        const despawnMap = buildFlowFreeConnectionMap(path, color);
-        const startCell = path[0];
-        despawnMap.delete(`${startCell.row}-${startCell.col}`);
-        flowFreeDespawning = despawnMap;
-        setFlowFreePath(color, [startCell]);
-        scheduleFlowFreeRender();
-
-        flowFreeDespawnTimer = window.setTimeout(() => {
-            flowFreeDespawning = new Map();
-            flowFreeDespawnTimer = null;
-            scheduleFlowFreeRender();
-        }, 220);
-    }
-
-    function getFlowFreeRulesText() {
-        return 'Clique une bou\u00e9e et trace un cordage color\u00e9 jusqu\u2019\u00e0 sa jumelle sans croiser les autres courants. Remplis toutes les cases du quai pour terminer la carte.';
-    }
-
-    function renderFlowFreeMenu() {
-        if (!flowFreeMenuOverlay || !flowFreeTable) return;
-        syncGameMenuOverlayBounds(flowFreeMenuOverlay, flowFreeTable);
-        flowFreeMenuOverlay.classList.toggle('hidden', !flowFreeMenuVisible);
-        flowFreeMenuOverlay.classList.toggle('is-closing', flowFreeMenuClosing);
-        flowFreeMenuOverlay.classList.toggle('is-entering', flowFreeMenuEntering);
-        flowFreeTable.classList.toggle('is-menu-open', flowFreeMenuVisible);
-        if (!flowFreeMenuVisible) return;
-        const hasResult = Boolean(flowFreeMenuResult);
-        if (flowFreeMenuEyebrow) flowFreeMenuEyebrow.textContent = flowFreeMenuShowingRules ? 'R\u00e8gles' : (hasResult ? flowFreeMenuResult.eyebrow : 'Cordages du quai');
-        if (flowFreeMenuTitle) flowFreeMenuTitle.textContent = flowFreeMenuShowingRules ? 'Rappel rapide' : (hasResult ? flowFreeMenuResult.title : 'Rope Line');
-        if (flowFreeMenuText) flowFreeMenuText.textContent = flowFreeMenuShowingRules ? getFlowFreeRulesText() : (hasResult ? flowFreeMenuResult.text : 'Relie chaque paire de bou\u00e9es avec un cordage color\u00e9 et remplis toutes les cases du quai.');
-        if (flowFreeMenuActionButton) flowFreeMenuActionButton.textContent = flowFreeMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer le trac\u00e9' : 'Lancer le trac\u00e9');
-        if (flowFreeMenuRulesButton) { flowFreeMenuRulesButton.textContent = 'R\u00e8gles'; flowFreeMenuRulesButton.hidden = flowFreeMenuShowingRules; }
-    }
-
-    function closeFlowFreeMenu() {
-        flowFreeMenuClosing = true;
-        renderFlowFreeMenu();
-        window.setTimeout(() => {
-            flowFreeMenuClosing = false;
-            flowFreeMenuVisible = false;
-            flowFreeMenuShowingRules = false;
-            flowFreeMenuEntering = false;
-            flowFreeMenuResult = null;
-            renderFlowFreeMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealFlowFreeOutcomeMenu(title, text, eyebrow) {
-        flowFreeMenuVisible = true;
-        flowFreeMenuResult = { title, text, eyebrow };
-        flowFreeMenuShowingRules = false;
-        flowFreeMenuClosing = false;
-        flowFreeMenuEntering = true;
-        if (flowFreeHelpText) flowFreeHelpText.textContent = text;
-        renderFlowFreeMenu();
-        window.setTimeout(() => { flowFreeMenuEntering = false; renderFlowFreeMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeFlowFree() {
-        closeGameOverModal();
-        flowFreeLevel = generateFlowFreeLevel();
-        flowFreeBoard.style.gridTemplateColumns = `repeat(${flowFreeLevel.size}, minmax(0, 1fr))`;
-        flowFreeCells = Array.from({ length: flowFreeLevel.size }, () => (
-            Array.from({ length: flowFreeLevel.size }, () => ({ color: null, isAnchor: false }))
-        ));
-        flowFreePaths = new Map();
-        flowFreeCompleted = new Set();
-        flowFreeMoves = 0;
-        flowFreeActiveColor = null;
-        flowFreePointerDown = false;
-        flowFreeLastHoverKey = null;
-        flowFreePendingTarget = null;
-        if (flowFreeCatchupFrame !== null) {
-            window.cancelAnimationFrame(flowFreeCatchupFrame);
-            flowFreeCatchupFrame = null;
-        }
-        flowFreeSpawning = new Set();
-        flowFreeSpawnTimers.forEach((timer) => window.clearTimeout(timer));
-        flowFreeSpawnTimers = new Map();
-        flowFreeDespawning = new Map();
-        if (flowFreeDespawnTimer) {
-            window.clearTimeout(flowFreeDespawnTimer);
-            flowFreeDespawnTimer = null;
-        }
-
-        flowFreeLevel.pairs.forEach((pair) => {
-            const startCell = flowFreeCells[pair.start.row][pair.start.col];
-            const endCell = flowFreeCells[pair.end.row][pair.end.col];
-            startCell.color = pair.color;
-            endCell.color = pair.color;
-            startCell.isAnchor = true;
-            endCell.isAnchor = true;
-            flowFreePaths.set(pair.color, [{ ...pair.start }]);
-        });
-
-        flowFreeHelpText.textContent = 'Relie chaque paire sans croiser les courants et couvre toutes les cases du plateau.';
-        flowFreeMenuResult = null;
-        flowFreeMenuShowingRules = false;
-        flowFreeMenuClosing = false;
-        flowFreeMenuEntering = false;
-        renderFlowFreeMenu();
-        renderFlowFree();
-    }
-
-    function startFlowFreePath(row, col) {
-        const cell = flowFreeCells[row][col];
-        if (!cell?.color) {
-            return;
-        }
-
-        const existingPath = flowFreePaths.get(cell.color) || [];
-        const existingIndex = existingPath.findIndex((pathCell) => pathCell.row === row && pathCell.col === col);
-
-        flowFreeMoves += 1;
-        flowFreeActiveColor = cell.color;
-        flowFreePointerDown = true;
-        flowFreeCompleted.delete(cell.color);
-        setFlowFreePath(
-            cell.color,
-            cell.isAnchor
-                ? [{ row, col }]
-                : existingIndex >= 0
-                    ? existingPath.slice(0, existingIndex + 1)
-                    : [{ row, col }]
-        );
-        flowFreeLastHoverKey = `${row}-${col}`;
-        flowFreeHelpText.textContent = "Trace maintenant le courant jusqu'à la bouée jumelle.";
-        scheduleFlowFreeRender();
-    }
-
-    function extendFlowFreePathStep(row, col, options = {}) {
-        const { deferRender = false } = options;
-        if (!flowFreePointerDown || !flowFreeActiveColor) {
-            return 'inactive';
-        }
-
-        const path = flowFreePaths.get(flowFreeActiveColor) || [];
-        const lastCell = path[path.length - 1];
-
-        if (!lastCell) {
-            return 'blocked';
-        }
-
-        const distance = Math.abs(lastCell.row - row) + Math.abs(lastCell.col - col);
-        if (distance !== 1) {
-            return 'blocked';
-        }
-
-        const targetCell = flowFreeCells[row][col];
-        if (!targetCell) {
-            return 'blocked';
-        }
-
-        const hoverKey = `${row}-${col}`;
-        if (flowFreeLastHoverKey === hoverKey) {
-            return 'duplicate';
-        }
-        flowFreeLastHoverKey = hoverKey;
-
-        const existingIndex = path.findIndex((cell) => cell.row === row && cell.col === col);
-        if (existingIndex >= 0) {
-            setFlowFreePath(flowFreeActiveColor, path.slice(0, existingIndex + 1));
-            flowFreeCompleted.delete(flowFreeActiveColor);
-            if (!deferRender) {
-                scheduleFlowFreeRender();
-            }
-            return 'advanced';
-        }
-
-        if (targetCell.color && targetCell.color !== flowFreeActiveColor) {
-            return 'blocked';
-        }
-
-        const pair = getFlowFreePairByColor(flowFreeActiveColor);
-        if (!pair) {
-            return 'blocked';
-        }
-
-        const isOtherAnchor = targetCell.isAnchor
-            && ((row === pair.start.row && col === pair.start.col) || (row === pair.end.row && col === pair.end.col));
-
-        if (targetCell.isAnchor && !isOtherAnchor) {
-            return 'blocked';
-        }
-
-        const nextPath = [...path, { row, col }];
-        setFlowFreePath(flowFreeActiveColor, nextPath);
-
-        const startCell = nextPath[0];
-        const reachedEnd = (startCell.row === pair.start.row && startCell.col === pair.start.col
-            && row === pair.end.row && col === pair.end.col)
-            || (startCell.row === pair.end.row && startCell.col === pair.end.col
-            && row === pair.start.row && col === pair.start.col);
-
-        if (!targetCell.isAnchor) {
-            animateFlowFreeCellAppearance(row, col, flowFreeActiveColor);
-        }
-
-        if (reachedEnd) {
-            renderFlowFree();
-            animateFlowFreeCompletedPath(nextPath, flowFreeActiveColor);
-            flowFreeCompleted.add(flowFreeActiveColor);
-            flowFreeHelpText.textContent = 'Un courant est ferme. Plus que quelques liaisons.';
-
-            const allCellsFilled = flowFreeCells.every((rowCells) => rowCells.every((cell) => Boolean(cell.color)));
-            if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
-                flowFreeHelpText.textContent = 'Tous les courants sont reliés. Le port est sécurisé.';
-                renderFlowFree();
-                revealFlowFreeOutcomeMenu('Courants reliés', `Toutes les liaisons sont terminées en ${flowFreeMoves} tracés.`, 'Port sécurisé');
-                flowFreePointerDown = false;
-                flowFreeActiveColor = null;
-                flowFreeLastHoverKey = null;
-                return 'completed';
-            }
-            flowFreeHelpText.textContent = allCellsFilled
-                ? 'Toutes les cases sont remplies. Termine les dernieres liaisons.'
-                : 'Un courant est ferme. Les cases libres doivent aussi etre couvertes.';
-            flowFreePointerDown = false;
-            flowFreeActiveColor = null;
-            flowFreeLastHoverKey = null;
-            if (!deferRender) {
-                scheduleFlowFreeRender();
-            }
-            return 'completed';
-        } else {
-            flowFreeCompleted.delete(flowFreeActiveColor);
-        }
-
-        if (!deferRender) {
-            scheduleFlowFreeRender();
-        }
-        return 'advanced';
-    }
-
-    function extendFlowFreePath(row, col) {
-        if (!flowFreePointerDown || !flowFreeActiveColor) {
-            return;
-        }
-        flowFreePendingTarget = { row, col };
-
-        if (flowFreeCatchupFrame === null) {
-            processFlowFreePendingPath();
-        }
-    }
-
-    function flushFlowFreePendingTarget() {
-        if (!flowFreePointerDown || !flowFreeActiveColor || !flowFreePendingTarget) {
-            return;
-        }
-
-        while (flowFreePointerDown && flowFreeActiveColor && flowFreePendingTarget) {
-            const stepResult = processFlowFreePendingPathSync();
-            if (stepResult !== 'advanced') {
-                break;
-            }
-        }
-    }
-
-    function finalizeFlowFreePathIfComplete(color) {
-        if (!color) {
-            return false;
-        }
-
-        const pair = getFlowFreePairByColor(color);
-        const path = flowFreePaths.get(color) || [];
-        const startCell = path[0];
-        const endCell = path[path.length - 1];
-
-        if (!pair || !startCell || !endCell) {
-            return false;
-        }
-
-        const connectsAnchors = (
-            startCell.row === pair.start.row
-            && startCell.col === pair.start.col
-            && endCell.row === pair.end.row
-            && endCell.col === pair.end.col
-        ) || (
-            startCell.row === pair.end.row
-            && startCell.col === pair.end.col
-            && endCell.row === pair.start.row
-            && endCell.col === pair.start.col
-        );
-
-        if (!connectsAnchors) {
-            return false;
-        }
-
-        renderFlowFree();
-        animateFlowFreeCompletedPath(path, color);
-        flowFreeCompleted.add(color);
-
-        const allCellsFilled = flowFreeCells.every((rowCells) => rowCells.every((cell) => Boolean(cell.color)));
-        flowFreeHelpText.textContent = allCellsFilled
-            ? 'Toutes les cases sont remplies. Termine les dernieres liaisons.'
-            : 'Un courant est ferme. Les cases libres doivent aussi etre couvertes.';
-
-        if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
-            flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
-            renderFlowFree();
-            openGameOverModal('Courants reliés', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracés.`);
-        }
-
-        return true;
-    }
-
-    function snapFlowFreePathToMatchingAnchor(color) {
-        if (!color) {
-            return;
-        }
-
-        const pair = getFlowFreePairByColor(color);
-        const path = flowFreePaths.get(color) || [];
-        const startCell = path[0];
-        const endCell = path[path.length - 1];
-
-        if (!pair || !startCell || !endCell) {
-            return;
-        }
-
-        const targetAnchor = (startCell.row === pair.start.row && startCell.col === pair.start.col)
-            ? pair.end
-            : pair.start;
-
-        if (endCell.row === targetAnchor.row && endCell.col === targetAnchor.col) {
-            return;
-        }
-
-        const distance = Math.abs(endCell.row - targetAnchor.row) + Math.abs(endCell.col - targetAnchor.col);
-        if (distance !== 1) {
-            return;
-        }
-
-        setFlowFreePath(color, [...path, { row: targetAnchor.row, col: targetAnchor.col }]);
-    }
-
-    function processFlowFreePendingPathSync() {
-        if (!flowFreePointerDown || !flowFreeActiveColor || !flowFreePendingTarget) {
-            return 'inactive';
-        }
-
-        const path = flowFreePaths.get(flowFreeActiveColor) || [];
-        const lastCell = path[path.length - 1];
-
-        if (!lastCell) {
-            flowFreePendingTarget = null;
-            return 'inactive';
-        }
-
-        const rowDiff = flowFreePendingTarget.row - lastCell.row;
-        const colDiff = flowFreePendingTarget.col - lastCell.col;
-        const distance = Math.abs(rowDiff) + Math.abs(colDiff);
-
-        if (distance === 0) {
-            flowFreePendingTarget = null;
-            return 'inactive';
-        }
-
-        const nextRow = rowDiff !== 0 && Math.abs(rowDiff) >= Math.abs(colDiff)
-            ? lastCell.row + Math.sign(rowDiff)
-            : lastCell.row;
-        const nextCol = nextRow === lastCell.row
-            ? lastCell.col + Math.sign(colDiff)
-            : lastCell.col;
-
-        const stepResult = extendFlowFreePathStep(nextRow, nextCol, { deferRender: true });
-        scheduleFlowFreeRender();
-
-        if (stepResult === 'completed' || stepResult === 'inactive') {
-            flowFreePendingTarget = null;
-            return stepResult;
-        }
-
-        if (stepResult !== 'advanced') {
-            flowFreePendingTarget = null;
-            return stepResult;
-        }
-
-        const updatedPath = flowFreePaths.get(flowFreeActiveColor) || [];
-        const updatedLastCell = updatedPath[updatedPath.length - 1];
-        if (!updatedLastCell) {
-            flowFreePendingTarget = null;
-            return 'inactive';
-        }
-
-        const remainingDistance = Math.abs(flowFreePendingTarget.row - updatedLastCell.row)
-            + Math.abs(flowFreePendingTarget.col - updatedLastCell.col);
-
-        if (remainingDistance === 0) {
-            flowFreePendingTarget = null;
-        }
-
-        return 'advanced';
-    }
-
-    function stopFlowFreePath() {
-        const activeColor = flowFreeActiveColor;
-        snapFlowFreePathToMatchingAnchor(activeColor);
-        const completedOnRelease = finalizeFlowFreePathIfComplete(activeColor);
-        flowFreePointerDown = false;
-        flowFreeActiveColor = null;
-        flowFreeLastHoverKey = null;
-        flowFreePendingTarget = null;
-        if (flowFreeCatchupFrame !== null) {
-            window.cancelAnimationFrame(flowFreeCatchupFrame);
-            flowFreeCatchupFrame = null;
-        }
-        if (!completedOnRelease && activeColor && !flowFreeCompleted.has(activeColor)) {
-            despawnFlowFreePath(activeColor);
-            return;
-        }
-
-        scheduleFlowFreeRender();
-    }
-
-    function animateFlowFreeCellAppearance(row, col, color) {
-        window.requestAnimationFrame(() => {
-            window.requestAnimationFrame(() => {
-                const cellElement = flowFreeBoard?.querySelector(`[data-flow-row="${row}"][data-flow-col="${col}"]`);
-                if (!cellElement || typeof cellElement.animate !== 'function') {
-                    return;
-                }
-
-                cellElement.animate([
-                    {
-                        transform: 'scale(0.72)',
-                        opacity: 0.55,
-                        boxShadow: `0 0 0 0 ${color}00`
-                    },
-                    {
-                        transform: 'scale(1.08)',
-                        opacity: 1,
-                        boxShadow: `0 0 0 10px ${color}33`
-                    },
-                    {
-                        transform: 'scale(1)',
-                        opacity: 1,
-                        boxShadow: `0 0 0 0 ${color}00`
-                    }
-                ], {
-                    duration: 220,
-                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
-                });
-            });
-        });
-    }
-
-    function animateFlowFreeCompletedPath(path, color) {
-        flowFreeCompletionAnimationToken += 1;
-        const animationToken = flowFreeCompletionAnimationToken;
-
-        const getPathElements = () => path.map((cell) => (
-            flowFreeBoard?.querySelector(`[data-flow-row="${cell.row}"][data-flow-col="${cell.col}"]`)
-        ));
-
-        const runAnimation = (elements) => {
-            if (animationToken !== flowFreeCompletionAnimationToken) {
-                return;
-            }
-
-            elements.forEach((cellElement, index) => {
-                if (!cellElement || typeof cellElement.animate !== 'function') {
-                    return;
-                }
-
-                cellElement.getAnimations?.().forEach((animation) => animation.cancel());
-                cellElement.animate([
-                    {
-                        transform: 'scale(1)',
-                        boxShadow: `0 0 0 0 ${color}00`,
-                        filter: 'brightness(1)'
-                    },
-                    {
-                        transform: 'scale(1.12)',
-                        boxShadow: `0 0 0 12px ${color}40`,
-                        filter: 'brightness(1.18)'
-                    },
-                    {
-                        transform: 'scale(1)',
-                        boxShadow: `0 0 0 0 ${color}00`,
-                        filter: 'brightness(1)'
-                    }
-                ], {
-                    duration: 360,
-                    delay: index * 26,
-                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-                    fill: 'both'
-                });
-            });
-        };
-
-        const startWhenReady = (attempt = 0) => {
-            if (animationToken !== flowFreeCompletionAnimationToken) {
-                return;
-            }
-
-            window.requestAnimationFrame(() => {
-                if (animationToken !== flowFreeCompletionAnimationToken) {
-                    return;
-                }
-
-                const elements = getPathElements();
-                if (elements.some((element) => !element)) {
-                    if (attempt < 5) {
-                        startWhenReady(attempt + 1);
-                    }
-                    return;
-                }
-
-                runAnimation(elements);
-                window.requestAnimationFrame(() => {
-                    if (animationToken !== flowFreeCompletionAnimationToken) {
-                        return;
-                    }
-
-                    runAnimation(elements);
-                    window.requestAnimationFrame(() => {
-                        if (animationToken !== flowFreeCompletionAnimationToken) {
-                            return;
-                        }
-
-                        runAnimation(elements);
-                    });
-                });
-            });
-        };
-
-        startWhenReady();
-
-        window.setTimeout(() => {
-            if (animationToken !== flowFreeCompletionAnimationToken) {
-                return;
-            }
-
-            const elements = getPathElements();
-            if (elements.some((element) => !element)) {
-                return;
-            }
-
-            runAnimation(elements);
-        }, 48);
-    }
-
-    function processFlowFreePendingPath() {
-        flowFreeCatchupFrame = null;
-        const stepResult = processFlowFreePendingPathSync();
-        if (stepResult !== 'advanced' || !flowFreePendingTarget) {
-            return;
-        }
-
-        flowFreeCatchupFrame = window.requestAnimationFrame(processFlowFreePendingPath);
-    }
-
-
-    function updateMagicSortHud() {
-        const solvedTubes = magicSortTubes.filter((tube) => (
-            tube.length === 4 && tube.every((color) => color === tube[0])
-        )).length;
-        const targetTubes = new Set(magicSortTubes.flat().filter(Boolean)).size;
-
-        magicSortSolvedDisplay.textContent = `${solvedTubes} / ${targetTubes}`;
-        magicSortMovesDisplay.textContent = String(magicSortMoves);
-    }
-
-    function renderMagicSort() {
-        updateMagicSortHud();
-        magicSortBoard.innerHTML = magicSortTubes.map((tube, tubeIndex) => {
-            const slots = Array.from({ length: 4 }, (_, slotIndex) => {
-                const color = tube[slotIndex];
-                const fill = color ? MAGIC_SORT_COLORS[color] : 'rgba(255, 255, 255, 0.06)';
-                return `<span class="magicsort-layer" style="background: ${fill};"></span>`;
-            }).join('');
-
-            return `
-                <div class="magicsort-tube${magicSortSelectedTube === tubeIndex ? ' is-selected' : ''}">
-                    <button type="button" class="magicsort-tube-button" data-magic-sort-tube="${tubeIndex}">
-                        ${slots}
-                    </button>
-                </div>
-            `;
-        }).join('');
-    }
-
-    function getMagicSortRulesText() {
-        return 'Clique une fiole pour la s\u00e9lectionner, puis une autre pour y verser le liquide du dessus. Tu ne peux verser que sur une couleur identique (ou sur une fiole vide). Termine la carte quand chaque fiole ne contient qu\u2019une seule couleur.';
-    }
-
-    function renderMagicSortMenu() {
-        if (!magicSortMenuOverlay || !magicSortTable) return;
-        syncGameMenuOverlayBounds(magicSortMenuOverlay, magicSortTable);
-        magicSortMenuOverlay.classList.toggle('hidden', !magicSortMenuVisible);
-        magicSortMenuOverlay.classList.toggle('is-closing', magicSortMenuClosing);
-        magicSortMenuOverlay.classList.toggle('is-entering', magicSortMenuEntering);
-        magicSortTable.classList.toggle('is-menu-open', magicSortMenuVisible);
-        if (!magicSortMenuVisible) return;
-        const hasResult = Boolean(magicSortMenuResult);
-        if (magicSortMenuEyebrow) magicSortMenuEyebrow.textContent = magicSortMenuShowingRules ? 'R\u00e8gles' : (hasResult ? magicSortMenuResult.eyebrow : 'Fioles du vieux navigateur');
-        if (magicSortMenuTitle) magicSortMenuTitle.textContent = magicSortMenuShowingRules ? 'Rappel rapide' : (hasResult ? magicSortMenuResult.title : 'Magic Sort');
-        if (magicSortMenuText) magicSortMenuText.textContent = magicSortMenuShowingRules ? getMagicSortRulesText() : (hasResult ? magicSortMenuResult.text : 'Verse les couleurs dans les fioles jusqu\u2019\u00e0 ce que chacune n\u2019en contienne plus qu\u2019une.');
-        if (magicSortMenuActionButton) magicSortMenuActionButton.textContent = magicSortMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer le tri' : 'Lancer le tri');
-        if (magicSortMenuRulesButton) { magicSortMenuRulesButton.textContent = 'R\u00e8gles'; magicSortMenuRulesButton.hidden = magicSortMenuShowingRules; }
-    }
-
-    function closeMagicSortMenu() {
-        magicSortMenuClosing = true;
-        renderMagicSortMenu();
-        window.setTimeout(() => {
-            magicSortMenuClosing = false;
-            magicSortMenuVisible = false;
-            magicSortMenuShowingRules = false;
-            magicSortMenuEntering = false;
-            magicSortMenuResult = null;
-            renderMagicSortMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealMagicSortOutcomeMenu(title, text, eyebrow) {
-        magicSortMenuVisible = true;
-        magicSortMenuResult = { title, text, eyebrow };
-        magicSortMenuShowingRules = false;
-        magicSortMenuClosing = false;
-        magicSortMenuEntering = true;
-        if (magicSortHelpText) magicSortHelpText.textContent = text;
-        renderMagicSortMenu();
-        window.setTimeout(() => { magicSortMenuEntering = false; renderMagicSortMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeMagicSort() {
-        closeGameOverModal();
-        magicSortTubes = generateMagicSortLevel();
-        magicSortSelectedTube = null;
-        magicSortMoves = 0;
-        magicSortHelpText.textContent = "Verse les couleurs d'un récipient à l'autre pour obtenir des tubes uniformes. Chaque partie mélange les fioles différemment.";
-        magicSortMenuResult = null;
-        magicSortMenuShowingRules = false;
-        magicSortMenuClosing = false;
-        magicSortMenuEntering = false;
-        renderMagicSortMenu();
-        renderMagicSort();
-    }
-
-    function isMagicSortSolved() {
-        return magicSortTubes.every((tube) => (
-            tube.length === 0 || (tube.length === 4 && tube.every((color) => color === tube[0]))
-        ));
-    }
-
-    function handleMagicSortTubeClick(index) {
-        const sourceTube = magicSortTubes[index];
-
-        if (magicSortSelectedTube === null) {
-            if (!sourceTube.length) {
-                return;
-            }
-
-            magicSortSelectedTube = index;
-            magicSortHelpText.textContent = 'Choisis maintenant le tube de destination.';
-            renderMagicSort();
-            return;
-        }
-
-        if (magicSortSelectedTube === index) {
-            magicSortSelectedTube = null;
-            magicSortHelpText.textContent = 'Sélection annulée.';
-            renderMagicSort();
-            return;
-        }
-
-        const fromTube = magicSortTubes[magicSortSelectedTube];
-        const toTube = magicSortTubes[index];
-
-        if (!fromTube.length || toTube.length === 4) {
-            magicSortSelectedTube = null;
-            renderMagicSort();
-            return;
-        }
-
-        const movingColor = fromTube[fromTube.length - 1];
-        const topTarget = toTube[toTube.length - 1];
-        if (topTarget && topTarget !== movingColor) {
-            magicSortHelpText.textContent = 'Les couleurs doivent correspondre pour verser.';
-            magicSortSelectedTube = null;
-            renderMagicSort();
-            return;
-        }
-
-        let contiguousCount = 0;
-        for (let cursor = fromTube.length - 1; cursor >= 0; cursor -= 1) {
-            if (fromTube[cursor] !== movingColor) {
-                break;
-            }
-            contiguousCount += 1;
-        }
-
-        const movableCount = Math.min(contiguousCount, 4 - toTube.length);
-        if (!movableCount) {
-            magicSortSelectedTube = null;
-            renderMagicSort();
-            return;
-        }
-
-        for (let step = 0; step < movableCount; step += 1) {
-            toTube.push(fromTube.pop());
-        }
-
-        magicSortMoves += 1;
-        magicSortSelectedTube = null;
-        magicSortHelpText.textContent = 'Bien joue. Continue de trier les fioles.';
-        renderMagicSort();
-
-        if (isMagicSortSolved()) {
-            magicSortHelpText.textContent = 'Toutes les fioles sont rangées.';
-            revealMagicSortOutcomeMenu(
-                'Fioles rangées',
-                `Toutes les couleurs ont été triées en ${magicSortMoves} coups.`,
-                'Alchimie réussie'
-            );
-        }
-    }
-
-    function getRandomCandyType() {
-        return CANDY_CRUSH_TYPES[Math.floor(Math.random() * CANDY_CRUSH_TYPES.length)];
-    }
-
-    function updateCandyCrushHud() {
-        candyCrushScoreDisplay.textContent = String(candyCrushScore);
-        candyCrushMovesDisplay.textContent = String(candyCrushMoves);
-    }
-
-    function renderCandyCrush() {
-        updateCandyCrushHud();
-        candyCrushBoard.innerHTML = candyCrushGrid.map((row, rowIndex) => row.map((cell, colIndex) => `
-            <button
-                type="button"
-                class="candycrush-cell${candyCrushSelectedCell?.row === rowIndex && candyCrushSelectedCell?.col === colIndex ? ' is-selected' : ''}"
-                data-candy-row="${rowIndex}"
-                data-candy-col="${colIndex}"
-                data-candy-type="${cell}"
-                style="--candy-fill: ${CANDY_CRUSH_COLORS[cell]}"
-            ></button>
-        `).join('')).join('');
-    }
-
-    async function animateCandyCrushFall(changedKeys = new Set()) {
-        changedKeys.forEach((key) => {
-            const [row, col] = key.split('-');
-            const element = candyCrushBoard.querySelector(`[data-candy-row="${row}"][data-candy-col="${col}"]`);
-            element?.classList.add('is-falling');
-        });
-
-        await waitMs(220);
-    }
-
-    function findCandyCrushMatches() {
-        const matches = new Set();
-
-        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
-            let streak = 1;
-
-            for (let colIndex = 1; colIndex <= CANDY_CRUSH_SIZE; colIndex += 1) {
-                const current = candyCrushGrid[rowIndex][colIndex];
-                const previous = candyCrushGrid[rowIndex][colIndex - 1];
-
-                if (current && current === previous) {
-                    streak += 1;
-                } else {
-                    if (streak >= 3) {
-                        for (let offset = 1; offset <= streak; offset += 1) {
-                            matches.add(`${rowIndex}-${colIndex - offset}`);
-                        }
-                    }
-                    streak = 1;
-                }
-            }
-        }
-
-        for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
-            let streak = 1;
-
-            for (let rowIndex = 1; rowIndex <= CANDY_CRUSH_SIZE; rowIndex += 1) {
-                const current = candyCrushGrid[rowIndex]?.[colIndex];
-                const previous = candyCrushGrid[rowIndex - 1]?.[colIndex];
-
-                if (current && current === previous) {
-                    streak += 1;
-                } else {
-                    if (streak >= 3) {
-                        for (let offset = 1; offset <= streak; offset += 1) {
-                            matches.add(`${rowIndex - offset}-${colIndex}`);
-                        }
-                    }
-                    streak = 1;
-                }
-            }
-        }
-
-        return matches;
-    }
-
-    function collapseCandyCrushGrid() {
-        const previousGrid = candyCrushGrid.map((row) => [...row]);
-        const changedKeys = new Set();
-
-        for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
-            const compacted = [];
-
-            for (let rowIndex = CANDY_CRUSH_SIZE - 1; rowIndex >= 0; rowIndex -= 1) {
-                const cell = candyCrushGrid[rowIndex][colIndex];
-                if (cell) {
-                    compacted.push(cell);
-                }
-            }
-
-            for (let rowIndex = CANDY_CRUSH_SIZE - 1; rowIndex >= 0; rowIndex -= 1) {
-                candyCrushGrid[rowIndex][colIndex] = compacted[CANDY_CRUSH_SIZE - 1 - rowIndex] || null;
-            }
-
-            for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
-                if (!candyCrushGrid[rowIndex][colIndex]) {
-                    candyCrushGrid[rowIndex][colIndex] = getRandomCandyType();
-                }
-            }
-        }
-
-        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
-            for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
-                if (candyCrushGrid[rowIndex][colIndex] !== previousGrid[rowIndex][colIndex]) {
-                    changedKeys.add(`${rowIndex}-${colIndex}`);
-                }
-            }
-        }
-
-        return changedKeys;
-    }
-
-    function hasCandyCrushPossibleMove() {
-        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
-            for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
-                const directions = [
-                    { row: 0, col: 1 },
-                    { row: 1, col: 0 }
-                ];
-
-                for (const direction of directions) {
-                    const nextRow = rowIndex + direction.row;
-                    const nextCol = colIndex + direction.col;
-
-                    if (nextRow >= CANDY_CRUSH_SIZE || nextCol >= CANDY_CRUSH_SIZE) {
-                        continue;
-                    }
-
-                    swapCandyCells({ row: rowIndex, col: colIndex }, { row: nextRow, col: nextCol });
-                    const hasMatch = findCandyCrushMatches().size > 0;
-                    swapCandyCells({ row: rowIndex, col: colIndex }, { row: nextRow, col: nextCol });
-
-                    if (hasMatch) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    function shuffleCandyCrushBoard() {
-        const candies = shuffleArray(candyCrushGrid.flat());
-        let cursor = 0;
-
-        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
-            for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
-                candyCrushGrid[rowIndex][colIndex] = candies[cursor];
-                cursor += 1;
-            }
-        }
-    }
-
-    function ensureCandyCrushPlayable() {
-        let attempts = 0;
-
-        while ((!hasCandyCrushPossibleMove() || findCandyCrushMatches().size > 0) && attempts < 20) {
-            shuffleCandyCrushBoard();
-            attempts += 1;
-        }
-    }
-
-    function resolveCandyCrushBoard() {
-        let chainCount = 0;
-
-        while (true) {
-            const matches = findCandyCrushMatches();
-            if (!matches.size) {
-                break;
-            }
-
-            chainCount += 1;
-            candyCrushScore += matches.size * (10 * chainCount);
-            matches.forEach((key) => {
-                const [row, col] = key.split('-').map(Number);
-                candyCrushGrid[row][col] = null;
-            });
-            collapseCandyCrushGrid();
-        }
-    }
-
-    function getCandyCrushRulesText() {
-        return 'Fais glisser une pi\u00e8ce vers une case voisine pour former un alignement de 3 tr\u00e9sors identiques ou plus. Chaque alignement casse la ligne et fait tomber la cale. Atteins l\u2019objectif de score avant d\u2019\u00e9puiser tes coups.';
-    }
-
-    function renderCandyCrushMenu() {
-        if (!candyCrushMenuOverlay || !candyCrushTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(candyCrushMenuOverlay, candyCrushTable);
-        candyCrushMenuOverlay.classList.toggle('hidden', !candyCrushMenuVisible);
-        candyCrushMenuOverlay.classList.toggle('is-closing', candyCrushMenuClosing);
-        candyCrushMenuOverlay.classList.toggle('is-entering', candyCrushMenuEntering);
-        candyCrushTable.classList.toggle('is-menu-open', candyCrushMenuVisible);
-
-        if (!candyCrushMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(candyCrushMenuResult);
-
-        if (candyCrushMenuEyebrow) {
-            candyCrushMenuEyebrow.textContent = candyCrushMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? candyCrushMenuResult.eyebrow : 'Cale \u00e0 confiseries marines');
-        }
-
-        if (candyCrushMenuTitle) {
-            candyCrushMenuTitle.textContent = candyCrushMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? candyCrushMenuResult.title : 'Coin Crush');
-        }
-
-        if (candyCrushMenuText) {
-            candyCrushMenuText.textContent = candyCrushMenuShowingRules
-                ? getCandyCrushRulesText()
-                : (hasResult
-                    ? candyCrushMenuResult.text
-                    : 'Glisse les tr\u00e9sors marins pour former des alignements de 3 ou plus avant d\u2019\u00e9puiser ta r\u00e9serve de coups.');
-        }
-
-        if (candyCrushMenuActionButton) {
-            candyCrushMenuActionButton.textContent = candyCrushMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la cale' : 'Lancer la cale');
-        }
-
-        if (candyCrushMenuRulesButton) {
-            candyCrushMenuRulesButton.textContent = 'R\u00e8gles';
-            candyCrushMenuRulesButton.hidden = candyCrushMenuShowingRules;
-        }
-    }
-
-    function closeCandyCrushMenu() {
-        candyCrushMenuClosing = true;
-        renderCandyCrushMenu();
-        window.setTimeout(() => {
-            candyCrushMenuClosing = false;
-            candyCrushMenuVisible = false;
-            candyCrushMenuShowingRules = false;
-            candyCrushMenuEntering = false;
-            candyCrushMenuResult = null;
-            renderCandyCrushMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealCandyCrushOutcomeMenu(title, text, eyebrow) {
-        candyCrushMenuVisible = true;
-        candyCrushMenuResult = { title, text, eyebrow };
-        candyCrushMenuShowingRules = false;
-        candyCrushMenuClosing = false;
-        candyCrushMenuEntering = true;
-
-        if (candyCrushHelpText) {
-            candyCrushHelpText.textContent = text;
-        }
-
-        renderCandyCrushMenu();
-        window.setTimeout(() => {
-            candyCrushMenuEntering = false;
-            renderCandyCrushMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeCandyCrush() {
-        closeGameOverModal();
-        candyCrushGrid = Array.from({ length: CANDY_CRUSH_SIZE }, () => Array(CANDY_CRUSH_SIZE).fill(null));
-
-        for (let rowIndex = 0; rowIndex < CANDY_CRUSH_SIZE; rowIndex += 1) {
-            for (let colIndex = 0; colIndex < CANDY_CRUSH_SIZE; colIndex += 1) {
-                let nextCandy = getRandomCandyType();
-                while (
-                    (colIndex >= 2 && nextCandy === candyCrushGrid[rowIndex][colIndex - 1] && nextCandy === candyCrushGrid[rowIndex][colIndex - 2])
-                    || (rowIndex >= 2 && nextCandy === candyCrushGrid[rowIndex - 1][colIndex] && nextCandy === candyCrushGrid[rowIndex - 2][colIndex])
-                ) {
-                    nextCandy = getRandomCandyType();
-                }
-                candyCrushGrid[rowIndex][colIndex] = nextCandy;
-            }
-        }
-
-        candyCrushSelectedCell = null;
-        candyCrushScore = 0;
-        candyCrushMoves = CANDY_CRUSH_START_MOVES;
-        candyCrushAnimating = false;
-        candyCrushPointerStart = null;
-        candyCrushMenuResult = null;
-        candyCrushMenuShowingRules = false;
-        candyCrushMenuClosing = false;
-        candyCrushMenuEntering = false;
-        ensureCandyCrushPlayable();
-        candyCrushHelpText.textContent = 'Fais glisser une pi\u00e8ce vers une voisine pour former des alignements de 3 tr\u00e9sors ou plus.';
-        renderCandyCrush();
-        renderCandyCrushMenu();
-    }
-
-    function areCandyCellsAdjacent(firstCell, secondCell) {
-        return Math.abs(firstCell.row - secondCell.row) + Math.abs(firstCell.col - secondCell.col) === 1;
-    }
-
-    function swapCandyCells(firstCell, secondCell) {
-        const temp = candyCrushGrid[firstCell.row][firstCell.col];
-        candyCrushGrid[firstCell.row][firstCell.col] = candyCrushGrid[secondCell.row][secondCell.col];
-        candyCrushGrid[secondCell.row][secondCell.col] = temp;
-    }
-
-    async function animateCandyCrushSwap(firstCell, secondCell, revert = false) {
-        const firstElement = candyCrushBoard.querySelector(`[data-candy-row="${firstCell.row}"][data-candy-col="${firstCell.col}"]`);
-        const secondElement = candyCrushBoard.querySelector(`[data-candy-row="${secondCell.row}"][data-candy-col="${secondCell.col}"]`);
-        if (!firstElement || !secondElement) {
-            return;
-        }
-
-        const firstRect = firstElement.getBoundingClientRect();
-        const secondRect = secondElement.getBoundingClientRect();
-        const deltaX = secondRect.left - firstRect.left;
-        const deltaY = secondRect.top - firstRect.top;
-
-        firstElement.style.transition = 'transform 180ms ease';
-        secondElement.style.transition = 'transform 180ms ease';
-        firstElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-        secondElement.style.transform = `translate(${-deltaX}px, ${-deltaY}px)`;
-        if (revert) {
-            firstElement.classList.add('is-bouncing');
-            secondElement.classList.add('is-bouncing');
-        }
-
-        await waitMs(190);
-    }
-
-    async function animateCandyCrushMatches(matches) {
-        matches.forEach((key) => {
-            const [row, col] = key.split('-');
-            const element = candyCrushBoard.querySelector(`[data-candy-row="${row}"][data-candy-col="${col}"]`);
-            if (element) {
-                element.classList.add('is-crushing');
-                element.insertAdjacentHTML('beforeend', `
-                    <span class="candy-hit-particle candy-hit-particle-a" aria-hidden="true"></span>
-                    <span class="candy-hit-particle candy-hit-particle-b" aria-hidden="true"></span>
-                    <span class="candy-hit-particle candy-hit-particle-c" aria-hidden="true"></span>
-                    <span class="candy-hit-particle candy-hit-particle-d" aria-hidden="true"></span>
-                    <span class="candy-hit-particle candy-hit-particle-e" aria-hidden="true"></span>
-                `);
-            }
-        });
-
-        await waitMs(320);
-    }
-
-    async function resolveCandyCrushBoardAnimated() {
-        let chainCount = 0;
-
-        while (true) {
-            const matches = findCandyCrushMatches();
-            if (!matches.size) {
-                break;
-            }
-
-            chainCount += 1;
-            await animateCandyCrushMatches(matches);
-            candyCrushScore += matches.size * (10 * chainCount);
-            matches.forEach((key) => {
-                const [row, col] = key.split('-').map(Number);
-                candyCrushGrid[row][col] = null;
-            });
-            const changedKeys = collapseCandyCrushGrid();
-            renderCandyCrush();
-            await animateCandyCrushFall(changedKeys);
-        }
-    }
-
-    async function tryCandyCrushSwap(firstCell, secondCell) {
-        if (candyCrushAnimating || candyCrushMoves <= 0) {
-            return;
-        }
-
-        if (!areCandyCellsAdjacent(firstCell, secondCell)) {
-            candyCrushSelectedCell = secondCell;
-            renderCandyCrush();
-            return;
-        }
-
-        candyCrushAnimating = true;
-        candyCrushSelectedCell = null;
-        await animateCandyCrushSwap(firstCell, secondCell);
-        swapCandyCells(firstCell, secondCell);
-        renderCandyCrush();
-        const matches = findCandyCrushMatches();
-
-        if (!matches.size) {
-            await animateCandyCrushSwap(secondCell, firstCell, true);
-            swapCandyCells(firstCell, secondCell);
-            renderCandyCrush();
-            candyCrushHelpText.textContent = 'Aucun alignement. Essaie un autre glissement.';
-            candyCrushAnimating = false;
-            return;
-        }
-
-        candyCrushMoves -= 1;
-        candyCrushHelpText.textContent = 'Belle combinaison. Les tresors s effondrent dans la cale.';
-        renderCandyCrush();
-        await resolveCandyCrushBoardAnimated();
-        ensureCandyCrushPlayable();
-        renderCandyCrush();
-        candyCrushAnimating = false;
-
-        if (candyCrushScore >= CANDY_CRUSH_TARGET_SCORE) {
-            revealCandyCrushOutcomeMenu(
-                'Cale vidée',
-                `Objectif atteint avec ${candyCrushScore} points. Coups restants : ${candyCrushMoves}.`,
-                'Trésors rassemblés'
-            );
-            return;
-        }
-
-        if (candyCrushMoves <= 0) {
-            revealCandyCrushOutcomeMenu(
-                'Réserve épuisée',
-                `Plus de coups disponibles. Score final : ${candyCrushScore}.`,
-                'Cale vide'
-            );
-        }
-    }
-
-    function updateHarborRunHud() {
-        harborRunScoreDisplay.textContent = String(harborRunScore);
-        harborRunBestDisplay.textContent = String(harborRunBestScore);
-        harborRunStartButton.textContent = harborRunRunning ? 'En course' : 'Lancer la route';
-    }
-
-    function isHarborRunCollision(obstacle) {
-        const boardHeight = harborRunBoard?.clientHeight || 540;
-        const playerCenterX = getHarborRunPlayerPosition();
-        const obstacleCenterX = HARBOR_RUN_LANES[obstacle.lane];
-        const playerWidthPercent = 22;
-        const obstacleWidthPercent = obstacle.type === 'rock' ? 18 : 20;
-        const horizontalGap = Math.abs(playerCenterX - obstacleCenterX);
-        const horizontalHitLimit = ((playerWidthPercent + obstacleWidthPercent) / 2) - 4.5;
-
-        if (horizontalGap > horizontalHitLimit) {
-            return false;
-        }
-
-        const playerHeightPercent = (82 / boardHeight) * 100;
-        const playerBottomPercent = 100 - ((18 / boardHeight) * 100);
-        const playerTopPercent = playerBottomPercent - playerHeightPercent + 2.2;
-        const playerBottomHitPercent = playerBottomPercent - 2.4;
-
-        const obstacleHeightPx = obstacle.type === 'rock' ? 66 : 78;
-        const obstacleHeightPercent = (obstacleHeightPx / boardHeight) * 100;
-        const obstacleTopPercent = obstacle.y + (obstacle.type === 'rock' ? 1.4 : 2.2);
-        const obstacleBottomPercent = obstacleTopPercent + obstacleHeightPercent - (obstacle.type === 'rock' ? 2.8 : 4.2);
-
-        return obstacleBottomPercent >= playerTopPercent && obstacleTopPercent <= playerBottomHitPercent;
-    }
-
-    function getHarborRunPlayerPosition() {
-        const safeLaneIndex = Math.max(0, Math.min(HARBOR_RUN_LANES.length - 1, harborRunVisualLane));
-        const lowerLaneIndex = Math.floor(safeLaneIndex);
-        const upperLaneIndex = Math.min(HARBOR_RUN_LANES.length - 1, lowerLaneIndex + 1);
-        const laneProgress = safeLaneIndex - lowerLaneIndex;
-        const lowerPosition = HARBOR_RUN_LANES[lowerLaneIndex];
-        const upperPosition = HARBOR_RUN_LANES[upperLaneIndex];
-        return lowerPosition + ((upperPosition - lowerPosition) * laneProgress);
-    }
-
-    function renderHarborRun() {
-        const farOffset = (harborRunBackdropOffset * 0.22) % 180;
-        const midOffset = (harborRunBackdropOffset * 0.42) % 210;
-        const nearOffset = (harborRunBackdropOffset * 0.72) % 160;
-        const foamOffset = (harborRunBackdropOffset * 0.95) % 140;
-        const backdropMarkup = `
-            <div class="harborrun-backdrop harborrun-backdrop-far" style="background-position: center ${farOffset}px;"></div>
-            <div class="harborrun-backdrop harborrun-backdrop-mid" style="background-position: center ${midOffset}px;"></div>
-            <div class="harborrun-waves harborrun-waves-near" style="background-position: center ${nearOffset}px;"></div>
-            <div class="harborrun-foam" style="background-position: center ${foamOffset}px;"></div>
-        `;
-        const playerMarkup = `<div class="harborrun-player" style="left: ${getHarborRunPlayerPosition()}%;"></div>`;
-        const obstaclesMarkup = harborRunObstacles.map((obstacle) => `
-            <div
-                class="harborrun-obstacle type-${obstacle.type}"
-                style="left: ${HARBOR_RUN_LANES[obstacle.lane]}%; top: ${obstacle.y}%;"
-            ></div>
-        `).join('');
-
-        harborRunBoard.innerHTML = `${backdropMarkup}${playerMarkup}${obstaclesMarkup}`;
-        updateHarborRunHud();
-    }
-
-    function stopHarborRun() {
-        harborRunRunning = false;
-        if (harborRunAnimationFrame) {
-            window.cancelAnimationFrame(harborRunAnimationFrame);
-            harborRunAnimationFrame = null;
-        }
-        harborRunLastFrame = 0;
-        updateHarborRunHud();
-    }
-
-    function getHarborRunRulesText() {
-        return 'Pilote ton navire dans le chenal du port. Fl\u00e8ches, ZQSD ou clic gauche/droit sur l\u2019\u00e9cran pour changer de voie. \u00c9vite rochers, \u00e9paves et autres bateaux \u2014 la vitesse monte au fil de la course.';
-    }
-
-    function renderHarborRunMenu() {
-        if (!harborRunMenuOverlay || !harborRunTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(harborRunMenuOverlay, harborRunTable);
-        harborRunMenuOverlay.classList.toggle('hidden', !harborRunMenuVisible);
-        harborRunMenuOverlay.classList.toggle('is-closing', harborRunMenuClosing);
-        harborRunMenuOverlay.classList.toggle('is-entering', harborRunMenuEntering);
-        harborRunTable.classList.toggle('is-menu-open', harborRunMenuVisible);
-
-        if (!harborRunMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(harborRunMenuResult);
-
-        if (harborRunMenuEyebrow) {
-            harborRunMenuEyebrow.textContent = harborRunMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? harborRunMenuResult.eyebrow : 'Course dans le chenal');
-        }
-
-        if (harborRunMenuTitle) {
-            harborRunMenuTitle.textContent = harborRunMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? harborRunMenuResult.title : 'Navire 2D');
-        }
-
-        if (harborRunMenuText) {
-            harborRunMenuText.textContent = harborRunMenuShowingRules
-                ? getHarborRunRulesText()
-                : (hasResult
-                    ? harborRunMenuResult.text
-                    : 'Guide ton navire entre rochers, \u00e9paves et autres bateaux pendant que la vitesse monte.');
-        }
-
-        if (harborRunMenuActionButton) {
-            harborRunMenuActionButton.textContent = harborRunMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Reprendre la mer' : 'Prendre la mer');
-        }
-
-        if (harborRunMenuRulesButton) {
-            harborRunMenuRulesButton.textContent = 'R\u00e8gles';
-            harborRunMenuRulesButton.hidden = harborRunMenuShowingRules;
-        }
-    }
-
-    function closeHarborRunMenu() {
-        harborRunMenuClosing = true;
-        renderHarborRunMenu();
-        window.setTimeout(() => {
-            harborRunMenuClosing = false;
-            harborRunMenuVisible = false;
-            harborRunMenuShowingRules = false;
-            harborRunMenuEntering = false;
-            harborRunMenuResult = null;
-            renderHarborRunMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealHarborRunOutcomeMenu(title, text, eyebrow) {
-        harborRunMenuVisible = true;
-        harborRunMenuResult = { title, text, eyebrow };
-        harborRunMenuShowingRules = false;
-        harborRunMenuClosing = false;
-        harborRunMenuEntering = true;
-
-        if (harborRunHelpText) {
-            harborRunHelpText.textContent = text;
-        }
-
-        renderHarborRunMenu();
-        window.setTimeout(() => {
-            harborRunMenuEntering = false;
-            renderHarborRunMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeHarborRun() {
-        closeGameOverModal();
-        stopHarborRun();
-        harborRunLane = 1;
-        harborRunVisualLane = 1;
-        harborRunSafeLane = 1;
-        harborRunObstacles = [];
-        harborRunScore = 0;
-        harborRunSpawnTimer = 0;
-        harborRunBackdropOffset = 0;
-        harborRunMenuResult = null;
-        harborRunMenuShowingRules = false;
-        harborRunMenuClosing = false;
-        harborRunMenuEntering = false;
-        harborRunStartButton.textContent = 'Lancer la route';
-        harborRunHelpText.textContent = 'Guide ton navire entre navires, épaves et rochers avec plus de marge pour passer.';
-        renderHarborRun();
-        renderHarborRunMenu();
-    }
-
-    function moveHarborRun(direction) {
-        if (!harborRunRunning) {
-            return;
-        }
-
-        harborRunLane = Math.max(0, Math.min(HARBOR_RUN_LANES.length - 1, harborRunLane + direction));
-        renderHarborRun();
-    }
-
-    function startHarborRun() {
-        if (harborRunRunning) {
-            return;
-        }
-
-        closeGameOverModal();
-        initializeHarborRun();
-        harborRunRunning = true;
-        harborRunHelpText.textContent = "Garde le cap. La mer s'accélère peu à peu à mesure que tu avances.";
-        updateHarborRunHud();
-        harborRunAnimationFrame = window.requestAnimationFrame(runHarborRunFrame);
-    }
-
-    function runHarborRunFrame(timestamp) {
-        if (!harborRunRunning) {
-            return;
-        }
-
-        if (!harborRunLastFrame) {
-            harborRunLastFrame = timestamp;
-        }
-
-        const deltaMs = timestamp - harborRunLastFrame;
-        harborRunLastFrame = timestamp;
-        harborRunSpawnTimer += deltaMs;
-
-        if (harborRunSpawnTimer >= Math.max(560, 980 - (harborRunScore * 8))) {
-            const hasRecentWave = harborRunObstacles.some((obstacle) => obstacle.y < 28);
-
-            if (!hasRecentWave) {
-                harborRunSpawnTimer = 0;
-                const accessibleOpenLanes = [harborRunSafeLane - 1, harborRunSafeLane, harborRunSafeLane + 1]
-                    .filter((lane) => lane >= 0 && lane < HARBOR_RUN_LANES.length);
-                const nextOpenLane = accessibleOpenLanes[Math.floor(Math.random() * accessibleOpenLanes.length)];
-                harborRunSafeLane = nextOpenLane;
-                const blockedLanes = [0, 1, 2].filter((lane) => lane !== nextOpenLane);
-                const nearestObstacleY = harborRunObstacles.reduce((nearest, obstacle) => (
-                    obstacle.y > nearest ? obstacle.y : nearest
-                ), -100);
-                const canSpawnDouble = harborRunScore > 10 && nearestObstacleY > 42 && Math.random() < 0.18;
-                const obstacleLanes = canSpawnDouble
-                    ? blockedLanes
-                    : [blockedLanes[Math.floor(Math.random() * blockedLanes.length)]];
-
-                obstacleLanes.forEach((lane) => {
-                    harborRunObstacles.push({
-                        lane,
-                        y: -18,
-                        passed: false,
-                        type: ['ship', 'wreck', 'rock'][Math.floor(Math.random() * 3)]
-                    });
-                });
-            }
-        }
-
-        const speed = 28 + Math.min(54, harborRunScore * 1.45);
-        const laneSmoothing = Math.min(1, (deltaMs / 1000) * 12);
-        harborRunVisualLane += (harborRunLane - harborRunVisualLane) * laneSmoothing;
-        harborRunBackdropOffset += (deltaMs / 1000) * speed * 5.6;
-        harborRunObstacles.forEach((obstacle) => {
-            obstacle.y += (deltaMs / 1000) * speed;
-            if (!obstacle.passed && obstacle.y > 94) {
-                obstacle.passed = true;
-                harborRunScore += 1;
-                if (harborRunScore > harborRunBestScore) {
-                    harborRunBestScore = harborRunScore;
-                    window.localStorage.setItem(HARBOR_RUN_BEST_KEY, String(harborRunBestScore));
-                }
-            }
-        });
-
-        harborRunObstacles = harborRunObstacles.filter((obstacle) => obstacle.y < 118);
-
-        const collided = harborRunObstacles.some((obstacle) => isHarborRunCollision(obstacle));
-
-        if (collided) {
-            stopHarborRun();
-            harborRunHelpText.textContent = 'Collision dans le port.';
-            renderHarborRun();
-            revealHarborRunOutcomeMenu(
-                'Navire échoué',
-                `Collision dans le chenal. Distance parcourue : ${harborRunScore}. Record : ${harborRunBestScore}.`,
-                'Cap sur le port'
-            );
-            return;
-        }
-
-        renderHarborRun();
-        harborRunAnimationFrame = window.requestAnimationFrame(runHarborRunFrame);
-    }
-
-    const STACKER_LAYER_HEIGHT = 26;
-    const STACKER_BASE_BOTTOM = 68;
-
-    function getStackerBottom(level) {
-        return STACKER_BASE_BOTTOM + ((level - 1) * (STACKER_LAYER_HEIGHT - 1));
-    }
-
-    function getStackerPalette(level) {
-        const palettes = [
-            { left: '#d4a15d', right: '#8b5a2b' },
-            { left: '#ca6b4a', right: '#7a3420' },
-            { left: '#4ea9a1', right: '#1f5d59' },
-            { left: '#d9b34f', right: '#8f6221' },
-            { left: '#7f8fc8', right: '#475281' },
-            { left: '#76a85a', right: '#44662e' }
-        ];
-
-        return palettes[level % palettes.length];
-    }
-
-    function getStackerCameraOffset() {
-        return Math.max(0, getStackerBottom(Math.max(0, stackerScore)) - 180);
-    }
-
-    function updateStackerHud() {
-        stackerScoreDisplay.textContent = String(stackerScore);
-        stackerBestDisplay.textContent = String(stackerBestScore);
-        stackerStartButton.textContent = stackerRunning ? 'Empiler' : 'Lancer la tour';
-    }
-
-    function renderStacker() {
-        const cameraOffset = getStackerCameraOffset();
-        const backdropOffset = Math.min(cameraOffset * 0.18, 48);
-        const foregroundOffset = Math.min(cameraOffset * 0.28, 72);
-        const layersMarkup = stackerLayers.map((layer) => `
-            <div
-                class="stacker-layer"
-                style="
-                    width: ${layer.width}%;
-                    left: ${layer.left}%;
-                    bottom: ${getStackerBottom(layer.level) - cameraOffset}px;
-                    --stack-left: ${layer.colorLeft};
-                    --stack-right: ${layer.colorRight};
-                "
-            ></div>
-        `).join('');
-        const fragmentsMarkup = stackerFragments.map((fragment) => `
-            <div
-                class="stacker-fragment"
-                style="
-                    width: ${fragment.width}%;
-                    left: ${fragment.left}%;
-                    bottom: ${fragment.bottom - cameraOffset}px;
-                    --stack-fragment-x: ${fragment.offsetX || 0}px;
-                    --stack-fragment-rotation: ${fragment.rotation || 0}deg;
-                    --stack-left: ${fragment.colorLeft};
-                    --stack-right: ${fragment.colorRight};
-                "
-            ></div>
-        `).join('');
-        const currentMarkup = stackerCurrentLayer ? `
-            <div
-                class="stacker-current"
-                style="
-                    width: ${stackerCurrentLayer.width}%;
-                    left: ${stackerCurrentLayer.left}%;
-                    bottom: ${getStackerBottom(stackerCurrentLayer.level) - cameraOffset}px;
-                    --stack-left: ${stackerCurrentLayer.colorLeft};
-                    --stack-right: ${stackerCurrentLayer.colorRight};
-                "
-            ></div>
-        ` : '';
-
-        stackerBoard.innerHTML = `
-            <div class="stacker-cloud stacker-cloud-a"></div>
-            <div class="stacker-cloud stacker-cloud-b"></div>
-            <div class="stacker-backdrop stacker-backdrop-far" style="transform: translateY(${backdropOffset}px);"></div>
-            <div class="stacker-backdrop stacker-backdrop-near" style="transform: translateY(${foregroundOffset}px);"></div>
-            ${layersMarkup}
-            ${fragmentsMarkup}
-            ${currentMarkup}
-            <div class="stacker-waterline" style="bottom: ${-cameraOffset}px;"></div>
-        `;
-        updateStackerHud();
-    }
-
-    function stopStacker() {
-        stackerRunning = false;
-        if (stackerAnimationFrame) {
-            window.cancelAnimationFrame(stackerAnimationFrame);
-            stackerAnimationFrame = null;
-        }
-        stackerLastFrame = 0;
-        updateStackerHud();
-    }
-
-    function createNextStackerLayer(level, width, fromLeft = true) {
-        const palette = getStackerPalette(level);
-        return {
-            level,
-            width,
-            left: fromLeft ? width / 2 : 100 - (width / 2),
-            direction: fromLeft ? 1 : -1,
-            speed: 34 + (level * 2),
-            colorLeft: palette.left,
-            colorRight: palette.right
-        };
-    }
-
-    function getStackerRulesText() {
-        return 'Clique sur le plateau ou appuie sur Espace au bon moment pour poser la cargaison qui va et vient. Chaque étage trop décalé se fait rogner. Vise la plus haute tour du port.';
-    }
-
-    function renderStackerMenu() {
-        if (!stackerMenuOverlay || !stackerTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(stackerMenuOverlay, stackerTable);
-        stackerMenuOverlay.classList.toggle('hidden', !stackerMenuVisible);
-        stackerMenuOverlay.classList.toggle('is-closing', stackerMenuClosing);
-        stackerMenuOverlay.classList.toggle('is-entering', stackerMenuEntering);
-        stackerTable.classList.toggle('is-menu-open', stackerMenuVisible);
-
-        if (!stackerMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(stackerMenuResult);
-
-        if (stackerMenuEyebrow) {
-            stackerMenuEyebrow.textContent = stackerMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? stackerMenuResult.eyebrow : 'Tour de butin');
-        }
-
-        if (stackerMenuTitle) {
-            stackerMenuTitle.textContent = stackerMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? stackerMenuResult.title : 'Stack 2D');
-        }
-
-        if (stackerMenuText) {
-            stackerMenuText.textContent = stackerMenuShowingRules
-                ? getStackerRulesText()
-                : (hasResult
-                    ? stackerMenuResult.text
-                    : 'Clique ou appuie sur Espace au bon moment pour empiler la cargaison. Vise la plus haute tour du port.');
-        }
-
-        if (stackerMenuActionButton) {
-            stackerMenuActionButton.textContent = stackerMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-
-        if (stackerMenuRulesButton) {
-            stackerMenuRulesButton.textContent = 'R\u00e8gles';
-            stackerMenuRulesButton.hidden = stackerMenuShowingRules;
-        }
-    }
-
-    function closeStackerMenu() {
-        stackerMenuClosing = true;
-        renderStackerMenu();
-        window.setTimeout(() => {
-            stackerMenuClosing = false;
-            stackerMenuVisible = false;
-            stackerMenuShowingRules = false;
-            stackerMenuEntering = false;
-            stackerMenuResult = null;
-            renderStackerMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealStackerOutcomeMenu(title, text, eyebrow) {
-        stackerMenuVisible = true;
-        stackerMenuResult = { title, text, eyebrow };
-        stackerMenuShowingRules = false;
-        stackerMenuClosing = false;
-        stackerMenuEntering = true;
-
-        if (stackerHelpText) {
-            stackerHelpText.textContent = text;
-        }
-
-        renderStackerMenu();
-        window.setTimeout(() => {
-            stackerMenuEntering = false;
-            renderStackerMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeStacker() {
-        closeGameOverModal();
-        stopStacker();
-        const basePalette = getStackerPalette(1);
-        stackerLayers = [{
-            level: 1,
-            width: 72,
-            left: 50,
-            colorLeft: basePalette.left,
-            colorRight: basePalette.right
-        }];
-        stackerFragments = [];
-        stackerCurrentLayer = createNextStackerLayer(2, 72, true);
-        stackerScore = 0;
-        stackerMenuResult = null;
-        stackerMenuShowingRules = false;
-        stackerMenuClosing = false;
-        stackerMenuEntering = false;
-        stackerHelpText.textContent = 'Clique ou appuie sur Espace au bon moment pour empiler les couches du phare.';
-        renderStacker();
-        renderStackerMenu();
-    }
-
-    function runStackerFrame(timestamp) {
-        if (!stackerRunning || !stackerCurrentLayer) {
-            return;
-        }
-
-        if (!stackerLastFrame) {
-            stackerLastFrame = timestamp;
-        }
-
-        const deltaMs = timestamp - stackerLastFrame;
-        stackerLastFrame = timestamp;
-        const delta = (deltaMs / 1000) * stackerCurrentLayer.speed;
-        const minLeft = stackerCurrentLayer.width / 2;
-        const maxLeft = 100 - (stackerCurrentLayer.width / 2);
-
-        stackerFragments = stackerFragments
-            .map((fragment) => ({
-                ...fragment,
-                velocityX: fragment.velocityX * 0.995,
-                velocityY: fragment.velocityY + (deltaMs / 1000) * 180,
-                offsetX: (fragment.offsetX || 0) + ((fragment.velocityX * deltaMs) / 1000),
-                bottom: fragment.bottom - ((fragment.velocityY * deltaMs) / 1000),
-                rotation: (fragment.rotation || 0) + (((fragment.spin || 0) * deltaMs) / 1000)
-            }))
-            .filter((fragment) => fragment.bottom > -140 && Math.abs(fragment.offsetX || 0) < 360);
-
-        stackerCurrentLayer.left += delta * stackerCurrentLayer.direction;
-        if (stackerCurrentLayer.left <= minLeft) {
-            stackerCurrentLayer.left = minLeft;
-            stackerCurrentLayer.direction = 1;
-        } else if (stackerCurrentLayer.left >= maxLeft) {
-            stackerCurrentLayer.left = maxLeft;
-            stackerCurrentLayer.direction = -1;
-        }
-
-        renderStacker();
-        stackerAnimationFrame = window.requestAnimationFrame(runStackerFrame);
-    }
-
-    function startStacker() {
-        if (stackerRunning) {
-            return;
-        }
-
-        closeGameOverModal();
-        stackerRunning = true;
-        stackerHelpText.textContent = "Empile les couches sans perdre l'alignement.";
-        stackerStartButton.textContent = 'Empiler';
-        updateStackerHud();
-        stackerAnimationFrame = window.requestAnimationFrame(runStackerFrame);
-    }
-
-    function dropStackerLayer() {
-        if (stackerMenuVisible || stackerMenuClosing) {
-            return;
-        }
-
-        if (!stackerCurrentLayer) {
-            return;
-        }
-
-        if (!stackerRunning) {
-            startStacker();
-            return;
-        }
-
-        const previousLayer = stackerLayers[stackerLayers.length - 1];
-        const previousLeft = previousLayer.left - (previousLayer.width / 2);
-        const previousRight = previousLayer.left + (previousLayer.width / 2);
-        const currentLeft = stackerCurrentLayer.left - (stackerCurrentLayer.width / 2);
-        const currentRight = stackerCurrentLayer.left + (stackerCurrentLayer.width / 2);
-        const overlap = Math.min(previousRight, currentRight) - Math.max(previousLeft, currentLeft);
-        const currentBottom = getStackerBottom(stackerCurrentLayer.level);
-
-        if (overlap <= 0) {
-            stackerFragments.push({
-                width: stackerCurrentLayer.width,
-                left: stackerCurrentLayer.left,
-                bottom: currentBottom,
-                offsetX: 0,
-                velocityX: stackerCurrentLayer.direction * 96,
-                velocityY: 36,
-                rotation: 0,
-                spin: stackerCurrentLayer.direction * 170,
-                colorLeft: stackerCurrentLayer.colorLeft,
-                colorRight: stackerCurrentLayer.colorRight
-            });
-            stackerCurrentLayer = null;
-            stopStacker();
-            stackerHelpText.textContent = 'La couche est tombée dans la baie.';
-            renderStacker();
-            revealStackerOutcomeMenu(
-                'Tour écroulée',
-                `La cargaison s'est effondrée après ${stackerScore} étage${stackerScore > 1 ? 's' : ''}. Record : ${stackerBestScore}.`,
-                'Cap sur la baie'
-            );
-            return;
-        }
-
-        const center = Math.max(previousLeft, currentLeft) + (overlap / 2);
-        const nextLevel = stackerCurrentLayer.level;
-        const trimmedWidth = stackerCurrentLayer.width - overlap;
-
-        if (trimmedWidth > 0) {
-            const trimmedOnLeft = currentLeft < previousLeft;
-            const fragmentLeft = trimmedOnLeft
-                ? currentLeft + (trimmedWidth / 2)
-                : currentRight - (trimmedWidth / 2);
-
-            stackerFragments.push({
-                width: trimmedWidth,
-                left: fragmentLeft,
-                bottom: currentBottom,
-                offsetX: 0,
-                velocityX: trimmedOnLeft ? -118 : 118,
-                velocityY: 28,
-                rotation: 0,
-                spin: trimmedOnLeft ? -150 : 150,
-                colorLeft: stackerCurrentLayer.colorLeft,
-                colorRight: stackerCurrentLayer.colorRight
-            });
-        }
-
-        const lockedPalette = getStackerPalette(nextLevel);
-
-        stackerLayers.push({
-            level: nextLevel,
-            width: overlap,
-            left: center,
-            colorLeft: lockedPalette.left,
-            colorRight: lockedPalette.right
-        });
-        stackerScore = stackerLayers.length - 1;
-
-        if (stackerScore > stackerBestScore) {
-            stackerBestScore = stackerScore;
-            window.localStorage.setItem(STACKER_BEST_KEY, String(stackerBestScore));
-        }
-
-        stackerCurrentLayer = createNextStackerLayer(nextLevel + 1, overlap, nextLevel % 2 === 1);
-        stackerHelpText.textContent = overlap < previousLayer.width
-            ? 'Oups, une partie est tombée. Continue de monter.'
-            : 'Empilement parfait. La tour prend de la hauteur.';
-        renderStacker();
-    }
 
     function createChessPiece(type, color) {
         return { type, color, hasMoved: false };
@@ -13158,1168 +9285,6 @@ document.addEventListener('DOMContentLoaded', () => {
         airHockeyAnimationFrame = window.requestAnimationFrame(updateAirHockey);
     }
 
-    function getRandomBaieBerryIndex() {
-        return Math.floor(Math.random() * Math.min(4, BAIE_BERRY_FRUITS.length));
-    }
-
-    function getRandomBaieBerryObjective() {
-        const targets = [
-            { type: 'score', target: 1500, label: 'Atteins 1500 points' },
-            { type: 'score', target: 3000, label: 'Atteins 3000 points' },
-            { type: 'level', target: 6, label: 'Cree une Perle Marine' },
-            { type: 'level', target: 7, label: 'Cree un Rubis des Flots' }
-        ];
-        return { ...targets[Math.floor(Math.random() * targets.length)], completed: false };
-    }
-
-    function refreshBaieBerryHud() {
-        if (!baieBerryState) {
-            return;
-        }
-
-        baieBerryScoreDisplay.textContent = String(baieBerryState.score);
-        baieBerryBestDisplay.textContent = String(baieBerryBestScore);
-        const nextFruit = BAIE_BERRY_FRUITS[baieBerryState.nextQueue[1]];
-        baieBerryNextDisplay.style.setProperty('--baieberry-preview-color', nextFruit.color);
-        baieBerryNextDisplay.setAttribute('aria-label', `Fruit suivant: ${nextFruit.name}`);
-        baieBerryObjectiveDisplay.textContent = baieBerryState.objective.completed
-            ? `${baieBerryState.objective.label} âœ“`
-            : baieBerryState.objective.label;
-    }
-
-    function addBaieBerryParticles(x, y, color, count = 14) {
-        if (!baieBerryState) {
-            return;
-        }
-
-        for (let index = 0; index < count; index += 1) {
-            const maxLife = 0.7 + (Math.random() * 0.45);
-            baieBerryState.particles.push({
-                x,
-                y,
-                vx: (Math.random() - 0.5) * 220,
-                vy: -40 - (Math.random() * 180),
-                life: maxLife,
-                maxLife,
-                size: 3 + (Math.random() * 7),
-                color
-            });
-        }
-    }
-
-    function addBaieBerryScorePopup(x, y, text, color = '#f8fafc') {
-        baieBerryState?.scorePopups.push({
-            x,
-            y,
-            vy: -36,
-            life: 1,
-            text,
-            color
-        });
-    }
-
-    function updateBaieBerryObjective(lastMergedLevel = null) {
-        if (!baieBerryState || baieBerryState.objective.completed) {
-            return;
-        }
-
-        const { objective } = baieBerryState;
-        if (objective.type === 'score' && baieBerryState.score >= objective.target) {
-            objective.completed = true;
-        }
-
-        if (objective.type === 'level' && lastMergedLevel !== null && lastMergedLevel >= objective.target) {
-            objective.completed = true;
-        }
-
-        if (objective.completed) {
-            baieBerryHelpText.textContent = `Objectif accompli: ${objective.label}. Continue de faire grimper la r\u00e9colte.`;
-            addBaieBerryScorePopup(baieBerryCanvas.width * 0.5, 108, 'Objectif atteint', '#fde68a');
-            refreshBaieBerryHud();
-        }
-    }
-
-    function updateBaieBerryDropGuide(positionX = null) {
-        if (!baieBerryDropGuide || !baieBerryDropLine || !baieBerryState) {
-            return;
-        }
-
-        const nextFruit = BAIE_BERRY_FRUITS[baieBerryState.nextQueue[0]];
-        const guideSize = Math.max(28, nextFruit.radius * 1.6);
-        const clampedX = positionX === null
-            ? (baieBerryCanvas.width / 2)
-            : Math.max(nextFruit.radius, Math.min(baieBerryCanvas.width - nextFruit.radius, positionX));
-        const renderedBounds = baieBerryCanvas.getBoundingClientRect();
-        const scaleX = (renderedBounds.width || baieBerryCanvas.width) / baieBerryCanvas.width;
-        const scaleY = (renderedBounds.height || baieBerryCanvas.height) / baieBerryCanvas.height;
-        const visualGuideSize = guideSize * Math.min(scaleX, scaleY);
-        const visualX = clampedX * scaleX;
-
-        baieBerryDropGuide.style.width = `${visualGuideSize}px`;
-        baieBerryDropGuide.style.height = `${visualGuideSize}px`;
-        baieBerryDropGuide.style.transform = `translateX(${visualX - (visualGuideSize / 2)}px)`;
-        baieBerryDropGuide.style.setProperty('--baieberry-guide-color', nextFruit.color);
-        baieBerryDropLine.style.height = `${Math.max(0, renderedBounds.height - visualGuideSize - 22)}px`;
-        baieBerryDropLine.style.transform = `translateX(${visualX - 1}px)`;
-        baieBerryDropLine.style.setProperty('--baieberry-guide-color', nextFruit.color);
-        baieBerryDropLine.style.opacity = '0.92';
-    }
-
-    function drawBaieBerryFruit(context, fruit, alpha = 1) {
-        const config = BAIE_BERRY_FRUITS[fruit.level];
-        const mergeScale = fruit.mergeProgress ? (1 + (fruit.mergeProgress * 0.14)) : 1;
-        const eyeOffsetX = config.radius * 0.22;
-        const eyeY = -config.radius * 0.08;
-        const blink = fruit.blink ? 0.18 : 1;
-        const mouthCurve = fruit.expression === 'happy' ? 1 : fruit.expression === 'worried' ? -1 : 0;
-        const pirateVariant = (fruit.id + fruit.level) % 5;
-        const gradient = context.createRadialGradient(
-            -config.radius * 0.35,
-            -config.radius * 0.42,
-            config.radius * 0.08,
-            0,
-            0,
-            config.radius
-        );
-        gradient.addColorStop(0, 'rgba(255,255,255,0.95)');
-        gradient.addColorStop(0.16, config.color);
-        gradient.addColorStop(0.72, config.color);
-        gradient.addColorStop(1, 'rgba(15,23,42,0.68)');
-
-        context.save();
-        context.globalAlpha = alpha;
-        context.translate(fruit.x, fruit.y);
-        context.rotate(fruit.rotation || 0);
-        context.scale(mergeScale, mergeScale);
-        context.beginPath();
-        context.fillStyle = gradient;
-        context.arc(0, 0, config.radius, 0, Math.PI * 2);
-        context.fill();
-
-        context.beginPath();
-        context.strokeStyle = 'rgba(255,255,255,0.2)';
-        context.lineWidth = Math.max(2, config.radius * 0.08);
-        context.arc(0, 0, config.radius * 0.82, Math.PI * 1.12, Math.PI * 1.84);
-        context.stroke();
-
-        context.beginPath();
-        context.fillStyle = 'rgba(255,255,255,0.24)';
-        context.ellipse(
-            -config.radius * 0.28,
-            -config.radius * 0.34,
-            config.radius * 0.24,
-            config.radius * 0.14,
-            -0.4,
-            0,
-            Math.PI * 2
-        );
-        context.fill();
-
-        if (pirateVariant === 1 || pirateVariant === 3) {
-            const bandanaBase = pirateVariant === 1
-                ? 'rgba(153, 27, 27, 0.96)'
-                : 'rgba(30, 64, 175, 0.96)';
-            const bandanaHighlight = pirateVariant === 1
-                ? 'rgba(248, 113, 113, 0.34)'
-                : 'rgba(147, 197, 253, 0.34)';
-
-            context.beginPath();
-            context.fillStyle = bandanaBase;
-            context.moveTo(-config.radius * 0.88, -config.radius * 0.38);
-            context.quadraticCurveTo(-config.radius * 0.3, -config.radius * 0.84, 0, -config.radius * 0.82);
-            context.quadraticCurveTo(config.radius * 0.34, -config.radius * 0.82, config.radius * 0.88, -config.radius * 0.38);
-            context.quadraticCurveTo(config.radius * 0.44, -config.radius * 0.08, 0, -config.radius * 0.14);
-            context.quadraticCurveTo(-config.radius * 0.46, -config.radius * 0.08, -config.radius * 0.88, -config.radius * 0.38);
-            context.closePath();
-            context.fill();
-
-            context.beginPath();
-            context.strokeStyle = bandanaHighlight;
-            context.lineWidth = Math.max(1.4, config.radius * 0.045);
-            context.moveTo(-config.radius * 0.54, -config.radius * 0.4);
-            context.quadraticCurveTo(0, -config.radius * 0.58, config.radius * 0.56, -config.radius * 0.4);
-            context.stroke();
-
-            context.beginPath();
-            context.fillStyle = bandanaBase;
-            context.ellipse(config.radius * 0.74, -config.radius * 0.04, config.radius * 0.1, config.radius * 0.22, -0.46, 0, Math.PI * 2);
-            context.fill();
-
-            context.beginPath();
-            context.fillStyle = bandanaBase;
-            context.ellipse(config.radius * 0.86, config.radius * 0.12, config.radius * 0.07, config.radius * 0.18, -0.12, 0, Math.PI * 2);
-            context.fill();
-        } else if (pirateVariant === 4) {
-            context.beginPath();
-            context.fillStyle = 'rgba(68, 37, 20, 0.98)';
-            context.moveTo(-config.radius * 0.78, -config.radius * 0.76);
-            context.quadraticCurveTo(-config.radius * 0.48, -config.radius * 1.16, -config.radius * 0.06, -config.radius * 1.06);
-            context.quadraticCurveTo(config.radius * 0.14, -config.radius * 1.4, config.radius * 0.34, -config.radius * 1.04);
-            context.quadraticCurveTo(config.radius * 0.58, -config.radius * 1.12, config.radius * 0.8, -config.radius * 0.76);
-            context.quadraticCurveTo(config.radius * 0.28, -config.radius * 0.92, -config.radius * 0.12, -config.radius * 0.88);
-            context.quadraticCurveTo(-config.radius * 0.42, -config.radius * 0.86, -config.radius * 0.78, -config.radius * 0.76);
-            context.closePath();
-            context.fill();
-
-            context.beginPath();
-            context.fillStyle = 'rgba(51, 29, 16, 0.98)';
-            context.ellipse(0, -config.radius * 0.74, config.radius * 0.82, config.radius * 0.14, -0.04, 0, Math.PI * 2);
-            context.fill();
-
-            context.beginPath();
-            context.strokeStyle = 'rgba(251, 191, 36, 0.68)';
-            context.lineWidth = Math.max(1.2, config.radius * 0.036);
-            context.moveTo(-config.radius * 0.3, -config.radius * 0.86);
-            context.quadraticCurveTo(config.radius * 0.02, -config.radius * 0.96, config.radius * 0.28, -config.radius * 0.84);
-            context.stroke();
-
-            context.beginPath();
-            context.fillStyle = 'rgba(245, 158, 11, 0.96)';
-            context.fillRect(-config.radius * 0.06, -config.radius * 0.98, config.radius * 0.12, config.radius * 0.08);
-
-            context.beginPath();
-            context.fillStyle = 'rgba(255, 248, 220, 0.9)';
-            context.arc(0, -config.radius * 0.94, Math.max(1.2, config.radius * 0.045), 0, Math.PI * 2);
-            context.fill();
-
-            context.beginPath();
-            context.strokeStyle = 'rgba(255,255,255,0.12)';
-            context.lineWidth = Math.max(1, config.radius * 0.03);
-            context.moveTo(-config.radius * 0.18, -config.radius * 1.02);
-            context.quadraticCurveTo(config.radius * 0.02, -config.radius * 1.2, config.radius * 0.2, -config.radius * 1.04);
-            context.stroke();
-        } else {
-            context.beginPath();
-            context.strokeStyle = 'rgba(34,197,94,0.92)';
-            context.lineWidth = Math.max(2, config.radius * 0.07);
-            context.moveTo(0, -config.radius * 0.92);
-            context.quadraticCurveTo(
-                config.radius * 0.08,
-                -config.radius * 1.18,
-                config.radius * 0.26,
-                -config.radius * 1.04
-            );
-            context.stroke();
-
-            context.beginPath();
-            context.fillStyle = 'rgba(74, 222, 128, 0.95)';
-            context.ellipse(
-                config.radius * 0.12,
-                -config.radius * 0.96,
-                config.radius * 0.18,
-                config.radius * 0.1,
-                0.45,
-                0,
-                Math.PI * 2
-            );
-            context.fill();
-        }
-
-        context.fillStyle = 'rgba(15, 23, 42, 0.92)';
-        if (pirateVariant === 2 || pirateVariant === 4) {
-            context.beginPath();
-            context.lineWidth = Math.max(1.5, config.radius * 0.048);
-            context.strokeStyle = 'rgba(127, 29, 29, 0.88)';
-            context.moveTo(-eyeOffsetX - (config.radius * 0.2), eyeY - (config.radius * 0.16));
-            context.lineTo(-eyeOffsetX + (config.radius * 0.2), eyeY + (config.radius * 0.14));
-            context.moveTo(-eyeOffsetX - (config.radius * 0.18), eyeY + (config.radius * 0.14));
-            context.lineTo(-eyeOffsetX + (config.radius * 0.22), eyeY - (config.radius * 0.12));
-            context.stroke();
-        }
-
-        if (pirateVariant === 3) {
-            context.beginPath();
-            context.strokeStyle = 'rgba(15, 23, 42, 0.78)';
-            context.lineWidth = Math.max(1.6, config.radius * 0.05);
-            context.moveTo(-config.radius * 0.68, eyeY - (config.radius * 0.08));
-            context.lineTo(eyeOffsetX - (config.radius * 0.2), eyeY - (config.radius * 0.04));
-            context.moveTo(eyeOffsetX + (config.radius * 0.2), eyeY - (config.radius * 0.04));
-            context.lineTo(config.radius * 0.68, eyeY - (config.radius * 0.08));
-            context.stroke();
-
-            context.beginPath();
-            context.fillStyle = 'rgba(17, 24, 39, 0.98)';
-            context.ellipse(eyeOffsetX, eyeY, Math.max(4, config.radius * 0.19), Math.max(4, config.radius * 0.15), -0.08, 0, Math.PI * 2);
-            context.fill();
-
-            context.beginPath();
-            context.strokeStyle = 'rgba(255,255,255,0.14)';
-            context.lineWidth = Math.max(0.9, config.radius * 0.024);
-            context.moveTo(eyeOffsetX - (config.radius * 0.08), eyeY - (config.radius * 0.08));
-            context.lineTo(eyeOffsetX + (config.radius * 0.06), eyeY - (config.radius * 0.16));
-            context.stroke();
-        } else {
-            context.beginPath();
-            context.ellipse(eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
-            context.fill();
-        }
-
-        context.beginPath();
-        context.ellipse(-eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
-        context.fill();
-
-        if (pirateVariant !== 3) {
-            context.beginPath();
-            context.ellipse(eyeOffsetX, eyeY, Math.max(2, config.radius * 0.1), Math.max(1.1, config.radius * 0.13 * blink), 0, 0, Math.PI * 2);
-            context.fill();
-        }
-
-        context.beginPath();
-        context.strokeStyle = 'rgba(15, 23, 42, 0.72)';
-        context.lineWidth = Math.max(2, config.radius * 0.07);
-        if (mouthCurve > 0) {
-            context.arc(0, config.radius * 0.14, config.radius * 0.18, 0.15, Math.PI - 0.15);
-        } else if (mouthCurve < 0) {
-            context.arc(0, config.radius * 0.3, config.radius * 0.16, Math.PI * 1.12, Math.PI * 1.88);
-        } else {
-            context.moveTo(-config.radius * 0.14, config.radius * 0.22);
-            context.lineTo(config.radius * 0.14, config.radius * 0.22);
-        }
-        context.stroke();
-
-        if (pirateVariant === 0) {
-            context.beginPath();
-            context.strokeStyle = 'rgba(255,255,255,0.62)';
-            context.lineWidth = Math.max(1, config.radius * 0.035);
-            context.moveTo(config.radius * 0.1, config.radius * 0.02);
-            context.lineTo(config.radius * 0.26, config.radius * 0.14);
-            context.stroke();
-        } else if (pirateVariant === 4) {
-            context.beginPath();
-            context.strokeStyle = 'rgba(120, 53, 15, 0.76)';
-            context.lineWidth = Math.max(1.4, config.radius * 0.05);
-            context.moveTo(config.radius * 0.04, config.radius * 0.02);
-            context.quadraticCurveTo(config.radius * 0.18, config.radius * 0.16, config.radius * 0.34, config.radius * 0.08);
-            context.stroke();
-        }
-        context.restore();
-    }
-
-    function drawBaieBerry() {
-        if (!baieBerryContext || !baieBerryState) {
-            return;
-        }
-
-        const context = baieBerryContext;
-
-        context.clearRect(0, 0, baieBerryCanvas.width, baieBerryCanvas.height);
-        const backdrop = context.createLinearGradient(0, 0, 0, baieBerryCanvas.height);
-        backdrop.addColorStop(0, '#dbeafe');
-        backdrop.addColorStop(0.18, '#93c5fd');
-        backdrop.addColorStop(0.65, '#38bdf8');
-        backdrop.addColorStop(1, '#0f766e');
-        context.fillStyle = backdrop;
-        context.fillRect(0, 0, baieBerryCanvas.width, baieBerryCanvas.height);
-
-        context.fillStyle = 'rgba(255,255,255,0.14)';
-        for (let bubbleIndex = 0; bubbleIndex < 16; bubbleIndex += 1) {
-            const drift = ((baieBerryState.elapsed || 0) * (8 + bubbleIndex)) % (baieBerryCanvas.height + 80);
-            const x = 26 + (bubbleIndex * 21) % (baieBerryCanvas.width - 52);
-            const y = baieBerryCanvas.height + 30 - drift;
-            const radius = 3 + (bubbleIndex % 4) * 1.7;
-            context.beginPath();
-            context.arc(x, y, radius, 0, Math.PI * 2);
-            context.fill();
-        }
-
-        for (let kelpIndex = 0; kelpIndex < 6; kelpIndex += 1) {
-            const baseX = 34 + (kelpIndex * 58);
-            const sway = Math.sin((baieBerryState.elapsed || 0) * 1.8 + kelpIndex) * 8;
-            context.beginPath();
-            context.moveTo(baseX, baieBerryCanvas.height - 16);
-            context.quadraticCurveTo(baseX + sway, baieBerryCanvas.height - 92, baseX - (sway * 0.6), baieBerryCanvas.height - 164);
-            context.strokeStyle = 'rgba(16, 185, 129, 0.28)';
-            context.lineWidth = 8;
-            context.lineCap = 'round';
-            context.stroke();
-        }
-
-        const dangerRatio = Math.min(1, baieBerryState.dangerTime / BAIE_BERRY_DANGER_DURATION_MS);
-        if (dangerRatio > 0) {
-            context.fillStyle = `rgba(239, 68, 68, ${0.08 + (dangerRatio * 0.18)})`;
-            context.fillRect(0, 0, baieBerryCanvas.width, BAIE_BERRY_DANGER_LINE_Y + 8);
-        }
-
-        context.fillStyle = 'rgba(255,255,255,0.1)';
-        context.fillRect(18, 12, baieBerryCanvas.width - 36, 6);
-        context.fillStyle = 'rgba(255,255,255,0.08)';
-        context.fillRect(12, baieBerryCanvas.height - 28, baieBerryCanvas.width - 24, 12);
-        context.fillStyle = 'rgba(239, 68, 68, 0.16)';
-        context.fillRect(18, BAIE_BERRY_DANGER_LINE_Y - 4, baieBerryCanvas.width - 36, 8);
-        context.strokeStyle = `rgba(254, 202, 202, ${0.5 + (dangerRatio * 0.45)})`;
-        context.lineWidth = 3;
-        context.beginPath();
-        context.moveTo(18, BAIE_BERRY_DANGER_LINE_Y);
-        context.lineTo(baieBerryCanvas.width - 18, BAIE_BERRY_DANGER_LINE_Y);
-        context.stroke();
-
-        baieBerryState.fruits.forEach((fruit) => {
-            drawBaieBerryFruit(context, fruit);
-        });
-
-        baieBerryState.particles.forEach((particle) => {
-            context.save();
-            context.globalAlpha = Math.max(0, particle.life / particle.maxLife);
-            context.fillStyle = particle.color;
-            context.beginPath();
-            context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-            context.fill();
-            context.restore();
-        });
-
-        baieBerryState.scorePopups.forEach((popup) => {
-            context.save();
-            context.globalAlpha = popup.life;
-            context.fillStyle = popup.color;
-            context.font = '700 18px "Trebuchet MS", sans-serif';
-            context.textAlign = 'center';
-            context.fillText(popup.text, popup.x, popup.y);
-            context.restore();
-        });
-
-    }
-
-    function getBaieBerryRulesText() {
-        return 'Glisse la récolte en cliquant ou en touchant la colonne voulue. Deux fruits identiques fusionnent au simple contact, mais la ligne rouge ne doit jamais rester occupée trop longtemps.';
-    }
-
-    function renderBaieBerryMenu() {
-        if (!baieBerryMenuOverlay || !baieBerryTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(baieBerryMenuOverlay, baieBerryGame);
-        baieBerryMenuOverlay.classList.toggle('hidden', !baieBerryMenuVisible);
-        baieBerryMenuOverlay.classList.toggle('is-closing', baieBerryMenuClosing);
-        baieBerryMenuOverlay.classList.toggle('is-entering', baieBerryMenuEntering);
-        baieBerryGame.classList.toggle('is-menu-open', baieBerryMenuVisible);
-        if (baieBerryNextDisplay) {
-            baieBerryNextDisplay.style.opacity = baieBerryMenuVisible ? '0' : '1';
-        }
-        if (baieBerryDropGuide) {
-            baieBerryDropGuide.style.opacity = baieBerryMenuVisible ? '0' : '1';
-        }
-        if (baieBerryDropLine) {
-            baieBerryDropLine.style.opacity = baieBerryMenuVisible ? '0' : '0.92';
-        }
-
-        if (!baieBerryMenuVisible) {
-            return;
-        }
-
-        const currentScore = baieBerryState?.score ?? 0;
-        const objectiveLabel = baieBerryState?.objective?.label ?? 'Atteins 1500 points';
-        const objectiveStatus = baieBerryState?.objective?.completed ? 'Objectif accompli.' : `Objectif du jour: ${objectiveLabel}.`;
-
-        if (baieBerryMenuEyebrow) {
-            baieBerryMenuEyebrow.textContent = baieBerryMenuShowingRules ? 'R\u00e8gles' : (baieBerryMenuResult ? 'Fin de r\u00e9colte' : "Baie d'arcade");
-        }
-        if (baieBerryMenuTitle) {
-            baieBerryMenuTitle.textContent = baieBerryMenuShowingRules
-                ? 'Rappel rapide'
-                : (baieBerryMenuResult ? 'Recolte termin\u00e9e' : 'BaieBerry');
-        }
-        if (baieBerryMenuText) {
-            baieBerryMenuText.textContent = baieBerryMenuShowingRules
-                ? getBaieBerryRulesText()
-                : (baieBerryMenuResult
-                    ? `Score ${currentScore}. ${objectiveStatus} La ligne rouge est restée occupée trop longtemps.`
-                    : 'Prepare ta r\u00e9colte avant de laisser tomber les fruits dans le panier.');
-        }
-        if (baieBerryMenuActionButton) {
-            baieBerryMenuActionButton.textContent = baieBerryMenuShowingRules
-                ? 'Retour'
-                : (baieBerryMenuResult ? 'Relancer la partie' : 'Lancer la partie');
-        }
-        if (baieBerryMenuRulesButton) {
-            baieBerryMenuRulesButton.textContent = 'R\u00e8gles';
-            baieBerryMenuRulesButton.hidden = baieBerryMenuShowingRules;
-        }
-    }
-
-    function startBaieBerryLaunchSequence() {
-        baieBerryMenuClosing = true;
-        renderBaieBerryMenu();
-        window.setTimeout(() => {
-            baieBerryMenuClosing = false;
-            baieBerryMenuVisible = false;
-            baieBerryMenuShowingRules = false;
-            baieBerryMenuEntering = false;
-            baieBerryMenuResult = false;
-            refreshBaieBerryHud();
-            updateBaieBerryDropGuide(baieBerryLastPointerX ?? (baieBerryCanvas.width / 2));
-            if (!baieBerryAnimationFrame) {
-                baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
-            }
-            renderBaieBerryMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealBaieBerryOutcomeMenu() {
-        baieBerryMenuShowingRules = false;
-        baieBerryMenuClosing = false;
-        baieBerryMenuEntering = true;
-        baieBerryMenuVisible = true;
-        baieBerryMenuResult = true;
-        renderBaieBerryMenu();
-        window.setTimeout(() => {
-            baieBerryMenuEntering = false;
-            renderBaieBerryMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeBaieBerry() {
-        closeGameOverModal();
-        stopBaieBerry();
-        if (baieBerryDropLineTimer) {
-            window.clearTimeout(baieBerryDropLineTimer);
-            baieBerryDropLineTimer = null;
-        }
-        baieBerryState = {
-            fruits: [],
-            nextQueue: [getRandomBaieBerryIndex(), getRandomBaieBerryIndex()],
-            score: 0,
-            gameOver: false,
-            dangerTime: 0,
-            comboCount: 0,
-            comboExpiresAt: 0,
-            objective: getRandomBaieBerryObjective(),
-            particles: [],
-            scorePopups: [],
-            shake: 0,
-            elapsed: 0
-        };
-        baieBerryLastFrame = 0;
-        baieBerryLastPointerX = baieBerryCanvas.width / 2;
-        baieBerryLastDropAt = 0;
-        baieBerryMenuVisible = true;
-        baieBerryMenuShowingRules = false;
-        baieBerryMenuClosing = false;
-        baieBerryMenuEntering = false;
-        baieBerryMenuResult = false;
-        refreshBaieBerryHud();
-        baieBerryHelpText.textContent = 'Surveille la ligne rouge et vise une grande chaine de fusions.';
-        updateBaieBerryDropGuide();
-        drawBaieBerry();
-        renderBaieBerryMenu();
-
-    }
-
-    function stopBaieBerry() {
-        if (baieBerryAnimationFrame) {
-            window.cancelAnimationFrame(baieBerryAnimationFrame);
-            baieBerryAnimationFrame = null;
-        }
-        if (baieBerryDropLineTimer) {
-            window.clearTimeout(baieBerryDropLineTimer);
-            baieBerryDropLineTimer = null;
-        }
-        baieBerryLastFrame = 0;
-        if (baieBerryStage) {
-            baieBerryStage.style.transform = 'translate(0, 0)';
-        }
-    }
-
-    function dropBaieBerryAt(x) {
-        if (!baieBerryState || baieBerryState.gameOver) {
-            return;
-        }
-
-        const now = performance.now();
-        if ((now - baieBerryLastDropAt) < BAIE_BERRY_DROP_COOLDOWN_MS) {
-            return;
-        }
-        baieBerryLastDropAt = now;
-        if (!baieBerryAnimationFrame) {
-            baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
-        }
-
-        baieBerryLastPointerX = x;
-        if (baieBerryDropLine) {
-            baieBerryDropLine.style.opacity = '0';
-        }
-        if (baieBerryDropLineTimer) {
-            window.clearTimeout(baieBerryDropLineTimer);
-            baieBerryDropLineTimer = null;
-        }
-
-        const level = baieBerryState.nextQueue[0];
-        const radius = BAIE_BERRY_FRUITS[level].radius;
-        baieBerryState.fruits.push({
-            id: baieBerryNextFruitId++,
-            x: Math.max(radius, Math.min(baieBerryCanvas.width - radius, x)),
-            y: radius + 4,
-            vx: 0,
-            vy: 0,
-            spawnedAt: now,
-            rotation: 0,
-            mergeProgress: 0,
-            blink: 1,
-            expression: 'focused',
-            level
-        });
-        baieBerryState.nextQueue = [baieBerryState.nextQueue[1], getRandomBaieBerryIndex()];
-        refreshBaieBerryHud();
-        updateBaieBerryDropGuide(baieBerryLastPointerX ?? x);
-        if (baieBerryDropLine) {
-            baieBerryDropLine.style.opacity = '0';
-        }
-        baieBerryDropLineTimer = window.setTimeout(() => {
-            baieBerryDropLineTimer = null;
-            if (!baieBerryState?.gameOver && !baieBerryMenuVisible && !baieBerryMenuClosing) {
-                updateBaieBerryDropGuide(baieBerryLastPointerX ?? x);
-            }
-        }, 220);
-    }
-
-    function updateBaieBerry(timestamp) {
-        if (!baieBerryState) {
-            return;
-        }
-
-        if (!baieBerryLastFrame) {
-            baieBerryLastFrame = timestamp;
-        }
-
-        const delta = Math.min(0.032, (timestamp - baieBerryLastFrame) / 1000);
-        baieBerryLastFrame = timestamp;
-        baieBerryState.elapsed += delta;
-
-        if (!baieBerryState.gameOver) {
-            baieBerryState.fruits.forEach((fruit) => {
-                const radius = BAIE_BERRY_FRUITS[fruit.level].radius;
-                fruit.vy += 620 * delta;
-                fruit.x += fruit.vx * delta;
-                fruit.y += fruit.vy * delta;
-                fruit.rotation = (fruit.rotation || 0) + ((fruit.vx * delta) / Math.max(12, radius));
-                fruit.vx *= fruit.y >= baieBerryCanvas.height - radius - 1 ? 0.992 : 0.998;
-                fruit.mergeProgress = 0;
-                fruit.blink = Math.sin((baieBerryState.elapsed * 2.4) + fruit.id) > 0.96 ? 0.18 : 1;
-                fruit.expression = Math.abs(fruit.vy) < 35 ? 'happy' : 'focused';
-
-                if (fruit.x < radius || fruit.x > baieBerryCanvas.width - radius) {
-                    fruit.x = Math.max(radius, Math.min(baieBerryCanvas.width - radius, fruit.x));
-                    fruit.vx *= -0.35;
-                }
-
-                if (fruit.y > baieBerryCanvas.height - radius) {
-                    fruit.y = baieBerryCanvas.height - radius;
-                    fruit.vy *= -0.18;
-                    fruit.vx *= 0.98;
-                }
-            });
-
-            for (let index = 0; index < baieBerryState.fruits.length; index += 1) {
-                const fruitA = baieBerryState.fruits[index];
-                for (let compareIndex = index + 1; compareIndex < baieBerryState.fruits.length; compareIndex += 1) {
-                    const fruitB = baieBerryState.fruits[compareIndex];
-                    const radiusA = BAIE_BERRY_FRUITS[fruitA.level].radius;
-                    const radiusB = BAIE_BERRY_FRUITS[fruitB.level].radius;
-                    const dx = fruitB.x - fruitA.x;
-                    const dy = fruitB.y - fruitA.y;
-                    const distance = Math.hypot(dx, dy) || 0.001;
-                    const minDistance = radiusA + radiusB;
-
-                    if (distance < minDistance) {
-                        const overlap = minDistance - distance;
-                        const nx = dx / distance;
-                        const ny = dy / distance;
-                        fruitA.x -= nx * overlap * 0.5;
-                        fruitA.y -= ny * overlap * 0.5;
-                        fruitB.x += nx * overlap * 0.5;
-                        fruitB.y += ny * overlap * 0.5;
-                        const sidePush = overlap * 7;
-                        fruitA.vx -= nx * sidePush;
-                        fruitB.vx += nx * sidePush;
-                        fruitA.vy *= 0.94;
-                        fruitB.vy *= 0.94;
-
-                        if (fruitA.level === fruitB.level && fruitA.level < BAIE_BERRY_FRUITS.length - 1) {
-                            const nextLevel = fruitA.level + 1;
-                            const now = performance.now();
-                            baieBerryState.comboCount = baieBerryState.comboExpiresAt > now
-                                ? baieBerryState.comboCount + 1
-                                : 1;
-                            baieBerryState.comboExpiresAt = now + BAIE_BERRY_COMBO_WINDOW_MS;
-                            const comboBonus = baieBerryState.comboCount > 1 ? baieBerryState.comboCount * 35 : 0;
-                            baieBerryState.score += BAIE_BERRY_FRUITS[nextLevel].score + comboBonus;
-                            const mergeX = (fruitA.x + fruitB.x) / 2;
-                            const mergeY = (fruitA.y + fruitB.y) / 2;
-                            baieBerryState.fruits.splice(compareIndex, 1);
-                            baieBerryState.fruits.splice(index, 1, {
-                                id: baieBerryNextFruitId++,
-                                x: mergeX,
-                                y: mergeY,
-                                vx: (fruitA.vx + fruitB.vx) * 0.15,
-                                vy: Math.min(fruitA.vy, fruitB.vy, 0) - 90,
-                                rotation: ((fruitA.rotation || 0) + (fruitB.rotation || 0)) / 2,
-                                mergeProgress: 0.9,
-                                blink: 1,
-                                expression: 'happy',
-                                level: nextLevel
-                            });
-                            addBaieBerryParticles(mergeX, mergeY, BAIE_BERRY_FRUITS[nextLevel].color, 18 + (baieBerryState.comboCount * 3));
-                            addBaieBerryScorePopup(
-                                mergeX,
-                                mergeY - 10,
-                                comboBonus ? `+${BAIE_BERRY_FRUITS[nextLevel].score + comboBonus}` : `+${BAIE_BERRY_FRUITS[nextLevel].score}`,
-                                '#fde68a'
-                            );
-                            if (baieBerryState.comboCount > 1) {
-                                addBaieBerryScorePopup(
-                                    mergeX,
-                                    mergeY - 34,
-                                    `x${baieBerryState.comboCount}`,
-                                    '#e2e8f0'
-                                );
-                            }
-                            baieBerryState.shake = Math.min(18, 8 + (nextLevel * 1.8) + (baieBerryState.comboCount * 1.5));
-                            baieBerryHelpText.textContent = baieBerryState.comboCount > 1
-                                ? `Combo x${baieBerryState.comboCount}. Les fusions s enchainent.`
-                                : `Fusion ${BAIE_BERRY_FRUITS[nextLevel].name}. Continue la r\u00e9colte.`;
-                            refreshBaieBerryHud();
-                            updateBaieBerryObjective(nextLevel);
-                            if (baieBerryState.score > baieBerryBestScore) {
-                                baieBerryBestScore = baieBerryState.score;
-                                window.localStorage.setItem(BAIE_BERRY_BEST_KEY, String(baieBerryBestScore));
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-
-            const dangerNow = performance.now();
-            const touchesDangerLine = baieBerryState.fruits.some((fruit) => (
-                (dangerNow - (fruit.spawnedAt || 0)) >= BAIE_BERRY_DANGER_GRACE_MS
-                && (fruit.y - BAIE_BERRY_FRUITS[fruit.level].radius) <= BAIE_BERRY_DANGER_LINE_Y
-            ));
-            baieBerryState.dangerTime = touchesDangerLine
-                ? Math.min(BAIE_BERRY_DANGER_DURATION_MS, baieBerryState.dangerTime + (delta * 1000))
-                : Math.max(0, baieBerryState.dangerTime - (delta * 700));
-
-            baieBerryState.particles = baieBerryState.particles.filter((particle) => {
-                particle.x += particle.vx * delta;
-                particle.y += particle.vy * delta;
-                particle.vy += 220 * delta;
-                particle.life -= delta;
-                return particle.life > 0;
-            });
-
-            baieBerryState.scorePopups = baieBerryState.scorePopups.filter((popup) => {
-                popup.y += popup.vy * delta;
-                popup.life -= delta * 1.2;
-                return popup.life > 0;
-            });
-
-            baieBerryState.shake *= BAIE_BERRY_SHAKE_DECAY;
-            if (baieBerryStage) {
-                const intensity = baieBerryState.shake;
-                baieBerryStage.style.transform = intensity > 0.2
-                    ? `translate(${(Math.random() - 0.5) * intensity}px, ${(Math.random() - 0.5) * intensity}px)`
-                    : 'translate(0, 0)';
-            }
-
-            if (baieBerryState.dangerTime >= BAIE_BERRY_DANGER_DURATION_MS) {
-                baieBerryState.gameOver = true;
-                baieBerryHelpText.textContent = `Récolte terminée. Score ${baieBerryState.score}. La ligne rouge est restée occupée trop longtemps.`;
-                revealBaieBerryOutcomeMenu();
-            }
-        }
-
-        drawBaieBerry();
-        baieBerryAnimationFrame = window.requestAnimationFrame(updateBaieBerry);
-    }
-
-
-    function createBlockBlastPiece(template) {
-        return {
-            id: `${template.key}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
-            key: template.key,
-            color: template.color,
-            cells: template.cells.map(([x, y]) => ({ x, y })),
-            width: Math.max(...template.cells.map(([x]) => x)) + 1,
-            height: Math.max(...template.cells.map(([, y]) => y)) + 1
-        };
-    }
-
-    function createBlockBlastBoard() {
-        return Array.from({ length: BLOCK_BLAST_SIZE }, () => Array.from({ length: BLOCK_BLAST_SIZE }, () => null));
-    }
-
-    function generateBlockBlastPieces() {
-        const pool = [...BLOCK_BLAST_SHAPES];
-        const picks = [];
-
-        while (picks.length < 3) {
-            const index = Math.floor(Math.random() * pool.length);
-            const [template] = pool.splice(index, 1);
-            picks.push(createBlockBlastPiece(template));
-        }
-
-        return picks;
-    }
-
-    function canPlaceBlockBlastPiece(piece, anchorRow, anchorCol) {
-        if (!piece || !blockBlastState) {
-            return false;
-        }
-
-        return piece.cells.every((cell) => {
-            const row = anchorRow + cell.y;
-            const col = anchorCol + cell.x;
-            return row >= 0
-                && row < BLOCK_BLAST_SIZE
-                && col >= 0
-                && col < BLOCK_BLAST_SIZE
-                && !blockBlastState.board[row][col];
-        });
-    }
-
-    function canAnyBlockBlastPieceFit() {
-        if (!blockBlastState) {
-            return false;
-        }
-
-        return blockBlastState.pieces.some((piece) => {
-            if (!piece) {
-                return false;
-            }
-
-            for (let row = 0; row < BLOCK_BLAST_SIZE; row += 1) {
-                for (let col = 0; col < BLOCK_BLAST_SIZE; col += 1) {
-                    if (canPlaceBlockBlastPiece(piece, row, col)) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        });
-    }
-
-    function updateBlockBlastHud() {
-        if (!blockBlastState) {
-            return;
-        }
-
-        blockBlastScoreDisplay.textContent = String(blockBlastState.score);
-        blockBlastComboDisplay.textContent = `x${Math.max(1, blockBlastState.combo)}`;
-    }
-
-    function clearBlockBlastPreview(shouldRender = true) {
-        if (!blockBlastPreview) {
-            return;
-        }
-
-        blockBlastPreview = null;
-        if (shouldRender) {
-            renderBlockBlastBoard();
-        }
-    }
-
-    function updateBlockBlastPreview(piece, anchorRow, anchorCol) {
-        if (!piece || !Number.isInteger(anchorRow) || !Number.isInteger(anchorCol)) {
-            clearBlockBlastPreview();
-            return false;
-        }
-
-        const keys = piece.cells
-            .map((cell) => ({ row: anchorRow + cell.y, col: anchorCol + cell.x }))
-            .filter((cell) => (
-                cell.row >= 0
-                && cell.row < BLOCK_BLAST_SIZE
-                && cell.col >= 0
-                && cell.col < BLOCK_BLAST_SIZE
-            ))
-            .map((cell) => `${cell.row}-${cell.col}`);
-        const valid = canPlaceBlockBlastPiece(piece, anchorRow, anchorCol);
-        const nextPreview = { keys, valid, row: anchorRow, col: anchorCol };
-        const previewChanged = !blockBlastPreview
-            || blockBlastPreview.valid !== nextPreview.valid
-            || blockBlastPreview.row !== nextPreview.row
-            || blockBlastPreview.col !== nextPreview.col
-            || blockBlastPreview.keys.length !== nextPreview.keys.length
-            || blockBlastPreview.keys.some((key, index) => key !== nextPreview.keys[index]);
-
-        blockBlastPreview = nextPreview;
-        if (previewChanged) {
-            renderBlockBlastBoard();
-        }
-
-        return valid;
-    }
-
-    function getBlockBlastAnchorFromPoint(clientX, clientY) {
-        if (!blockBlastBoard) {
-            return null;
-        }
-
-        const bounds = blockBlastBoard.getBoundingClientRect();
-        if (clientX < bounds.left || clientX > bounds.right || clientY < bounds.top || clientY > bounds.bottom) {
-            return null;
-        }
-
-        const relativeX = (clientX - bounds.left) / bounds.width;
-        const relativeY = (clientY - bounds.top) / bounds.height;
-
-        return {
-            row: Math.max(0, Math.min(BLOCK_BLAST_SIZE - 1, Math.floor(relativeY * BLOCK_BLAST_SIZE))),
-            col: Math.max(0, Math.min(BLOCK_BLAST_SIZE - 1, Math.floor(relativeX * BLOCK_BLAST_SIZE)))
-        };
-    }
-
-    function stopBlockBlastDrag() {
-        blockBlastDragState = null;
-        clearBlockBlastPreview();
-    }
-
-    function renderBlockBlastPieces() {
-        if (!blockBlastPieces || !blockBlastState) {
-            return;
-        }
-
-        blockBlastPieces.innerHTML = blockBlastState.pieces.map((piece, index) => {
-            if (!piece) {
-                return '<div class="blockblast-piece-slot is-empty"></div>';
-            }
-
-            return `
-                <button
-                    type="button"
-                    class="blockblast-piece${blockBlastSelectedPieceIndex === index ? ' is-selected' : ''}"
-                    data-blockblast-piece="${index}"
-                    style="--piece-columns:${piece.width}; --piece-rows:${piece.height};"
-                    aria-label="Piece ${index + 1}"
-                >
-                    ${piece.cells.map((cell) => `<span class="blockblast-piece-cell is-${piece.color}" style="grid-column:${cell.x + 1}; grid-row:${cell.y + 1};"></span>`).join('')}
-                </button>
-            `;
-        }).join('');
-    }
-
-    function renderBlockBlastBoard() {
-        if (!blockBlastBoard || !blockBlastState) {
-            return;
-        }
-
-        const previewKeys = new Set(blockBlastPreview?.keys || []);
-        const previewClassName = blockBlastPreview
-            ? (blockBlastPreview.valid ? ' is-preview-valid' : ' is-preview-invalid')
-            : '';
-
-        blockBlastBoard.innerHTML = blockBlastState.board.map((row, rowIndex) => row.map((cell, colIndex) => {
-            const clearing = blockBlastState.clearingCells?.some((entry) => entry.row === rowIndex && entry.col === colIndex);
-            const preview = previewKeys.has(`${rowIndex}-${colIndex}`);
-            return `
-                <button
-                    type="button"
-                    class="blockblast-cell${cell ? ` is-filled is-${cell.color}` : ''}${clearing ? ' is-clearing' : ''}${preview ? previewClassName : ''}"
-                    data-blockblast-row="${rowIndex}"
-                    data-blockblast-col="${colIndex}"
-                    aria-label="Case ${rowIndex + 1}-${colIndex + 1}"
-                ></button>
-            `;
-        }).join('')).join('');
-    }
-
-    function renderBlockBlast() {
-        updateBlockBlastHud();
-        renderBlockBlastBoard();
-        renderBlockBlastPieces();
-    }
-
-    function finishBlockBlast() {
-        if (!blockBlastState) {
-            return;
-        }
-
-        blockBlastHelpText.textContent = `Le pont est saturé. Score final ${blockBlastState.score}. Record ${blockBlastBestScore}.`;
-        revealBlockBlastOutcomeMenu(
-            'Pont saturé',
-            `Plus aucune pièce ne rentre. Score final : ${blockBlastState.score}. Record : ${blockBlastBestScore}.`,
-            'Marée bloquée'
-        );
-    }
-
-    function refillBlockBlastPiecesIfNeeded() {
-        if (!blockBlastState) {
-            return;
-        }
-
-        if (blockBlastState.pieces.every((piece) => !piece)) {
-            blockBlastState.pieces = generateBlockBlastPieces();
-            blockBlastSelectedPieceIndex = null;
-            blockBlastHelpText.textContent = 'Nouvelle cargaison sur le quai. Continue a liberer des lignes.';
-        }
-    }
-
-    function clearBlockBlastLines() {
-        if (!blockBlastState) {
-            return;
-        }
-
-        const rowsToClear = [];
-        const colsToClear = [];
-
-        for (let row = 0; row < BLOCK_BLAST_SIZE; row += 1) {
-            if (blockBlastState.board[row].every(Boolean)) {
-                rowsToClear.push(row);
-            }
-        }
-
-        for (let col = 0; col < BLOCK_BLAST_SIZE; col += 1) {
-            if (blockBlastState.board.every((row) => row[col])) {
-                colsToClear.push(col);
-            }
-        }
-
-        const uniqueCells = new Map();
-        rowsToClear.forEach((row) => {
-            for (let col = 0; col < BLOCK_BLAST_SIZE; col += 1) {
-                uniqueCells.set(`${row}-${col}`, { row, col });
-            }
-        });
-        colsToClear.forEach((col) => {
-            for (let row = 0; row < BLOCK_BLAST_SIZE; row += 1) {
-                uniqueCells.set(`${row}-${col}`, { row, col });
-            }
-        });
-
-        const cleared = [...uniqueCells.values()];
-        blockBlastState.clearingCells = cleared;
-
-        if (!cleared.length) {
-            blockBlastState.combo = 1;
-            blockBlastHelpText.textContent = 'Pose les formes pour préparer un gros nettoyage.';
-            return;
-        }
-
-        cleared.forEach(({ row, col }) => {
-            blockBlastState.board[row][col] = null;
-        });
-
-        blockBlastState.score += cleared.length * 12 * Math.max(1, blockBlastState.combo);
-        blockBlastState.combo += 1;
-
-        if (blockBlastState.score > blockBlastBestScore) {
-            blockBlastBestScore = blockBlastState.score;
-            window.localStorage.setItem(BLOCK_BLAST_BEST_KEY, String(blockBlastBestScore));
-        }
-
-        blockBlastHelpText.textContent = `${cleared.length} cases liberees. La mer reprend de l air.`;
-        renderBlockBlast();
-
-        window.setTimeout(() => {
-            if (!blockBlastState) {
-                return;
-            }
-            blockBlastState.clearingCells = [];
-            renderBlockBlastBoard();
-        }, 220);
-    }
-
-    function placeBlockBlastPieceAtIndex(pieceIndex, row, col) {
-        if (!blockBlastState || pieceIndex === null) {
-            return;
-        }
-
-        const piece = blockBlastState.pieces[pieceIndex];
-        if (!piece || !canPlaceBlockBlastPiece(piece, row, col)) {
-            blockBlastHelpText.textContent = 'Cette forme ne rentre pas ici. Cherche un autre coin du plateau.';
-            return;
-        }
-
-        piece.cells.forEach((cell) => {
-            blockBlastState.board[row + cell.y][col + cell.x] = { color: piece.color };
-        });
-
-        blockBlastState.score += piece.cells.length * 4;
-        blockBlastState.pieces[pieceIndex] = null;
-        blockBlastSelectedPieceIndex = null;
-        clearBlockBlastPreview(false);
-        clearBlockBlastLines();
-        refillBlockBlastPiecesIfNeeded();
-        renderBlockBlast();
-
-        if (!canAnyBlockBlastPieceFit()) {
-            finishBlockBlast();
-        }
-    }
-
-    function placeBlockBlastPiece(row, col) {
-        if (blockBlastSelectedPieceIndex === null) {
-            return;
-        }
-
-        placeBlockBlastPieceAtIndex(blockBlastSelectedPieceIndex, row, col);
-    }
-
-    function getBlockBlastRulesText() {
-        return 'Fais glisser une pi\u00e8ce de la r\u00e9serve sur le pont. Remplis une ligne ou une colonne enti\u00e8re pour la nettoyer et faire grimper le combo. La partie s\u2019arr\u00eate d\u00e8s qu\u2019aucune pi\u00e8ce ne peut plus \u00eatre pos\u00e9e.';
-    }
-
-    function renderBlockBlastMenu() {
-        if (!blockBlastMenuOverlay || !blockBlastTable) return;
-        syncGameMenuOverlayBounds(blockBlastMenuOverlay, blockBlastTable);
-        blockBlastMenuOverlay.classList.toggle('hidden', !blockBlastMenuVisible);
-        blockBlastMenuOverlay.classList.toggle('is-closing', blockBlastMenuClosing);
-        blockBlastMenuOverlay.classList.toggle('is-entering', blockBlastMenuEntering);
-        blockBlastTable.classList.toggle('is-menu-open', blockBlastMenuVisible);
-        if (!blockBlastMenuVisible) return;
-        const hasResult = Boolean(blockBlastMenuResult);
-        if (blockBlastMenuEyebrow) blockBlastMenuEyebrow.textContent = blockBlastMenuShowingRules ? 'R\u00e8gles' : (hasResult ? blockBlastMenuResult.eyebrow : 'Ligne de cargaison');
-        if (blockBlastMenuTitle) blockBlastMenuTitle.textContent = blockBlastMenuShowingRules ? 'Rappel rapide' : (hasResult ? blockBlastMenuResult.title : 'Block Line');
-        if (blockBlastMenuText) blockBlastMenuText.textContent = blockBlastMenuShowingRules ? getBlockBlastRulesText() : (hasResult ? blockBlastMenuResult.text : 'Pose les pi\u00e8ces de cargaison sur le pont pour former des lignes et colonnes compl\u00e8tes. Tiens le plus longtemps possible.');
-        if (blockBlastMenuActionButton) blockBlastMenuActionButton.textContent = blockBlastMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la mar\u00e9e' : 'Lancer la mar\u00e9e');
-        if (blockBlastMenuRulesButton) { blockBlastMenuRulesButton.textContent = 'R\u00e8gles'; blockBlastMenuRulesButton.hidden = blockBlastMenuShowingRules; }
-    }
-
-    function closeBlockBlastMenu() {
-        blockBlastMenuClosing = true;
-        renderBlockBlastMenu();
-        window.setTimeout(() => {
-            blockBlastMenuClosing = false;
-            blockBlastMenuVisible = false;
-            blockBlastMenuShowingRules = false;
-            blockBlastMenuEntering = false;
-            blockBlastMenuResult = null;
-            renderBlockBlastMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealBlockBlastOutcomeMenu(title, text, eyebrow) {
-        blockBlastMenuVisible = true;
-        blockBlastMenuResult = { title, text, eyebrow };
-        blockBlastMenuShowingRules = false;
-        blockBlastMenuClosing = false;
-        blockBlastMenuEntering = true;
-        if (blockBlastHelpText) blockBlastHelpText.textContent = text;
-        renderBlockBlastMenu();
-        window.setTimeout(() => { blockBlastMenuEntering = false; renderBlockBlastMenu(); }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeBlockBlast() {
-        closeGameOverModal();
-        blockBlastState = {
-            board: createBlockBlastBoard(),
-            pieces: generateBlockBlastPieces(),
-            score: 0,
-            combo: 1,
-            clearingCells: []
-        };
-        blockBlastSelectedPieceIndex = null;
-        clearBlockBlastPreview(false);
-        stopBlockBlastDrag();
-        blockBlastHelpText.textContent = 'Fais glisser une forme sur le pont. Efface des lignes pour garder la baie dégagée.';
-        blockBlastMenuResult = null;
-        blockBlastMenuShowingRules = false;
-        blockBlastMenuClosing = false;
-        blockBlastMenuEntering = false;
-        renderBlockBlastMenu();
-        renderBlockBlast();
-    }
-
     function showUnoEvent(message) {
         if (!unoEventBanner) {
             return;
@@ -15814,7 +10779,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'sudoku') {
-            sudokuMenuVisible = true;
+            __su.setSudokuMenuVisible(true);
             initializeSudoku(false);
             return;
         }
@@ -15854,7 +10819,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'solitaire') {
-            solitaireMenuVisible = true;
+            __sol.setSolitaireMenuVisible(true);
             initializeSolitaire();
             return;
         }
@@ -15876,13 +10841,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'flowFree') {
-            flowFreeMenuVisible = true;
+            __ff.setFlowFreeMenuVisible(true);
             initializeFlowFree();
             return;
         }
 
         if (nextTab === 'magicSort') {
-            magicSortMenuVisible = true;
+            __ms.setMagicSortMenuVisible(true);
             initializeMagicSort();
             return;
         }
@@ -15893,19 +10858,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'candyCrush') {
-            candyCrushMenuVisible = true;
+            __cc2.setCandyCrushMenuVisible(true);
             initializeCandyCrush();
             return;
         }
 
         if (nextTab === 'harborRun') {
-            harborRunMenuVisible = true;
+            __hr.setHarborRunMenuVisible(true);
             initializeHarborRun();
             return;
         }
 
         if (nextTab === 'stacker') {
-            stackerMenuVisible = true;
+            __st.setStackerMenuVisible(true);
             initializeStacker();
             return;
         }
@@ -15949,7 +10914,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'blockBlast') {
-            blockBlastMenuVisible = true;
+            __bb.setBlockBlastMenuVisible(true);
             initializeBlockBlast();
             return;
         }
@@ -16126,8 +11091,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     minesweeperMenuActionButton?.addEventListener('click', () => {
-        if (minesweeperMenuShowingRules) {
-            minesweeperMenuShowingRules = false;
+        if (__mw.getMinesweeperMenuShowingRules()) {
+            __mw.setMinesweeperMenuShowingRules(false);
             renderMinesweeperMenu();
             return;
         }
@@ -16137,7 +11102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     minesweeperMenuRulesButton?.addEventListener('click', () => {
-        minesweeperMenuShowingRules = true;
+        __mw.setMinesweeperMenuShowingRules(true);
         renderMinesweeperMenu();
     });
 
@@ -16205,22 +11170,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = Number(cellButton.dataset.row);
         const col = Number(cellButton.dataset.col);
 
-        sudokuSelectedCell = { row, col };
+        setSudokuSelectedCell(row, col);
         renderSudoku();
     });
 
     sudokuRestartButton.addEventListener('click', () => {
-        initializeSudoku(!sudokuMenuVisible);
+        initializeSudoku(!__su.getSudokuMenuVisible());
     });
 
     sudokuDifficultyButton?.addEventListener('click', () => {
-        sudokuDifficultyIndex = (sudokuDifficultyIndex + 1) % SUDOKU_DIFFICULTIES.length;
-        initializeSudoku(!sudokuMenuVisible);
+        cycleSudokuDifficulty();
+        initializeSudoku(!__su.getSudokuMenuVisible());
     });
 
     sudokuMenuActionButton?.addEventListener('click', () => {
-        if (sudokuMenuShowingRules) {
-            sudokuMenuShowingRules = false;
+        if (__su.getSudokuMenuShowingRules()) {
+            __su.setSudokuMenuShowingRules(false);
             renderSudokuMenu();
             return;
         }
@@ -16230,7 +11195,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sudokuMenuRulesButton?.addEventListener('click', () => {
-        sudokuMenuShowingRules = true;
+        __su.setSudokuMenuShowingRules(true);
         renderSudokuMenu();
     });
 
@@ -16509,8 +11474,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     memoryMenuActionButton?.addEventListener('click', () => {
-        if (memoryMenuShowingRules) {
-            memoryMenuShowingRules = false;
+        if (__mem.getMemoryMenuShowingRules()) {
+            __mem.setMemoryMenuShowingRules(false);
             renderMemoryMenu();
             return;
         }
@@ -16521,7 +11486,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     memoryMenuRulesButton?.addEventListener('click', () => {
-        memoryMenuShowingRules = !memoryMenuShowingRules;
+        __mem.setMemoryMenuShowingRules(!__mem.getMemoryMenuShowingRules());
         renderMemoryMenu();
     });
 
@@ -16678,8 +11643,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireMenuActionButton?.addEventListener('click', () => {
-        if (solitaireMenuShowingRules) {
-            solitaireMenuShowingRules = false;
+        if (__sol.getSolitaireMenuShowingRules()) {
+            __sol.setSolitaireMenuShowingRules(false);
             renderSolitaireMenu();
             return;
         }
@@ -16688,7 +11653,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireMenuRulesButton?.addEventListener('click', () => {
-        solitaireMenuShowingRules = true;
+        __sol.setSolitaireMenuShowingRules(true);
         renderSolitaireMenu();
     });
 
@@ -16772,8 +11737,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     flowFreeMenuActionButton?.addEventListener('click', () => {
-        if (flowFreeMenuShowingRules) {
-            flowFreeMenuShowingRules = false;
+        if (__ff.getFlowFreeMenuShowingRules()) {
+            __ff.setFlowFreeMenuShowingRules(false);
             renderFlowFreeMenu();
             return;
         }
@@ -16782,7 +11747,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     flowFreeMenuRulesButton?.addEventListener('click', () => {
-        flowFreeMenuShowingRules = true;
+        __ff.setFlowFreeMenuShowingRules(true);
         renderFlowFreeMenu();
     });
 
@@ -16792,8 +11757,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     magicSortMenuActionButton?.addEventListener('click', () => {
-        if (magicSortMenuShowingRules) {
-            magicSortMenuShowingRules = false;
+        if (__ms.getMagicSortMenuShowingRules()) {
+            __ms.setMagicSortMenuShowingRules(false);
             renderMagicSortMenu();
             return;
         }
@@ -16802,7 +11767,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     magicSortMenuRulesButton?.addEventListener('click', () => {
-        magicSortMenuShowingRules = true;
+        __ms.setMagicSortMenuShowingRules(true);
         renderMagicSortMenu();
     });
 
@@ -16891,8 +11856,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     candyCrushMenuActionButton?.addEventListener('click', () => {
-        if (candyCrushMenuShowingRules) {
-            candyCrushMenuShowingRules = false;
+        if (__cc2.getCandyCrushMenuShowingRules()) {
+            __cc2.setCandyCrushMenuShowingRules(false);
             renderCandyCrushMenu();
             return;
         }
@@ -16902,7 +11867,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     candyCrushMenuRulesButton?.addEventListener('click', () => {
-        candyCrushMenuShowingRules = true;
+        __cc2.setCandyCrushMenuShowingRules(true);
         renderCandyCrushMenu();
     });
 
@@ -16912,8 +11877,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     harborRunMenuActionButton?.addEventListener('click', () => {
-        if (harborRunMenuShowingRules) {
-            harborRunMenuShowingRules = false;
+        if (__hr.getHarborRunMenuShowingRules()) {
+            __hr.setHarborRunMenuShowingRules(false);
             renderHarborRunMenu();
             return;
         }
@@ -16926,7 +11891,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     harborRunMenuRulesButton?.addEventListener('click', () => {
-        harborRunMenuShowingRules = true;
+        __hr.setHarborRunMenuShowingRules(true);
         renderHarborRunMenu();
     });
 
@@ -16935,8 +11900,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     stackerMenuActionButton?.addEventListener('click', () => {
-        if (stackerMenuShowingRules) {
-            stackerMenuShowingRules = false;
+        if (__st.getStackerMenuShowingRules()) {
+            __st.setStackerMenuShowingRules(false);
             renderStackerMenu();
             return;
         }
@@ -16946,7 +11911,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     stackerMenuRulesButton?.addEventListener('click', () => {
-        stackerMenuShowingRules = true;
+        __st.setStackerMenuShowingRules(true);
         renderStackerMenu();
     });
 
@@ -17217,8 +12182,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     baieBerryMenuActionButton?.addEventListener('click', () => {
-        if (baieBerryMenuShowingRules) {
-            baieBerryMenuShowingRules = false;
+        if (__bb2.getBaieBerryMenuShowingRules()) {
+            __bb2.setBaieBerryMenuShowingRules(false);
             renderBaieBerryMenu();
             return;
         }
@@ -17228,23 +12193,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     baieBerryMenuRulesButton?.addEventListener('click', () => {
-        baieBerryMenuShowingRules = !baieBerryMenuShowingRules;
+        __bb2.setBaieBerryMenuShowingRules(!__bb2.getBaieBerryMenuShowingRules());
         renderBaieBerryMenu();
     });
 
     baieBerryCanvas?.addEventListener('pointermove', (event) => {
-        if (baieBerryMenuVisible || baieBerryMenuClosing) {
+        if (__bb2.getBaieBerryMenuVisible() || __bb2.getBaieBerryMenuClosing()) {
             return;
         }
         const bounds = baieBerryCanvas.getBoundingClientRect();
         const scaleX = baieBerryCanvas.width / bounds.width;
         const x = (event.clientX - bounds.left) * scaleX;
-        baieBerryLastPointerX = x;
+        __bb2.setBaieBerryLastPointerX(x);
         updateBaieBerryDropGuide(x);
     });
 
     baieBerryCanvas?.addEventListener('click', (event) => {
-        if (baieBerryMenuVisible || baieBerryMenuClosing) {
+        if (__bb2.getBaieBerryMenuVisible() || __bb2.getBaieBerryMenuClosing()) {
             return;
         }
         const bounds = baieBerryCanvas.getBoundingClientRect();
@@ -17269,8 +12234,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     blockBlastMenuActionButton?.addEventListener('click', () => {
-        if (blockBlastMenuShowingRules) {
-            blockBlastMenuShowingRules = false;
+        if (__bb.getBlockBlastMenuShowingRules()) {
+            __bb.setBlockBlastMenuShowingRules(false);
             renderBlockBlastMenu();
             return;
         }
@@ -17279,7 +12244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     blockBlastMenuRulesButton?.addEventListener('click', () => {
-        blockBlastMenuShowingRules = true;
+        __bb.setBlockBlastMenuShowingRules(true);
         renderBlockBlastMenu();
     });
 
@@ -17288,22 +12253,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     blockBlastPieces?.addEventListener('pointerdown', (event) => {
-        if (blockBlastMenuVisible || blockBlastMenuClosing) return;
+        if (__bb.getBlockBlastMenuVisible() || __bb.getBlockBlastMenuClosing()) return;
         const pieceButton = event.target.closest('[data-blockblast-piece]');
-        if (!pieceButton || !blockBlastState) {
+        const state = __bb.getBlockBlastState();
+        if (!pieceButton || !state) {
             return;
         }
 
         const index = Number(pieceButton.dataset.blockblastPiece);
-        const piece = blockBlastState.pieces[index];
+        const piece = state.pieces[index];
         if (!piece) {
             return;
         }
 
         event.preventDefault();
-        blockBlastSuppressClick = false;
+        __bb.setBlockBlastSuppressClick(false);
         stopBlockBlastDrag();
-        blockBlastDragState = {
+        __bb.setBlockBlastDragState({
             pointerId: event.pointerId,
             pieceIndex: index,
             piece,
@@ -17311,21 +12277,22 @@ document.addEventListener('DOMContentLoaded', () => {
             startX: event.clientX,
             startY: event.clientY,
             moved: false
-        };
+        });
     });
 
     document.addEventListener('pointermove', (event) => {
-        if (!blockBlastDragState || event.pointerId !== blockBlastDragState.pointerId) {
+        const drag = __bb.getBlockBlastDragState();
+        if (!drag || event.pointerId !== drag.pointerId) {
             return;
         }
 
         const dragDistance = Math.hypot(
-            event.clientX - blockBlastDragState.startX,
-            event.clientY - blockBlastDragState.startY
+            event.clientX - drag.startX,
+            event.clientY - drag.startY
         );
         if (dragDistance > 6) {
-            blockBlastDragState.moved = true;
-            blockBlastSuppressClick = true;
+            drag.moved = true;
+            __bb.setBlockBlastSuppressClick(true);
         }
 
         const anchor = getBlockBlastAnchorFromPoint(event.clientX, event.clientY);
@@ -17334,19 +12301,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        updateBlockBlastPreview(blockBlastDragState.piece, anchor.row, anchor.col);
+        updateBlockBlastPreview(drag.piece, anchor.row, anchor.col);
     });
 
     document.addEventListener('pointerup', (event) => {
-        if (!blockBlastDragState || event.pointerId !== blockBlastDragState.pointerId) {
+        const drag = __bb.getBlockBlastDragState();
+        if (!drag || event.pointerId !== drag.pointerId) {
             return;
         }
 
         const anchor = getBlockBlastAnchorFromPoint(event.clientX, event.clientY);
-        const shouldPlace = blockBlastDragState.moved
+        const shouldPlace = drag.moved
             && anchor
-            && canPlaceBlockBlastPiece(blockBlastDragState.piece, anchor.row, anchor.col);
-        const draggedPieceIndex = blockBlastDragState.pieceIndex;
+            && canPlaceBlockBlastPiece(drag.piece, anchor.row, anchor.col);
+        const draggedPieceIndex = drag.pieceIndex;
 
         stopBlockBlastDrag();
 
@@ -17354,47 +12322,50 @@ document.addEventListener('DOMContentLoaded', () => {
             placeBlockBlastPieceAtIndex(draggedPieceIndex, anchor.row, anchor.col);
         }
 
-        if (blockBlastSuppressClick) {
+        if (__bb.getBlockBlastSuppressClick()) {
             window.setTimeout(() => {
-                blockBlastSuppressClick = false;
+                __bb.setBlockBlastSuppressClick(false);
             }, 0);
         }
     });
 
     document.addEventListener('pointercancel', (event) => {
-        if (!blockBlastDragState || event.pointerId !== blockBlastDragState.pointerId) {
+        const drag = __bb.getBlockBlastDragState();
+        if (!drag || event.pointerId !== drag.pointerId) {
             return;
         }
 
         stopBlockBlastDrag();
-        blockBlastSuppressClick = false;
+        __bb.setBlockBlastSuppressClick(false);
     });
 
     blockBlastPieces?.addEventListener('click', (event) => {
-        if (blockBlastSuppressClick) {
-            blockBlastSuppressClick = false;
+        if (__bb.getBlockBlastSuppressClick()) {
+            __bb.setBlockBlastSuppressClick(false);
             return;
         }
 
         const pieceButton = event.target.closest('[data-blockblast-piece]');
-        if (!pieceButton || !blockBlastState) {
+        const state = __bb.getBlockBlastState();
+        if (!pieceButton || !state) {
             return;
         }
 
         const index = Number(pieceButton.dataset.blockblastPiece);
-        if (!blockBlastState.pieces[index]) {
+        if (!state.pieces[index]) {
             return;
         }
 
-        blockBlastSelectedPieceIndex = blockBlastSelectedPieceIndex === index ? null : index;
+        const current = __bb.getBlockBlastSelectedPieceIndex();
+        __bb.setBlockBlastSelectedPieceIndex(current === index ? null : index);
         clearBlockBlastPreview();
         renderBlockBlastPieces();
     });
 
     blockBlastBoard?.addEventListener('click', (event) => {
-        if (blockBlastMenuVisible || blockBlastMenuClosing) return;
-        if (blockBlastSuppressClick) {
-            blockBlastSuppressClick = false;
+        if (__bb.getBlockBlastMenuVisible() || __bb.getBlockBlastMenuClosing()) return;
+        if (__bb.getBlockBlastSuppressClick()) {
+            __bb.setBlockBlastSuppressClick(false);
             return;
         }
 
@@ -17597,7 +12568,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireStock.addEventListener('click', (event) => {
-        if (solitaireMenuVisible || solitaireMenuClosing) return;
+        if (__sol.getSolitaireMenuVisible() || __sol.getSolitaireMenuClosing()) return;
         const actionButton = event.target.closest('[data-solitaire-action]');
 
         if (!actionButton) {
@@ -17608,14 +12579,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireWaste.addEventListener('click', (event) => {
-        if (solitaireMenuVisible || solitaireMenuClosing) return;
+        if (__sol.getSolitaireMenuVisible() || __sol.getSolitaireMenuClosing()) return;
         const wasteCard = event.target.closest('[data-solitaire-source="waste"]');
 
         if (!wasteCard) {
             return;
         }
 
-        if (solitaireSelectedSource?.type === 'waste') {
+        if (__sol.getSolitaireSelectedSource()?.type === 'waste') {
             clearSolitaireSelection();
             renderSolitaire();
             return;
@@ -17625,7 +12596,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     solitaireFoundations.addEventListener('click', (event) => {
-        if (solitaireMenuVisible || solitaireMenuClosing) return;
+        if (__sol.getSolitaireMenuVisible() || __sol.getSolitaireMenuClosing()) return;
         const foundationButton = event.target.closest('[data-solitaire-foundation]');
 
         if (!foundationButton) {
@@ -17634,7 +12605,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const suit = foundationButton.dataset.solitaireFoundation;
 
-        if (solitaireSelectedSource) {
+        if (__sol.getSolitaireSelectedSource()) {
             if (moveSelectedSolitaireToFoundation(suit)) {
                 return;
             }
@@ -17644,13 +12615,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (solitaireFoundationsState[suit].length) {
+        if (__sol.getSolitaireFoundationCount(suit)) {
             selectSolitaireSource({ type: 'foundation', suit });
         }
     });
 
     solitaireTableau.addEventListener('click', (event) => {
-        if (solitaireMenuVisible || solitaireMenuClosing) return;
+        if (__sol.getSolitaireMenuVisible() || __sol.getSolitaireMenuClosing()) return;
         const tableauCard = event.target.closest('[data-solitaire-tableau]');
         const columnTarget = event.target.closest('[data-solitaire-column]');
 
@@ -17658,7 +12629,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const col = Number(tableauCard.dataset.solitaireTableau);
             const index = Number(tableauCard.dataset.solitaireIndex);
 
-            if (solitaireSelectedSource) {
+            if (__sol.getSolitaireSelectedSource()) {
                 if (moveSelectedSolitaireToTableau(col)) {
                     return;
                 }
@@ -17672,7 +12643,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (columnTarget && solitaireSelectedSource) {
+        if (columnTarget && __sol.getSolitaireSelectedSource()) {
             const col = Number(columnTarget.dataset.solitaireColumn);
 
             if (!Number.isNaN(col) && moveSelectedSolitaireToTableau(col)) {
@@ -17714,7 +12685,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     flowFreeBoard.addEventListener('pointerdown', (event) => {
-        if (flowFreeMenuVisible || flowFreeMenuClosing) return;
+        if (__ff.getFlowFreeMenuVisible() || __ff.getFlowFreeMenuClosing()) return;
         const cellButton = event.target.closest('.flowfree-cell');
         if (!cellButton) {
             return;
@@ -17743,7 +12714,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     flowFreeBoard.addEventListener('pointermove', (event) => {
-        if (!flowFreePointerDown) {
+        if (!__ff.getFlowFreePointerDown()) {
             return;
         }
 
@@ -17760,7 +12731,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('pointerup', (event) => {
-        if (flowFreePointerDown) {
+        if (__ff.getFlowFreePointerDown()) {
             const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
             const cellButton = hoveredElement?.closest('.flowfree-cell');
             if (cellButton) {
@@ -17784,14 +12755,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof flowFreeBoard.releasePointerCapture === 'function' && flowFreeBoard.hasPointerCapture?.(event.pointerId)) {
             flowFreeBoard.releasePointerCapture(event.pointerId);
         }
-        if (flowFreePointerDown) {
+        if (__ff.getFlowFreePointerDown()) {
             flushFlowFreePendingTarget();
             stopFlowFreePath();
         }
     });
 
     magicSortBoard.addEventListener('pointerdown', (event) => {
-        if (magicSortMenuVisible || magicSortMenuClosing) return;
+        if (__ms.getMagicSortMenuVisible() || __ms.getMagicSortMenuClosing()) return;
         const tubeButton = event.target.closest('[data-magic-sort-tube]');
         if (!tubeButton) {
             return;
@@ -17801,7 +12772,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     candyCrushBoard.addEventListener('pointerdown', (event) => {
-        if (candyCrushMenuVisible || candyCrushMenuClosing) {
+        if (__cc2.getCandyCrushMenuVisible() || __cc2.getCandyCrushMenuClosing()) {
             return;
         }
         const cellButton = event.target.closest('.candycrush-cell');
@@ -17809,22 +12780,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        candyCrushPointerStart = {
+        const start = {
             row: Number(cellButton.dataset.candyRow),
             col: Number(cellButton.dataset.candyCol)
         };
-        candyCrushSelectedCell = candyCrushPointerStart;
+        __cc2.setCandyCrushPointerStart(start);
+        __cc2.setCandyCrushSelectedCell(start);
         renderCandyCrush();
     });
 
     candyCrushBoard.addEventListener('pointerup', async (event) => {
-        if (candyCrushMenuVisible || candyCrushMenuClosing) {
-            candyCrushPointerStart = null;
+        if (__cc2.getCandyCrushMenuVisible() || __cc2.getCandyCrushMenuClosing()) {
+            __cc2.setCandyCrushPointerStart(null);
             return;
         }
         const cellButton = event.target.closest('.candycrush-cell');
-        if (!cellButton || !candyCrushPointerStart) {
-            candyCrushPointerStart = null;
+        const start = __cc2.getCandyCrushPointerStart();
+        if (!cellButton || !start) {
+            __cc2.setCandyCrushPointerStart(null);
             return;
         }
 
@@ -17833,21 +12806,20 @@ document.addEventListener('DOMContentLoaded', () => {
             col: Number(cellButton.dataset.candyCol)
         };
 
-        const startCell = candyCrushPointerStart;
-        candyCrushPointerStart = null;
-        await tryCandyCrushSwap(startCell, targetCell);
+        __cc2.setCandyCrushPointerStart(null);
+        await tryCandyCrushSwap(start, targetCell);
     });
 
     candyCrushBoard.addEventListener('pointerleave', () => {
-        candyCrushPointerStart = null;
-        candyCrushSelectedCell = null;
-        if (!candyCrushAnimating) {
+        __cc2.setCandyCrushPointerStart(null);
+        __cc2.setCandyCrushSelectedCell(null);
+        if (!__cc2.getCandyCrushAnimating()) {
             renderCandyCrush();
         }
     });
 
     harborRunBoard.addEventListener('pointerdown', (event) => {
-        if (harborRunMenuVisible || harborRunMenuClosing) {
+        if (__hr.getHarborRunMenuVisible() || __hr.getHarborRunMenuClosing()) {
             return;
         }
 
@@ -18186,7 +13158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'harborRun') {
-            if (harborRunMenuVisible || harborRunMenuClosing) {
+            if (__hr.getHarborRunMenuVisible() || __hr.getHarborRunMenuClosing()) {
                 return;
             }
             if (['ArrowLeft', 'q', 'Q', 'a', 'A'].includes(event.key)) {
@@ -18237,26 +13209,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (activeGameTab === 'sudoku') {
             const digit = Number(event.key);
+            const sudokuSel = __su.getSudokuSelectedCell();
 
-            if (!sudokuSelectedCell || sudokuSolved) {
-                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key) && sudokuSelectedCell) {
+            if (!sudokuSel || __su.getSudokuSolved()) {
+                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key) && sudokuSel) {
                     event.preventDefault();
                 }
             }
 
-            if (digit >= 1 && digit <= 9 && sudokuSelectedCell) {
+            if (digit >= 1 && digit <= 9 && sudokuSel) {
                 event.preventDefault();
-                updateSudokuCell(sudokuSelectedCell.row, sudokuSelectedCell.col, digit);
+                updateSudokuCell(sudokuSel.row, sudokuSel.col, digit);
                 return;
             }
 
-            if ((event.key === 'Backspace' || event.key === 'Delete' || event.key === '0') && sudokuSelectedCell) {
+            if ((event.key === 'Backspace' || event.key === 'Delete' || event.key === '0') && sudokuSel) {
                 event.preventDefault();
-                updateSudokuCell(sudokuSelectedCell.row, sudokuSelectedCell.col, 0);
+                updateSudokuCell(sudokuSel.row, sudokuSel.col, 0);
                 return;
             }
 
-            if (sudokuSelectedCell && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+            if (sudokuSel && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
                 event.preventDefault();
                 const offsets = {
                     ArrowUp: { row: -1, col: 0 },
@@ -18265,9 +13238,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     ArrowRight: { row: 0, col: 1 }
                 };
                 const offset = offsets[event.key];
-                const nextRow = Math.min(SUDOKU_SIZE - 1, Math.max(0, sudokuSelectedCell.row + offset.row));
-                const nextCol = Math.min(SUDOKU_SIZE - 1, Math.max(0, sudokuSelectedCell.col + offset.col));
-                sudokuSelectedCell = { row: nextRow, col: nextCol };
+                const nextRow = Math.min(8, Math.max(0, sudokuSel.row + offset.row));
+                const nextCol = Math.min(8, Math.max(0, sudokuSel.col + offset.col));
+                setSudokuSelectedCell(nextRow, nextCol);
                 renderSudoku();
                 return;
             }

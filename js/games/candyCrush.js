@@ -501,3 +501,5 @@ export function getCandyCrushAnimating() { return candyCrushAnimating; }
 export function getCandyCrushMenuVisible() { return candyCrushMenuVisible; }
 export function setCandyCrushMenuVisible(v) { candyCrushMenuVisible = Boolean(v); }
 export function setCandyCrushMenuShowingRules(v) { candyCrushMenuShowingRules = Boolean(v); }
+export function getCandyCrushMenuShowingRules() { return candyCrushMenuShowingRules; }
+export function getCandyCrushMenuClosing() { return candyCrushMenuClosing; }

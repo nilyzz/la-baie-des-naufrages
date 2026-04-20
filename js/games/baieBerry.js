@@ -854,3 +854,5 @@ export function setBaieBerryMenuVisible(v) { baieBerryMenuVisible = Boolean(v); 
 export function setBaieBerryMenuShowingRules(v) { baieBerryMenuShowingRules = Boolean(v); }
 export function getBaieBerryLastPointerX() { return baieBerryLastPointerX; }
 export function setBaieBerryLastPointerX(v) { baieBerryLastPointerX = v; }
+export function getBaieBerryMenuShowingRules() { return baieBerryMenuShowingRules; }
+export function getBaieBerryMenuClosing() { return baieBerryMenuClosing; }

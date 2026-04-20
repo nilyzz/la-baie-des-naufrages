@@ -488,3 +488,5 @@ export function getSudokuMenuVisible() { return sudokuMenuVisible; }
 export function getSudokuMenuClosing() { return sudokuMenuClosing; }
 export function getSudokuSolved() { return sudokuSolved; }
 export function getSudokuFailed() { return sudokuFailed; }
+export function getSudokuMenuShowingRules() { return sudokuMenuShowingRules; }
+export function getSudokuSelectedCell() { return sudokuSelectedCell; }

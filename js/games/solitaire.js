@@ -158,7 +158,11 @@ function canPlaceSolitaireOnTableau(cards, col) {
         && targetCard.rank === firstCard.rank + 1;
 }
 
-function clearSolitaireSelection() {
+export function getSolitaireFoundationCount(suit) {
+    return solitaireFoundationsState[suit]?.length ?? 0;
+}
+
+export function clearSolitaireSelection() {
     solitaireSelectedSource = null;
 }
 
@@ -363,3 +367,5 @@ export function getSolitaireSelectedSource() { return solitaireSelectedSource; }
 export function getSolitaireMenuVisible() { return solitaireMenuVisible; }
 export function setSolitaireMenuVisible(v) { solitaireMenuVisible = Boolean(v); }
 export function setSolitaireMenuShowingRules(v) { solitaireMenuShowingRules = Boolean(v); }
+export function getSolitaireMenuShowingRules() { return solitaireMenuShowingRules; }
+export function getSolitaireMenuClosing() { return solitaireMenuClosing; }
