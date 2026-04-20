@@ -1062,6 +1062,13 @@ function emitRoomGameStart(room) {
   });
 }
 
+// Host click "Lancer" in the lobby: broadcasts the signal to open the game view
+// on all clients, WITHOUT marking the game as launched. Players must still
+// toggle ready in the game view before launchRoomGame() actually fires.
+function openRoomGameView(room) {
+  emitRoomGameStart(room);
+}
+
 function launchRoomGame(room) {
   room.gameLaunched = true;
 
@@ -1082,6 +1089,9 @@ function launchRoomGame(room) {
   }
 
   emitRoomGameStart(room);
+  // Explicit room:updated propagates gameLaunched=true to clients so the
+  // per-game menus (Mettre prêt button, chat visibility) react correctly.
+  emitRoomUpdate(room);
 }
 
 function toggleRoomReady(room, socketId) {
@@ -3253,7 +3263,11 @@ io.on('connection', (socket) => {
       return;
     }
 
-    launchRoomGame(room);
+    // Le bouton « Lancer la partie » du lobby n'effectue plus qu'une ouverture
+    // de la vue du jeu pour tous les joueurs. Le vrai lancement (gameLaunched
+    // = true, deal uno/chess/bomb, timer bomb) n'arrive qu'une fois que
+    // tous les joueurs ont cliqué « Mettre prêt » dans la vue du jeu.
+    openRoomGameView(room);
   });
 
   socket.on('room:chat:send', ({ message }) => {
