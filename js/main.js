@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof magicSort.initializeMagicSort === 'function' || typeof magicSort.renderMagicSort === 'function',
         typeof memoryGame.initializeMemory === 'function' || typeof memoryGame.renderMemory === 'function',
         typeof mentalMath.initializeMentalMath === 'function' || typeof mentalMath.renderMentalMath === 'function',
-        typeof minesweeper.initializeMinesweeper === 'function' || typeof minesweeper.renderMinesweeper === 'function',
+        typeof minesweeper.initializeGame === 'function' && typeof minesweeper.renderBoard === 'function',
         typeof pacman.initializePacman === 'function' || typeof pacman.renderPacman === 'function',
         typeof pong.initializePong === 'function',
         typeof reaction.initializeReaction === 'function' || typeof reaction.renderReaction === 'function',
