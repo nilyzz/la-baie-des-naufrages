@@ -237,6 +237,15 @@ export function syncMultiplayerAirHockeyState() {
         return;
     }
 
+    // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée.
+    {
+        const room = getMultiplayerActiveRoom();
+        if (room?.gameLaunched && airHockeyMenuVisible && !airHockeyMenuResult) {
+            airHockeyMenuVisible = false;
+            renderAirHockeyMenu();
+        }
+    }
+
     if (airHockeyAnimationFrame) {
         window.cancelAnimationFrame(airHockeyAnimationFrame);
         airHockeyAnimationFrame = null;
@@ -563,6 +572,9 @@ export function initializeAirHockey(resetScores = true) {
     airHockeyMenuEntering = false;
 
     if (isMultiplayerAirHockeyActive()) {
+        const room = getMultiplayerActiveRoom();
+        airHockeyMenuVisible = !room?.gameLaunched;
+        renderAirHockeyMenu();
         syncMultiplayerAirHockeyState();
         return;
     }

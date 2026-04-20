@@ -95,6 +95,12 @@ export function createInitialCheckersBoard() {
 
 export function initializeCheckers() {
     if (isMultiplayerCheckersActive()) {
+        const room = getMultiplayerActiveRoom();
+        checkersMenuVisible = !room?.gameLaunched;
+        checkersMenuShowingRules = false;
+        checkersMenuClosing = false;
+        checkersMenuEntering = false;
+        renderCheckersMenu();
         syncMultiplayerCheckersState();
         return;
     }
@@ -565,6 +571,15 @@ export function syncMultiplayerCheckersState() {
         checkersLastMoveAnimationKey = '';
         checkersLastCaptureFxKey = '';
         return;
+    }
+
+    // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée.
+    {
+        const room = getMultiplayerActiveRoom();
+        if (room?.gameLaunched && checkersMenuVisible && !checkersMenuResult) {
+            checkersMenuVisible = false;
+            renderCheckersMenu();
+        }
     }
 
     if (checkersLastMoveResetTimer) {

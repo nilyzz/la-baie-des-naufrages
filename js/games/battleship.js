@@ -7,7 +7,9 @@ import { closeGameOverModal } from '../core/modals.js';
 import { shuffleArray } from '../core/utils.js';
 import {
     getMultiplayerActiveRoom,
-    getMultiplayerSocket
+    getMultiplayerSocket,
+    isCurrentPlayerMultiplayerReady,
+    getMultiplayerReadySummary
 } from '../multiplayer/state.js';
 
 export const BATTLESHIP_SIZE = 8;
@@ -330,9 +332,13 @@ export function renderBattleshipMenu() {
     }
 
     if (battleshipMenuActionButton) {
+        const roomForMenu = getMultiplayerActiveRoom();
+        const waitingForReady = isMultiplayerBattleshipActive() && !roomForMenu?.gameLaunched;
         battleshipMenuActionButton.textContent = battleshipMenuShowingRules
             ? 'Retour'
-            : (hasResult ? 'Relancer la bataille' : 'Lancer la bataille');
+            : (waitingForReady
+                ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
+                : (hasResult ? 'Relancer la bataille' : 'Lancer la bataille'));
     }
 
     if (battleshipMenuRulesButton) {
@@ -376,7 +382,8 @@ export function revealBattleshipOutcomeMenu(title, text, eyebrow) {
 export function initializeBattleship() {
     const { battleshipStatusText } = dom();
     if (isMultiplayerBattleshipActive()) {
-        battleshipMenuVisible = false;
+        const room = getMultiplayerActiveRoom();
+        battleshipMenuVisible = !room?.gameLaunched;
         battleshipMenuResult = null;
         battleshipMenuShowingRules = false;
         battleshipMenuClosing = false;
@@ -560,6 +567,12 @@ export function syncMultiplayerBattleshipState() {
     if (!isMultiplayerBattleshipActive()) {
         battleshipLastFinishedStateKey = '';
         return;
+    }
+
+    // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée.
+    if (multiplayerActiveRoom?.gameLaunched && battleshipMenuVisible && !battleshipMenuResult) {
+        battleshipMenuVisible = false;
+        renderBattleshipMenu();
     }
 
     battleshipPlayerGrid = multiplayerActiveRoom.gameState.yourBoard.map((row) => row.map((cell) => ({ ...cell })));

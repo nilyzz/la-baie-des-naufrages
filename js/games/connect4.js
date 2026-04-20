@@ -250,6 +250,15 @@ export function syncMultiplayerConnect4State() {
         return;
     }
 
+    // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée.
+    {
+        const room = getMultiplayerActiveRoom();
+        if (room?.gameLaunched && connect4MenuVisible && !connect4MenuResult) {
+            connect4MenuVisible = false;
+            renderConnect4Menu();
+        }
+    }
+
     if (connect4AiTimeout) {
         window.clearTimeout(connect4AiTimeout);
         connect4AiTimeout = null;
@@ -374,6 +383,12 @@ export function renderConnect4() {
 
 export function initializeConnect4() {
     if (isMultiplayerConnect4Active()) {
+        const room = getMultiplayerActiveRoom();
+        connect4MenuVisible = !room?.gameLaunched;
+        connect4MenuShowingRules = false;
+        connect4MenuClosing = false;
+        connect4MenuEntering = false;
+        renderConnect4Menu();
         syncMultiplayerConnect4State();
         return;
     }

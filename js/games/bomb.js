@@ -5,7 +5,11 @@ import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { normalizeBombWord } from '../core/utils.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 import { closeGameOverModal, openGameOverModal } from '../core/modals.js';
-import { getMultiplayerActiveRoom } from '../multiplayer/state.js';
+import {
+    getMultiplayerActiveRoom,
+    isCurrentPlayerMultiplayerReady,
+    getMultiplayerReadySummary
+} from '../multiplayer/state.js';
 
 const BOMB_LOCAL_SYLLABLES = [
     'ba', 'be', 'bi', 'bo', 'bu',
@@ -453,9 +457,13 @@ export function renderBombMenu() {
         }
     }
     if (bombMenuActionButton) {
+        const roomForMenu = getMultiplayerActiveRoom();
+        const waitingForReady = isMultiplayerBombActive() && !roomForMenu?.gameLaunched;
         bombMenuActionButton.textContent = bombMenuShowingRules
             ? 'Retour'
-            : (hasResult ? 'Rejouer un duel' : (bombSelectedMode === 'local' ? 'Allumer la mèche' : 'Aller au lobby'));
+            : (waitingForReady
+                ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
+                : (hasResult ? 'Rejouer un duel' : (bombSelectedMode === 'local' ? 'Allumer la mèche' : 'Aller au lobby')));
     }
     if (bombMenuRulesButton) {
         bombMenuRulesButton.textContent = 'R\u00e8gles';
@@ -500,6 +508,15 @@ export function syncMultiplayerBombState() {
         return;
     }
 
+    // Ferme auto le menu « Mettre prêt » quand la bombe est vraiment armée.
+    {
+        const room = getMultiplayerActiveRoom();
+        if (room?.gameLaunched && bombMenuVisible) {
+            bombMenuVisible = false;
+            renderBombMenu();
+        }
+    }
+
     bombState = cloneBombState(getMultiplayerActiveRoom().gameState);
     startBombTimerLoop();
     renderBomb();
@@ -521,7 +538,9 @@ export function initializeBomb() {
     bombMenuEntering = false;
     if (isMultiplayerBombActive()) {
         bombLocalState = null;
-        bombMenuVisible = false;
+        const room = getMultiplayerActiveRoom();
+        bombMenuVisible = !room?.gameLaunched;
+        renderBombMenu();
         syncMultiplayerBombState();
         if (bombWordInput && getMultiplayerActiveRoom()?.gameLaunched) {
             const currentPlayer = getBombCurrentPlayer();

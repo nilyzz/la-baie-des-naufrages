@@ -341,6 +341,13 @@ export function syncMultiplayerPongState() {
     pongPaused = false;
     pongCountdownEndsAt = Number(nextState.countdownEndsAt || 0);
 
+    // Le menu « Mettre prêt » se ferme automatiquement une fois la partie
+    // réellement lancée côté serveur.
+    if (room.gameLaunched && pongMenuVisible && !pongMenuResult) {
+        pongMenuVisible = false;
+    }
+    renderPongMenu();
+
     if (!pongState.countdownActive) {
         hidePongCountdown();
     }
@@ -913,6 +920,12 @@ export function updatePongFrame(timestamp) {
 export function initializePong() {
     if (isMultiplayerPongActive()) {
         pongMenuResult = null;
+        const room = getMultiplayerActiveRoom();
+        pongMenuVisible = !room?.gameLaunched;
+        pongMenuShowingRules = false;
+        pongMenuClosing = false;
+        pongMenuEntering = false;
+        renderPongMenu();
         syncMultiplayerPongState();
         return;
     }

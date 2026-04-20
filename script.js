@@ -4832,6 +4832,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (isMultiplayerBattleshipActive() && isMultiplayerLaunchPending('battleship')) {
+            toggleMultiplayerReady();
+            return;
+        }
+
         if (isMultiplayerBattleshipActive()) {
             multiplayerSocket?.emit('battleship:restart');
         } else {
@@ -5775,6 +5780,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (__bm.getBombMenuShowingRules()) {
             __bm.setBombMenuShowingRules(false);
             renderBombMenu();
+            return;
+        }
+
+        if (isMultiplayerBombActive() && isMultiplayerLaunchPending('bomb')) {
+            toggleMultiplayerReady();
             return;
         }
 
