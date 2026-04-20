@@ -712,6 +712,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const isMultiplayerConnect4Active = __c4.isMultiplayerConnect4Active;
     const syncMultiplayerConnect4State = __c4.syncMultiplayerConnect4State;
 
+    // Bridge ESM — Battleship géré par js/games/battleship.js.
+    const __bs = window.__baie.battleship;
+    const initializeBattleship = __bs.initializeBattleship;
+    const renderBattleship = __bs.renderBattleship;
+    const renderBattleshipMenu = __bs.renderBattleshipMenu;
+    const closeBattleshipMenu = __bs.closeBattleshipMenu;
+    const handleBattleshipShot = __bs.handleBattleshipShot;
+    const setBattleshipMode = __bs.setBattleshipMode;
+    const isMultiplayerBattleshipActive = __bs.isMultiplayerBattleshipActive;
+    const syncMultiplayerBattleshipState = __bs.syncMultiplayerBattleshipState;
+
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
     const chessTurnDisplay = document.getElementById('chessTurnDisplay');
@@ -888,9 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pianoHelpText = document.getElementById('pianoHelpText');
 
     const PONG_TARGET_SCORE = 7;
-    const BATTLESHIP_SIZE = 8;
     const UNO_COLORS = ['red', 'yellow', 'green', 'blue'];
-    const BATTLESHIP_SHIPS = [4, 3, 3, 2, 2];
     const CHESS_SIZE = 8;
     const AIR_HOCKEY_GOAL_SCORE = 5;
     const AIR_HOCKEY_SPEED = 340;
@@ -1006,7 +1015,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerEntryMode = 'create';
     let multiplayerChatSignature = '';
     let ticTacToeLastFinishedStateKey = '';
-    let battleshipLastFinishedStateKey = '';
     let pongLastFinishedStateKey = '';
     let chessLastMoveAnimationKey = '';
     let chessLastFinishedStateKey = '';
@@ -1071,20 +1079,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacmanTouchStartY = null;
     let tetrisTouchStartX = null;
     let tetrisTouchStartY = null;
-    let battleshipPlayerGrid = [];
-    let battleshipEnemyGrid = [];
-    let battleshipPlayerRemainingShips = 0;
-    let battleshipEnemyRemainingShips = 0;
-    let battleshipFinished = false;
-    let battleshipAiTargets = [];
-    let battleshipAwaitingAi = false;
-    let battleshipMode = 'solo';
-    let battleshipCurrentTurn = 'captain1';
-    let battleshipMenuVisible = true;
-    let battleshipMenuShowingRules = false;
-    let battleshipMenuClosing = false;
-    let battleshipMenuEntering = false;
-    let battleshipMenuResult = null;
     let chessState = null;
     let chessSelectedSquare = null;
     let chessMode = 'solo';
@@ -3624,7 +3618,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 pongLocalPredictedPaddleY = null;
                 pongCountdownEndsAt = 0;
                 ticTacToeLastFinishedStateKey = '';
-                battleshipLastFinishedStateKey = '';
                 chessLastFinishedStateKey = '';
                 unoLastWinnerKey = '';
                 bombLastFinishedStateKey = '';
@@ -4004,7 +3997,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (previousTab === 'battleship' && nextTab !== 'battleship') {
-            battleshipMenuVisible = true;
+            __bs.setBattleshipMenuVisible(true);
             initializeBattleship();
         }
 
@@ -4133,467 +4126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    function createBattleshipGrid() {
-        return Array.from({ length: BATTLESHIP_SIZE }, () => Array.from({ length: BATTLESHIP_SIZE }, () => ({
-            hasShip: false,
-            hit: false,
-            shipId: null
-        })));
-    }
-
-    function placeBattleshipFleet(grid) {
-        let shipId = 0;
-
-        BATTLESHIP_SHIPS.forEach((length) => {
-            let placed = false;
-
-            while (!placed) {
-                const horizontal = Math.random() > 0.5;
-                const row = Math.floor(Math.random() * BATTLESHIP_SIZE);
-                const col = Math.floor(Math.random() * BATTLESHIP_SIZE);
-                const cells = [];
-
-                for (let index = 0; index < length; index += 1) {
-                    const nextRow = row + (horizontal ? 0 : index);
-                    const nextCol = col + (horizontal ? index : 0);
-
-                    if (nextRow >= BATTLESHIP_SIZE || nextCol >= BATTLESHIP_SIZE || grid[nextRow][nextCol].hasShip) {
-                        cells.length = 0;
-                        break;
-                    }
-
-                    cells.push({ row: nextRow, col: nextCol });
-                }
-
-                if (!cells.length) {
-                    continue;
-                }
-
-                cells.forEach((cell) => {
-                    grid[cell.row][cell.col].hasShip = true;
-                    grid[cell.row][cell.col].shipId = shipId;
-                });
-
-                shipId += 1;
-                placed = true;
-            }
-        });
-    }
-
-    function countRemainingBattleshipShips(grid) {
-        const ships = new Map();
-
-        grid.forEach((row) => {
-            row.forEach((cell) => {
-                if (cell.shipId === null) {
-                    return;
-                }
-
-                const ship = ships.get(cell.shipId) || { total: 0, hits: 0 };
-                ship.total += 1;
-                if (cell.hit) {
-                    ship.hits += 1;
-                }
-                ships.set(cell.shipId, ship);
-            });
-        });
-
-        return [...ships.values()].filter((ship) => ship.hits < ship.total).length;
-    }
-
-    function updateBattleshipHud() {
-        if (isMultiplayerBattleshipActive()) {
-            battleshipPlayerLabel.textContent = 'Ta flotte';
-            battleshipEnemyLabel.textContent = 'Flotte adverse';
-            battleshipPlayerBoardLabel.textContent = 'Ta flotte';
-            battleshipEnemyBoardLabel.textContent = 'Flotte adverse';
-            battleshipPlayerShipsDisplay.textContent = String(battleshipPlayerRemainingShips);
-            battleshipEnemyShipsDisplay.textContent = String(battleshipEnemyRemainingShips);
-            return;
-        }
-
-        const isCaptainOneTurn = battleshipMode === 'solo' || battleshipCurrentTurn === 'captain1';
-        const playerLabel = battleshipMode === 'solo'
-            ? 'Ta flotte'
-            : (isCaptainOneTurn ? 'Flotte capitaine 1' : 'Flotte capitaine 2');
-        const enemyLabel = battleshipMode === 'solo'
-            ? 'Flotte adverse'
-            : (isCaptainOneTurn ? 'Flotte capitaine 2' : 'Flotte capitaine 1');
-
-        battleshipPlayerLabel.textContent = playerLabel;
-        battleshipEnemyLabel.textContent = enemyLabel;
-        battleshipPlayerBoardLabel.textContent = playerLabel;
-        battleshipEnemyBoardLabel.textContent = enemyLabel;
-        battleshipPlayerShipsDisplay.textContent = String(isCaptainOneTurn ? battleshipPlayerRemainingShips : battleshipEnemyRemainingShips);
-        battleshipEnemyShipsDisplay.textContent = String(isCaptainOneTurn ? battleshipEnemyRemainingShips : battleshipPlayerRemainingShips);
-    }
-
-    function setBattleshipMode(mode) {
-        battleshipMode = mode === 'duo' ? 'duo' : 'solo';
-        battleshipCurrentTurn = 'captain1';
-        battleshipModeButtons.forEach((button) => {
-            button.classList.toggle('is-active', button.dataset.battleshipMode === battleshipMode);
-        });
-        initializeBattleship();
-    }
-
-    function getBattleshipTurnContext() {
-        if (battleshipMode === 'solo' || battleshipCurrentTurn === 'captain1') {
-            return {
-                attackerName: battleshipMode === 'solo' ? 'Toi' : 'Capitaine 1',
-                defenderName: battleshipMode === 'solo' ? 'la flotte ennemie' : 'Capitaine 2',
-                playerGrid: battleshipPlayerGrid,
-                enemyGrid: battleshipEnemyGrid
-            };
-        }
-
-        return {
-            attackerName: 'Capitaine 2',
-            defenderName: 'Capitaine 1',
-            playerGrid: battleshipEnemyGrid,
-            enemyGrid: battleshipPlayerGrid
-        };
-    }
-
-    function getBattleshipShipSegmentClass(grid, rowIndex, colIndex) {
-        const cell = grid[rowIndex]?.[colIndex];
-
-        if (!cell?.hasShip || cell.shipId === null) {
-            return '';
-        }
-
-        const topSame = grid[rowIndex - 1]?.[colIndex]?.shipId === cell.shipId;
-        const bottomSame = grid[rowIndex + 1]?.[colIndex]?.shipId === cell.shipId;
-        const leftSame = grid[rowIndex]?.[colIndex - 1]?.shipId === cell.shipId;
-        const rightSame = grid[rowIndex]?.[colIndex + 1]?.shipId === cell.shipId;
-
-        if (!topSame && !bottomSame && !leftSame && !rightSame) {
-            return 'is-single';
-        }
-
-        if (leftSame || rightSame) {
-            if (!leftSame) {
-                return 'is-head-horizontal';
-            }
-
-            if (!rightSame) {
-                return 'is-tail-horizontal';
-            }
-
-            return 'is-body-horizontal';
-        }
-
-        if (!topSame) {
-            return 'is-head-vertical';
-        }
-
-        if (!bottomSame) {
-            return 'is-tail-vertical';
-        }
-
-        return 'is-body-vertical';
-    }
-
-    function renderBattleshipBoard(boardElement, grid, revealShips = false, boardType = 'enemy') {
-        boardElement.innerHTML = grid.map((row, rowIndex) => row.map((cell, colIndex) => {
-            const classes = ['battleship-cell'];
-            let innerMarkup = '';
-            let label = '';
-            const shouldShowShip = (revealShips && cell.hasShip) || (cell.hit && cell.hasShip);
-
-            if (shouldShowShip) {
-                classes.push('has-ship');
-                innerMarkup = `<span class="battleship-ship ${getBattleshipShipSegmentClass(grid, rowIndex, colIndex)}" aria-hidden="true"></span>`;
-            }
-
-            if (cell.hit && cell.hasShip) {
-                classes.push('is-hit');
-                label = 'âœ•';
-            } else if (cell.hit) {
-                classes.push('is-miss');
-                label = 'â€¢';
-            }
-
-            return `
-                <button
-                    type="button"
-                    class="${classes.join(' ')}"
-                    data-board="${boardType}"
-                    data-row="${rowIndex}"
-                    data-col="${colIndex}"
-                    aria-label="Case ${rowIndex + 1}-${colIndex + 1}"
-                >${innerMarkup}</button>
-            `;
-        }).join('')).join('');
-    }
-
-    function renderBattleship() {
-        const context = getBattleshipTurnContext();
-        renderBattleshipBoard(battleshipPlayerBoard, context.playerGrid, true, 'player');
-        renderBattleshipBoard(battleshipEnemyBoard, context.enemyGrid, false, 'enemy');
-        updateBattleshipHud();
-    }
-
-    function getBattleshipRulesText() {
-        return 'Chaque flotte place 5 navires al\u00e9atoirement dans la baie. Clique sur la grille ennemie pour ouvrir le feu. Touche tous leurs navires avant qu\u2019ils ne coulent les tiens. En solo, un ennemi IA riposte apr\u00e8s chaque tir.';
-    }
-
-    function renderBattleshipMenu() {
-        if (!battleshipMenuOverlay || !battleshipTable) {
-            return;
-        }
-
-        syncGameMenuOverlayBounds(battleshipMenuOverlay, battleshipTable);
-        battleshipMenuOverlay.classList.toggle('hidden', !battleshipMenuVisible);
-        battleshipMenuOverlay.classList.toggle('is-closing', battleshipMenuClosing);
-        battleshipMenuOverlay.classList.toggle('is-entering', battleshipMenuEntering);
-        battleshipTable.classList.toggle('is-menu-open', battleshipMenuVisible);
-
-        if (!battleshipMenuVisible) {
-            return;
-        }
-
-        const hasResult = Boolean(battleshipMenuResult);
-
-        if (battleshipMenuEyebrow) {
-            battleshipMenuEyebrow.textContent = battleshipMenuShowingRules
-                ? 'R\u00e8gles'
-                : (hasResult ? battleshipMenuResult.eyebrow : 'Bataille navale de la baie');
-        }
-
-        if (battleshipMenuTitle) {
-            battleshipMenuTitle.textContent = battleshipMenuShowingRules
-                ? 'Rappel rapide'
-                : (hasResult ? battleshipMenuResult.title : 'Bataille');
-        }
-
-        if (battleshipMenuText) {
-            battleshipMenuText.textContent = battleshipMenuShowingRules
-                ? getBattleshipRulesText()
-                : (hasResult
-                    ? battleshipMenuResult.text
-                    : 'Rep\u00e8re les navires ennemis et coule toute leur flotte avant qu\u2019ils ne coulent la tienne.');
-        }
-
-        if (battleshipMenuActionButton) {
-            battleshipMenuActionButton.textContent = battleshipMenuShowingRules
-                ? 'Retour'
-                : (hasResult ? 'Relancer la bataille' : 'Lancer la bataille');
-        }
-
-        if (battleshipMenuRulesButton) {
-            battleshipMenuRulesButton.textContent = 'R\u00e8gles';
-            battleshipMenuRulesButton.hidden = battleshipMenuShowingRules;
-        }
-    }
-
-    function closeBattleshipMenu() {
-        battleshipMenuClosing = true;
-        renderBattleshipMenu();
-        window.setTimeout(() => {
-            battleshipMenuClosing = false;
-            battleshipMenuVisible = false;
-            battleshipMenuShowingRules = false;
-            battleshipMenuEntering = false;
-            battleshipMenuResult = null;
-            renderBattleshipMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function revealBattleshipOutcomeMenu(title, text, eyebrow) {
-        battleshipMenuVisible = true;
-        battleshipMenuResult = { title, text, eyebrow };
-        battleshipMenuShowingRules = false;
-        battleshipMenuClosing = false;
-        battleshipMenuEntering = true;
-
-        if (battleshipStatusText) {
-            battleshipStatusText.textContent = text;
-        }
-
-        renderBattleshipMenu();
-        window.setTimeout(() => {
-            battleshipMenuEntering = false;
-            renderBattleshipMenu();
-        }, UNO_MENU_CLOSE_DURATION_MS);
-    }
-
-    function initializeBattleship() {
-        if (isMultiplayerBattleshipActive()) {
-            battleshipMenuVisible = false;
-            battleshipMenuResult = null;
-            battleshipMenuShowingRules = false;
-            battleshipMenuClosing = false;
-            battleshipMenuEntering = false;
-            renderBattleshipMenu();
-            syncMultiplayerBattleshipState();
-            return;
-        }
-
-        battleshipPlayerGrid = createBattleshipGrid();
-        battleshipEnemyGrid = createBattleshipGrid();
-        placeBattleshipFleet(battleshipPlayerGrid);
-        placeBattleshipFleet(battleshipEnemyGrid);
-        battleshipPlayerRemainingShips = BATTLESHIP_SHIPS.length;
-        battleshipEnemyRemainingShips = BATTLESHIP_SHIPS.length;
-        battleshipFinished = false;
-        battleshipAwaitingAi = false;
-        battleshipCurrentTurn = 'captain1';
-        battleshipMenuResult = null;
-        battleshipMenuShowingRules = false;
-        battleshipMenuClosing = false;
-        battleshipMenuEntering = false;
-        battleshipAiTargets = shuffleArray(
-            Array.from({ length: BATTLESHIP_SIZE * BATTLESHIP_SIZE }, (_, index) => ({
-                row: Math.floor(index / BATTLESHIP_SIZE),
-                col: index % BATTLESHIP_SIZE
-            }))
-        );
-        battleshipStatusText.textContent = battleshipMode === 'solo'
-            ? 'Choisis une case dans la grille ennemie pour ouvrir le feu.'
-            : 'Capitaine 1 ouvre le duel. Choisis une case dans la grille ennemie.';
-        renderBattleship();
-        renderBattleshipMenu();
-    }
-
-    function finishBattleship(playerWon) {
-        if (battleshipMode === 'duo') {
-            battleshipFinished = true;
-            const context = getBattleshipTurnContext();
-            const winnerName = playerWon ? context.attackerName : context.defenderName;
-            battleshipStatusText.textContent = `${winnerName} remporte la bataille dans la baie.`;
-            revealBattleshipOutcomeMenu(
-                'Bataille terminée',
-                `${winnerName} gagne la bataille navale.`,
-                'Pont en liesse'
-            );
-            return;
-        }
-
-        battleshipFinished = true;
-        battleshipStatusText.textContent = playerWon
-            ? 'Victoire. La flotte adverse sombre dans la baie.'
-            : 'Défaite. Ta flotte a été coulée.';
-        revealBattleshipOutcomeMenu(
-            playerWon ? 'Flotte ennemie coulée' : 'Flotte coulée',
-            playerWon ? 'La bataille navale est remportée.' : 'La flotte ennemie gagne la bataille.',
-            playerWon ? 'Victoire en baie' : 'Cap sur le port'
-        );
-    }
-
-    function runBattleshipAiTurn() {
-        if (battleshipMode !== 'solo') {
-            return;
-        }
-
-        if (battleshipFinished) {
-            return;
-        }
-
-        const nextTarget = battleshipAiTargets.find((target) => !battleshipPlayerGrid[target.row][target.col].hit);
-
-        if (!nextTarget) {
-            return;
-        }
-
-        const targetCell = battleshipPlayerGrid[nextTarget.row][nextTarget.col];
-        targetCell.hit = true;
-
-        if (targetCell.hasShip) {
-            battleshipPlayerRemainingShips = countRemainingBattleshipShips(battleshipPlayerGrid);
-            battleshipStatusText.textContent = "L'ennemi a touché un de tes navires.";
-
-            if (battleshipPlayerRemainingShips === 0) {
-                renderBattleship();
-                finishBattleship(false);
-                return;
-            }
-        } else {
-            battleshipStatusText.textContent = "L'ennemi a manqué son tir.";
-        }
-
-        battleshipAwaitingAi = false;
-        renderBattleship();
-    }
-
-    function handleBattleshipShot(row, col) {
-        if (battleshipMode === 'duo') {
-            if (battleshipFinished || battleshipAwaitingAi) {
-                return;
-            }
-
-            const context = getBattleshipTurnContext();
-            const targetCell = context.enemyGrid[row]?.[col];
-
-            if (!targetCell || targetCell.hit) {
-                return;
-            }
-
-            closeGameOverModal();
-            targetCell.hit = true;
-
-            if (targetCell.hasShip) {
-                if (battleshipCurrentTurn === 'captain1') {
-                    battleshipEnemyRemainingShips = countRemainingBattleshipShips(battleshipEnemyGrid);
-                } else {
-                    battleshipPlayerRemainingShips = countRemainingBattleshipShips(battleshipPlayerGrid);
-                }
-
-                battleshipStatusText.textContent = `Touche. ${context.attackerName} frappe un navire de ${context.defenderName}.`;
-                renderBattleship();
-
-                const defenderRemainingShips = battleshipCurrentTurn === 'captain1'
-                    ? battleshipEnemyRemainingShips
-                    : battleshipPlayerRemainingShips;
-
-                if (defenderRemainingShips === 0) {
-                    finishBattleship(true);
-                    return;
-                }
-            } else {
-                battleshipStatusText.textContent = `Dans l'eau. ${context.defenderName} prend maintenant la barre.`;
-                renderBattleship();
-            }
-
-            battleshipCurrentTurn = battleshipCurrentTurn === 'captain1' ? 'captain2' : 'captain1';
-            renderBattleship();
-            return;
-        }
-
-        if (battleshipFinished || battleshipAwaitingAi) {
-            return;
-        }
-
-        const targetCell = battleshipEnemyGrid[row]?.[col];
-
-        if (!targetCell || targetCell.hit) {
-            return;
-        }
-
-        closeGameOverModal();
-        targetCell.hit = true;
-        battleshipAwaitingAi = true;
-
-        if (targetCell.hasShip) {
-            battleshipEnemyRemainingShips = countRemainingBattleshipShips(battleshipEnemyGrid);
-            battleshipStatusText.textContent = 'Touché. Tu viens de frapper un navire ennemi.';
-            renderBattleship();
-
-            if (battleshipEnemyRemainingShips === 0) {
-                finishBattleship(true);
-                return;
-            }
-        }
-
-        if (!targetCell.hasShip) {
-            battleshipStatusText.textContent = "Dans l'eau. La flotte ennemie réplique.";
-            renderBattleship();
-        }
-
-        window.setTimeout(() => {
-            runBattleshipAiTurn();
-        }, 420);
-    }
 
 
 
@@ -6565,66 +6097,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    function isMultiplayerBattleshipActive() {
-        return multiplayerActiveRoom?.gameId === 'battleship' && Boolean(multiplayerActiveRoom?.gameState);
-    }
-
-    function getMultiplayerBattleshipRole() {
-        return multiplayerActiveRoom?.players?.find((player) => player.isYou)?.symbol || null;
-    }
-
-    function syncMultiplayerBattleshipState() {
-        if (!isMultiplayerBattleshipActive()) {
-            battleshipLastFinishedStateKey = '';
-            return;
-        }
-
-        battleshipPlayerGrid = multiplayerActiveRoom.gameState.yourBoard.map((row) => row.map((cell) => ({ ...cell })));
-        battleshipEnemyGrid = multiplayerActiveRoom.gameState.enemyBoard.map((row) => row.map((cell) => ({ ...cell })));
-        battleshipPlayerRemainingShips = Number(multiplayerActiveRoom.gameState.yourRemainingShips || 0);
-        battleshipEnemyRemainingShips = Number(multiplayerActiveRoom.gameState.enemyRemainingShips || 0);
-        battleshipCurrentTurn = multiplayerActiveRoom.gameState.currentTurn || 'captain1';
-        battleshipFinished = Boolean(multiplayerActiveRoom.gameState.winner);
-        battleshipAwaitingAi = false;
-
-        const yourRole = getMultiplayerBattleshipRole();
-        const isYourTurn = battleshipCurrentTurn === yourRole;
-        battleshipStatusText.textContent = multiplayerActiveRoom.gameState.winner
-            ? (multiplayerActiveRoom.gameState.winner === yourRole
-                ? 'Victoire. Tu coules la flotte adverse.'
-                : "D\u00e9faite. L'adversaire remporte la bataille.")
-            : (isYourTurn
-                ? "\u00c0 toi de tirer sur la flotte adverse."
-                : "Attends le tir de l'adversaire.");
-        renderBattleship();
-
-        if (!multiplayerActiveRoom.gameState.winner) {
-            battleshipLastFinishedStateKey = '';
-            closeGameOverModal();
-            return;
-        }
-
-        const nextFinishedKey = `${multiplayerActiveRoom.gameState.round}:${multiplayerActiveRoom.gameState.winner || 'none'}`;
-        if (nextFinishedKey === battleshipLastFinishedStateKey || activeGameTab !== 'battleship') {
-            return;
-        }
-
-        battleshipLastFinishedStateKey = nextFinishedKey;
-
-        if (multiplayerActiveRoom.gameState.winner === yourRole) {
-            revealBattleshipOutcomeMenu(
-                'Flotte ennemie coulée',
-                'Tu remportes cette bataille navale en ligne.',
-                'Victoire en baie'
-            );
-        } else {
-            revealBattleshipOutcomeMenu(
-                'Flotte coulée',
-                "L'adversaire remporte cette bataille navale.",
-                'Cap sur le port'
-            );
-        }
-    }
 
     function isMultiplayerAirHockeyActive() {
         return multiplayerActiveRoom?.gameId === 'airHockey' && Boolean(multiplayerActiveRoom?.gameState);
@@ -8871,7 +8343,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (nextTab === 'battleship') {
-            battleshipMenuVisible = true;
+            __bs.setBattleshipMenuVisible(true);
             initializeBattleship();
             return;
         }
@@ -9648,8 +9120,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     battleshipMenuActionButton?.addEventListener('click', () => {
-        if (battleshipMenuShowingRules) {
-            battleshipMenuShowingRules = false;
+        if (__bs.getBattleshipMenuShowingRules()) {
+            __bs.setBattleshipMenuShowingRules(false);
             renderBattleshipMenu();
             return;
         }
@@ -9663,7 +9135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     battleshipMenuRulesButton?.addEventListener('click', () => {
-        battleshipMenuShowingRules = true;
+        __bs.setBattleshipMenuShowingRules(true);
         renderBattleshipMenu();
     });
 
@@ -10617,7 +10089,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     battleshipEnemyBoard.addEventListener('click', (event) => {
-        if (battleshipMenuVisible || battleshipMenuClosing) {
+        if (__bs.getBattleshipMenuVisible() || __bs.getBattleshipMenuClosing()) {
             return;
         }
 
