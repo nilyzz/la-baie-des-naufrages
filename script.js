@@ -3450,6 +3450,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             multiplayerSocket.on('room:game:start', ({ gameId }) => {
                 setMultiplayerStatus(`${getMultiplayerGameLabel(gameId)} se lance pour toute la room.`);
+                // Le serveur n'émet pas de room:updated en même temps que room:game:start
+                // (launchRoomGame ne fait que emitRoomGameStart). On propage donc
+                // gameLaunched=true localement pour que le chat s'affiche et que
+                // isMultiplayerChatVisible() soit cohérent.
+                if (multiplayerActiveRoom) {
+                    multiplayerActiveRoom = { ...multiplayerActiveRoom, gameLaunched: true };
+                    syncMultiplayerStateBridge();
+                }
                 if (gameId === 'uno') {
                     __uno.setUnoMenuVisible(true);
                     __uno.setUnoMenuShowingRules(false);
