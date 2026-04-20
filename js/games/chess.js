@@ -1321,3 +1321,6 @@ export function getChessMenuVisible() { return chessMenuVisible; }
 export function setChessMenuVisible(v) { chessMenuVisible = Boolean(v); }
 export function getChessMenuShowingRules() { return chessMenuShowingRules; }
 export function setChessMenuShowingRules(v) { chessMenuShowingRules = Boolean(v); }
+export function getChessMenuClosing() { return chessMenuClosing; }
+export function setChessSelectedSquare(v) { chessSelectedSquare = v; }
+export function setChessDragState(v) { chessDragState = v; }
