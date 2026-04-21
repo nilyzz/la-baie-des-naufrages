@@ -20,7 +20,8 @@ function fmt(n) { return (n / 1024).toFixed(1) + ' KB'; }
 async function main() {
     const before = {
         script: gzipSize('script.js'),
-        main: gzipSize('js/main.js')
+        main: gzipSize('js/main.js'),
+        css: gzipSize('style.css')
     };
 
     // 1. Bundle l'arbre ESM (main.js + ~45 modules) → un seul fichier.
@@ -46,9 +47,20 @@ async function main() {
         logLevel: 'info'
     });
 
+    // 3. Minify style.css (aucun @import a resoudre, pas de bundling requis).
+    await build({
+        entryPoints: ['style.css'],
+        bundle: false,
+        minify: true,
+        outfile: 'style.min.css',
+        legalComments: 'none',
+        logLevel: 'info'
+    });
+
     const after = {
         script: gzipSize('script.min.js'),
-        main: gzipSize('js/main.bundle.min.js')
+        main: gzipSize('js/main.bundle.min.js'),
+        css: gzipSize('style.min.css')
     };
 
     console.log('\n=== Tailles ===');
@@ -56,9 +68,13 @@ async function main() {
     console.log(`script.min.js   : ${fmt(after.script.raw)} raw / ${fmt(after.script.gz)} gz`);
     console.log(`main.js (seul)  : ${fmt(before.main.raw)} raw / ${fmt(before.main.gz)} gz`);
     console.log(`main.bundle.min : ${fmt(after.main.raw)} raw / ${fmt(after.main.gz)} gz  (inclut ~45 modules)`);
+    console.log(`style.css       : ${fmt(before.css.raw)} raw / ${fmt(before.css.gz)} gz`);
+    console.log(`style.min.css   : ${fmt(after.css.raw)} raw / ${fmt(after.css.gz)} gz`);
 
     const savedGz = (before.script.gz - after.script.gz);
+    const savedCssGz = (before.css.gz - after.css.gz);
     console.log(`\nGain script.js gz : ${fmt(savedGz)} (-${(100 * savedGz / before.script.gz).toFixed(1)}%)`);
+    console.log(`Gain CSS gz       : ${fmt(savedCssGz)} (-${(100 * savedCssGz / before.css.gz).toFixed(1)}%)`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });
