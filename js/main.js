@@ -129,7 +129,16 @@ if (typeof window !== 'undefined') {
         PIANO_NOTES: musicModule.PIANO_NOTES,
         PIANO_NOTE_MAP: musicModule.PIANO_NOTE_MAP,
         PIANO_KEYBOARD_LAYOUT: musicModule.PIANO_KEYBOARD_LAYOUT,
-        UNIT_GROUPS: mathModule.UNIT_GROUPS
+        UNIT_GROUPS: mathModule.UNIT_GROUPS,
+        normalizeCalculatorExpression: mathModule.normalizeCalculatorExpression,
+        evaluateCalculatorExpression: mathModule.evaluateCalculatorExpression,
+        populateConverterUnits: mathModule.populateConverterUnits,
+        convertTemperature: mathModule.convertTemperature,
+        convertUnits: mathModule.convertUnits,
+        initializeConverter: mathModule.initializeConverter,
+        calculatePercentage: mathModule.calculatePercentage,
+        calculateRuleOfThree: mathModule.calculateRuleOfThree,
+        calculateCircle: mathModule.calculateCircle
     });
     window.__baie.multiplayerState = multiplayerState;
     window.__baie.music = musicModule;
