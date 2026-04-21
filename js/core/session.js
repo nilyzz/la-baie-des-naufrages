@@ -1,16 +1,11 @@
-// Session persistence in localStorage for La Baie des Naufragés.
-// Extracted from script.js during the ES-modules migration.
-// Side-effects tied to the running app (activity timer rescheduling, view
-// reload) remain in script.js for now: this module only deals with reading,
-// writing and clearing the persisted payload.
+// Session persistence + activity scheduler for La Baie des Naufragés.
+// Source of truth for session handling. script.js no longer duplicates these
+// functions; it calls the window-exposed versions via js/main.js.
 
 import { SESSION_KEY, SESSION_TIMEOUT_MS } from './constants.js';
 
-/**
- * Reads the current session from localStorage.
- * Returns null when no valid (authenticated + recent) session is present.
- * A stale session is cleared as a side-effect.
- */
+let sessionTimeout = null;
+
 export function loadSession() {
     try {
         const storedSession = window.localStorage.getItem(SESSION_KEY);
@@ -38,13 +33,6 @@ export function loadSession() {
     }
 }
 
-/**
- * Persists session data, merging with whatever is already stored.
- * Always refreshes `lastActivity` to "now".
- *
- * Note: the original `saveSession` in script.js also re-schedules the
- * activity-based timeout; that scheduler still lives in script.js for now.
- */
 export function saveSession(partialSession = {}) {
     const currentSession = loadSession() || {};
     const nextSession = {
@@ -56,12 +44,52 @@ export function saveSession(partialSession = {}) {
     };
 
     window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
+    scheduleSessionTimeout();
 }
 
-/**
- * Removes the persisted session. Does NOT clear any timer set by script.js —
- * the IIFE version still handles that alongside its own `clearSession`.
- */
 export function clearSession() {
+    if (sessionTimeout) {
+        window.clearTimeout(sessionTimeout);
+        sessionTimeout = null;
+    }
+
     window.localStorage.removeItem(SESSION_KEY);
+}
+
+export function scheduleSessionTimeout() {
+    const session = loadSession();
+
+    if (sessionTimeout) {
+        window.clearTimeout(sessionTimeout);
+        sessionTimeout = null;
+    }
+
+    if (!session) {
+        return;
+    }
+
+    const timeRemaining = SESSION_TIMEOUT_MS - (Date.now() - Number(session.lastActivity));
+
+    if (timeRemaining <= 0) {
+        clearSession();
+        return;
+    }
+
+    sessionTimeout = window.setTimeout(() => {
+        clearSession();
+        window.location.reload();
+    }, timeRemaining);
+}
+
+export function registerActivity() {
+    const session = loadSession();
+
+    if (!session) {
+        return;
+    }
+
+    saveSession({
+        ...session,
+        lastActivity: Date.now()
+    });
 }

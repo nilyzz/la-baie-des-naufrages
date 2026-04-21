@@ -13,7 +13,7 @@ import {
 } from './core/constants.js';
 
 import { shuffleArray, formatMathNumber, normalizeBombWord } from './core/utils.js';
-import { loadSession, saveSession, clearSession } from './core/session.js';
+import { loadSession, saveSession, clearSession, scheduleSessionTimeout, registerActivity } from './core/session.js';
 import {
     openLegalNoticeModal,
     closeLegalNoticeModal,
@@ -114,7 +114,7 @@ if (typeof window !== 'undefined') {
         EXCEL_FILE_CANDIDATES, MULTIPLAYER_SUPPORTED_GAMES, GAME_FILTER_TAGS,
         UNO_MENU_CLOSE_DURATION_MS, GRID_OUTCOME_MENU_DELAY_MS,
         shuffleArray, formatMathNumber, normalizeBombWord,
-        loadSession, saveSession, clearSession,
+        loadSession, saveSession, clearSession, scheduleSessionTimeout, registerActivity,
         openLegalNoticeModal, closeLegalNoticeModal,
         openGameOverModal, closeGameOverModal,
         showViewImmediately,

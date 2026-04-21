@@ -954,7 +954,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerEntryMode = 'create';
     let multiplayerChatSignature = '';
     let ticTacToeLastFinishedStateKey = '';
-    let sessionTimeout = null;
     let activeGameTab = 'home';
     // Bridge pour les modules ESM : expose l'onglet actif courant.
     if (typeof window !== 'undefined') {
@@ -979,93 +978,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pianoPointerId = null;
     let pianoPointerNoteId = null;
 
-    function loadSession() {
-        try {
-            const storedSession = window.localStorage.getItem(SESSION_KEY);
-
-            if (!storedSession) {
-                return null;
-            }
-
-            const session = JSON.parse(storedSession);
-
-            if (!session?.authenticated || !session.lastActivity) {
-                return null;
-            }
-
-            if (Date.now() - Number(session.lastActivity) > SESSION_TIMEOUT_MS) {
-                clearSession();
-                return null;
-            }
-
-            return session;
-        } catch (error) {
-            console.error('Impossible de lire la session sauvegardee.', error);
-            clearSession();
-            return null;
-        }
-    }
-
-    function saveSession(partialSession = {}) {
-        const currentSession = loadSession() || {};
-        const nextSession = {
-            authenticated: true,
-            lastActivity: Date.now(),
-            lastDestination: currentSession.lastDestination || 'services',
-            ...currentSession,
-            ...partialSession
-        };
-
-        window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
-        scheduleSessionTimeout();
-    }
-
-    function clearSession() {
-        if (sessionTimeout) {
-            window.clearTimeout(sessionTimeout);
-            sessionTimeout = null;
-        }
-
-        window.localStorage.removeItem(SESSION_KEY);
-    }
-
-    function scheduleSessionTimeout() {
-        const session = loadSession();
-
-        if (sessionTimeout) {
-            window.clearTimeout(sessionTimeout);
-            sessionTimeout = null;
-        }
-
-        if (!session) {
-            return;
-        }
-
-        const timeRemaining = SESSION_TIMEOUT_MS - (Date.now() - Number(session.lastActivity));
-
-        if (timeRemaining <= 0) {
-            clearSession();
-            return;
-        }
-
-        sessionTimeout = window.setTimeout(() => {
-            clearSession();
-            window.location.reload();
-        }, timeRemaining);
-    }
-
-    function registerActivity() {
-        const session = loadSession();
-
-        if (!session) {
-            return;
-        }
-
-        saveSession({
-            ...session,
-            lastActivity: Date.now()
-        });
-    }
+    // loadSession, saveSession, clearSession, scheduleSessionTimeout, registerActivity : exposes sur window par js/main.js (source = js/core/session.js).
 
     function loadMovies() {
         return [];
