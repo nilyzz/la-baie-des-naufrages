@@ -438,7 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Bridge ESM — OursAim géré par js/games/aim.js.
     const __am = window.__baie.aim;
     const initializeAim = __am.initializeAim;
-    const renderAimBoard = __am.renderAimBoard;
     const renderAimMenu = __am.renderAimMenu;
     const closeAimMenu = __am.closeAimMenu;
     const startAimRound = __am.startAimRound;
@@ -5764,10 +5763,6 @@ document.addEventListener('DOMContentLoaded', () => {
             render2048();
         }
 
-        if (activeGameTab === 'aim') {
-            renderAimBoard();
-        }
-
         if (activeGameTab === 'pacman') {
             renderPacman();
         }
@@ -5905,6 +5900,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleSessionTimeout();
     }
 });
+
 
 
 
