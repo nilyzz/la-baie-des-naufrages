@@ -3905,11 +3905,20 @@ body:has(#servicesView.view-active) .services-legal-button {
     gap: 8px;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 0;
 }
 
 .aim-card {
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    min-height: 0;
+}
+
+.aim-card.games-panel-active {
+    display: flex;
 }
 
 .aim-counter-block {
@@ -3951,7 +3960,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .aim-help {
-    margin: 0 0 8px;
+    margin: 0;
     text-align: center;
     color: var(--muted-text);
     font-size: 0.8rem;
@@ -3961,7 +3970,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin: 0 auto 10px;
+    margin: 0 auto;
     flex-wrap: wrap;
 }
 
@@ -8543,9 +8552,15 @@ body:has(#servicesView.view-active) .services-legal-button {
 .aim-table {
     position: relative;
     z-index: 1;
-    width: min(100%, min(54vh, 520px));
-    margin: 0 auto;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 360px;
+    height: 100%;
+    min-width: 0;
+    margin: 0;
     border-radius: 22px;
+    display: flex;
+    overflow: hidden;
 }
 
 .aim-table.is-menu-open > :not(.aim-menu-overlay) {
@@ -8593,8 +8608,10 @@ body:has(#servicesView.view-active) .services-legal-button {
 .aim-board {
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1;
-    margin: 0 auto;
+    height: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    margin: 0;
     cursor: crosshair;
     border-radius: 22px;
     overflow: hidden;
@@ -8654,6 +8671,7 @@ body:has(#servicesView.view-active) .services-legal-button {
         0 0 18px rgba(125, 211, 252, 0.46);
     pointer-events: none;
     animation: aimCountdownPulse 0.32s ease;
+    border-radius: inherit;
 }
 
 .aim-target-shell {
