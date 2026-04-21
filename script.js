@@ -2606,34 +2606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmModal.setAttribute('aria-hidden', 'true');
     }
 
-    function openLegalNoticeModal() {
-        if (!legalNoticeModal) {
-            return;
-        }
-
-        legalNoticeModal.classList.remove('hidden');
-        window.requestAnimationFrame(() => {
-            legalNoticeModal.classList.add('modal-visible');
-        });
-        legalNoticeModal.setAttribute('aria-hidden', 'false');
-        closeLegalNoticeButton?.focus();
-    }
-
-    function closeLegalNoticeModal() {
-        if (!legalNoticeModal) {
-            return;
-        }
-
-        legalNoticeModal.classList.remove('modal-visible');
-        legalNoticeModal.setAttribute('aria-hidden', 'true');
-
-        window.setTimeout(() => {
-            if (!legalNoticeModal.classList.contains('modal-visible')) {
-                legalNoticeModal.classList.add('hidden');
-                openLegalNoticeButton?.focus();
-            }
-        }, LEGAL_NOTICE_ANIMATION_MS);
-    }
+    // openLegalNoticeModal / closeLegalNoticeModal : exposes sur window par js/main.js (source = js/core/modals.js).
 
     function getSelectedMultiplayerGame() {
         const fallbackGameId = multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || null;
