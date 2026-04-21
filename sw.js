@@ -1,10 +1,10 @@
-const CACHE_NAME = 'baie-des-naufrages-v44';
+const CACHE_NAME = 'baie-des-naufrages-v45';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
     '/style.css?v=2026-04-19-audit-1',
-    '/script.js?v=2026-04-20-bridge-5',
-    '/js/main.js?v=2026-04-20-esm-2',
+    '/script.js?v=2026-04-21-bridge-10',
+    '/js/main.js?v=2026-04-20-esm-3',
     '/js/core/constants.js',
     '/js/core/utils.js',
     '/js/core/session.js',

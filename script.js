@@ -1389,9 +1389,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let moviesLoadStarted = false;
+    function ensureMoviesLoaded() {
+        if (moviesLoadStarted) return;
+        moviesLoadStarted = true;
+        importMoviesFromExcel();
+    }
+
     function showCinema() {
         closeGameOverModal();
         saveSession({ lastDestination: 'cinema' });
+        ensureMoviesLoaded();
         transitionToView(appView, {
             showHeader: true,
             headerMode: 'cinema',
@@ -6658,7 +6666,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     renderAll();
-    importMoviesFromExcel();
+    // film.xlsx (~137KB) n'est chargé qu'à la première visite du cinéma
+    // (voir ensureMoviesLoaded dans showCinema). Si la session précédente
+    // s'est terminée sur le cinéma, on le précharge pour éviter l'attente.
+    if (loadSession()?.lastDestination === 'cinema') {
+        importMoviesFromExcel();
+        moviesLoadStarted = true;
+    }
     showGamePanel('home');
     updateMultiplayerLobby();
     initializeGame();
