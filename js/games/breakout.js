@@ -550,6 +550,9 @@ export function getBreakoutMenuClosing() { return breakoutMenuClosing; }
 // Reprend la boucle d'animation après un Space — équivalent du vieux bloc
 // dans script.js. Initialise si besoin et garantit qu'une seule RAF tourne.
 export function resumeBreakoutLoop() {
+    if (breakoutMenuVisible || breakoutMenuClosing) {
+        return;
+    }
     if (!breakoutState || breakoutState.lives <= 0) {
         initializeBreakout();
     }

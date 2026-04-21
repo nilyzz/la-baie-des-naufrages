@@ -5626,6 +5626,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeGameTab === 'breakout') {
+            if (__bk.getBreakoutMenuVisible() || __bk.getBreakoutMenuClosing()) {
+                if (['Space', 'ArrowLeft', 'ArrowRight', 'KeyQ', 'KeyD'].includes(event.code)) {
+                    event.preventDefault();
+                }
+                return;
+            }
+
             const normalizedKey = event.key.toLowerCase();
             if (['q', 'd', 'arrowleft', 'arrowright'].includes(normalizedKey)) {
                 event.preventDefault();
