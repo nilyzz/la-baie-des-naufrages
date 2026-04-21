@@ -18,17 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'cinema.xls',
         'cinema.xlsm'
     ];
-    const MULTIPLAYER_SUPPORTED_GAMES = {
-        airHockey: 'Sea Hockey',
-        battleship: 'Bataille',
-        pong: 'Pong',
-        ticTacToe: 'Morpion',
-        connect4: 'Coin 4',
-        chess: '\u00c9checs',
-        checkers: 'Dames',
-        uno: 'Buno',
-        bomb: 'La Bombe'
-    };
+    // MULTIPLAYER_SUPPORTED_GAMES : expose sur window par js/core/constants.js via js/main.js.
 
     const loginView = document.getElementById('loginView');
     const servicesView = document.getElementById('servicesView');
@@ -125,39 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerRoomPlayers = document.getElementById('multiplayerRoomPlayers');
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
     let multiplayerCreateLeaveButton = null;
-    const GAME_FILTER_TAGS = {
-        '2048': ['puzzle'],
-        airHockey: ['arcade', 'reflexe'],
-        flappy: ['arcade', 'reflexe'],
-        baieBerry: ['arcade', 'puzzle'],
-        battleship: ['strategie', 'puzzle', 'table'],
-        breakout: ['arcade', 'reflexe'],
-        blockBlast: ['puzzle', 'strategie'],
-        mentalMath: ['puzzle', 'reflexe'],
-        coinClicker: ['arcade'],
-        candyCrush: ['puzzle'],
-        checkers: ['strategie', 'table'],
-        minesweeper: ['puzzle', 'strategie'],
-        chess: ['strategie', 'table'],
-        aim: ['reflexe', 'arcade'],
-        memory: ['puzzle', 'reflexe', 'carte'],
-        harborRun: ['arcade', 'reflexe'],
-        ticTacToe: ['strategie', 'table'],
-        pacman: ['arcade', 'reflexe'],
-        pong: ['arcade', 'reflexe'],
-        reaction: ['reflexe'],
-        solitaire: ['strategie', 'puzzle', 'carte'],
-        connect4: ['strategie', 'table'],
-        rhythm: ['reflexe', 'arcade'],
-        flowFree: ['puzzle'],
-        magicSort: ['puzzle'],
-        snake: ['arcade', 'reflexe'],
-        stacker: ['arcade', 'reflexe'],
-        sudoku: ['puzzle', 'strategie'],
-        tetris: ['puzzle', 'reflexe'],
-        uno: ['strategie', 'arcade', 'carte'],
-        bomb: ['arcade', 'reflexe']
-    };
+    // GAME_FILTER_TAGS : expose sur window par js/core/constants.js via js/main.js.
     let activeGamesFilter = 'all';
     const snakeGame = document.getElementById('snakeGame');
     const pongGame = document.getElementById('pongGame');
