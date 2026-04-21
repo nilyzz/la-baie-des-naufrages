@@ -556,6 +556,8 @@ export function initializeBomb() {
     stopBombTimerLoop();
     bombLocalState = null;
     bombState = null;
+    bombMenuVisible = true;
+    renderBombMenu();
     renderBomb();
 }
 
