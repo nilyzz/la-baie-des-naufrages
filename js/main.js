@@ -130,6 +130,8 @@ if (typeof window !== 'undefined') {
         PIANO_NOTE_MAP: musicModule.PIANO_NOTE_MAP,
         PIANO_KEYBOARD_LAYOUT: musicModule.PIANO_KEYBOARD_LAYOUT,
         UNIT_GROUPS: mathModule.UNIT_GROUPS,
+        parseMoviesFromWorkbook: cinemaModule.parseMoviesFromWorkbook,
+        normalizeMovieRow: cinemaModule.normalizeMovieRow,
         formatDate: cinemaModule.formatDate,
         formatExcelDisplayValue: cinemaModule.formatExcelDisplayValue,
         formatRating: cinemaModule.formatRating,
