@@ -27,9 +27,9 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.min.css?v=2026-04-21-fix-1">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=2026-04-21-fix-1">
-    <link rel="preload" as="script" href="/script.min.js?v=2026-04-21-fix-1">
+    <link rel="stylesheet" href="style.min.css?v=2026-04-21-fix-2">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=2026-04-21-fix-2">
+    <link rel="preload" as="script" href="/script.min.js?v=2026-04-21-fix-2">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -209,29 +209,24 @@
                         </div>
 
                         <div class="catalog-filter-block">
+                            <label class="field-label" for="catalogSortFilterSelect">Trier par</label>
+                            <select id="catalogSortFilterSelect" class="catalog-filter-input"></select>
+                        </div>
+
+                        <div id="catalogDirectorFilterBlock" class="catalog-filter-block hidden">
                             <label class="field-label" for="catalogDirectorFilterInput">R&eacute;alisateur</label>
                             <input id="catalogDirectorFilterInput" class="catalog-filter-input" type="search" placeholder="Nom du r&eacute;alisateur" list="catalogDirectorSuggestions">
                             <datalist id="catalogDirectorSuggestions"></datalist>
                         </div>
 
-                        <div class="catalog-filter-block">
+                        <div id="catalogReleaseFilterBlock" class="catalog-filter-block hidden">
                             <label class="field-label" for="catalogReleaseFilterSelect">P&eacute;riode de sortie</label>
                             <select id="catalogReleaseFilterSelect" class="catalog-filter-input"></select>
                         </div>
 
-                        <div class="catalog-filter-block">
-                            <label class="field-label" for="catalogLetterFilterSelect">Filtre alphab&eacute;tique</label>
-                            <select id="catalogLetterFilterSelect" class="catalog-filter-input"></select>
-                        </div>
-
-                        <div class="catalog-filter-block">
+                        <div id="catalogRatingFilterBlock" class="catalog-filter-block hidden">
                             <label class="field-label" for="catalogRatingFilterSelect">Note minimale</label>
                             <select id="catalogRatingFilterSelect" class="catalog-filter-input"></select>
-                        </div>
-
-                        <div class="catalog-filter-block">
-                            <label class="field-label" for="catalogSortFilterSelect">Trier par</label>
-                            <select id="catalogSortFilterSelect" class="catalog-filter-input"></select>
                         </div>
 
                         <div class="catalog-filter-block">
@@ -921,6 +916,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="aimCountdown" class="aim-countdown hidden" aria-hidden="true"></div>
                         <div id="aimBoard" class="aim-board" aria-label="Zone de tir de la baie"></div>
                     </div>
                 </div>
@@ -2177,8 +2173,8 @@
             }
         })();
     </script>
-    <script type="module" src="/js/main.bundle.min.js?v=2026-04-21-fix-1"></script>
-    <script defer src="script.min.js?v=2026-04-21-fix-1"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=2026-04-21-fix-2"></script>
+    <script defer src="script.min.js?v=2026-04-21-fix-2"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

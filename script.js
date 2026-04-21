@@ -32,8 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyCatalogMessage = document.getElementById('emptyCatalogMessage');
     const catalogResultsSummary = document.getElementById('catalogResultsSummary');
     const catalogGenreFilterGroup = document.getElementById('catalogGenreFilterGroup');
+    const catalogDirectorFilterBlock = document.getElementById('catalogDirectorFilterBlock');
+    const catalogReleaseFilterBlock = document.getElementById('catalogReleaseFilterBlock');
+    const catalogRatingFilterBlock = document.getElementById('catalogRatingFilterBlock');
     const catalogReleaseFilterSelect = document.getElementById('catalogReleaseFilterSelect');
-    const catalogLetterFilterSelect = document.getElementById('catalogLetterFilterSelect');
     const catalogRatingFilterSelect = document.getElementById('catalogRatingFilterSelect');
     const catalogSortFilterSelect = document.getElementById('catalogSortFilterSelect');
     const catalogDirectorFilterInput = document.getElementById('catalogDirectorFilterInput');
@@ -939,9 +941,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let searchTerm = '';
     let catalogSelectedGenres = new Set();
     let catalogReleaseFilter = 'all';
-    let catalogLetterFilter = 'all';
     let catalogMinimumRatingFilter = 'all';
-    let catalogSortMode = 'title-asc';
+    let catalogSortMode = 'default';
     let catalogDirectorTerm = '';
     let currentView = loginView;
     let siteAdsEnterTimer = null;
@@ -1738,7 +1739,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCatalogFilters() {
         const genreCounts = new Map();
         const directorNames = new Set();
-        const titleLetters = new Set();
 
         movies.forEach((movie) => {
             getMovieGenreTokens(movie).forEach((genre) => {
@@ -1748,8 +1748,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (movie.director) {
                 directorNames.add(movie.director);
             }
-
-            titleLetters.add(getMovieTitleLetter(movie));
         });
 
         catalogSelectedGenres = new Set([...catalogSelectedGenres].filter((genre) => genreCounts.has(genre)));
@@ -1802,12 +1800,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ], catalogReleaseFilter);
         catalogReleaseFilter = catalogReleaseFilterSelect?.value || 'all';
 
-        syncCatalogSelectOptions(catalogLetterFilterSelect, [
-            { value: 'all', label: 'Toutes les initiales' },
-            ...[...titleLetters].sort().map((letter) => ({ value: letter, label: letter === '#' ? 'Titres num\u00e9riques / autres' : letter }))
-        ], catalogLetterFilter);
-        catalogLetterFilter = catalogLetterFilterSelect?.value || 'all';
-
         syncCatalogSelectOptions(catalogRatingFilterSelect, [
             { value: 'all', label: 'Toutes les notes' },
             { value: '16', label: '16 / 20 et plus' },
@@ -1819,15 +1811,14 @@ document.addEventListener('DOMContentLoaded', () => {
         catalogMinimumRatingFilter = catalogRatingFilterSelect?.value || 'all';
 
         syncCatalogSelectOptions(catalogSortFilterSelect, [
-            { value: 'title-asc', label: 'Titre A \u00e0 Z' },
-            { value: 'title-desc', label: 'Titre Z \u00e0 A' },
+            { value: 'default', label: 'Ordre du catalogue' },
             { value: 'rating-desc', label: 'Note d\u00e9croissante' },
             { value: 'rating-asc', label: 'Note croissante' },
             { value: 'release-desc', label: 'Sortie la plus r\u00e9cente' },
             { value: 'release-asc', label: 'Sortie la plus ancienne' },
             { value: 'director-asc', label: 'R\u00e9alisateur A \u00e0 Z' }
         ], catalogSortMode);
-        catalogSortMode = catalogSortFilterSelect?.value || 'title-asc';
+        catalogSortMode = catalogSortFilterSelect?.value || 'default';
 
         if (catalogDirectorSuggestions) {
             catalogDirectorSuggestions.textContent = '';
@@ -1843,6 +1834,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (catalogDirectorFilterInput && catalogDirectorFilterInput.value !== catalogDirectorTerm) {
             catalogDirectorFilterInput.value = catalogDirectorTerm;
         }
+
+        catalogDirectorFilterBlock?.classList.toggle('hidden', catalogSortMode !== 'director-asc');
+        catalogReleaseFilterBlock?.classList.toggle('hidden', !['release-desc', 'release-asc'].includes(catalogSortMode));
+        catalogRatingFilterBlock?.classList.toggle('hidden', !['rating-desc', 'rating-asc'].includes(catalogSortMode));
     }
 
     function updateCatalogResultsSummary(filteredMovies) {
@@ -1852,11 +1847,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const activeFilters = [
             searchTerm,
-            catalogDirectorTerm,
-            catalogReleaseFilter !== 'all' ? catalogReleaseFilter : '',
-            catalogLetterFilter !== 'all' ? catalogLetterFilter : '',
-            catalogMinimumRatingFilter !== 'all' ? catalogMinimumRatingFilter : '',
-            catalogSortMode !== 'title-asc' ? catalogSortMode : '',
+            catalogSortMode === 'director-asc' ? catalogDirectorTerm : '',
+            ['release-desc', 'release-asc'].includes(catalogSortMode) && catalogReleaseFilter !== 'all' ? catalogReleaseFilter : '',
+            ['rating-desc', 'rating-asc'].includes(catalogSortMode) && catalogMinimumRatingFilter !== 'all' ? catalogMinimumRatingFilter : '',
+            catalogSortMode !== 'default' ? catalogSortMode : '',
             catalogSelectedGenres.size ? 'genres' : ''
         ].filter(Boolean).length;
 
@@ -1872,8 +1866,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getFilteredMovies() {
         const normalizedSearch = normalizeCatalogText(searchTerm);
-        const normalizedDirectorSearch = normalizeCatalogText(catalogDirectorTerm);
-        const minimumRating = catalogMinimumRatingFilter === 'all' ? null : Number(catalogMinimumRatingFilter);
+        const normalizedDirectorSearch = catalogSortMode === 'director-asc'
+            ? normalizeCatalogText(catalogDirectorTerm)
+            : '';
+        const minimumRating = ['rating-desc', 'rating-asc'].includes(catalogSortMode) && catalogMinimumRatingFilter !== 'all'
+            ? Number(catalogMinimumRatingFilter)
+            : null;
 
         const filteredMovies = movies.filter((movie) => {
             if (normalizedSearch) {
@@ -1895,28 +1893,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            if (catalogLetterFilter !== 'all' && getMovieTitleLetter(movie) !== catalogLetterFilter) {
-                return false;
-            }
-
             const releaseYear = getMovieReleaseYear(movie);
-            if (catalogReleaseFilter === '2020+' && (!releaseYear || releaseYear < 2020)) {
-                return false;
-            }
-            if (catalogReleaseFilter === '2010s' && (!releaseYear || releaseYear < 2010 || releaseYear > 2019)) {
-                return false;
-            }
-            if (catalogReleaseFilter === '2000s' && (!releaseYear || releaseYear < 2000 || releaseYear > 2009)) {
-                return false;
-            }
-            if (catalogReleaseFilter === '1990s' && (!releaseYear || releaseYear < 1990 || releaseYear > 1999)) {
-                return false;
-            }
-            if (catalogReleaseFilter === '1980s' && (!releaseYear || releaseYear < 1980 || releaseYear > 1989)) {
-                return false;
-            }
-            if (catalogReleaseFilter === 'before-1980' && (!releaseYear || releaseYear >= 1980)) {
-                return false;
+            if (['release-desc', 'release-asc'].includes(catalogSortMode)) {
+                if (catalogReleaseFilter === '2020+' && (!releaseYear || releaseYear < 2020)) {
+                    return false;
+                }
+                if (catalogReleaseFilter === '2010s' && (!releaseYear || releaseYear < 2010 || releaseYear > 2019)) {
+                    return false;
+                }
+                if (catalogReleaseFilter === '2000s' && (!releaseYear || releaseYear < 2000 || releaseYear > 2009)) {
+                    return false;
+                }
+                if (catalogReleaseFilter === '1990s' && (!releaseYear || releaseYear < 1990 || releaseYear > 1999)) {
+                    return false;
+                }
+                if (catalogReleaseFilter === '1980s' && (!releaseYear || releaseYear < 1980 || releaseYear > 1989)) {
+                    return false;
+                }
+                if (catalogReleaseFilter === 'before-1980' && (!releaseYear || releaseYear >= 1980)) {
+                    return false;
+                }
             }
 
             if (minimumRating !== null) {
@@ -1932,9 +1928,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const compareText = (left, right) => String(left || '').localeCompare(String(right || ''), 'fr', { sensitivity: 'base' });
 
         filteredMovies.sort((left, right) => {
-            if (catalogSortMode === 'title-desc') {
-                return compareText(right.title, left.title);
-            }
             if (catalogSortMode === 'rating-desc') {
                 return (getMovieRatingOutOfTwenty(right) ?? -Infinity) - (getMovieRatingOutOfTwenty(left) ?? -Infinity);
             }
@@ -1950,7 +1943,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (catalogSortMode === 'director-asc') {
                 return compareText(left.director, right.director) || compareText(left.title, right.title);
             }
-            return compareText(left.title, right.title);
+            return 0;
         });
 
         return filteredMovies;
@@ -3893,15 +3886,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     aimBoard.addEventListener('pointerdown', (event) => {
         if (__am.getAimMenuVisible() || __am.getAimMenuClosing()) return;
-        const cellButton = event.target.closest('.aim-cell');
-
-        if (!cellButton) {
-            return;
-        }
-
         event.preventDefault();
-
-        const targetId = cellButton.dataset.targetId;
+        const targetButton = event.target.closest('.aim-target-shell[data-target-id]');
+        const targetId = targetButton?.dataset.targetId;
 
         if (targetId) {
             handleAimTargetHit(targetId);
@@ -5369,11 +5356,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCatalog();
     });
 
-    catalogLetterFilterSelect?.addEventListener('change', (event) => {
-        catalogLetterFilter = event.target.value;
-        renderCatalog();
-    });
-
     catalogRatingFilterSelect?.addEventListener('change', (event) => {
         catalogMinimumRatingFilter = event.target.value;
         renderCatalog();
@@ -5381,6 +5363,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     catalogSortFilterSelect?.addEventListener('change', (event) => {
         catalogSortMode = event.target.value;
+        renderCatalogFilters();
         renderCatalog();
     });
 
@@ -5401,9 +5384,8 @@ document.addEventListener('DOMContentLoaded', () => {
     catalogResetFiltersButton?.addEventListener('click', () => {
         catalogSelectedGenres = new Set();
         catalogReleaseFilter = 'all';
-        catalogLetterFilter = 'all';
         catalogMinimumRatingFilter = 'all';
-        catalogSortMode = 'title-asc';
+        catalogSortMode = 'default';
         catalogDirectorTerm = '';
         searchTerm = '';
 
@@ -5918,8 +5900,6 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleSessionTimeout();
     }
 });
-
-
 
 
 

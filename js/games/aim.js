@@ -1,4 +1,4 @@
-// Game module — OursAim (Canon de bord).
+// Game module â€” OursAim (Canon de bord).
 // Extracted verbatim from script.js during the ES-modules migration.
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
@@ -11,6 +11,8 @@ export const AIM_DEFAULT_ROUND_SECONDS = 20;
 export const AIM_HIT_SCORE = 12;
 export const AIM_MISS_SCORE = 5;
 export const AIM_BEST_KEY = 'baie-des-naufrages-aim-best';
+export const AIM_TARGET_SIZE_RATIO = 0.18;
+export const AIM_TARGET_MIN_DISTANCE = 0.19;
 
 let aimTargets = [];
 let aimScore = 0;
@@ -20,10 +22,13 @@ let aimTimeRemaining = AIM_DEFAULT_ROUND_SECONDS;
 let aimRoundRunning = false;
 let aimRoundCompleted = false;
 let aimTimerInterval = null;
-let aimHitEffectKey = null;
+let aimHitEffectPosition = null;
 let aimHitEffectTimeout = null;
-let aimSpawnEffectKey = null;
+let aimSpawnEffectPosition = null;
 let aimSpawnEffectTimeout = null;
+let aimCountdownTimer = null;
+let aimCountdownCompleteTimer = null;
+let aimCountdownActive = false;
 let aimMenuVisible = true;
 let aimMenuShowingRules = false;
 let aimMenuClosing = false;
@@ -35,6 +40,7 @@ const $ = (id) => document.getElementById(id);
 function dom() {
     return {
         aimBoard: $('aimBoard'),
+        aimCountdown: $('aimCountdown'),
         aimScoreDisplay: $('aimScoreDisplay'),
         aimTimerDisplay: $('aimTimerDisplay'),
         aimBestScoreDisplay: $('aimBestScoreDisplay'),
@@ -50,50 +56,93 @@ function dom() {
     };
 }
 
+function clearAimCountdownTimers() {
+    if (aimCountdownTimer) {
+        window.clearTimeout(aimCountdownTimer);
+        aimCountdownTimer = null;
+    }
+    if (aimCountdownCompleteTimer) {
+        window.clearTimeout(aimCountdownCompleteTimer);
+        aimCountdownCompleteTimer = null;
+    }
+}
+
+function getAimBoardMetrics(aimBoard) {
+    const boardWidth = Math.max(0, aimBoard?.clientWidth || 0);
+    const boardHeight = Math.max(0, aimBoard?.clientHeight || boardWidth);
+    const targetSize = Math.max(58, Math.min(96, Math.round(Math.min(boardWidth, boardHeight) * AIM_TARGET_SIZE_RATIO)));
+    return {
+        boardWidth,
+        boardHeight,
+        targetSize,
+        maxLeft: Math.max(0, boardWidth - targetSize),
+        maxTop: Math.max(0, boardHeight - targetSize)
+    };
+}
+
+function getAimPositionDistance(left, right) {
+    if (!left || !right) {
+        return Infinity;
+    }
+
+    const leftCenterX = left.x + (left.sizeRatio / 2);
+    const leftCenterY = left.y + (left.sizeRatio / 2);
+    const rightCenterX = right.x + (right.sizeRatio / 2);
+    const rightCenterY = right.y + (right.sizeRatio / 2);
+    return Math.hypot(leftCenterX - rightCenterX, leftCenterY - rightCenterY);
+}
+
+function pickRandomAimPosition(excludedId = null) {
+    const sizeRatio = AIM_TARGET_SIZE_RATIO;
+    const maxCoordinate = Math.max(0, 1 - sizeRatio);
+    const occupiedTargets = aimTargets.filter((target) => target.id !== excludedId);
+    let fallbackPosition = null;
+
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+        const nextPosition = {
+            x: Math.random() * maxCoordinate,
+            y: Math.random() * maxCoordinate,
+            sizeRatio
+        };
+
+        if (!fallbackPosition) {
+            fallbackPosition = nextPosition;
+        }
+
+        const isFarEnough = occupiedTargets.every((target) => getAimPositionDistance(nextPosition, target) >= AIM_TARGET_MIN_DISTANCE);
+        if (isFarEnough) {
+            return nextPosition;
+        }
+    }
+
+    return fallbackPosition;
+}
+
 export function updateAimHud() {
     const { aimScoreDisplay, aimTimerDisplay, aimBestScoreDisplay, aimStartButton, aimDurationButtons } = dom();
     if (aimScoreDisplay) aimScoreDisplay.textContent = String(aimScore);
     if (aimTimerDisplay) aimTimerDisplay.textContent = String(aimTimeRemaining);
     if (aimBestScoreDisplay) aimBestScoreDisplay.textContent = String(aimBestScore);
-    if (aimStartButton) aimStartButton.textContent = aimRoundRunning ? 'Bordée en cours' : 'Nouvelle bordée';
+    if (aimStartButton) {
+        aimStartButton.textContent = aimRoundRunning
+            ? 'Bordee en cours'
+            : (aimCountdownActive ? 'A l abordage...' : 'Nouvelle bordee');
+    }
     aimDurationButtons.forEach((button) => {
         button.classList.toggle('is-active', Number(button.dataset.aimDuration) === aimRoundSeconds);
     });
 }
 
-function getAimFreeCells(excludedKey = null) {
-    const occupied = new Set(
-        aimTargets
-            .filter((target) => `${target.row}-${target.col}` !== excludedKey)
-            .map((target) => `${target.row}-${target.col}`)
-    );
-    const freeCells = [];
-    for (let row = 0; row < AIM_GRID_SIZE; row += 1) {
-        for (let col = 0; col < AIM_GRID_SIZE; col += 1) {
-            const key = `${row}-${col}`;
-            if (key !== excludedKey && !occupied.has(key)) {
-                freeCells.push({ row, col });
-            }
-        }
-    }
-    return freeCells;
-}
-
-function pickRandomAimCell(excludedKey = null) {
-    const freeCells = getAimFreeCells(excludedKey);
-    if (!freeCells.length) return null;
-    return freeCells[Math.floor(Math.random() * freeCells.length)];
-}
-
 export function createAimTargets() {
     aimTargets = [];
     while (aimTargets.length < AIM_TARGET_COUNT) {
-        const nextCell = pickRandomAimCell();
-        if (!nextCell) break;
+        const nextPosition = pickRandomAimPosition();
+        if (!nextPosition) break;
         aimTargets.push({
             id: crypto.randomUUID(),
-            row: nextCell.row,
-            col: nextCell.col
+            x: nextPosition.x,
+            y: nextPosition.y,
+            sizeRatio: nextPosition.sizeRatio
         });
     }
 }
@@ -101,40 +150,101 @@ export function createAimTargets() {
 export function renderAimBoard() {
     const { aimBoard } = dom();
     if (!aimBoard) return;
-    aimBoard.innerHTML = Array.from({ length: AIM_GRID_SIZE * AIM_GRID_SIZE }, (_, index) => {
-        const row = Math.floor(index / AIM_GRID_SIZE);
-        const col = index % AIM_GRID_SIZE;
-        const target = aimTargets.find((item) => item.row === row && item.col === col);
-        const effectKey = `${row}-${col}`;
-        const hitEffect = aimHitEffectKey === effectKey;
-        const spawnEffect = aimSpawnEffectKey === effectKey;
-        const shouldRenderTarget = Boolean(target) || hitEffect;
-        const targetClasses = [
-            'aim-target',
-            spawnEffect ? 'is-spawning' : '',
-            hitEffect && !target ? 'is-dispersing' : ''
-        ].filter(Boolean).join(' ');
 
+    const { maxLeft, maxTop, targetSize } = getAimBoardMetrics(aimBoard);
+    const renderTargetInner = (className) => `<span class="${className}" aria-hidden="true"></span>`;
+    const renderHitParticles = () => `
+        <span class="aim-hit-particle aim-hit-particle-a" aria-hidden="true"></span>
+        <span class="aim-hit-particle aim-hit-particle-b" aria-hidden="true"></span>
+        <span class="aim-hit-particle aim-hit-particle-c" aria-hidden="true"></span>
+        <span class="aim-hit-particle aim-hit-particle-d" aria-hidden="true"></span>
+        <span class="aim-hit-particle aim-hit-particle-e" aria-hidden="true"></span>
+    `;
+    const renderTargetButton = (target, extraTargetClass = '') => {
+        const left = Math.round(target.x * maxLeft);
+        const top = Math.round(target.y * maxTop);
+        const targetClasses = ['aim-target', extraTargetClass].filter(Boolean).join(' ');
         return `
             <button
                 type="button"
-                class="aim-cell${target ? ' aim-cell-has-target' : ''}${hitEffect ? ' is-hit-effect' : ''}"
-                data-row="${row}"
-                data-col="${col}"
-                ${target ? `data-target-id="${target.id}"` : ''}
-                aria-label="${target ? 'Oursin à toucher' : "Case d'eau"}"
+                class="aim-target-shell"
+                data-target-id="${target.id}"
+                style="left:${left}px;top:${top}px;width:${targetSize}px;height:${targetSize}px;"
+                aria-label="Oursin a toucher"
             >
-                ${shouldRenderTarget ? `<span class="${targetClasses}" aria-hidden="true"></span>` : ''}
-                ${hitEffect ? `
-                    <span class="aim-hit-particle aim-hit-particle-a" aria-hidden="true"></span>
-                    <span class="aim-hit-particle aim-hit-particle-b" aria-hidden="true"></span>
-                    <span class="aim-hit-particle aim-hit-particle-c" aria-hidden="true"></span>
-                    <span class="aim-hit-particle aim-hit-particle-d" aria-hidden="true"></span>
-                    <span class="aim-hit-particle aim-hit-particle-e" aria-hidden="true"></span>
-                ` : ''}
+                ${renderTargetInner(targetClasses)}
             </button>
         `;
-    }).join('');
+    };
+    const renderEffect = (position, targetClassName, withParticles = false) => {
+        if (!position) {
+            return '';
+        }
+
+        const left = Math.round(position.x * maxLeft);
+        const top = Math.round(position.y * maxTop);
+        return `
+            <span class="aim-target-shell is-effect" style="left:${left}px;top:${top}px;width:${targetSize}px;height:${targetSize}px;" aria-hidden="true">
+                ${renderTargetInner(targetClassName)}
+                ${withParticles ? renderHitParticles() : ''}
+            </span>
+        `;
+    };
+
+    aimBoard.innerHTML = [
+        ...aimTargets.map((target) => renderTargetButton(target, aimSpawnEffectPosition?.id === target.id ? 'is-spawning' : '')),
+        renderEffect(aimHitEffectPosition, 'aim-target is-dispersing', Boolean(aimHitEffectPosition))
+    ].join('');
+}
+
+export function hideAimCountdown() {
+    const { aimCountdown } = dom();
+    if (!aimCountdown) {
+        return;
+    }
+
+    aimCountdown.textContent = '';
+    aimCountdown.classList.add('hidden');
+    aimCountdown.setAttribute('aria-hidden', 'true');
+}
+
+export function showAimCountdown(label) {
+    const { aimCountdown } = dom();
+    if (!aimCountdown) {
+        return;
+    }
+
+    aimCountdown.textContent = label;
+    aimCountdown.classList.remove('hidden');
+    aimCountdown.setAttribute('aria-hidden', 'false');
+}
+
+export function startAimCountdown(onComplete) {
+    clearAimCountdownTimers();
+    hideAimCountdown();
+    aimCountdownActive = true;
+    updateAimHud();
+
+    const steps = ['3', '2', '1', 'GO'];
+    let stepIndex = 0;
+
+    const runStep = () => {
+        const currentLabel = steps[stepIndex];
+
+        if (currentLabel === undefined) {
+            aimCountdownCompleteTimer = window.setTimeout(() => {
+                hideAimCountdown();
+                onComplete?.();
+            }, 260);
+            return;
+        }
+
+        showAimCountdown(currentLabel);
+        stepIndex += 1;
+        aimCountdownTimer = window.setTimeout(runStep, 620);
+    };
+
+    runStep();
 }
 
 export function stopAimRound() {
@@ -142,6 +252,9 @@ export function stopAimRound() {
         window.clearInterval(aimTimerInterval);
         aimTimerInterval = null;
     }
+    clearAimCountdownTimers();
+    hideAimCountdown();
+    aimCountdownActive = false;
     aimRoundRunning = false;
     updateAimHud();
 }
@@ -159,53 +272,70 @@ export function finishAimRound() {
 
     updateAimHud();
     revealAimOutcomeMenu(
-        'Bordée terminée',
-        `Tu as inscrit ${aimScore} touches avant la fin de la marée. Record : ${aimBestScore}.`,
-        'Canon calé'
+        'Bordee terminee',
+        `Tu as inscrit ${aimScore} touches avant la fin de la maree. Record : ${aimBestScore}.`,
+        'Canon cale'
     );
 }
 
 export function startAimRound() {
     closeGameOverModal();
-    aimRoundRunning = true;
-    updateAimHud();
+    if (aimRoundCompleted || aimTimeRemaining <= 0 || aimRoundRunning || aimCountdownActive) {
+        return;
+    }
 
-    aimTimerInterval = window.setInterval(() => {
-        aimTimeRemaining -= 1;
+    startAimCountdown(() => {
+        aimCountdownActive = false;
+        aimRoundRunning = true;
         updateAimHud();
-        if (aimTimeRemaining <= 0) {
-            finishAimRound();
-        }
-    }, 1000);
+
+        aimTimerInterval = window.setInterval(() => {
+            aimTimeRemaining -= 1;
+            updateAimHud();
+            if (aimTimeRemaining <= 0) {
+                finishAimRound();
+            }
+        }, 1000);
+    });
 }
 
 export function handleAimTargetHit(targetId) {
-    if (aimRoundCompleted || aimTimeRemaining <= 0) return;
-    if (!aimRoundRunning) startAimRound();
+    if (aimRoundCompleted || aimTimeRemaining <= 0 || !aimRoundRunning || aimCountdownActive) return;
 
     const target = aimTargets.find((item) => item.id === targetId);
     if (!target) return;
 
     aimScore += AIM_HIT_SCORE;
-    aimHitEffectKey = `${target.row}-${target.col}`;
-    const nextCell = pickRandomAimCell(`${target.row}-${target.col}`);
-    if (nextCell) {
-        target.row = nextCell.row;
-        target.col = nextCell.col;
-        aimSpawnEffectKey = `${target.row}-${target.col}`;
+    aimHitEffectPosition = {
+        x: target.x,
+        y: target.y,
+        sizeRatio: target.sizeRatio
+    };
+
+    const nextPosition = pickRandomAimPosition(target.id);
+    if (nextPosition) {
+        target.x = nextPosition.x;
+        target.y = nextPosition.y;
+        target.sizeRatio = nextPosition.sizeRatio;
+        aimSpawnEffectPosition = {
+            id: target.id,
+            x: target.x,
+            y: target.y,
+            sizeRatio: target.sizeRatio
+        };
     }
 
     updateAimHud();
     renderAimBoard();
     if (aimHitEffectTimeout) window.clearTimeout(aimHitEffectTimeout);
     aimHitEffectTimeout = window.setTimeout(() => {
-        aimHitEffectKey = null;
+        aimHitEffectPosition = null;
         renderAimBoard();
     }, 320);
     if (aimSpawnEffectTimeout) window.clearTimeout(aimSpawnEffectTimeout);
     aimSpawnEffectTimeout = window.setTimeout(() => {
-        aimSpawnEffectKey = null;
-        if (!aimHitEffectKey) renderAimBoard();
+        aimSpawnEffectPosition = null;
+        if (!aimHitEffectPosition) renderAimBoard();
     }, 280);
     const { aimBoard } = dom();
     if (aimBoard) {
@@ -216,7 +346,7 @@ export function handleAimTargetHit(targetId) {
 }
 
 export function handleAimMiss() {
-    if (!aimRoundRunning || aimRoundCompleted || aimTimeRemaining <= 0) return;
+    if (!aimRoundRunning || aimRoundCompleted || aimTimeRemaining <= 0 || aimCountdownActive) return;
     aimScore = Math.max(0, aimScore - AIM_MISS_SCORE);
     updateAimHud();
     const { aimBoard } = dom();
@@ -228,7 +358,7 @@ export function handleAimMiss() {
 }
 
 export function getAimRulesText() {
-    return 'Clique chaque oursin qui appara\u00eet dans la baie avant qu\u2019il ne disparaisse. Un tir sur l\u2019eau t\u2019enl\u00e8ve des points. Choisis la dur\u00e9e de la bord\u00e9e (20 / 40 / 60 s) et marque le plus de touches avant la fin.';
+    return 'Clique chaque oursin qui apparait dans la baie avant qu il ne disparaisse. Un tir sur l eau t enleve des points. Choisis la duree de la bordee (20 / 40 / 60 s) et marque le plus de touches avant la fin.';
 }
 
 export function renderAimMenu() {
@@ -241,11 +371,11 @@ export function renderAimMenu() {
     aimTable.classList.toggle('is-menu-open', aimMenuVisible);
     if (!aimMenuVisible) return;
     const hasResult = Boolean(aimMenuResult);
-    if (aimMenuEyebrow) aimMenuEyebrow.textContent = aimMenuShowingRules ? 'R\u00e8gles' : (hasResult ? aimMenuResult.eyebrow : 'Canon de bord');
+    if (aimMenuEyebrow) aimMenuEyebrow.textContent = aimMenuShowingRules ? 'Regles' : (hasResult ? aimMenuResult.eyebrow : 'Canon de bord');
     if (aimMenuTitle) aimMenuTitle.textContent = aimMenuShowingRules ? 'Rappel rapide' : (hasResult ? aimMenuResult.title : 'OursAim');
-    if (aimMenuText) aimMenuText.textContent = aimMenuShowingRules ? getAimRulesText() : (hasResult ? aimMenuResult.text : 'Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l\u2019eau te co\u00fbte des points.');
-    if (aimMenuActionButton) aimMenuActionButton.textContent = aimMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la bord\u00e9e' : 'Lancer la bord\u00e9e');
-    if (aimMenuRulesButton) { aimMenuRulesButton.textContent = 'R\u00e8gles'; aimMenuRulesButton.hidden = aimMenuShowingRules; }
+    if (aimMenuText) aimMenuText.textContent = aimMenuShowingRules ? getAimRulesText() : (hasResult ? aimMenuResult.text : 'Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l eau te coute des points.');
+    if (aimMenuActionButton) aimMenuActionButton.textContent = aimMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la bordee' : 'Lancer la bordee');
+    if (aimMenuRulesButton) { aimMenuRulesButton.textContent = 'Regles'; aimMenuRulesButton.hidden = aimMenuShowingRules; }
 }
 
 export function closeAimMenu() {
@@ -275,8 +405,8 @@ export function initializeAim() {
     stopAimRound();
     if (aimHitEffectTimeout) { window.clearTimeout(aimHitEffectTimeout); aimHitEffectTimeout = null; }
     if (aimSpawnEffectTimeout) { window.clearTimeout(aimSpawnEffectTimeout); aimSpawnEffectTimeout = null; }
-    aimHitEffectKey = null;
-    aimSpawnEffectKey = null;
+    aimHitEffectPosition = null;
+    aimSpawnEffectPosition = null;
     aimScore = 0;
     aimTimeRemaining = aimRoundSeconds;
     aimRoundCompleted = false;

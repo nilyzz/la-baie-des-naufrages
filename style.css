@@ -8595,10 +8595,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     width: 100%;
     aspect-ratio: 1 / 1;
     margin: 0 auto;
-    padding: 7px;
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 7px;
+    cursor: crosshair;
     border-radius: 22px;
     overflow: hidden;
     background:
@@ -8642,36 +8639,43 @@ body:has(#servicesView.view-active) .services-legal-button {
     animation: aimBoardSplash 0.28s ease;
 }
 
-.aim-cell {
-    position: relative;
-    border-radius: 18px;
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    background:
-        linear-gradient(180deg, rgba(125, 211, 252, 0.08), rgba(29, 78, 216, 0.06)),
-        rgba(15, 23, 42, 0.16);
-    backdrop-filter: blur(2px);
-    padding: 0;
-    overflow: hidden;
-}
-
-.aim-cell:hover {
-    transform: translateY(0);
-    filter: brightness(1.06);
-}
-
-.aim-cell::after {
-    content: '';
+.aim-countdown {
     position: absolute;
-    inset: auto 14% 14% 14%;
-    height: 10px;
-    border-radius: 999px;
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.22), transparent 72%);
-    opacity: 0.5;
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    font-size: clamp(2.6rem, 11vw, 4.8rem);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #f8fafc;
+    text-shadow:
+        0 14px 36px rgba(15, 23, 42, 0.9),
+        0 0 18px rgba(125, 211, 252, 0.46);
+    pointer-events: none;
+    animation: aimCountdownPulse 0.32s ease;
+}
+
+.aim-target-shell {
+    position: absolute;
+    padding: 0;
+    border: none;
+    background: none;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+.aim-target-shell.is-effect {
+    pointer-events: none;
+}
+
+.aim-target-shell:hover {
+    filter: brightness(1.08);
 }
 
 .aim-target {
     position: absolute;
-    inset: 24%;
+    inset: 0;
     border-radius: 50%;
     background:
         radial-gradient(circle at 32% 30%, rgba(186, 230, 253, 0.18) 0 10%, transparent 11%),
@@ -8727,17 +8731,18 @@ body:has(#servicesView.view-active) .services-legal-button {
     z-index: 2;
 }
 
-.aim-cell-has-target::before {
+.aim-target-shell::before {
     content: '';
     position: absolute;
     left: 50%;
-    top: 72%;
-    width: 44%;
-    height: 12%;
+    top: 78%;
+    width: 56%;
+    height: 14%;
     transform: translateX(-50%);
     border-radius: 999px;
     border-top: 2px solid rgba(255, 255, 255, 0.18);
-    opacity: 0.36;
+    opacity: 0.3;
+    pointer-events: none;
 }
 
 .aim-hit-particle {
@@ -8761,6 +8766,18 @@ body:has(#servicesView.view-active) .services-legal-button {
 .aim-hit-particle-c { --aim-particle-x: -14px; --aim-particle-y: 18px; }
 .aim-hit-particle-d { --aim-particle-x: 20px; --aim-particle-y: 14px; }
 .aim-hit-particle-e { --aim-particle-x: 0px; --aim-particle-y: -24px; }
+
+@keyframes aimCountdownPulse {
+    0% {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
 
 @keyframes aimTargetPulse {
     0%,
@@ -9104,12 +9121,15 @@ button:hover {
 .catalog-layout {
     display: grid;
     grid-template-columns: 248px minmax(0, 1fr);
+    width: min(100%, 1500px);
+    margin: 0 auto;
     gap: 24px;
     align-items: start;
 }
 
 .catalog-main {
     min-width: 0;
+    width: 100%;
 }
 
 .catalog-filters-card {
