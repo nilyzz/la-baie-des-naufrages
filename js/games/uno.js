@@ -34,6 +34,7 @@ let unoLastRenderedTopCardId = '';
 let unoMenuVisible = true;
 let unoMenuShowingRules = false;
 let unoMenuClosing = false;
+let unoMenuResult = null;
 
 let activeGameTabAccessor = () => null;
 export function setUnoActiveGameTabAccessor(fn) {
@@ -347,7 +348,13 @@ export function renderUnoMenu() {
         ? 'Quand tout le monde est pr\u00eat, la travers\u00e9e commence automatiquement.'
         : 'Lance une nouvelle manche quand tu es prêt.';
 
-    unoMenuVisible = isOnline ? !roomStarted : unoMenuVisible;
+    // Si une manche vient de se terminer, le menu outcome force l'affichage
+    // meme en multijoueur (room encore flaggee roomStarted cote serveur).
+    if (unoMenuResult) {
+        unoMenuVisible = true;
+    } else {
+        unoMenuVisible = isOnline ? !roomStarted : unoMenuVisible;
+    }
     unoMenuOverlay.classList.toggle('hidden', !unoMenuVisible);
     unoMenuOverlay.classList.toggle('is-closing', unoMenuClosing);
     unoTable.classList.toggle('is-menu-open', unoMenuVisible);
@@ -356,17 +363,43 @@ export function renderUnoMenu() {
         return;
     }
 
+    const showingOutcome = Boolean(unoMenuResult) && !unoMenuShowingRules;
+
     if (unoMenuEyebrow) {
-        unoMenuEyebrow.textContent = unoMenuShowingRules ? 'R\u00e8gles' : (isOnline ? 'Salle multijoueur' : 'Baie des cartes');
+        if (unoMenuShowingRules) {
+            unoMenuEyebrow.textContent = 'R\u00e8gles';
+        } else if (showingOutcome) {
+            unoMenuEyebrow.textContent = unoMenuResult.eyebrow || (isOnline ? 'Salle multijoueur' : 'Baie des cartes');
+        } else {
+            unoMenuEyebrow.textContent = isOnline ? 'Salle multijoueur' : 'Baie des cartes';
+        }
     }
     if (unoMenuTitle) {
-        unoMenuTitle.textContent = unoMenuShowingRules ? 'Rappel rapide' : 'Buno';
+        if (unoMenuShowingRules) {
+            unoMenuTitle.textContent = 'Rappel rapide';
+        } else if (showingOutcome) {
+            unoMenuTitle.textContent = unoMenuResult.title || 'Manche termin\u00e9e';
+        } else {
+            unoMenuTitle.textContent = 'Buno';
+        }
     }
     if (unoMenuText) {
-        unoMenuText.textContent = unoMenuShowingRules ? getUnoRulesText() : baseText;
+        if (unoMenuShowingRules) {
+            unoMenuText.textContent = getUnoRulesText();
+        } else if (showingOutcome) {
+            unoMenuText.textContent = unoMenuResult.text || baseText;
+        } else {
+            unoMenuText.textContent = baseText;
+        }
     }
     if (unoMenuActionButton) {
-        unoMenuActionButton.textContent = unoMenuShowingRules ? 'Retour' : actionLabel;
+        if (unoMenuShowingRules) {
+            unoMenuActionButton.textContent = 'Retour';
+        } else if (showingOutcome) {
+            unoMenuActionButton.textContent = isOnline ? 'Revenir au salon' : 'Rejouer';
+        } else {
+            unoMenuActionButton.textContent = actionLabel;
+        }
     }
     if (unoMenuRulesButton) {
         unoMenuRulesButton.textContent = 'R\u00e8gles';
@@ -374,8 +407,18 @@ export function renderUnoMenu() {
     }
 }
 
+export function revealUnoOutcomeMenu(title, text, eyebrow) {
+    unoMenuResult = { title, text, eyebrow };
+    unoMenuVisible = true;
+    unoMenuShowingRules = false;
+    unoMenuClosing = false;
+    renderUnoMenu();
+}
+
 export function startUnoLaunchSequence() {
     unoMenuClosing = true;
+    unoMenuResult = null;
+    unoLastWinnerKey = '';
     renderUnoMenu();
     window.setTimeout(() => {
         unoMenuClosing = false;
@@ -636,6 +679,7 @@ export function renderUnoOpponent(player, isActive = false, orientation = 'top')
 export function maybeOpenUnoOutcomeModal() {
     if (!unoState?.winner) {
         unoLastWinnerKey = '';
+        unoMenuResult = null;
         return;
     }
 
@@ -647,7 +691,11 @@ export function maybeOpenUnoOutcomeModal() {
     unoLastWinnerKey = winnerKey;
     const winner = unoState.players.find((player) => player.id === unoState.winner);
     const isVictory = winner?.id === 'you' || winner?.isYou;
-    openGameOverModal(isVictory ? 'Victoire' : 'Partie termin\u00e9e', `${winner?.name || 'Un joueur'} remporte la manche de Buno.`);
+    revealUnoOutcomeMenu(
+        isVictory ? 'Victoire' : 'Partie termin\u00e9e',
+        `${winner?.name || 'Un joueur'} remporte la manche de Buno.`,
+        isVictory ? 'Manche gagn\u00e9e' : 'Manche perdue'
+    );
 }
 
 export function updateUnoHud() {
@@ -1105,6 +1153,8 @@ export function getUnoMenuShowingRules() { return unoMenuShowingRules; }
 export function setUnoMenuShowingRules(v) { unoMenuShowingRules = Boolean(v); }
 export function getUnoMenuClosing() { return unoMenuClosing; }
 export function setUnoMenuClosing(v) { unoMenuClosing = Boolean(v); }
+export function getUnoMenuResult() { return unoMenuResult; }
+export function setUnoMenuResult(v) { unoMenuResult = v || null; }
 export function getUnoDrawRequestPending() { return unoDrawRequestPending; }
 export function setUnoDrawRequestPending(v) { unoDrawRequestPending = Boolean(v); }
 export function getUnoPendingDrawAnimation() { return unoPendingDrawAnimation; }
