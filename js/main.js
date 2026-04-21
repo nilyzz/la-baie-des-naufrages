@@ -125,7 +125,11 @@ if (typeof window !== 'undefined') {
         renderMultiplayerChatMessages, updateMultiplayerChatPanel, setMultiplayerEntryMode,
         ensureMultiplayerCreateLeaveButton, updateMultiplayerGameTileSelection,
         getSelectedMultiplayerGameLabel, syncMultiplayerEntryModeAccess, updateMultiplayerLobby,
-        syncGameMenuOverlayBounds, syncAllGameMenuOverlayBounds, GAME_MENU_OVERLAY_PAIRS
+        syncGameMenuOverlayBounds, syncAllGameMenuOverlayBounds, GAME_MENU_OVERLAY_PAIRS,
+        PIANO_NOTES: musicModule.PIANO_NOTES,
+        PIANO_NOTE_MAP: musicModule.PIANO_NOTE_MAP,
+        PIANO_KEYBOARD_LAYOUT: musicModule.PIANO_KEYBOARD_LAYOUT,
+        UNIT_GROUPS: mathModule.UNIT_GROUPS
     });
     window.__baie.multiplayerState = multiplayerState;
     window.__baie.music = musicModule;
