@@ -1,23 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const LEGAL_NOTICE_ANIMATION_MS = 220;
-    const SESSION_KEY = 'baie-des-naufrages-session';
-    const SESSION_TIMEOUT_MS = 2 * 60 * 60 * 1000;
-    const multiplayerServerMeta = document.querySelector('meta[name="multiplayer-server-url"]');
-    const MULTIPLAYER_SERVER_URL = String(window.BAIE_MULTIPLAYER_SERVER_URL || multiplayerServerMeta?.content || '')
-        .trim()
-        .replace(/\/+$/, '');
+    // Constantes LEGAL_NOTICE_ANIMATION_MS, SESSION_KEY, SESSION_TIMEOUT_MS,
+    // MULTIPLAYER_SERVER_URL, EXCEL_FILE_CANDIDATES : exposees sur window par
+    // js/main.js (source de verite = js/core/constants.js et js/multiplayer/connection.js).
     const defaultPoster = 'https://placehold.co/600x900/0f172a/f8fafc?text=Affiche';
-    const EXCEL_FILE_CANDIDATES = [
-        'film.xlsx',
-        'film.xls',
-        'film.xlsm',
-        'films.xlsx',
-        'films.xls',
-        'films.xlsm',
-        'cinema.xlsx',
-        'cinema.xls',
-        'cinema.xlsm'
-    ];
     // MULTIPLAYER_SUPPORTED_GAMES : expose sur window par js/core/constants.js via js/main.js.
 
     const loginView = document.getElementById('loginView');
@@ -1062,8 +1047,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacmanTouchStartY = null;
     let tetrisTouchStartX = null;
     let tetrisTouchStartY = null;
-    const UNO_MENU_CLOSE_DURATION_MS = 260;
-    const GRID_OUTCOME_MENU_DELAY_MS = 650;
+    // UNO_MENU_CLOSE_DURATION_MS et GRID_OUTCOME_MENU_DELAY_MS : exposees sur window par js/main.js.
     let resizeFrame = null;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
