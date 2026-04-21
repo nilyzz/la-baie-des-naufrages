@@ -508,13 +508,14 @@ export function syncMultiplayerBombState() {
         return;
     }
 
-    // Ferme auto le menu « Mettre prêt » quand la bombe est vraiment armée.
+    // Ferme auto le menu « Mettre prêt » quand la bombe est vraiment armée
+    // et re-render à chaque sync pour que le compteur ready (X/2) se mette à jour.
     {
         const room = getMultiplayerActiveRoom();
         if (room?.gameLaunched && bombMenuVisible) {
             bombMenuVisible = false;
-            renderBombMenu();
         }
+        renderBombMenu();
     }
 
     bombState = cloneBombState(getMultiplayerActiveRoom().gameState);

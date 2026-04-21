@@ -237,13 +237,14 @@ export function syncMultiplayerAirHockeyState() {
         return;
     }
 
-    // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée.
+    // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée
+    // et re-render à chaque sync pour que le compteur ready (X/2) se mette à jour.
     {
         const room = getMultiplayerActiveRoom();
         if (room?.gameLaunched && airHockeyMenuVisible && !airHockeyMenuResult) {
             airHockeyMenuVisible = false;
-            renderAirHockeyMenu();
         }
+        renderAirHockeyMenu();
     }
 
     if (airHockeyAnimationFrame) {

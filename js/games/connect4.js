@@ -250,13 +250,14 @@ export function syncMultiplayerConnect4State() {
         return;
     }
 
-    // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée.
+    // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée
+    // et re-render à chaque sync pour que le compteur ready (X/2) se mette à jour.
     {
         const room = getMultiplayerActiveRoom();
         if (room?.gameLaunched && connect4MenuVisible && !connect4MenuResult) {
             connect4MenuVisible = false;
-            renderConnect4Menu();
         }
+        renderConnect4Menu();
     }
 
     if (connect4AiTimeout) {
