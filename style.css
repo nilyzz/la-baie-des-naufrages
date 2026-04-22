@@ -3913,10 +3913,13 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .aim-card {
-    display: flex;
-    flex-direction: column;
     min-height: 0;
     overflow: hidden;
+}
+
+.aim-card.games-panel-active {
+    display: flex;
+    flex-direction: column;
 }
 
 .aim-counter-block {
