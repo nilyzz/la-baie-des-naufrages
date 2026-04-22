@@ -3913,6 +3913,9 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .aim-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -8546,8 +8549,11 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .aim-table {
     position: relative;
+    display: flex;
+    flex: 1 1 auto;
     z-index: 1;
-    width: min(100%, min(54vh, 520px));
+    width: 100%;
+    min-height: 0;
     margin: 0 auto;
     border-radius: 22px;
 }
@@ -8596,8 +8602,9 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .aim-board {
     position: relative;
+    flex: 1 1 auto;
     width: 100%;
-    aspect-ratio: 1 / 1;
+    min-height: 0;
     margin: 0 auto;
     cursor: crosshair;
     border-radius: 22px;
@@ -10596,6 +10603,10 @@ button:hover {
         overflow: hidden;
     }
 
+    .aim-card {
+        overflow: hidden;
+    }
+
     .minesweeper-topbar,
     .snake-topbar,
     .pong-topbar,
@@ -10653,6 +10664,10 @@ button:hover {
     .baieberry-stage {
         width: 100%;
         max-width: 100%;
+    }
+
+    .aim-table {
+        min-height: clamp(260px, 70vw, 420px);
     }
 
     .pong-board {

@@ -34,11 +34,13 @@ let aimMenuShowingRules = false;
 let aimMenuClosing = false;
 let aimMenuEntering = false;
 let aimMenuResult = null;
+let aimLayoutFrame = null;
 
 const $ = (id) => document.getElementById(id);
 
 function dom() {
     return {
+        aimGame: $('aimGame'),
         aimBoard: $('aimBoard'),
         aimCountdown: $('aimCountdown'),
         aimScoreDisplay: $('aimScoreDisplay'),
@@ -54,6 +56,64 @@ function dom() {
         aimMenuRulesButton: $('aimMenuRulesButton'),
         aimDurationButtons: document.querySelectorAll('[data-aim-duration]')
     };
+}
+
+function getAimStyleValue(value) {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function syncAimLayout({ rerenderBoard = true } = {}) {
+    const { aimGame, aimBoard, aimMenuOverlay, aimTable } = dom();
+    const aimTopbar = aimGame?.querySelector('.aim-topbar');
+    const aimDurationSwitch = aimGame?.querySelector('.aim-duration-switch');
+    const aimHelp = aimGame?.querySelector('.aim-help');
+    if (!aimGame || !aimBoard || !aimTable) return;
+
+    if (!aimGame.classList.contains('games-panel-active') || aimGame.clientHeight <= 0) {
+        aimTable.style.removeProperty('height');
+        if (aimMenuOverlay) {
+            syncGameMenuOverlayBounds(aimMenuOverlay, aimTable);
+        }
+        return;
+    }
+
+    const cardStyles = window.getComputedStyle(aimGame);
+    const topbarStyles = aimTopbar ? window.getComputedStyle(aimTopbar) : null;
+    const durationStyles = aimDurationSwitch ? window.getComputedStyle(aimDurationSwitch) : null;
+    const helpStyles = aimHelp ? window.getComputedStyle(aimHelp) : null;
+    const availableHeight = aimGame.clientHeight
+        - getAimStyleValue(cardStyles.paddingTop)
+        - getAimStyleValue(cardStyles.paddingBottom)
+        - (aimTopbar ? aimTopbar.offsetHeight + getAimStyleValue(topbarStyles?.marginBottom) : 0)
+        - (aimDurationSwitch ? aimDurationSwitch.offsetHeight + getAimStyleValue(durationStyles?.marginBottom) : 0)
+        - (aimHelp ? aimHelp.offsetHeight + getAimStyleValue(helpStyles?.marginBottom) : 0)
+        - 8;
+
+    if (availableHeight > 0) {
+        aimTable.style.height = `${availableHeight}px`;
+    } else {
+        aimTable.style.removeProperty('height');
+    }
+
+    if (rerenderBoard && aimBoard.clientWidth > 0 && aimBoard.clientHeight > 0) {
+        renderAimBoard();
+    }
+
+    if (aimMenuOverlay) {
+        syncGameMenuOverlayBounds(aimMenuOverlay, aimTable);
+    }
+}
+
+function scheduleAimLayoutSync(options) {
+    if (aimLayoutFrame !== null) {
+        window.cancelAnimationFrame(aimLayoutFrame);
+    }
+
+    aimLayoutFrame = window.requestAnimationFrame(() => {
+        aimLayoutFrame = null;
+        syncAimLayout(options);
+    });
 }
 
 function clearAimCountdownTimers() {
@@ -364,7 +424,7 @@ export function getAimRulesText() {
 export function renderAimMenu() {
     const { aimMenuOverlay, aimTable, aimMenuEyebrow, aimMenuTitle, aimMenuText, aimMenuActionButton, aimMenuRulesButton } = dom();
     if (!aimMenuOverlay || !aimTable) return;
-    syncGameMenuOverlayBounds(aimMenuOverlay, aimTable);
+    syncAimLayout({ rerenderBoard: false });
     aimMenuOverlay.classList.toggle('hidden', !aimMenuVisible);
     aimMenuOverlay.classList.toggle('is-closing', aimMenuClosing);
     aimMenuOverlay.classList.toggle('is-entering', aimMenuEntering);
@@ -420,6 +480,7 @@ export function initializeAim() {
     updateAimHud();
     renderAimBoard();
     renderAimMenu();
+    scheduleAimLayoutSync();
 }
 
 export function setAimRoundDuration(seconds) {
@@ -433,3 +494,5 @@ export function setAimMenuShowingRules(v) { aimMenuShowingRules = Boolean(v); }
 export function getAimMenuVisible() { return aimMenuVisible; }
 export function getAimMenuClosing() { return aimMenuClosing; }
 export function getAimMenuShowingRules() { return aimMenuShowingRules; }
+
+window.addEventListener('resize', scheduleAimLayoutSync);
