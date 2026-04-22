@@ -8,6 +8,7 @@ import { closeGameOverModal } from '../core/modals.js';
 export const TETRIS_ROWS = 18;
 export const TETRIS_COLS = 10;
 export const TETRIS_TICK_MS = 420;
+const TETRIS_MAX_BOARD_WIDTH = 320;
 export const TETRIS_PIECES = {
     I: { color: '#38bdf8', shape: [[1, 1, 1, 1]] },
     O: { color: '#facc15', shape: [[1, 1], [1, 1]] },
@@ -29,10 +30,12 @@ let tetrisMenuShowingRules = false;
 let tetrisMenuClosing = false;
 let tetrisMenuEntering = false;
 let tetrisMenuResult = null;
+let tetrisLayoutFrame = null;
 
 const $ = (id) => document.getElementById(id);
 function dom() {
     return {
+        tetrisGame: $('tetrisGame'),
         tetrisBoard: $('tetrisBoard'),
         tetrisScoreDisplay: $('tetrisScoreDisplay'),
         tetrisLinesDisplay: $('tetrisLinesDisplay'),
@@ -46,6 +49,68 @@ function dom() {
         tetrisMenuActionButton: $('tetrisMenuActionButton'),
         tetrisMenuRulesButton: $('tetrisMenuRulesButton')
     };
+}
+
+function getTetrisStyleValue(value) {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function syncTetrisLayout() {
+    const { tetrisGame, tetrisTable, tetrisHelpText } = dom();
+    const tetrisTopbar = tetrisGame?.querySelector('.tetris-topbar');
+    if (!tetrisGame || !tetrisTable || !tetrisTopbar) return;
+
+    if (!tetrisGame.classList.contains('games-panel-active') || tetrisGame.clientHeight <= 0) {
+        tetrisTable.style.removeProperty('width');
+        return;
+    }
+
+    const cardStyles = window.getComputedStyle(tetrisGame);
+    const topbarStyles = window.getComputedStyle(tetrisTopbar);
+    const helpStyles = tetrisHelpText ? window.getComputedStyle(tetrisHelpText) : null;
+    const availableWidth = tetrisGame.clientWidth
+        - getTetrisStyleValue(cardStyles.paddingLeft)
+        - getTetrisStyleValue(cardStyles.paddingRight);
+    const availableHeight = tetrisGame.clientHeight
+        - getTetrisStyleValue(cardStyles.paddingTop)
+        - getTetrisStyleValue(cardStyles.paddingBottom)
+        - tetrisTopbar.offsetHeight
+        - getTetrisStyleValue(topbarStyles.marginBottom)
+        - (tetrisHelpText
+            ? tetrisHelpText.offsetHeight + getTetrisStyleValue(helpStyles?.marginBottom)
+            : 0)
+        - 6;
+
+    if (availableWidth <= 0 || availableHeight <= 0) {
+        tetrisTable.style.removeProperty('width');
+        return;
+    }
+
+    const nextWidth = Math.min(
+        TETRIS_MAX_BOARD_WIDTH,
+        availableWidth,
+        Math.floor((availableHeight * TETRIS_COLS) / TETRIS_ROWS)
+    );
+
+    if (nextWidth > 0) {
+        tetrisTable.style.width = `${nextWidth}px`;
+    }
+}
+
+function scheduleTetrisLayoutSync() {
+    if (tetrisLayoutFrame !== null) {
+        window.cancelAnimationFrame(tetrisLayoutFrame);
+    }
+
+    tetrisLayoutFrame = window.requestAnimationFrame(() => {
+        tetrisLayoutFrame = null;
+        syncTetrisLayout();
+        const { tetrisMenuOverlay, tetrisTable } = dom();
+        if (tetrisMenuOverlay && tetrisTable) {
+            syncGameMenuOverlayBounds(tetrisMenuOverlay, tetrisTable);
+        }
+    });
 }
 
 function createEmptyTetrisGrid() {
@@ -226,6 +291,7 @@ export function getTetrisRulesText() {
 export function renderTetrisMenu() {
     const { tetrisMenuOverlay, tetrisTable, tetrisMenuEyebrow, tetrisMenuTitle, tetrisMenuText, tetrisMenuActionButton, tetrisMenuRulesButton } = dom();
     if (!tetrisMenuOverlay || !tetrisTable) return;
+    syncTetrisLayout();
     syncGameMenuOverlayBounds(tetrisMenuOverlay, tetrisTable);
     tetrisMenuOverlay.classList.toggle('hidden', !tetrisMenuVisible);
     tetrisMenuOverlay.classList.toggle('is-closing', tetrisMenuClosing);
@@ -283,6 +349,7 @@ export function initializeTetris() {
     if (tetrisHelpText) tetrisHelpText.textContent = 'Empile les caisses. Fl\u00e8ches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.';
     renderTetris();
     renderTetrisMenu();
+    scheduleTetrisLayoutSync();
 }
 
 export function startTetris() {
@@ -300,3 +367,5 @@ export function getTetrisMenuVisible() { return tetrisMenuVisible; }
 export function getTetrisRunning() { return tetrisRunning; }
 export function getTetrisMenuShowingRules() { return tetrisMenuShowingRules; }
 export function getTetrisMenuClosing() { return tetrisMenuClosing; }
+
+window.addEventListener('resize', scheduleTetrisLayoutSync);

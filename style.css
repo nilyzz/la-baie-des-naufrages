@@ -2021,6 +2021,10 @@ body:has(#servicesView.view-active) .services-legal-button {
     overflow: auto;
 }
 
+.tetris-card {
+    overflow: hidden;
+}
+
 .minesweeper-card {
     position: relative;
     width: min(100%, 760px);
