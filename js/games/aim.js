@@ -11,8 +11,16 @@ export const AIM_DEFAULT_ROUND_SECONDS = 20;
 export const AIM_HIT_SCORE = 12;
 export const AIM_MISS_SCORE = 5;
 export const AIM_BEST_KEY = 'baie-des-naufrages-aim-best';
-export const AIM_TARGET_SIZE_RATIO = 0.18;
-export const AIM_TARGET_MIN_DISTANCE = 0.19;
+export const AIM_TARGET_SIZE_RATIO = 0.155;
+const AIM_TARGET_MIN_SIZE = 54;
+const AIM_TARGET_MAX_SIZE = 96;
+const AIM_BOARD_RADIUS_FALLBACK = 22;
+const AIM_FALLBACK_BOARD_WIDTH = 640;
+const AIM_FALLBACK_BOARD_HEIGHT = 360;
+const AIM_TARGET_SPIKE_OVERFLOW_RATIO = 0.18;
+const AIM_TARGET_PULSE_SCALE = 1.035;
+const AIM_TARGET_MIN_GAP_PX = 8;
+const AIM_TARGET_POSITION_ATTEMPTS = 240;
 
 let aimTargets = [];
 let aimScore = 0;
@@ -128,50 +136,152 @@ function clearAimCountdownTimers() {
 }
 
 function getAimBoardMetrics(aimBoard) {
-    const boardWidth = Math.max(0, aimBoard?.clientWidth || 0);
-    const boardHeight = Math.max(0, aimBoard?.clientHeight || boardWidth);
-    const targetSize = Math.max(58, Math.min(96, Math.round(Math.min(boardWidth, boardHeight) * AIM_TARGET_SIZE_RATIO)));
+    const measuredWidth = Math.max(0, aimBoard?.clientWidth || 0);
+    const measuredHeight = Math.max(0, aimBoard?.clientHeight || 0);
+    const boardWidth = measuredWidth || AIM_FALLBACK_BOARD_WIDTH;
+    const boardHeight = measuredHeight || Math.max(AIM_FALLBACK_BOARD_HEIGHT, Math.round(boardWidth * 0.56));
+    const targetSize = Math.max(
+        AIM_TARGET_MIN_SIZE,
+        Math.min(AIM_TARGET_MAX_SIZE, Math.round(Math.min(boardWidth, boardHeight) * AIM_TARGET_SIZE_RATIO))
+    );
+    const visualSize = Math.ceil(getAimTargetVisualDiameter(targetSize));
+    const shellPadding = Math.max(0, Math.round((visualSize - targetSize) / 2));
+    const boardCornerRadius = getAimBoardCornerRadius(aimBoard, boardWidth, boardHeight);
     return {
         boardWidth,
         boardHeight,
         targetSize,
-        maxLeft: Math.max(0, boardWidth - targetSize),
-        maxTop: Math.max(0, boardHeight - targetSize)
+        visualSize,
+        shellPadding,
+        boardCornerRadius,
+        maxLeft: Math.max(0, boardWidth - visualSize),
+        maxTop: Math.max(0, boardHeight - visualSize)
     };
 }
 
-function getAimPositionDistance(left, right) {
-    if (!left || !right) {
+function getAimBoardCornerRadius(aimBoard, boardWidth, boardHeight) {
+    if (!aimBoard || typeof window === 'undefined') {
+        return Math.min(AIM_BOARD_RADIUS_FALLBACK, boardWidth / 2, boardHeight / 2);
+    }
+
+    const styles = window.getComputedStyle(aimBoard);
+    const radii = [
+        styles.borderTopLeftRadius,
+        styles.borderTopRightRadius,
+        styles.borderBottomRightRadius,
+        styles.borderBottomLeftRadius
+    ]
+        .map(getAimStyleValue)
+        .filter((value) => Number.isFinite(value) && value > 0);
+    const radius = radii.length ? Math.max(...radii) : AIM_BOARD_RADIUS_FALLBACK;
+    return Math.min(radius, boardWidth / 2, boardHeight / 2);
+}
+
+function getAimTargetVisualDiameter(targetSize) {
+    const spikeDiameter = targetSize * (1 + (AIM_TARGET_SPIKE_OVERFLOW_RATIO * 2));
+    const pulseDiameter = targetSize * AIM_TARGET_PULSE_SCALE;
+    return Math.max(spikeDiameter, pulseDiameter);
+}
+
+function getAimMinimumTargetDistance(boardMetrics) {
+    if (!boardMetrics) {
+        return 0;
+    }
+
+    return getAimTargetVisualDiameter(boardMetrics.targetSize) + Math.max(AIM_TARGET_MIN_GAP_PX, Math.round(boardMetrics.targetSize * 0.06));
+}
+
+function getAimTargetCenter(position, boardMetrics) {
+    return {
+        x: (position.x * boardMetrics.maxLeft) + (boardMetrics.visualSize / 2),
+        y: (position.y * boardMetrics.maxTop) + (boardMetrics.visualSize / 2)
+    };
+}
+
+function getAimPositionDistance(left, right, boardMetrics) {
+    if (!left || !right || !boardMetrics) {
         return Infinity;
     }
 
-    const leftCenterX = left.x + (left.sizeRatio / 2);
-    const leftCenterY = left.y + (left.sizeRatio / 2);
-    const rightCenterX = right.x + (right.sizeRatio / 2);
-    const rightCenterY = right.y + (right.sizeRatio / 2);
+    const leftCenter = getAimTargetCenter(left, boardMetrics);
+    const rightCenter = getAimTargetCenter(right, boardMetrics);
+    const leftCenterX = leftCenter.x;
+    const leftCenterY = leftCenter.y;
+    const rightCenterX = rightCenter.x;
+    const rightCenterY = rightCenter.y;
     return Math.hypot(leftCenterX - rightCenterX, leftCenterY - rightCenterY);
 }
 
-function pickRandomAimPosition(excludedId = null) {
-    const sizeRatio = AIM_TARGET_SIZE_RATIO;
-    const maxCoordinate = Math.max(0, 1 - sizeRatio);
-    const occupiedTargets = aimTargets.filter((target) => target.id !== excludedId);
-    let fallbackPosition = null;
+function isAimPointInsideRoundedBoard(x, y, boardMetrics) {
+    if (!boardMetrics) {
+        return true;
+    }
 
-    for (let attempt = 0; attempt < 80; attempt += 1) {
+    const radius = Math.max(0, boardMetrics.boardCornerRadius || 0);
+    if (radius <= 0) {
+        return x >= 0 && x <= boardMetrics.boardWidth && y >= 0 && y <= boardMetrics.boardHeight;
+    }
+
+    const nearestX = Math.max(radius, Math.min(boardMetrics.boardWidth - radius, x));
+    const nearestY = Math.max(radius, Math.min(boardMetrics.boardHeight - radius, y));
+    const deltaX = x - nearestX;
+    const deltaY = y - nearestY;
+    return (deltaX * deltaX) + (deltaY * deltaY) <= radius * radius;
+}
+
+function isAimPositionInsideRoundedBoard(position, boardMetrics) {
+    if (!position || !boardMetrics) {
+        return true;
+    }
+
+    const left = position.x * boardMetrics.maxLeft;
+    const top = position.y * boardMetrics.maxTop;
+    const centerX = left + (boardMetrics.visualSize / 2);
+    const centerY = top + (boardMetrics.visualSize / 2);
+    const radius = (boardMetrics.visualSize / 2) - Math.max(1, Math.round(boardMetrics.visualSize * 0.04));
+    const sampleCount = 12;
+
+    for (let sampleIndex = 0; sampleIndex < sampleCount; sampleIndex += 1) {
+        const angle = (Math.PI * 2 * sampleIndex) / sampleCount;
+        const sampleX = centerX + (Math.cos(angle) * radius);
+        const sampleY = centerY + (Math.sin(angle) * radius);
+        if (!isAimPointInsideRoundedBoard(sampleX, sampleY, boardMetrics)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function pickRandomAimPosition(excludedId = null, boardMetrics = getAimBoardMetrics(dom().aimBoard)) {
+    const sizeRatio = boardMetrics.targetSize / Math.max(1, Math.min(boardMetrics.boardWidth, boardMetrics.boardHeight));
+    const occupiedTargets = aimTargets.filter((target) => target.id !== excludedId);
+    const minimumDistance = getAimMinimumTargetDistance(boardMetrics);
+    let fallbackPosition = null;
+    let bestDistance = -Infinity;
+
+    for (let attempt = 0; attempt < AIM_TARGET_POSITION_ATTEMPTS; attempt += 1) {
         const nextPosition = {
-            x: Math.random() * maxCoordinate,
-            y: Math.random() * maxCoordinate,
+            x: boardMetrics.maxLeft > 0 ? Math.random() : 0,
+            y: boardMetrics.maxTop > 0 ? Math.random() : 0,
             sizeRatio
         };
 
-        if (!fallbackPosition) {
-            fallbackPosition = nextPosition;
+        if (!isAimPositionInsideRoundedBoard(nextPosition, boardMetrics)) {
+            continue;
         }
 
-        const isFarEnough = occupiedTargets.every((target) => getAimPositionDistance(nextPosition, target) >= AIM_TARGET_MIN_DISTANCE);
-        if (isFarEnough) {
+        const nearestDistance = occupiedTargets.reduce((closestDistance, target) => {
+            return Math.min(closestDistance, getAimPositionDistance(nextPosition, target, boardMetrics));
+        }, Infinity);
+
+        if (nearestDistance >= minimumDistance) {
             return nextPosition;
+        }
+
+        if (!fallbackPosition || nearestDistance > bestDistance) {
+            fallbackPosition = nextPosition;
+            bestDistance = nearestDistance;
         }
     }
 
@@ -194,9 +304,11 @@ export function updateAimHud() {
 }
 
 export function createAimTargets() {
+    const { aimBoard } = dom();
+    const boardMetrics = getAimBoardMetrics(aimBoard);
     aimTargets = [];
     while (aimTargets.length < AIM_TARGET_COUNT) {
-        const nextPosition = pickRandomAimPosition();
+        const nextPosition = pickRandomAimPosition(null, boardMetrics);
         if (!nextPosition) break;
         aimTargets.push({
             id: crypto.randomUUID(),
@@ -211,8 +323,8 @@ export function renderAimBoard() {
     const { aimBoard } = dom();
     if (!aimBoard) return;
 
-    const { maxLeft, maxTop, targetSize } = getAimBoardMetrics(aimBoard);
-    const renderTargetInner = (className) => `<span class="${className}" aria-hidden="true"></span>`;
+    const { maxLeft, maxTop, visualSize, shellPadding } = getAimBoardMetrics(aimBoard);
+    const renderTargetInner = (className) => `<span class="${className}" style="--aim-target-padding:${shellPadding}px;" aria-hidden="true"></span>`;
     const renderHitParticles = () => `
         <span class="aim-hit-particle aim-hit-particle-a" aria-hidden="true"></span>
         <span class="aim-hit-particle aim-hit-particle-b" aria-hidden="true"></span>
@@ -224,12 +336,13 @@ export function renderAimBoard() {
         const left = Math.round(target.x * maxLeft);
         const top = Math.round(target.y * maxTop);
         const targetClasses = ['aim-target', extraTargetClass].filter(Boolean).join(' ');
+        const shellClasses = ['aim-target-shell', extraTargetClass.includes('is-spawning') ? 'is-spawning-target' : ''].filter(Boolean).join(' ');
         return `
             <button
                 type="button"
-                class="aim-target-shell"
+                class="${shellClasses}"
                 data-target-id="${target.id}"
-                style="left:${left}px;top:${top}px;width:${targetSize}px;height:${targetSize}px;"
+                style="left:${left}px;top:${top}px;width:${visualSize}px;height:${visualSize}px;"
                 aria-label="Oursin a toucher"
             >
                 ${renderTargetInner(targetClasses)}
@@ -244,7 +357,7 @@ export function renderAimBoard() {
         const left = Math.round(position.x * maxLeft);
         const top = Math.round(position.y * maxTop);
         return `
-            <span class="aim-target-shell is-effect" style="left:${left}px;top:${top}px;width:${targetSize}px;height:${targetSize}px;" aria-hidden="true">
+            <span class="aim-target-shell is-effect" style="left:${left}px;top:${top}px;width:${visualSize}px;height:${visualSize}px;" aria-hidden="true">
                 ${renderTargetInner(targetClassName)}
                 ${withParticles ? renderHitParticles() : ''}
             </span>
@@ -253,7 +366,7 @@ export function renderAimBoard() {
 
     aimBoard.innerHTML = [
         ...aimTargets.map((target) => renderTargetButton(target, aimSpawnEffectPosition?.id === target.id ? 'is-spawning' : '')),
-        renderEffect(aimHitEffectPosition, 'aim-target is-dispersing', Boolean(aimHitEffectPosition))
+        renderEffect(aimHitEffectPosition, 'aim-hit-flash', Boolean(aimHitEffectPosition))
     ].join('');
 }
 
@@ -372,7 +485,8 @@ export function handleAimTargetHit(targetId) {
         sizeRatio: target.sizeRatio
     };
 
-    const nextPosition = pickRandomAimPosition(target.id);
+    const { aimBoard } = dom();
+    const nextPosition = pickRandomAimPosition(target.id, getAimBoardMetrics(aimBoard));
     if (nextPosition) {
         target.x = nextPosition.x;
         target.y = nextPosition.y;
@@ -397,7 +511,6 @@ export function handleAimTargetHit(targetId) {
         aimSpawnEffectPosition = null;
         if (!aimHitEffectPosition) renderAimBoard();
     }, 280);
-    const { aimBoard } = dom();
     if (aimBoard) {
         aimBoard.classList.remove('is-splashing');
         void aimBoard.offsetWidth;

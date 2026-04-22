@@ -8612,6 +8612,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     cursor: crosshair;
     border-radius: 22px;
     overflow: hidden;
+    isolation: isolate;
     background:
         radial-gradient(circle at 16% 14%, rgba(125, 211, 252, 0.2), transparent 18%),
         radial-gradient(circle at 84% 20%, rgba(45, 212, 191, 0.14), transparent 17%),
@@ -8619,6 +8620,9 @@ body:has(#servicesView.view-active) .services-legal-button {
         rgba(15, 23, 42, 0.62);
     border: 1px solid rgba(99, 102, 241, 0.16);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
 }
 
 .aim-board::before,
@@ -8627,26 +8631,27 @@ body:has(#servicesView.view-active) .services-legal-button {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    background-repeat: no-repeat;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .aim-board::before {
     background:
-        radial-gradient(circle at 18% 28%, rgba(255, 255, 255, 0.08) 0 2%, transparent 2.5%),
-        radial-gradient(circle at 72% 36%, rgba(255, 255, 255, 0.06) 0 2%, transparent 2.5%),
-        radial-gradient(circle at 48% 72%, rgba(255, 255, 255, 0.07) 0 2.2%, transparent 2.8%);
-    opacity: 0.9;
+        radial-gradient(circle at 18% 28%, rgba(255, 255, 255, 0.072) 0 2%, transparent 2.5%),
+        radial-gradient(circle at 72% 36%, rgba(255, 255, 255, 0.054) 0 2%, transparent 2.5%),
+        radial-gradient(circle at 48% 72%, rgba(255, 255, 255, 0.063) 0 2.2%, transparent 2.8%);
 }
 
 .aim-board::after {
     background:
-        radial-gradient(ellipse at 50% 106%, rgba(255, 255, 255, 0.08) 0 24%, transparent 25%),
-        radial-gradient(ellipse at 28% 104%, rgba(255, 255, 255, 0.045) 0 18%, transparent 19%),
-        radial-gradient(ellipse at 74% 102%, rgba(255, 255, 255, 0.045) 0 16%, transparent 17%);
-    opacity: 0.38;
+        radial-gradient(ellipse at 50% 106%, rgba(255, 255, 255, 0.03) 0 24%, transparent 25%),
+        radial-gradient(ellipse at 28% 104%, rgba(255, 255, 255, 0.017) 0 18%, transparent 19%),
+        radial-gradient(ellipse at 74% 102%, rgba(255, 255, 255, 0.017) 0 16%, transparent 17%);
 }
 
 .aim-board.is-rumbling {
-    animation: boardRumble 0.24s ease;
+    animation: boardRumble 0.24s ease, aimMissPulse 0.24s ease;
 }
 
 .aim-board.is-splashing::before {
@@ -8683,13 +8688,21 @@ body:has(#servicesView.view-active) .services-legal-button {
     pointer-events: none;
 }
 
+.aim-target-shell.is-effect::before {
+    opacity: 0;
+}
+
+.aim-target-shell.is-spawning-target::before {
+    opacity: 0;
+}
+
 .aim-target-shell:hover {
     filter: brightness(1.08);
 }
 
 .aim-target {
     position: absolute;
-    inset: 0;
+    inset: var(--aim-target-padding, 0px);
     border-radius: 50%;
     background:
         radial-gradient(circle at 32% 30%, rgba(186, 230, 253, 0.18) 0 10%, transparent 11%),
@@ -8706,10 +8719,6 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .aim-target.is-spawning {
     animation: aimTargetSpawn 0.28s ease, aimTargetPulse 1.1s ease-in-out 0.28s infinite;
-}
-
-.aim-target.is-dispersing {
-    animation: aimTargetDisperse 0.3s ease forwards;
 }
 
 .aim-target::before,
@@ -8731,10 +8740,11 @@ body:has(#servicesView.view-active) .services-legal-button {
     -webkit-mask: radial-gradient(circle, transparent 0 50%, #000 50.5% 100%);
     mask: radial-gradient(circle, transparent 0 50%, #000 50.5% 100%);
     opacity: 0.98;
+    inset: -18%;
 }
 
 .aim-target::after {
-    inset: 6%;
+    inset: 10%;
     background:
         radial-gradient(circle at 24% 28%, rgba(191, 219, 254, 0.34) 0 9%, transparent 10%),
         radial-gradient(circle at 68% 30%, rgba(30, 64, 175, 0.32) 0 10%, transparent 11%),
@@ -8743,6 +8753,18 @@ body:has(#servicesView.view-active) .services-legal-button {
         radial-gradient(circle at 48% 48%, rgba(96, 165, 250, 0.14) 0 68%, transparent 69%);
     opacity: 0.95;
     z-index: 2;
+}
+
+.aim-hit-flash {
+    position: absolute;
+    inset: calc(var(--aim-target-padding, 0px) + 4px);
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, rgba(224, 242, 254, 0.92) 0 18%, rgba(125, 211, 252, 0.5) 19% 42%, rgba(56, 189, 248, 0.18) 43% 70%, transparent 72%);
+    box-shadow:
+        0 0 24px -12px rgba(186, 230, 253, 0.95),
+        inset 0 0 18px rgba(255, 255, 255, 0.22);
+    animation: aimHitFlash 0.24s ease-out forwards;
 }
 
 .aim-target-shell::before {
@@ -8800,21 +8822,37 @@ body:has(#servicesView.view-active) .services-legal-button {
     }
 
     50% {
-        transform: scale(1.06);
+        transform: scale(1.035);
     }
 }
 
-@keyframes aimTargetDisperse {
+@keyframes aimMissPulse {
+    0%,
+    100% {
+        border-color: rgba(99, 102, 241, 0.16);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    }
+
+    45% {
+        border-color: rgba(248, 113, 113, 0.7);
+        box-shadow:
+            inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+            0 0 0 2px rgba(239, 68, 68, 0.26),
+            0 0 22px -12px rgba(239, 68, 68, 0.8);
+    }
+}
+
+@keyframes aimHitFlash {
     0% {
-        opacity: 1;
-        transform: scale(1);
+        opacity: 0.92;
+        transform: scale(0.72);
         filter: blur(0);
     }
 
     100% {
         opacity: 0;
-        transform: scale(0.6);
-        filter: blur(4px);
+        transform: scale(1.35);
+        filter: blur(3px);
     }
 }
 
@@ -8833,13 +8871,13 @@ body:has(#servicesView.view-active) .services-legal-button {
 @keyframes aimTargetSpawn {
     0% {
         opacity: 0;
-        transform: scale(0.35);
-        filter: blur(5px);
+        transform: scale(0.82);
+        filter: blur(0);
     }
 
     70% {
         opacity: 1;
-        transform: scale(1.08);
+        transform: scale(1.04);
         filter: blur(0);
     }
 
