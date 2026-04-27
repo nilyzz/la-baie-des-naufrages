@@ -28,6 +28,8 @@ export const CHECKERS_DIRECTIONS = {
 let checkersState = null;
 let checkersSelectedSquare = null;
 let checkersMode = 'solo';
+let checkersDragState = null;
+let checkersSuppressNextClick = false;
 let checkersAiTimeout = null;
 let checkersLastMoveResetTimer = null;
 let checkersMenuVisible = true;
@@ -94,6 +96,9 @@ export function createInitialCheckersBoard() {
 }
 
 export function initializeCheckers() {
+    clearCheckersDragState(false);
+    checkersSuppressNextClick = false;
+
     if (isMultiplayerCheckersActive()) {
         const room = getMultiplayerActiveRoom();
         checkersMenuVisible = !room?.gameLaunched;
@@ -132,6 +137,183 @@ export function initializeCheckers() {
 
 export function isCheckersAiTurn() {
     return checkersMode === 'solo' && checkersState && !checkersState.winner && checkersState.turn === 'black';
+}
+
+export function canInteractWithCheckersPiece(row, col) {
+    const piece = checkersState?.board?.[row]?.[col];
+    if (!piece || checkersState?.winner) {
+        return false;
+    }
+
+    if (isMultiplayerCheckersActive()) {
+        return checkersState.turn === getMultiplayerCheckersRole() && piece.color === checkersState.turn;
+    }
+
+    return !isCheckersAiTurn() && piece.color === checkersState.turn;
+}
+
+export function getCheckersMoveFromSelection(row, col) {
+    if (!checkersSelectedSquare) {
+        return null;
+    }
+
+    return getCheckersMoves(checkersSelectedSquare.row, checkersSelectedSquare.col)
+        .find((candidate) => candidate.row === row && candidate.col === col) || null;
+}
+
+export function submitCheckersMove(toRow, toCol) {
+    const move = getCheckersMoveFromSelection(toRow, toCol);
+    if (!move || !checkersSelectedSquare) {
+        return false;
+    }
+
+    if (isMultiplayerCheckersActive()) {
+        getMultiplayerSocket()?.emit('checkers:move', {
+            fromRow: checkersSelectedSquare.row,
+            fromCol: checkersSelectedSquare.col,
+            toRow,
+            toCol
+        });
+        return true;
+    }
+
+    return applyCheckersMove(checkersSelectedSquare.row, checkersSelectedSquare.col, toRow, toCol);
+}
+
+export function clearCheckersDragState(shouldRender = true) {
+    const { checkersBoard } = dom();
+    checkersDragState = null;
+    checkersBoard?.classList.remove('is-dragging-piece');
+    document.querySelector('.checkers-drag-ghost')?.remove();
+    if (shouldRender && checkersState) {
+        renderCheckers();
+    }
+}
+
+export function updateCheckersDragPointer(clientX, clientY) {
+    const { checkersBoard } = dom();
+    if (!checkersDragState || !checkersDragState.dragging || !checkersBoard) {
+        return;
+    }
+
+    checkersDragState.pointerX = clientX;
+    checkersDragState.pointerY = clientY;
+
+    const hoveredCell = document.elementFromPoint(clientX, clientY)?.closest?.('[data-checkers-cell]');
+    checkersDragState.hoveredCell = hoveredCell?.dataset?.checkersCell || null;
+
+    renderCheckers();
+}
+
+export function startCheckersPieceDrag(clientX, clientY) {
+    const { checkersBoard } = dom();
+    if (!checkersDragState) {
+        return;
+    }
+
+    checkersDragState.dragging = true;
+    checkersDragState.pointerX = clientX;
+    checkersDragState.pointerY = clientY;
+    checkersBoard?.classList.add('is-dragging-piece');
+    updateCheckersDragPointer(clientX, clientY);
+}
+
+export function renderCheckersDragGhost() {
+    document.querySelector('.checkers-drag-ghost')?.remove();
+
+    if (!checkersDragState?.dragging) {
+        return;
+    }
+
+    const piece = checkersState?.board?.[checkersDragState.row]?.[checkersDragState.col];
+    if (!piece) {
+        return;
+    }
+
+    const ghost = document.createElement('div');
+    ghost.className = 'checkers-drag-ghost';
+    ghost.style.left = `${checkersDragState.pointerX}px`;
+    ghost.style.top = `${checkersDragState.pointerY}px`;
+
+    const ghostPiece = document.createElement('span');
+    ghostPiece.className = `checkers-piece ${piece.color === 'red' ? 'is-red' : 'is-black'}${piece.king ? ' is-king' : ''}`;
+    ghost.appendChild(ghostPiece);
+    document.body.appendChild(ghost);
+}
+
+export function finishCheckersPieceDrag(clientX, clientY) {
+    if (!checkersDragState) {
+        return;
+    }
+
+    const wasDragging = checkersDragState.dragging;
+    const source = { row: checkersDragState.row, col: checkersDragState.col };
+    const legalMove = wasDragging
+        ? (() => {
+            const hoveredCell = document.elementFromPoint(clientX, clientY)?.closest?.('[data-checkers-cell]');
+            if (!hoveredCell?.dataset?.checkersCell) {
+                return null;
+            }
+
+            const [targetRow, targetCol] = hoveredCell.dataset.checkersCell.split('-').map(Number);
+            return getCheckersMoves(source.row, source.col)
+                .find((candidate) => candidate.row === targetRow && candidate.col === targetCol) || null;
+        })()
+        : null;
+
+    checkersSuppressNextClick = wasDragging;
+    clearCheckersDragState(false);
+    checkersSelectedSquare = source;
+
+    if (legalMove) {
+        submitCheckersMove(legalMove.row, legalMove.col);
+        return;
+    }
+
+    renderCheckers();
+}
+
+export function handleCheckersPiecePointerDown(event, row, col) {
+    if (event.button !== 0 || !canInteractWithCheckersPiece(row, col)) {
+        return;
+    }
+
+    event.preventDefault();
+    checkersSelectedSquare = { row, col };
+    checkersDragState = {
+        row,
+        col,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        pointerX: event.clientX,
+        pointerY: event.clientY,
+        dragging: false,
+        hoveredCell: null
+    };
+    renderCheckers();
+}
+
+export function handleCheckersPointerMove(event) {
+    if (!checkersDragState || checkersDragState.pointerId !== event.pointerId) {
+        return;
+    }
+
+    const distance = Math.hypot(event.clientX - checkersDragState.startX, event.clientY - checkersDragState.startY);
+    if (!checkersDragState.dragging && distance >= 8) {
+        startCheckersPieceDrag(event.clientX, event.clientY);
+        return;
+    }
+
+    updateCheckersDragPointer(event.clientX, event.clientY);
+}
+
+export function handleCheckersPointerUp(event) {
+    if (!checkersDragState || checkersDragState.pointerId !== event.pointerId) {
+        return;
+    }
+
+    finishCheckersPieceDrag(event.clientX, event.clientY);
 }
 
 export function getCheckersMoves(row, col) {
@@ -232,6 +414,7 @@ export function renderCheckers() {
     const redCount = checkersState.board.flat().filter((piece) => piece?.color === 'red').length;
     const nextAnimationKey = getBoardMoveAnimationKey(checkersState.lastMove);
     const shouldAnimateLastMove = Boolean(checkersState.lastMove) && nextAnimationKey !== checkersLastMoveAnimationKey;
+    checkersBoard.classList.toggle('is-dragging-piece', Boolean(checkersDragState?.dragging));
     checkersTurnDisplay.textContent = checkersState.winner
         ? '-'
         : (isMultiplayerCheckersActive()
@@ -257,10 +440,11 @@ export function renderCheckers() {
         const pieceAnimation = getBoardMoveAnimationMetadata(shouldAnimateLastMove ? checkersState.lastMove : null, row, col);
         return `
             <button type="button" class="checkers-cell ${dark ? 'is-dark' : 'is-light'} ${selected ? 'is-selected' : ''} ${playable ? 'is-move' : ''} ${captureHit ? 'is-capture-hit' : ''}" data-checkers-cell="${row}-${col}">
-                ${piece ? `<span class="checkers-piece ${piece.color === 'red' ? 'is-red' : 'is-black'} ${piece.king ? 'is-king' : ''} ${pieceAnimation.className}" ${pieceAnimation.style}></span>` : ''}
+                ${piece ? `<span class="checkers-piece ${piece.color === 'red' ? 'is-red' : 'is-black'} ${piece.king ? 'is-king' : ''} ${pieceAnimation.className}${checkersDragState?.row === row && checkersDragState?.col === col ? ' is-drag-source' : ''}${checkersDragState?.hoveredCell === `${row}-${col}` && legalMoves.some((move) => move.row === row && move.col === col) ? ' is-drag-target' : ''}" ${pieceAnimation.style} data-checkers-piece="${row}-${col}"></span>` : ''}
             </button>
         `;
     }).join('')).join('');
+    renderCheckersDragGhost();
 
     if (checkersState.lastMove && shouldAnimateLastMove) {
         scheduleCheckersMoveAnimationClear();
@@ -365,44 +549,7 @@ export function handleCheckersCellClick(row, col) {
         return;
     }
 
-    if (isMultiplayerCheckersActive()) {
-        if (checkersState.winner || checkersState.turn !== getMultiplayerCheckersRole()) {
-            return;
-        }
-
-        const piece = checkersState.board[row][col];
-        if (piece && piece.color === checkersState.turn) {
-            checkersSelectedSquare = { row, col };
-            renderCheckers();
-            return;
-        }
-
-        if (!checkersSelectedSquare) {
-            return;
-        }
-
-        const move = getCheckersMoves(checkersSelectedSquare.row, checkersSelectedSquare.col).find((candidate) => candidate.row === row && candidate.col === col);
-        if (!move) {
-            checkersSelectedSquare = null;
-            renderCheckers();
-            return;
-        }
-
-        getMultiplayerSocket()?.emit('checkers:move', {
-            fromRow: checkersSelectedSquare.row,
-            fromCol: checkersSelectedSquare.col,
-            toRow: row,
-            toCol: col
-        });
-        return;
-    }
-
-    if (checkersState.winner || isCheckersAiTurn()) {
-        return;
-    }
-
-    const piece = checkersState.board[row][col];
-    if (piece && piece.color === checkersState.turn) {
+    if (canInteractWithCheckersPiece(row, col)) {
         checkersSelectedSquare = { row, col };
         renderCheckers();
         return;
@@ -412,14 +559,10 @@ export function handleCheckersCellClick(row, col) {
         return;
     }
 
-    const move = getCheckersMoves(checkersSelectedSquare.row, checkersSelectedSquare.col).find((candidate) => candidate.row === row && candidate.col === col);
-    if (!move) {
+    if (!submitCheckersMove(row, col)) {
         checkersSelectedSquare = null;
         renderCheckers();
-        return;
     }
-
-    applyCheckersMove(checkersSelectedSquare.row, checkersSelectedSquare.col, row, col);
 }
 
 export function applyCheckersMove(fromRow, fromCol, toRow, toCol) {
@@ -570,8 +713,13 @@ export function syncMultiplayerCheckersState() {
         checkersLastFinishedStateKey = '';
         checkersLastMoveAnimationKey = '';
         checkersLastCaptureFxKey = '';
+        clearCheckersDragState(false);
+        checkersSuppressNextClick = false;
         return;
     }
+
+    clearCheckersDragState(false);
+    checkersSuppressNextClick = false;
 
     // Ferme auto le menu « Mettre prêt » quand la partie est vraiment lancée
     // et re-render à chaque sync pour que le compteur ready (X/2) se mette à jour.
@@ -637,6 +785,9 @@ export function syncMultiplayerCheckersState() {
 export function getCheckersMode() { return checkersMode; }
 export function getCheckersState() { return checkersState; }
 export function getCheckersSelectedSquare() { return checkersSelectedSquare; }
+export function getCheckersDragState() { return checkersDragState; }
+export function getCheckersSuppressNextClick() { return checkersSuppressNextClick; }
+export function setCheckersSuppressNextClick(v) { checkersSuppressNextClick = Boolean(v); }
 export function getCheckersMenuVisible() { return checkersMenuVisible; }
 export function setCheckersMenuVisible(v) { checkersMenuVisible = Boolean(v); }
 export function getCheckersMenuShowingRules() { return checkersMenuShowingRules; }

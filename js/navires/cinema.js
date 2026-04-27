@@ -112,6 +112,17 @@ function parseNumberValue(value) {
     return Number.isFinite(parsedValue) ? parsedValue : null;
 }
 
+function parseDurationToMinutes(value) {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    const str = String(value || '').trim();
+    const hm = str.match(/^(\d+)h(\d*)$/i);
+    if (hm) return parseInt(hm[1], 10) * 60 + (parseInt(hm[2], 10) || 0);
+    const m = str.match(/^(\d+)\s*min$/i);
+    if (m) return parseInt(m[1], 10);
+    const n = parseFloat(str.replace(',', '.'));
+    return Number.isFinite(n) ? n : null;
+}
+
 function parseExcelDateValue(value) {
     if (!value && value !== 0) {
         return '';
@@ -165,12 +176,12 @@ export function normalizeMovieRow(row) {
     const ratingValue = parseNumberValue(getFirstFilledValue(normalizedRecord, [
         'note', 'rating', 'score', 'notesur20', 'notesur5'
     ]));
-    const hasNoteSur5Column = normalizedRecord.notesur5 !== undefined && String(normalizedRecord.notesur5).trim() !== '';
-    const hasNoteSur20Column = normalizedRecord.notesur20 !== undefined && String(normalizedRecord.notesur20).trim() !== '';
+    const hasNoteSur5Column = 'notesur5' in normalizedRecord;
+    const hasNoteSur20Column = 'notesur20' in normalizedRecord;
     const ratingScale = hasNoteSur20Column || (Number.isFinite(ratingValue) && ratingValue > 5)
         ? 20
         : (hasNoteSur5Column ? 5 : 20);
-    const durationValue = parseNumberValue(getFirstFilledValue(normalizedRecord, [
+    const durationValue = parseDurationToMinutes(getFirstFilledValue(normalizedRecord, [
         'duree', 'duration', 'temps'
     ]));
     const releaseDate = parseExcelDateValue(getFirstFilledValue(normalizedRecord, [
@@ -217,9 +228,10 @@ function parseMoviesFromFixedColumns(worksheet) {
         date: 'CB',
         dateaffichage: 'CB',
         genre: 'CC',
-        realisateur: 'CD',
-        realisateurlink: 'CD',
-        notesur20: 'CE'
+        duree: 'CD',
+        realisateur: 'CE',
+        realisateurlink: 'CE',
+        notesur20: 'CF'
     };
 
     for (let rowNumber = 2; rowNumber <= range.e.r + 1; rowNumber += 1) {

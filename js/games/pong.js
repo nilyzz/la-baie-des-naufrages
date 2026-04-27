@@ -35,6 +35,7 @@ let pongKeys = new Set();
 let pongState = null;
 let pongDisplayState = null;
 let pongPaused = false;
+let pongPauseIndicatorTimer = null;
 let pongMultiplayerInputDirection = 0;
 let pongCountdownEndsAt = 0;
 let pongCountdownTimer = null;
@@ -59,6 +60,9 @@ function dom() {
         pongBoard: $('pongBoard'),
         pongTable: $('pongTable'),
         pongCountdown: $('pongCountdown'),
+        pongPauseIndicator: $('pongPauseIndicator'),
+        pongPauseIndicatorIcon: $('pongPauseIndicatorIcon'),
+        pongPauseIndicatorText: $('pongPauseIndicatorText'),
         pongPlayerPaddle: $('pongPlayerPaddle'),
         pongAiPaddle: $('pongAiPaddle'),
         pongBall: $('pongBall'),
@@ -274,6 +278,7 @@ export function syncMultiplayerPongState() {
         pongDisplayState = null;
         pongLocalPredictedPaddleY = null;
         pongRenderLastFrame = 0;
+        hidePongPauseIndicator();
         return;
     }
 
@@ -285,6 +290,7 @@ export function syncMultiplayerPongState() {
     pongPaused = false;
     pongLastFrame = 0;
     clearPongCountdownTimers();
+    hidePongPauseIndicator();
     closeGameOverModal();
 
     const room = getMultiplayerActiveRoom();
@@ -401,9 +407,11 @@ export function updatePongHud() {
 
     pongLeftLabel.textContent = pongMode === 'duo' ? 'Joueur 1' : 'Toi';
     pongRightLabel.textContent = pongMode === 'duo' ? 'Joueur 2' : 'IA';
-    pongHelpText.innerHTML = pongMode === 'duo'
-        ? 'Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas. Premier &agrave; 7.'
-        : "Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l'IA. Premier &agrave; 7.";
+    pongHelpText.innerHTML = pongPaused
+        ? 'Partie en pause. Appuie sur Espace pour reprendre le duel.'
+        : (pongMode === 'duo'
+            ? 'Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas. Premier &agrave; 7.'
+            : "Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l'IA. Premier &agrave; 7.");
     pongModeButtons.forEach((button) => {
         button.classList.toggle('is-active', button.dataset.pongMode === pongMode);
         button.disabled = false;
@@ -454,6 +462,53 @@ export function clearPongCountdownTimers() {
     if (pongCountdownCompleteTimer) {
         window.clearTimeout(pongCountdownCompleteTimer);
         pongCountdownCompleteTimer = null;
+    }
+}
+
+export function clearPongPauseIndicatorTimer() {
+    if (pongPauseIndicatorTimer) {
+        window.clearTimeout(pongPauseIndicatorTimer);
+        pongPauseIndicatorTimer = null;
+    }
+}
+
+export function hidePongPauseIndicator() {
+    const { pongPauseIndicator } = dom();
+    clearPongPauseIndicatorTimer();
+
+    if (!pongPauseIndicator) {
+        return;
+    }
+
+    pongPauseIndicator.classList.add('hidden');
+    pongPauseIndicator.setAttribute('aria-hidden', 'true');
+    pongPauseIndicator.removeAttribute('data-state');
+}
+
+export function showPongPauseIndicator(state = 'pause') {
+    const { pongPauseIndicator, pongPauseIndicatorIcon, pongPauseIndicatorText } = dom();
+    if (!pongPauseIndicator) {
+        return;
+    }
+
+    clearPongPauseIndicatorTimer();
+    const nextState = state === 'play' ? 'play' : 'pause';
+
+    if (pongPauseIndicatorIcon) {
+        pongPauseIndicatorIcon.textContent = nextState === 'play' ? '▶' : '❚❚';
+    }
+    if (pongPauseIndicatorText) {
+        pongPauseIndicatorText.textContent = nextState === 'play' ? 'Reprise' : 'Pause';
+    }
+
+    pongPauseIndicator.dataset.state = nextState;
+    pongPauseIndicator.classList.remove('hidden');
+    pongPauseIndicator.setAttribute('aria-hidden', 'false');
+
+    if (nextState === 'play') {
+        pongPauseIndicatorTimer = window.setTimeout(() => {
+            hidePongPauseIndicator();
+        }, 540);
     }
 }
 
@@ -584,6 +639,7 @@ export function ensureMultiplayerPongRenderLoop() {
 
 export function startPongCountdown(onComplete) {
     clearPongCountdownTimers();
+    hidePongPauseIndicator();
 
     if (!pongState) {
         return;
@@ -805,6 +861,7 @@ export function stopPong() {
     }
 
     hidePongCountdown();
+    hidePongPauseIndicator();
     pongRunning = false;
     pongPaused = false;
     pongLastFrame = 0;
@@ -831,6 +888,7 @@ export function pausePong() {
     pongRunning = false;
     pongPaused = true;
     pongLastFrame = 0;
+    showPongPauseIndicator('pause');
     updatePongHud();
 }
 
@@ -842,6 +900,7 @@ export function resumePong() {
     pongRunning = true;
     pongPaused = false;
     pongLastFrame = 0;
+    showPongPauseIndicator('play');
     updatePongHud();
     pongAnimationFrame = window.requestAnimationFrame(updatePongFrame);
 }
@@ -976,6 +1035,7 @@ export function startPong() {
     pongKeys.clear();
     pongLastNetworkSyncAt = 0;
     pongMenuResult = null;
+    hidePongPauseIndicator();
     resetPongMatch();
     pongRunning = true;
     pongPaused = false;

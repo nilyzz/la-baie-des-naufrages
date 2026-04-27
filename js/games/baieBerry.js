@@ -53,7 +53,7 @@ function dom() {
         baieBerryScoreDisplay: $('baieBerryScoreDisplay'),
         baieBerryBestDisplay: $('baieBerryBestDisplay'),
         baieBerryNextDisplay: $('baieBerryNextDisplay'),
-        baieBerryObjectiveDisplay: { textContent: '' },
+        baieBerryObjectiveDisplay: $('baieBerryObjectiveDisplay'),
         baieBerryHelpText: $('baieBerryHelpText'),
         baieBerryMenuOverlay: $('baieBerryMenuOverlay'),
         baieBerryMenuEyebrow: $('baieBerryMenuEyebrow'),
@@ -91,8 +91,8 @@ export function refreshBaieBerryHud() {
         baieBerryNextDisplay.style.setProperty('--baieberry-preview-color', nextFruit.color);
         baieBerryNextDisplay.setAttribute('aria-label', `Fruit suivant: ${nextFruit.name}`);
     }
-    baieBerryObjectiveDisplay.textContent = baieBerryState.objective.completed
-        ? `${baieBerryState.objective.label} âœ“`
+    if (baieBerryObjectiveDisplay) baieBerryObjectiveDisplay.textContent = baieBerryState.objective.completed
+        ? `${baieBerryState.objective.label} ✓`
         : baieBerryState.objective.label;
 }
 

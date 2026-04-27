@@ -625,6 +625,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCheckersMenu = __ck.renderCheckersMenu;
     const startCheckersLaunchSequence = __ck.startCheckersLaunchSequence;
     const handleCheckersCellClick = __ck.handleCheckersCellClick;
+    const handleCheckersPiecePointerDown = __ck.handleCheckersPiecePointerDown;
+    const handleCheckersPointerMove = __ck.handleCheckersPointerMove;
+    const handleCheckersPointerUp = __ck.handleCheckersPointerUp;
     const setCheckersMode = __ck.setCheckersMode;
     const isMultiplayerCheckersActive = __ck.isMultiplayerCheckersActive;
     const syncMultiplayerCheckersState = __ck.syncMultiplayerCheckersState;
@@ -956,10 +959,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerChatSignature = '';
     let ticTacToeLastFinishedStateKey = '';
     let activeGameTab = 'home';
+    let gamesGridDominoFrame = null;
+    let gamesGridDominoCleanupTimer = null;
     // Bridge pour les modules ESM : expose l'onglet actif courant.
     if (typeof window !== 'undefined') {
         window.__baieActiveGameTab = () => activeGameTab;
     }
+    const gameHomeTileReplayTimers = new WeakMap();
     let game2048TouchStartX = null;
     let game2048TouchStartY = null;
     let snakeTouchStartX = null;
@@ -2849,6 +2855,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateMultiplayerLobby();
         updateGamesFilters();
+
+        if (isDiscoveryPanel) {
+            playGamesGridDominoAnimation();
+        }
     }
 
     function getCurrentGamesGrid() {
@@ -2861,6 +2871,101 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return gamesHomePanel?.querySelector('.games-home-grid') || null;
+    }
+
+    function getVisibleGameHomeTiles(grid = getCurrentGamesGrid()) {
+        if (!grid) {
+            return [];
+        }
+
+        return Array.from(grid.querySelectorAll('[data-open-game]')).filter((tile) => !tile.hidden);
+    }
+
+    function syncGamesGridDominoOrder(grid = getCurrentGamesGrid()) {
+        getVisibleGameHomeTiles(grid).forEach((tile, index) => {
+            tile.style.setProperty('--domino-order', String(index));
+        });
+    }
+
+    function clearGamesGridDominoAnimation() {
+        if (gamesGridDominoFrame !== null) {
+            window.cancelAnimationFrame(gamesGridDominoFrame);
+            gamesGridDominoFrame = null;
+        }
+
+        if (gamesGridDominoCleanupTimer) {
+            window.clearTimeout(gamesGridDominoCleanupTimer);
+            gamesGridDominoCleanupTimer = null;
+        }
+
+        document.querySelectorAll('.games-home-grid.is-domino-running').forEach((activeGrid) => {
+            activeGrid.classList.remove('is-domino-running');
+        });
+    }
+
+    function playGamesGridDominoAnimation(grid = getCurrentGamesGrid()) {
+        const visibleTiles = getVisibleGameHomeTiles(grid);
+        clearGamesGridDominoAnimation();
+
+        if (!visibleTiles.length) {
+            return;
+        }
+
+        grid?.classList.add('is-domino-running');
+        visibleTiles.forEach((tile, index) => {
+            tile.style.setProperty('--domino-order', String(index));
+            tile.classList.remove('is-domino-entering');
+        });
+
+        gamesGridDominoFrame = window.requestAnimationFrame(() => {
+            gamesGridDominoFrame = window.requestAnimationFrame(() => {
+                visibleTiles.forEach((tile) => {
+                    tile.classList.add('is-domino-entering');
+                    tile.addEventListener('animationend', (e) => {
+                        if (e.animationName === 'gameHomeTileDominoIn') {
+                            tile.classList.remove('is-domino-entering');
+                        }
+                    }, { once: true });
+                });
+                gamesGridDominoFrame = null;
+            });
+        });
+
+        const totalDuration = 620 + Math.max(0, visibleTiles.length - 1) * 58;
+        gamesGridDominoCleanupTimer = window.setTimeout(() => {
+            visibleTiles.forEach((tile) => {
+                tile.classList.remove('is-domino-entering');
+            });
+            grid?.classList.remove('is-domino-running');
+            gamesGridDominoCleanupTimer = null;
+        }, totalDuration);
+    }
+
+    function replayGameHomeTileAnimation(tile) {
+        const currentGrid = getCurrentGamesGrid();
+        if (!tile || tile.hidden || !currentGrid || tile.closest('.games-home-grid') !== currentGrid) {
+            return;
+        }
+
+        if (currentGrid.classList.contains('is-domino-running')) {
+            return;
+        }
+
+        const previousTimer = gameHomeTileReplayTimers.get(tile);
+        if (previousTimer) {
+            window.clearTimeout(previousTimer);
+        }
+
+        tile.classList.remove('is-domino-replaying');
+        void tile.offsetWidth;
+        tile.classList.add('is-domino-replaying');
+
+        const cleanupTimer = window.setTimeout(() => {
+            tile.classList.remove('is-domino-replaying');
+            gameHomeTileReplayTimers.delete(tile);
+        }, 380);
+
+        gameHomeTileReplayTimers.set(tile, cleanupTimer);
     }
 
     function updateGamesFilters() {
@@ -2897,6 +3002,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? ''
                 : 'Aucun jeu ne correspond a cette recherche. Essaie un autre mot ou un autre filtre.';
         }
+
+        syncGamesGridDominoOrder(currentGrid);
     }
 
     async function setSelectedMultiplayerGame(gameId) {
@@ -3373,6 +3480,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             openSelectedGame(tile.dataset.openGame);
+        });
+
+        tile.addEventListener('pointerenter', () => {
+            replayGameHomeTileAnimation(tile);
+        });
+
+        tile.addEventListener('focus', () => {
+            replayGameHomeTileAnimation(tile);
         });
     });
 
@@ -4521,7 +4636,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    checkersBoard?.addEventListener('pointerdown', (event) => {
+        const piece = event.target.closest('[data-checkers-piece]');
+        if (!piece) {
+            return;
+        }
+
+        const [row, col] = piece.dataset.checkersPiece.split('-').map(Number);
+        handleCheckersPiecePointerDown(event, row, col);
+    });
+
+    window.addEventListener('pointermove', handleCheckersPointerMove);
+    window.addEventListener('pointerup', handleCheckersPointerUp);
+    window.addEventListener('pointercancel', handleCheckersPointerUp);
+
     checkersBoard?.addEventListener('click', (event) => {
+        if (__ck.getCheckersSuppressNextClick()) {
+            __ck.setCheckersSuppressNextClick(false);
+            return;
+        }
+
         const cell = event.target.closest('[data-checkers-cell]');
 
         if (!cell) {

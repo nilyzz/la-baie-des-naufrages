@@ -5,21 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="multiplayer-server-url" content="https://la-baie-des-naufrages.onrender.com">
     <meta name="google-adsense-account" content="ca-pub-1302716532000899">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1302716532000899" crossorigin="anonymous"></script>
-    <meta name="description" content="La Baie des naufragés est un site de jeux, cinéma, maths et musique dans un univers marin personnalisé.">
+    <meta name="description" content="La Baie des naufragés réunit 31 mini-jeux, un catalogue cinéma, des outils de calcul et un piano interactif dans un univers marin original.">
     <meta name="theme-color" content="#0E3056">
     <meta name="robots" content="index, follow">
     <meta property="og:locale" content="fr_FR">
     <meta property="og:type" content="website">
     <meta property="og:title" content="La Baie des naufragés">
-    <meta property="og:description" content="Jeux, cinéma, maths et musique dans l'univers de La Baie des naufragés.">
+    <meta property="og:description" content="31 mini-jeux, cinéma, maths et musique dans un univers marin original.">
     <meta property="og:url" content="https://labaiedesnaufrages.fr/">
     <meta property="og:site_name" content="La Baie des naufragés">
     <meta property="og:image" content="https://labaiedesnaufrages.fr/assets/branding/logo-baie-cartoon.svg">
     <meta property="og:image:alt" content="Logo de La Baie des naufragés">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="La Baie des naufragés">
-    <meta name="twitter:description" content="Jeux, cinéma, maths et musique dans l'univers de La Baie des naufragés.">
+    <meta name="twitter:description" content="31 mini-jeux, cinéma, maths et musique dans un univers marin original.">
     <meta name="twitter:image" content="https://labaiedesnaufrages.fr/assets/branding/logo-baie-cartoon.svg">
     <title>La Baie des naufragés</title>
     <link rel="canonical" href="https://labaiedesnaufrages.fr/">
@@ -27,9 +26,9 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.min.css?v=2026-04-22-fix-10">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=2026-04-22-fix-10">
-    <link rel="preload" as="script" href="/script.min.js?v=2026-04-22-fix-10">
+    <link rel="stylesheet" href="style.min.css?v=v1-03">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-03">
+    <link rel="preload" as="script" href="/script.min.js?v=v1-03">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -38,7 +37,7 @@
                     "@type": "WebSite",
                     "name": "La Baie des naufragés",
                     "url": "https://labaiedesnaufrages.fr/",
-                    "description": "Site de jeux, cinéma, maths et musique dans un univers marin personnalisé."
+                    "description": "Site public mêlant mini-jeux, cinéma, maths et musique dans un univers marin original."
                 },
                 {
                     "@type": "Organization",
@@ -129,6 +128,9 @@
 
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
+                    <p class="login-version">
+                        <span id="siteVersionDisplay" data-site-version>Version 1.03</span>
+                    </p>
                 </form>
             </div>
         </section>
@@ -137,7 +139,7 @@
             <div class="services-shell">
                 <div class="services-copy">
                     <p class="eyebrow">Bienvenue sur le Quai de la Baie des naufragés</p>
-                    <h1>Quel navire veux-tu prendre ?</h1>
+                    <h2>Quel navire veux-tu prendre ?</h2>
                     <p class="intro">
                         Choisis le navire qui t'emmène vers l'univers que tu veux explorer.
                     </p>
@@ -801,6 +803,10 @@
                         <div id="pongBoard" class="pong-board" aria-label="Plateau du Pong">
                             <div class="pong-center-line" aria-hidden="true"></div>
                             <div id="pongCountdown" class="pong-countdown hidden" aria-hidden="true"></div>
+                            <div id="pongPauseIndicator" class="pong-pause-indicator hidden" aria-hidden="true">
+                                <span id="pongPauseIndicatorIcon" class="pong-pause-indicator-icon" aria-hidden="true">❚❚</span>
+                                <span id="pongPauseIndicatorText" class="pong-pause-indicator-text">Pause</span>
+                            </div>
                             <div id="pongPlayerPaddle" class="pong-paddle pong-paddle-player" aria-hidden="true"></div>
                             <div id="pongAiPaddle" class="pong-paddle pong-paddle-ai" aria-hidden="true"></div>
                             <div id="pongBall" class="pong-ball" aria-hidden="true"></div>
@@ -897,12 +903,6 @@
                         </div>
                     </div>
 
-                    <div class="aim-duration-switch" role="group" aria-label="Durée de jeu OursAim">
-                        <button type="button" class="secondary-button aim-duration-button is-active" data-aim-duration="20">20s</button>
-                        <button type="button" class="secondary-button aim-duration-button" data-aim-duration="40">40s</button>
-                        <button type="button" class="secondary-button aim-duration-button" data-aim-duration="60">60s</button>
-                    </div>
-
                     <p class="aim-help">OursAim. Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l eau te co&ucirc;te des points.</p>
                     <div id="aimTable" class="aim-table">
                         <div id="aimMenuOverlay" class="aim-menu-overlay">
@@ -910,6 +910,11 @@
                                 <span id="aimMenuEyebrow" class="aim-menu-eyebrow">Canon de bord</span>
                                 <h3 id="aimMenuTitle" class="aim-menu-title">OursAim</h3>
                                 <p id="aimMenuText" class="aim-menu-text">Cinq oursins se cachent dans la baie. Touche-les au plus vite pour marquer, mais un tir dans l&rsquo;eau te coûte des points.</p>
+                                <div class="aim-duration-switch" role="group" aria-label="Durée de jeu OursAim">
+                                    <button type="button" class="secondary-button aim-duration-button is-active" data-aim-duration="20">20s</button>
+                                    <button type="button" class="secondary-button aim-duration-button" data-aim-duration="40">40s</button>
+                                    <button type="button" class="secondary-button aim-duration-button" data-aim-duration="60">60s</button>
+                                </div>
                                 <div class="aim-menu-actions">
                                     <button id="aimMenuActionButton" type="button" class="game-menu-primary-button">Lancer la bordée</button>
                                     <button id="aimMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1665,6 +1670,7 @@
                             <div id="baieBerryNextDisplay" class="baieberry-next-preview" aria-label="Fruit suivant"></div>
                         </div>
                     </div>
+                    <p id="baieBerryObjectiveDisplay" class="baieberry-objective" aria-live="polite"></p>
                     <p id="baieBerryHelpText" class="baieberry-help">Clique dans la colonne pour laisser tomber un fruit. Deux fruits identiques fusionnent en plus gros.</p>
                     <div class="baieberry-layout">
                         <div id="baieBerryTable" class="baieberry-table">
@@ -2083,7 +2089,7 @@
         </section>
 
         <aside
-            class="site-ads site-ads-hidden site-ads-no-transition"
+            class="site-ads site-ads-hidden site-ads-no-transition site-ads-consent-blocked"
             aria-label="Espace publicitaire"
             data-adsense-client="ca-pub-1302716532000899"
             data-ad-slot="7342451972"
@@ -2137,9 +2143,9 @@
             <p class="section-tag">Informations légales</p>
             <h3 id="legalNoticeTitle">Mentions légales</h3>
             <div class="legal-notice-content">
-                <p><strong>Éditeur du site</strong><br>Nom : Nail YAHYAOUI<br>Statut : Éditeur du site à titre non professionnel<br>Adresse : Strasbourg, France<br>Email de contact : <a href="mailto:nilyzoff@gmail.com">nilyzoff@gmail.com</a></p>
+                <p><strong>Éditeur du site</strong><br>Site édité à titre non professionnel.<br>Les informations publiques de l'éditeur sont volontairement limitées afin de préserver son anonymat public.<br>Email de contact : <a href="mailto:nilyzoff@gmail.com">nilyzoff@gmail.com</a></p>
 
-                <p><strong>Directeur de la publication</strong><br>Nail YAHYAOUI</p>
+                <p><strong>Directeur de la publication</strong><br>La direction de la publication est assurée par l'éditeur du site.</p>
 
                 <p><strong>Nom du site</strong><br>La Baie des naufragés</p>
 
@@ -2157,24 +2163,232 @@
         </div>
     </div>
 
+    <button
+        id="openConsentPreferencesButton"
+        type="button"
+        class="secondary-button consent-preferences-button"
+        aria-haspopup="dialog"
+        aria-controls="consentBanner"
+    >
+        Cookies &amp; pub
+    </button>
+
+    <section id="consentBanner" class="consent-banner card hidden" aria-hidden="true" role="dialog" aria-labelledby="consentBannerTitle">
+        <p class="section-tag">Cookies</p>
+        <h3 id="consentBannerTitle">Choix de confidentialité et publicité</h3>
+        <p class="consent-banner-copy">
+            La Baie des naufrages peut afficher une zone publicitaire Google AdSense uniquement en mode non personnalise. Tu peux autoriser ce chargement ou refuser totalement la publicite. Tant que tu n'as pas choisi, la zone pub reste bloquee.
+        </p>
+        <p id="consentStatusText" class="consent-status" aria-live="polite"></p>
+        <div class="consent-actions">
+            <button type="button" class="primary-button" data-consent-choice="non-personalized">Autoriser la pub</button>
+            <button type="button" class="secondary-button consent-refuse-button" data-consent-choice="rejected">Refuser</button>
+        </div>
+        <div class="consent-banner-links">
+            <a href="/confidentialite.html">Politique de confidentialité</a>
+            <a href="/mentions-legales.html">Mentions légales</a>
+            <button type="button" class="secondary-button consent-close-button" data-close-consent-banner="true">Fermer</button>
+        </div>
+    </section>
+
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
         (function () {
+            const CONSENT_KEY = 'baie-des-naufrages-ad-consent-v1';
+            const LEGACY_PERSONALIZED_MODE = 'personalized';
+            const ADSENSE_SCRIPT_ID = 'baieAdsenseLoader';
+            const ADSENSE_SRC = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1302716532000899';
             const adContainer = document.querySelector('.site-ads');
             const adSlot = document.querySelector('.ad-slot');
-            if (!adContainer || !adSlot) {
-                return;
+            const consentBanner = document.getElementById('consentBanner');
+            const consentStatusText = document.getElementById('consentStatusText');
+            const openConsentPreferencesButton = document.getElementById('openConsentPreferencesButton');
+            const closeConsentButtons = document.querySelectorAll('[data-close-consent-banner="true"]');
+            const consentChoiceButtons = document.querySelectorAll('[data-consent-choice]');
+            let adRequestIssued = false;
+
+            function getAdsQueue() {
+                return window.adsbygoogle = window.adsbygoogle || [];
             }
-            try {
-                (window.adsbygoogle = window.adsbygoogle || []).push({});
-                adContainer.classList.add('site-ads-ready');
-            } catch (error) {
-                adContainer.classList.add('site-ads-unconfigured');
+
+            function readConsent() {
+                try {
+                    const storedConsent = JSON.parse(window.localStorage.getItem(CONSENT_KEY) || 'null');
+                    if (!storedConsent || ![LEGACY_PERSONALIZED_MODE, 'non-personalized', 'rejected'].includes(storedConsent.mode)) {
+                        return null;
+                    }
+                    if (storedConsent.mode === LEGACY_PERSONALIZED_MODE) {
+                        return {
+                            ...storedConsent,
+                            mode: 'non-personalized',
+                            legacyPersonalized: true
+                        };
+                    }
+                    return storedConsent;
+                } catch (error) {
+                    return null;
+                }
             }
+
+            function writeConsent(mode) {
+                try {
+                    window.localStorage.setItem(CONSENT_KEY, JSON.stringify({
+                        mode,
+                        updatedAt: Date.now()
+                    }));
+                } catch (error) {
+                    console.warn('Impossible de sauvegarder le choix de consentement.', error);
+                }
+            }
+
+            function describeConsent(mode) {
+                if (mode === 'non-personalized') {
+                    return 'Tu autorises uniquement des annonces non personnalisees. La zone pub peut se charger sans ciblage publicitaire personnalise.';
+                }
+                if (mode === 'rejected') {
+                    return 'Tu refuses le chargement publicitaire. Les annonces restent désactivées tant que tu ne changes pas ce choix.';
+                }
+                return 'Aucun choix n\'est enregistré. Par défaut, la publicité reste bloquée tant que tu n\'as pas décidé.';
+            }
+
+            function openConsentBanner() {
+                if (!consentBanner) {
+                    return;
+                }
+                consentBanner.classList.remove('hidden');
+                consentBanner.setAttribute('aria-hidden', 'false');
+            }
+
+            function closeConsentBanner() {
+                if (!consentBanner) {
+                    return;
+                }
+                consentBanner.classList.add('hidden');
+                consentBanner.setAttribute('aria-hidden', 'true');
+                openConsentPreferencesButton?.focus();
+            }
+
+            function setAdsBlockedState(blocked) {
+                if (!adContainer) {
+                    return;
+                }
+                adContainer.classList.toggle('site-ads-consent-blocked', blocked);
+                if (blocked) {
+                    getAdsQueue().pauseAdRequests = 1;
+                    adContainer.classList.remove('site-ads-ready', 'site-ads-unconfigured');
+                }
+            }
+
+            function requestAdFill(mode) {
+                if (!adContainer || !adSlot) {
+                    return;
+                }
+                const adsQueue = getAdsQueue();
+                adsQueue.requestNonPersonalizedAds = mode === 'non-personalized' ? 1 : 0;
+                adsQueue.pauseAdRequests = 0;
+
+                if (adRequestIssued) {
+                    return;
+                }
+
+                try {
+                    adsQueue.push({});
+                    adRequestIssued = true;
+                    adContainer.classList.add('site-ads-ready');
+                } catch (error) {
+                    adContainer.classList.add('site-ads-unconfigured');
+                }
+            }
+
+            function ensureAdsenseLoaded(mode) {
+                if (!adContainer || !adSlot) {
+                    return;
+                }
+
+                if (mode !== 'non-personalized') {
+                    setAdsBlockedState(true);
+                    return;
+                }
+
+                setAdsBlockedState(false);
+                const adsQueue = getAdsQueue();
+                adsQueue.pauseAdRequests = 1;
+                adsQueue.requestNonPersonalizedAds = mode === 'non-personalized' ? 1 : 0;
+
+                const existingScript = document.getElementById(ADSENSE_SCRIPT_ID);
+                if (existingScript) {
+                    if (existingScript.dataset.loaded === 'true') {
+                        requestAdFill(mode);
+                    }
+                    return;
+                }
+
+                const adsenseScript = document.createElement('script');
+                adsenseScript.id = ADSENSE_SCRIPT_ID;
+                adsenseScript.async = true;
+                adsenseScript.src = ADSENSE_SRC;
+                adsenseScript.crossOrigin = 'anonymous';
+                adsenseScript.addEventListener('load', () => {
+                    adsenseScript.dataset.loaded = 'true';
+                    requestAdFill(mode);
+                }, { once: true });
+                adsenseScript.addEventListener('error', () => {
+                    adContainer.classList.add('site-ads-unconfigured');
+                }, { once: true });
+                document.head.appendChild(adsenseScript);
+            }
+
+            function applyConsent(mode) {
+                if (consentStatusText) {
+                    consentStatusText.textContent = describeConsent(mode);
+                }
+                openConsentPreferencesButton?.setAttribute('data-consent-mode', mode || 'unset');
+                ensureAdsenseLoaded(mode);
+            }
+
+            function requiresReload(previousMode, nextMode) {
+                if (!previousMode || previousMode === 'rejected') {
+                    return false;
+                }
+                return previousMode !== nextMode;
+            }
+
+            closeConsentButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    closeConsentBanner();
+                });
+            });
+
+            openConsentPreferencesButton?.addEventListener('click', () => {
+                openConsentBanner();
+            });
+
+            consentChoiceButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const previousMode = readConsent()?.mode || null;
+                    const nextMode = button.dataset.consentChoice || 'rejected';
+                    writeConsent(nextMode);
+                    applyConsent(nextMode);
+                    closeConsentBanner();
+
+                    if (requiresReload(previousMode, nextMode)) {
+                        window.setTimeout(() => {
+                            window.location.reload();
+                        }, 120);
+                    }
+                });
+            });
+
+            const initialConsent = readConsent();
+            const initialMode = initialConsent?.mode || null;
+            if (initialConsent?.legacyPersonalized) {
+                writeConsent(initialMode);
+            }
+            applyConsent(initialMode);
         })();
     </script>
-    <script type="module" src="/js/main.bundle.min.js?v=2026-04-22-fix-10"></script>
-    <script defer src="script.min.js?v=2026-04-22-fix-10"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v1-03"></script>
+    <script defer src="script.min.js?v=v1-03"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
