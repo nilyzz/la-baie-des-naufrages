@@ -1,13 +1,13 @@
-const CACHE_NAME = 'baie-des-naufrages-v1-09';
+const CACHE_NAME = 'baie-des-naufrages-v1-10';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
     '/confidentialite.html',
     '/mentions-legales.html',
     '/ads.txt',
-    '/style.min.css?v=v1-09',
-    '/script.min.js?v=v1-09',
-    '/js/main.bundle.min.js?v=v1-09',
+    '/style.min.css?v=v1-10',
+    '/script.min.js?v=v1-10',
+    '/js/main.bundle.min.js?v=v1-10',
     '/site.webmanifest',
     '/assets/branding/logo-baie-cartoon.svg',
     '/assets/navires/navire-cinema.svg',
@@ -49,6 +49,27 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    const isHtml = request.headers.get('Accept')?.includes('text/html')
+        || url.pathname.endsWith('.html')
+        || url.pathname === '/';
+
+    if (isHtml) {
+        // Network-first pour les pages HTML : l'utilisateur voit toujours la dernière version
+        event.respondWith(
+            fetch(request)
+                .then((response) => {
+                    if (response && response.ok && response.type === 'basic') {
+                        const clone = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(request, clone)).catch(() => null);
+                    }
+                    return response;
+                })
+                .catch(() => caches.match(request))
+        );
+        return;
+    }
+
+    // Cache-first pour les assets versionnés (CSS/JS avec ?v=...) et fichiers statiques
     event.respondWith(
         caches.match(request).then((cached) => {
             const networkFetch = fetch(request).then((response) => {
