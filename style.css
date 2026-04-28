@@ -11177,9 +11177,9 @@ button:hover {
     padding: 16px 0 0;
     overflow: hidden;
     background:
-        radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 34%),
-        radial-gradient(circle at 82% 18%, rgba(14, 165, 233, 0.22), transparent 24%),
-        linear-gradient(180deg, rgba(186, 230, 253, 0.98), rgba(125, 211, 252, 0.96));
+        radial-gradient(circle at top, rgba(255,255,255,0.06), transparent 34%),
+        radial-gradient(circle at 82% 18%, rgba(14, 165, 233, 0.10), transparent 24%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(12, 20, 33, 0.97));
 }
 
 .breakout-card.games-panel {
@@ -11196,9 +11196,9 @@ button:hover {
     inset: 0;
     pointer-events: none;
     background:
-        radial-gradient(circle at 12% 14%, rgba(125, 211, 252, 0.24), transparent 18%),
-        radial-gradient(circle at 84% 18%, rgba(2, 132, 199, 0.18), transparent 22%),
-        linear-gradient(180deg, rgba(255,255,255,0.12), transparent 40%);
+        radial-gradient(circle at 12% 14%, rgba(125, 211, 252, 0.10), transparent 18%),
+        radial-gradient(circle at 84% 18%, rgba(2, 132, 199, 0.08), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), transparent 40%);
 }
 
 .coinclicker-topbar,
@@ -13744,12 +13744,12 @@ button:hover {
     position: relative;
     overflow: hidden;
     background:
-        radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 34%),
-        linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(226, 232, 240, 0.94));
+        radial-gradient(circle at top, rgba(255,255,255,0.06), transparent 34%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(12, 20, 33, 0.97));
 }
 
 .blockblast-card {
-    color: #111827;
+    color: #e2e8f0;
 }
 
 .blockblast-card::before,
@@ -13760,9 +13760,9 @@ button:hover {
     inset: 0;
     pointer-events: none;
     background:
-        radial-gradient(circle at 12% 14%, rgba(125, 211, 252, 0.18), transparent 18%),
-        radial-gradient(circle at 84% 18%, rgba(250, 204, 21, 0.14), transparent 22%),
-        linear-gradient(180deg, rgba(255,255,255,0.12), transparent 40%);
+        radial-gradient(circle at 12% 14%, rgba(125, 211, 252, 0.10), transparent 18%),
+        radial-gradient(circle at 84% 18%, rgba(250, 204, 21, 0.08), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), transparent 40%);
 }
 
 .blockblast-topbar,
@@ -13785,8 +13785,8 @@ button:hover {
     padding: 14px 18px;
     min-width: 112px;
     border-radius: 18px;
-    background: rgba(255,255,255,0.86);
-    box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.92);
+    background: rgba(255,255,255,0.07);
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.14);
 }
 
 .blockblast-counter-label,
@@ -13798,7 +13798,7 @@ button:hover {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.16em;
-    color: #115e59;
+    color: #64748b;
 }
 
 .blockblast-counter-value,
@@ -13807,7 +13807,7 @@ button:hover {
 .bomb-counter-value {
     font-size: 1.45rem;
     font-weight: 800;
-    color: #111827;
+    color: #f8fafc;
 }
 
 .blockblast-face,
@@ -13840,7 +13840,7 @@ button:hover {
     position: relative;
     z-index: 1;
     margin: 18px 0 0;
-    color: #374151 !important;
+    color: #94a3b8 !important;
     opacity: 1;
     font-weight: 600;
 }
@@ -14014,10 +14014,10 @@ button:hover {
 .bomb-sidebar-card {
     border-radius: 26px;
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.68)),
-        linear-gradient(135deg, rgba(125, 211, 252, 0.12), rgba(251, 191, 36, 0.08));
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)),
+        rgba(15, 23, 42, 0.72);
     box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.5),
+        inset 0 0 0 1px rgba(255,255,255,0.08),
         0 22px 40px -34px rgba(15, 23, 42, 0.52);
 }
 
@@ -14037,7 +14037,7 @@ button:hover {
 
 .bomb-status-banner {
     margin: 0;
-    color: #374151 !important;
+    color: #e2e8f0 !important;
     font-weight: 700;
 }
 
@@ -14348,13 +14348,13 @@ button:hover {
 .blockblast-sidebar-card {
     padding: 18px;
     border-radius: 22px;
-    background: rgba(255,255,255,0.72);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.07);
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.14);
 }
 
 .blockblast-sidebar-text {
     margin: 12px 0 0;
-    color: #374151 !important;
+    color: #94a3b8 !important;
 }
 
 .blockblast-pieces {
@@ -14381,8 +14381,8 @@ button:hover {
     grid-template-columns: repeat(var(--piece-columns, 1), 22px);
     grid-template-rows: repeat(var(--piece-rows, 1), 22px);
     gap: 6px;
-    background: rgba(224, 242, 254, 0.86);
-    box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.28);
+    background: rgba(255,255,255,0.07);
+    box-shadow: inset 0 0 0 1px rgba(186, 230, 253, 0.16);
     transition: transform 140ms ease, box-shadow 140ms ease;
 }
 
@@ -14404,17 +14404,17 @@ button:hover {
 }
 
 .breakout-counter-block {
-    background: rgba(255,255,255,0.86);
-    box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.92);
+    background: rgba(255,255,255,0.07);
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.14);
     border: 0;
 }
 
 .breakout-counter-label {
-    color: #115e59;
+    color: #64748b;
 }
 
 .breakout-counter-value {
-    color: #111827;
+    color: #f8fafc;
 }
 
 .breakout-face {
