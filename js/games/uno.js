@@ -194,7 +194,9 @@ export function ensureUnoDrawPile(state) {
         return;
     }
 
-    state.drawPile = createUnoDeck();
+    const topCard = state.discardPile.pop();
+    state.drawPile = state.discardPile.sort(() => Math.random() - 0.5);
+    state.discardPile = topCard ? [topCard] : [];
 }
 
 export function drawUnoCards(state, playerIndex, amount) {

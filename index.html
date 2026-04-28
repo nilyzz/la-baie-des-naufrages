@@ -26,9 +26,9 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.min.css?v=v1-05">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-05">
-    <link rel="preload" as="script" href="/script.min.js?v=v1-05">
+    <link rel="stylesheet" href="style.min.css?v=v1-06">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-06">
+    <link rel="preload" as="script" href="/script.min.js?v=v1-06">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -129,7 +129,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 1.05</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 1.06</span>
                     </p>
                 </form>
             </div>
@@ -2191,7 +2191,7 @@
         </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
     <script>
         (function () {
             const CONSENT_KEY = 'baie-des-naufrages-ad-consent-v1';
@@ -2387,8 +2387,8 @@
             applyConsent(initialMode);
         })();
     </script>
-    <script type="module" src="/js/main.bundle.min.js?v=v1-05"></script>
-    <script defer src="script.min.js?v=v1-05"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v1-06"></script>
+    <script defer src="script.min.js?v=v1-06"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

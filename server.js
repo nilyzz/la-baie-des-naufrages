@@ -7,6 +7,7 @@ const { Server } = require('socket.io');
 const compression = require('compression');
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = Number(process.env.PORT) || 3000;
 const ROOM_CODE_LENGTH = 6;
 const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -91,6 +92,7 @@ const rooms = new Map();
 let postersCache = null;
 let postersPersistTimer = null;
 const roomCreationRateMap = new Map();
+const posterResolveRateMap = new Map();
 
 function parseCorsOrigin(value) {
   const origins = String(value || '*')
@@ -117,6 +119,15 @@ app.use(cors({
   origin: CORS_ORIGIN,
   methods: ['GET', 'POST']
 }));
+
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-XSS-Protection', '0');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  next();
+});
 
 const SENSITIVE_FILE_RE = /^\/(?:server\.js|package(?:-lock)?\.json|film\.xlsx|posters-cache\.json|render\.yaml|readme\.md|cname|\.env|node_modules)/i;
 
@@ -2298,8 +2309,19 @@ app.get('/api/health', (_request, response) => {
 });
 
 app.post('/api/posters/resolve', async (request, response) => {
+  const clientIp = request.ip || 'unknown';
+  const now = Date.now();
+  const rateEntry = posterResolveRateMap.get(clientIp) || { count: 0, windowStart: now };
+  if (now - rateEntry.windowStart >= 60000) { rateEntry.count = 0; rateEntry.windowStart = now; }
+  rateEntry.count += 1;
+  posterResolveRateMap.set(clientIp, rateEntry);
+  if (rateEntry.count > 5) {
+    return response.status(429).json({ error: 'too-many-requests' });
+  }
+
+  const movies = Array.isArray(request.body?.movies) ? request.body.movies.slice(0, 100) : [];
+
   try {
-    const movies = Array.isArray(request.body?.movies) ? request.body.movies : [];
     const resolutions = await Promise.all(movies.map(async (movie) => ({
       id: movie.id,
       posterUrl: await resolvePosterForMovie(movie)
@@ -2307,7 +2329,7 @@ app.post('/api/posters/resolve', async (request, response) => {
 
     response.json({ resolutions });
   } catch (error) {
-    console.error('Impossible de resoudre les affiches TMDb.', error);
+    console.error('Impossible de resoudre les affiches TMDb.');
     response.status(500).json({ error: 'poster-resolution-failed' });
   }
 });
@@ -2610,6 +2632,10 @@ io.on('connection', (socket) => {
       return;
     }
 
+    if (!room.gameLaunched) {
+      return;
+    }
+
     const playerRole = getBattleshipPlayerRole(room, socket.id);
     const targetRow = Number(row);
     const targetCol = Number(col);
@@ -2662,7 +2688,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!room.players.some((player) => player.id === socket.id)) {
+    if (room.hostId !== socket.id) {
       return;
     }
 
@@ -2740,7 +2766,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!room.players.some((player) => player.id === socket.id)) {
+    if (room.hostId !== socket.id) {
       return;
     }
 
@@ -2818,7 +2844,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!room.players.some((player) => player.id === socket.id)) {
+    if (room.hostId !== socket.id) {
       return;
     }
 
@@ -2904,7 +2930,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!room.players.some((player) => player.id === socket.id)) {
+    if (room.hostId !== socket.id) {
       return;
     }
 
@@ -2997,7 +3023,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!room.players.some((player) => player.id === socket.id)) {
+    if (room.hostId !== socket.id) {
       return;
     }
 
@@ -3125,7 +3151,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!room.players.some((player) => player.id === socket.id)) {
+    if (room.hostId !== socket.id) {
       return;
     }
 
