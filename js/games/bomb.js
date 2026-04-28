@@ -4,7 +4,7 @@
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { normalizeBombWord } from '../core/utils.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
-import { closeGameOverModal, openGameOverModal } from '../core/modals.js';
+import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
     isCurrentPlayerMultiplayerReady,
@@ -283,7 +283,11 @@ export function maybeOpenBombOutcomeModal() {
     bombLastFinishedStateKey = finishedKey;
     const winner = bombState.players.find((player) => player.id === bombState.winner);
     const isVictory = Boolean(getMultiplayerActiveRoom()?.players?.find((player) => player.isYou)?.id === bombState.winner);
-    openGameOverModal(isVictory ? 'Victoire' : 'Partie terminée', `${winner?.name || 'Un joueur'} remporte la manche de la Bombe.`);
+    revealBombOutcomeMenu(
+        isVictory ? 'Victoire' : 'Partie terminée',
+        `${winner?.name || 'Un joueur'} remporte la manche de la Bombe.`,
+        'Manche terminée'
+    );
 }
 
 export function renderBombPlayers() {

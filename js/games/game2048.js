@@ -2,7 +2,7 @@
 // Extracted verbatim from script.js during the ES-modules migration.
 
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
-import { openGameOverModal, closeGameOverModal } from '../core/modals.js';
+import { closeGameOverModal } from '../core/modals.js';
 
 export const GAME_2048_SIZE = 4;
 export const GAME_2048_BEST_KEY = 'baie-des-naufrages-2048-best';
@@ -349,7 +349,7 @@ export function move2048(direction, { isActiveTab = true } = {}) {
             ));
 
         if (!hasMovesLeft) {
-            openGameOverModal("C'est perdu", "La marée t'a bloqué. Plus aucun coup possible.");
+            reveal2048OutcomeMenu();
             game2048QueuedMove = null;
             return;
         }

@@ -4982,6 +4982,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (__uno.getUnoMenuResult() && (isMultiplayerUnoActive() || multiplayerActiveRoom?.gameId === 'uno')) {
+            __uno.setUnoMenuResult(null);
+            __uno.setUnoMenuVisible(false);
+            showGamePanel('multiplayer');
+            return;
+        }
+
         if (isMultiplayerUnoActive()) {
             toggleMultiplayerReady();
             return;
@@ -5254,6 +5261,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         flapFlappyBird();
+    });
+
+    flappyBoard.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
     });
 
     flowFreeBoard.addEventListener('pointerdown', (event) => {

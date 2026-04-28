@@ -2207,7 +2207,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     padding: 16px;
     height: 100%;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .tetris-card {

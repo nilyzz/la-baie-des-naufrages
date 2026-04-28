@@ -1,9 +1,9 @@
-// Game module — Rope Line (FlowFree).
+﻿// Game module — Rope Line (FlowFree).
 // Extracted verbatim from script.js during the ES-modules migration.
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
-import { closeGameOverModal, openGameOverModal } from '../core/modals.js';
+import { closeGameOverModal } from '../core/modals.js';
 import { shuffleArray } from '../core/utils.js';
 
 export const FLOW_FREE_SIZE = 7;
@@ -646,7 +646,7 @@ function finalizeFlowFreePathIfComplete(color) {
     if (flowFreeCompleted.size === flowFreeLevel.pairs.length && allCellsFilled) {
         if (flowFreeHelpText) flowFreeHelpText.textContent = 'Tous les courants sont relies. Le port est securise.';
         renderFlowFree();
-        openGameOverModal('Courants reliés', `Toutes les liaisons sont termin\u00e9es en ${flowFreeMoves} tracés.`);
+        revealFlowFreeOutcomeMenu('Courants reliés', `Toutes les liaisons sont terminées en ${flowFreeMoves} tracés.`, 'Port sécurisé');
     }
 
     return true;

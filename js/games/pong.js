@@ -3,7 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
-import { closeGameOverModal, openGameOverModal } from '../core/modals.js';
+import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
     getMultiplayerSocket,
@@ -906,11 +906,7 @@ export function resumePong() {
 }
 
 export function finishPongMatch(playerWon) {
-    stopPong();
-    openGameOverModal(
-        playerWon ? 'Victoire' : "C'est perdu",
-        playerWon ? "Le duel est gagné. La baie t'acclame." : "L'IA remporte la manche. Le courant t'échappe."
-    );
+    finishPongOutcome(playerWon);
 }
 
 export function scorePongPoint(playerWon) {

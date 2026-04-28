@@ -3,7 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
-import { closeGameOverModal, openGameOverModal } from '../core/modals.js';
+import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
     getMultiplayerSocket,
