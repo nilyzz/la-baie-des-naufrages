@@ -108,7 +108,7 @@ function parseCorsOrigin(value) {
 }
 
 app.use(compression());
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 app.use((err, _request, response, next) => {
   if (err && err.type === 'entity.parse.failed') {
     return response.status(400).json({ error: 'invalid-json' });
@@ -3414,4 +3414,7 @@ process.on('SIGTERM', async () => {
 server.listen(PORT, () => {
   console.log(`La Baie des Naufrages multiplayer server listening on port ${PORT}`);
   console.log(`CORS origin: ${Array.isArray(CORS_ORIGIN) ? CORS_ORIGIN.join(', ') : CORS_ORIGIN}`);
+  if (CORS_ORIGIN === '*') {
+    console.warn('[SECURITE] CORS_ORIGIN est en wildcard (*). Definir la variable env CORS_ORIGIN=https://labaiedesnaufrages.fr sur Render.');
+  }
 });

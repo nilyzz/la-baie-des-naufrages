@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagmanager.com https://adservice.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://image.tmdb.org https://*.googlesyndication.com https://*.google.com https://googleads.g.doubleclick.net; connect-src 'self' https://la-baie-des-naufrages.onrender.com wss://la-baie-des-naufrages.onrender.com https://api.themoviedb.org; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; font-src 'self'; object-src 'none'; base-uri 'self';">
     <meta name="multiplayer-server-url" content="https://la-baie-des-naufrages.onrender.com">
     <meta name="google-adsense-account" content="ca-pub-1302716532000899">
     <meta name="description" content="La Baie des naufragés réunit 31 mini-jeux, un catalogue cinéma, des outils de calcul et un piano interactif dans un univers marin original.">
@@ -26,9 +27,9 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.min.css?v=v1-06">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-06">
-    <link rel="preload" as="script" href="/script.min.js?v=v1-06">
+    <link rel="stylesheet" href="style.min.css?v=v1-07">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-07">
+    <link rel="preload" as="script" href="/script.min.js?v=v1-07">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -129,7 +130,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 1.06</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 1.07</span>
                     </p>
                 </form>
             </div>
@@ -2387,8 +2388,8 @@
             applyConsent(initialMode);
         })();
     </script>
-    <script type="module" src="/js/main.bundle.min.js?v=v1-06"></script>
-    <script defer src="script.min.js?v=v1-06"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v1-07"></script>
+    <script defer src="script.min.js?v=v1-07"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
