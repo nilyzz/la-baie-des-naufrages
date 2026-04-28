@@ -2342,6 +2342,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMultiplayerChatMessages();
     }
 
+    let multiplayerChatLastSentAt = 0;
+    const MULTIPLAYER_CHAT_COOLDOWN_MS = 3000;
+
     async function sendMultiplayerChatMessage() {
         const message = multiplayerChatInput?.value.trim() || '';
         if (!message) {
@@ -2352,6 +2355,15 @@ document.addEventListener('DOMContentLoaded', () => {
             setMultiplayerStatus('Le chat sera disponible une fois la partie lanc\u00e9e.');
             return;
         }
+
+        const now = Date.now();
+        const remaining = MULTIPLAYER_CHAT_COOLDOWN_MS - (now - multiplayerChatLastSentAt);
+        if (remaining > 0) {
+            setMultiplayerStatus(`Attends ${Math.ceil(remaining / 1000)}s avant le prochain message.`);
+            return;
+        }
+
+        multiplayerChatLastSentAt = now;
 
         try {
             const socket = await ensureMultiplayerConnection();
@@ -5568,6 +5580,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const TRACKED_DIR_CODES = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'KeyQ', 'KeyD', 'KeyZ', 'KeyS', 'KeyA', 'KeyW']);
+    let heldDirectionKeys = [];
+
+    document.addEventListener('keyup', (event) => {
+        const idx = heldDirectionKeys.indexOf(event.code);
+        if (idx !== -1) heldDirectionKeys.splice(idx, 1);
+    });
+
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !confirmModal.classList.contains('hidden')) {
             closeDeleteModal();
@@ -5599,6 +5619,31 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             startPianoNote(pianoNoteId, 'keyboard');
             return;
+        }
+
+        if (!isTypingTarget && TRACKED_DIR_CODES.has(event.code)) {
+            if (!event.repeat && !heldDirectionKeys.includes(event.code)) {
+                heldDirectionKeys.push(event.code);
+            }
+            if (event.repeat && heldDirectionKeys[heldDirectionKeys.length - 1] !== event.code) {
+                event.preventDefault();
+                return;
+            }
+        }
+
+        if (!isTypingTarget && event.code === 'Space') {
+            const activePanel = document.querySelector('.games-panel.games-panel-active');
+            if (activePanel) {
+                const actionBtn = activePanel.querySelector('[id$="MenuActionButton"]:not([hidden])');
+                if (actionBtn) {
+                    const overlay = actionBtn.closest('[id$="MenuOverlay"]');
+                    if (overlay && !overlay.classList.contains('hidden') && !overlay.classList.contains('is-closing')) {
+                        event.preventDefault();
+                        actionBtn.click();
+                        return;
+                    }
+                }
+            }
         }
 
         const directions = {
@@ -5967,6 +6012,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     multiplayerJoinRoomCodeInput?.addEventListener('input', () => {
         multiplayerJoinRoomCodeInput.value = multiplayerJoinRoomCodeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    });
+    multiplayerJoinRoomCodeInput?.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            joinMultiplayerRoom();
+        }
     });
     multiplayerChatForm?.addEventListener('submit', (event) => {
         event.preventDefault();
