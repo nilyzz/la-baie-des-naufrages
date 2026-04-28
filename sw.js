@@ -1,13 +1,13 @@
-const CACHE_NAME = 'baie-des-naufrages-v1-10';
+const CACHE_NAME = 'baie-des-naufrages-v1-11';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
     '/confidentialite.html',
     '/mentions-legales.html',
     '/ads.txt',
-    '/style.min.css?v=v1-10',
-    '/script.min.js?v=v1-10',
-    '/js/main.bundle.min.js?v=v1-10',
+    '/style.min.css?v=v1-11',
+    '/script.min.js?v=v1-11',
+    '/js/main.bundle.min.js?v=v1-11',
     '/site.webmanifest',
     '/assets/branding/logo-baie-cartoon.svg',
     '/assets/navires/navire-cinema.svg',
@@ -29,6 +29,8 @@ self.addEventListener('activate', (event) => {
         caches.keys().then((keys) => Promise.all(
             keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
         )).then(() => self.clients.claim())
+            .then(() => self.clients.matchAll({ type: 'window' }))
+            .then((clients) => clients.forEach((client) => client.postMessage({ type: 'SW_UPDATED' })))
     );
 });
 

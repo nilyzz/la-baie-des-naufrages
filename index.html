@@ -27,9 +27,9 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.min.css?v=v1-10">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-10">
-    <link rel="preload" as="script" href="/script.min.js?v=v1-10">
+    <link rel="stylesheet" href="style.min.css?v=v1-11">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-11">
+    <link rel="preload" as="script" href="/script.min.js?v=v1-11">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -130,7 +130,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 1.10</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 1.11</span>
                     </p>
                 </form>
             </div>
@@ -2388,12 +2388,17 @@
             applyConsent(initialMode);
         })();
     </script>
-    <script type="module" src="/js/main.bundle.min.js?v=v1-10"></script>
-    <script defer src="script.min.js?v=v1-10"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v1-11"></script>
+    <script defer src="script.min.js?v=v1-11"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').catch(() => null);
+            });
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data?.type === 'SW_UPDATED') {
+                    window.location.reload();
+                }
             });
         }
     </script>
