@@ -2820,8 +2820,6 @@ body:has(#servicesView.view-active) .services-legal-button {
     padding: 7px;
     border-radius: 16px;
     background:
-        radial-gradient(circle at 18% 18%, rgba(253, 224, 71, 0.08), transparent 16%),
-        radial-gradient(circle at 84% 20%, rgba(125, 211, 252, 0.1), transparent 20%),
         linear-gradient(180deg, rgba(56, 189, 248, 0.08), rgba(15, 23, 42, 0.22)),
         rgba(15, 23, 42, 0.68);
     border: 1px solid rgba(125, 211, 252, 0.18);
@@ -3157,8 +3155,6 @@ body:has(#servicesView.view-active) .services-legal-button {
     touch-action: none;
     overflow: hidden;
     background:
-        radial-gradient(circle at 20% 12%, rgba(167, 243, 208, 0.16), transparent 18%),
-        radial-gradient(circle at 78% 18%, rgba(103, 232, 249, 0.12), transparent 16%),
         linear-gradient(180deg, rgba(45, 212, 191, 0.12), rgba(15, 23, 42, 0.24)),
         rgba(15, 23, 42, 0.62);
     border: 1px solid rgba(45, 212, 191, 0.18);
