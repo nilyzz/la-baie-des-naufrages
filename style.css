@@ -3153,8 +3153,8 @@ body:has(#servicesView.view-active) .services-legal-button {
     touch-action: none;
     overflow: hidden;
     background:
-        linear-gradient(180deg, rgba(45, 212, 191, 0.12), rgba(15, 23, 42, 0.24)),
-        rgba(15, 23, 42, 0.62);
+        linear-gradient(180deg, rgba(45, 212, 191, 0.08), rgba(15, 23, 42, 0.12)),
+        rgba(15, 23, 42, 0.92);
 }
 
 .snake-grid,
