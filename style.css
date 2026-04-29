@@ -2218,11 +2218,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     position: relative;
     width: min(100%, 760px);
     overflow: hidden;
-    background:
-        radial-gradient(circle at 14% 18%, rgba(251, 191, 36, 0.16), transparent 16%),
-        radial-gradient(circle at 84% 16%, rgba(125, 211, 252, 0.2), transparent 18%),
-        radial-gradient(circle at 20% 82%, rgba(134, 239, 172, 0.14), transparent 18%),
-        linear-gradient(180deg, rgba(31, 64, 104, 0.98), rgba(14, 30, 56, 0.99));
+    background: linear-gradient(180deg, rgba(31, 64, 104, 0.98), rgba(14, 30, 56, 0.99));
 }
 
 .minesweeper-card::before {
@@ -2242,11 +2238,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     position: relative;
     width: min(100%, 760px);
     overflow: hidden;
-    background:
-        radial-gradient(circle at 16% 16%, rgba(167, 243, 208, 0.14), transparent 16%),
-        radial-gradient(circle at 86% 18%, rgba(103, 232, 249, 0.16), transparent 18%),
-        radial-gradient(circle at 18% 84%, rgba(253, 224, 71, 0.12), transparent 16%),
-        linear-gradient(180deg, rgba(17, 94, 89, 0.94), rgba(8, 47, 73, 0.98));
+    background: linear-gradient(180deg, rgba(17, 94, 89, 0.94), rgba(8, 47, 73, 0.98));
 }
 
 .snake-card::before {
