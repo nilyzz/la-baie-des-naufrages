@@ -1,14 +1,25 @@
-// Game module — Minesweeper (Démineur).
-// Extracted verbatim from script.js during the ES-modules migration.
+// Game module - Minesweeper (Demineur).
+// Extracted from script.js during the ES-modules migration.
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 import { closeGameOverModal } from '../core/modals.js';
+import { formatTenthsTimer } from '../core/utils.js';
 
-export const BOARD_SIZE = 14;
-export const TOTAL_MINES = 36;
+export const BOARD_SIZE = 13;
+export const TOTAL_MINES = 30;
+export const MINESWEEPER_GRID_SIZE_KEY = 'baie-des-naufrages-minesweeper-grid-size';
+export const MINESWEEPER_GRID_SIZES = [10, 13, 16];
+
+const MINESWEEPER_MINE_COUNTS = {
+    10: 18,
+    13: 30,
+    16: 45
+};
 
 let gameBoard = [];
+let currentBoardSize = loadMinesweeperGridSize();
+let currentTotalMines = getMinesweeperMineCount(currentBoardSize);
 let flagsPlaced = 0;
 let timer = 0;
 let timerInterval = null;
@@ -35,21 +46,69 @@ function dom() {
         minesweeperMenuTitle: $('minesweeperMenuTitle'),
         minesweeperMenuText: $('minesweeperMenuText'),
         minesweeperMenuActionButton: $('minesweeperMenuActionButton'),
-        minesweeperMenuRulesButton: $('minesweeperMenuRulesButton')
+        minesweeperMenuRulesButton: $('minesweeperMenuRulesButton'),
+        minesweeperGridSizePicker: $('minesweeperGridSizePicker'),
+        minesweeperGridSizeButtons: document.querySelectorAll('[data-minesweeper-grid-size]')
     };
 }
 
+function normalizeMinesweeperGridSize(value) {
+    const numericValue = Number.parseInt(value, 10);
+    return MINESWEEPER_GRID_SIZES.includes(numericValue) ? numericValue : BOARD_SIZE;
+}
+
+function getMinesweeperMineCount(size) {
+    return MINESWEEPER_MINE_COUNTS[normalizeMinesweeperGridSize(size)] || TOTAL_MINES;
+}
+
+function loadMinesweeperGridSize() {
+    if (typeof window === 'undefined') return BOARD_SIZE;
+    return normalizeMinesweeperGridSize(window.localStorage.getItem(MINESWEEPER_GRID_SIZE_KEY));
+}
+
+function persistMinesweeperGridSize() {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(MINESWEEPER_GRID_SIZE_KEY, String(currentBoardSize));
+}
+
+function syncCurrentMinesweeperPreset() {
+    currentTotalMines = getMinesweeperMineCount(currentBoardSize);
+}
+
+function renderMinesweeperGridSizeButtons() {
+    const { minesweeperGridSizePicker, minesweeperGridSizeButtons } = dom();
+
+    if (minesweeperGridSizePicker) {
+        minesweeperGridSizePicker.hidden = minesweeperMenuShowingRules;
+    }
+
+    minesweeperGridSizeButtons.forEach((button) => {
+        const buttonSize = normalizeMinesweeperGridSize(button.dataset.minesweeperGridSize);
+        const isActive = buttonSize === currentBoardSize;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+}
+
 function createEmptyBoard() {
-    return Array.from({ length: BOARD_SIZE }, (_, row) => (
-        Array.from({ length: BOARD_SIZE }, (_, col) => ({
-            row, col, isMine: false, isRevealed: false, isFlagged: false, adjacentMines: 0, justRevealed: false
+    return Array.from({ length: currentBoardSize }, (_, row) => (
+        Array.from({ length: currentBoardSize }, (_, col) => ({
+            row,
+            col,
+            isMine: false,
+            isRevealed: false,
+            isFlagged: false,
+            adjacentMines: 0,
+            justRevealed: false
         }))
     ));
 }
 
 function clearRevealHighlights(shouldRender = false) {
     gameBoard.forEach((row) => {
-        row.forEach((cell) => { cell.justRevealed = false; });
+        row.forEach((cell) => {
+            cell.justRevealed = false;
+        });
     });
     if (shouldRender) renderBoard();
 }
@@ -86,9 +145,9 @@ function getSafeZone(firstRow, firstCol) {
 function placeMines(firstRow, firstCol) {
     let minesPlaced = 0;
     const safeZone = getSafeZone(firstRow, firstCol);
-    while (minesPlaced < TOTAL_MINES) {
-        const row = Math.floor(Math.random() * BOARD_SIZE);
-        const col = Math.floor(Math.random() * BOARD_SIZE);
+    while (minesPlaced < currentTotalMines) {
+        const row = Math.floor(Math.random() * currentBoardSize);
+        const col = Math.floor(Math.random() * currentBoardSize);
         const cell = getCell(row, col);
         if (!cell || cell.isMine || safeZone.has(`${row}-${col}`)) continue;
         cell.isMine = true;
@@ -96,23 +155,31 @@ function placeMines(firstRow, firstCol) {
     }
     gameBoard.forEach((row) => {
         row.forEach((cell) => {
-            cell.adjacentMines = cell.isMine ? 0 : getNeighbors(cell.row, cell.col).filter((n) => n.isMine).length;
+            cell.adjacentMines = cell.isMine ? 0 : getNeighbors(cell.row, cell.col).filter((neighbor) => neighbor.isMine).length;
         });
     });
 }
 
 export function updateCounters() {
     const { mineCountDisplay, timerDisplay } = dom();
-    if (mineCountDisplay) mineCountDisplay.textContent = String(TOTAL_MINES - flagsPlaced);
-    if (timerDisplay) timerDisplay.textContent = String(timer);
+    if (mineCountDisplay) mineCountDisplay.textContent = String(currentTotalMines - flagsPlaced);
+    if (timerDisplay) timerDisplay.textContent = formatTenthsTimer(timer);
 }
 
 export function getMinesweeperRulesText() {
-    return "Clique sur une case pour révéler le récif. Les chiffres indiquent combien de mines touchent la case. Clique droit pour poser un drapeau et ouvre toutes les cases sûres pour gagner.";
+    return 'Clique sur une case pour r\u00e9v\u00e9ler le r\u00e9cif. Les chiffres indiquent combien de mines touchent la case. Clique droit pour poser un drapeau et ouvre toutes les cases s\u00fbres pour gagner.';
 }
 
 export function renderMinesweeperMenu() {
-    const { minesweeperMenuOverlay, minesweeperTable, minesweeperMenuEyebrow, minesweeperMenuTitle, minesweeperMenuText, minesweeperMenuActionButton, minesweeperMenuRulesButton } = dom();
+    const {
+        minesweeperMenuOverlay,
+        minesweeperTable,
+        minesweeperMenuEyebrow,
+        minesweeperMenuTitle,
+        minesweeperMenuText,
+        minesweeperMenuActionButton,
+        minesweeperMenuRulesButton
+    } = dom();
     if (!minesweeperMenuOverlay || !minesweeperTable) return;
 
     syncGameMenuOverlayBounds(minesweeperMenuOverlay, minesweeperTable);
@@ -124,11 +191,26 @@ export function renderMinesweeperMenu() {
     if (!minesweeperMenuVisible) return;
 
     const hasResult = Boolean(minesweeperMenuResult);
-    if (minesweeperMenuEyebrow) minesweeperMenuEyebrow.textContent = minesweeperMenuShowingRules ? 'R\u00e8gles' : (hasResult ? minesweeperMenuResult.eyebrow : 'Champ de mines du r\u00e9cif');
-    if (minesweeperMenuTitle) minesweeperMenuTitle.textContent = minesweeperMenuShowingRules ? 'Rappel rapide' : (hasResult ? minesweeperMenuResult.title : 'D\u00e9mineur');
-    if (minesweeperMenuText) minesweeperMenuText.textContent = minesweeperMenuShowingRules ? getMinesweeperRulesText() : (hasResult ? minesweeperMenuResult.text : 'Rep\u00e8re les zones s\u00fbres du r\u00e9cif, pose tes drapeaux et traverse sans toucher une mine.');
-    if (minesweeperMenuActionButton) minesweeperMenuActionButton.textContent = minesweeperMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
-    if (minesweeperMenuRulesButton) { minesweeperMenuRulesButton.textContent = 'R\u00e8gles'; minesweeperMenuRulesButton.hidden = minesweeperMenuShowingRules; }
+    if (minesweeperMenuEyebrow) {
+        minesweeperMenuEyebrow.textContent = minesweeperMenuShowingRules ? 'R\u00e8gles' : (hasResult ? minesweeperMenuResult.eyebrow : 'Champ de mines du r\u00e9cif');
+    }
+    if (minesweeperMenuTitle) {
+        minesweeperMenuTitle.textContent = minesweeperMenuShowingRules ? 'Rappel rapide' : (hasResult ? minesweeperMenuResult.title : 'D\u00e9mineur');
+    }
+    if (minesweeperMenuText) {
+        minesweeperMenuText.textContent = minesweeperMenuShowingRules
+            ? getMinesweeperRulesText()
+            : (hasResult ? minesweeperMenuResult.text : 'Rep\u00e8re les zones s\u00fbres du r\u00e9cif, pose tes drapeaux et traverse sans toucher une mine.');
+    }
+    if (minesweeperMenuActionButton) {
+        minesweeperMenuActionButton.textContent = minesweeperMenuShowingRules ? 'Retour' : (hasResult ? 'Relancer la partie' : 'Lancer la partie');
+    }
+    if (minesweeperMenuRulesButton) {
+        minesweeperMenuRulesButton.textContent = 'R\u00e8gles';
+        minesweeperMenuRulesButton.hidden = minesweeperMenuShowingRules;
+    }
+
+    renderMinesweeperGridSizeButtons();
 }
 
 export function closeMinesweeperMenu() {
@@ -173,10 +255,10 @@ function updateRestartButtonLabel() {
 function startTimer() {
     if (timerInterval) return;
     timerInterval = window.setInterval(() => {
-        timer += 1;
+        timer += 100;
         const { timerDisplay } = dom();
-        if (timerDisplay) timerDisplay.textContent = String(timer);
-    }, 1000);
+        if (timerDisplay) timerDisplay.textContent = formatTenthsTimer(timer);
+    }, 100);
 }
 
 function stopTimer() {
@@ -187,6 +269,7 @@ function stopTimer() {
 }
 
 export function initializeGame() {
+    syncCurrentMinesweeperPreset();
     stopTimer();
     gameBoard = createEmptyBoard();
     flagsPlaced = 0;
@@ -201,7 +284,7 @@ export function initializeGame() {
     minesweeperMenuShowingRules = false;
     minesweeperMenuClosing = false;
     minesweeperMenuEntering = false;
-    if (minesweeperHelpText) minesweeperHelpText.textContent = 'Clic gauche pour révéler. Clic droit pour poser un drapeau.';
+    if (minesweeperHelpText) minesweeperHelpText.textContent = 'Clic gauche pour r\u00e9v\u00e9ler. Clic droit pour poser un drapeau.';
     updateRestartButtonLabel();
     updateCounters();
     renderBoard();
@@ -210,7 +293,9 @@ export function initializeGame() {
 
 function revealAllMines(explodedCell = null) {
     gameBoard.forEach((row) => {
-        row.forEach((cell) => { if (cell.isMine) cell.isRevealed = true; });
+        row.forEach((cell) => {
+            if (cell.isMine) cell.isRevealed = true;
+        });
     });
     if (explodedCell) explodedCell.isExploded = true;
 }
@@ -239,15 +324,17 @@ function checkWin() {
     stopTimer();
     updateRestartButtonLabel();
     gameBoard.forEach((row) => {
-        row.forEach((cell) => { if (cell.isMine && !cell.isFlagged) cell.isFlagged = true; });
+        row.forEach((cell) => {
+            if (cell.isMine && !cell.isFlagged) cell.isFlagged = true;
+        });
     });
-    flagsPlaced = TOTAL_MINES;
+    flagsPlaced = currentTotalMines;
     updateCounters();
     renderBoard();
     revealMinesweeperOutcomeMenu(
-        'Récif traversé',
-        `Toutes les zones sûres ont été dégagées en ${timer} secondes.`,
-        'Traversée réussie'
+        'R\u00e9cif travers\u00e9',
+        `Toutes les zones s\u00fbres ont \u00e9t\u00e9 d\u00e9gag\u00e9es en ${formatTenthsTimer(timer)}.`,
+        'Travers\u00e9e r\u00e9ussie'
     );
 }
 
@@ -255,7 +342,7 @@ export function toggleFlag(row, col) {
     if (gameFinished) return;
     const cell = getCell(row, col);
     if (!cell || cell.isRevealed) return;
-    if (!cell.isFlagged && flagsPlaced >= TOTAL_MINES) return;
+    if (!cell.isFlagged && flagsPlaced >= currentTotalMines) return;
     clearRevealHighlights();
     cell.isFlagged = !cell.isFlagged;
     flagsPlaced += cell.isFlagged ? 1 : -1;
@@ -293,9 +380,9 @@ export function revealCell(row, col) {
         }
         renderBoard();
         revealMinesweeperOutcomeMenu(
-            'Mine déclenchée',
-            `La traversée s'arrête après ${timer} secondes. Repars avec un nouveau tracé.`,
-            'Récif en alerte'
+            'Mine d\u00e9clench\u00e9e',
+            `La travers\u00e9e s'arr\u00eate apr\u00e8s ${formatTenthsTimer(timer)}. Repars avec un nouveau trac\u00e9.`,
+            'R\u00e9cif en alerte'
         );
         return;
     }
@@ -315,13 +402,17 @@ export function revealCell(row, col) {
     }
 
     renderBoard();
-    window.setTimeout(() => { clearRevealHighlights(); }, 120);
+    window.setTimeout(() => {
+        clearRevealHighlights();
+    }, 120);
     checkWin();
 }
 
 export function renderBoard() {
     const { minesweeperBoard } = dom();
     if (!minesweeperBoard) return;
+
+    minesweeperBoard.style.setProperty('--minesweeper-size', String(currentBoardSize));
     minesweeperBoard.innerHTML = gameBoard.map((row) => row.map((cell) => {
         const classes = ['minesweeper-cell'];
         let label = '';
@@ -366,6 +457,16 @@ export function renderBoard() {
     }).join('')).join('');
 }
 
+export function setMinesweeperGridSize(nextSize) {
+    const normalizedSize = normalizeMinesweeperGridSize(nextSize);
+    if (normalizedSize === currentBoardSize) return;
+
+    currentBoardSize = normalizedSize;
+    syncCurrentMinesweeperPreset();
+    persistMinesweeperGridSize();
+    initializeGame();
+}
+
 export function setMinesweeperMenuVisible(v) { minesweeperMenuVisible = Boolean(v); }
 export function setMinesweeperMenuShowingRules(v) { minesweeperMenuShowingRules = Boolean(v); }
 export function getMinesweeperMenuVisible() { return minesweeperMenuVisible; }
@@ -374,3 +475,4 @@ export function getMinesweeperGameFinished() { return gameFinished; }
 export function getMinesweeperMenuShowingRules() { return minesweeperMenuShowingRules; }
 export function getMinesweeperMenuClosing() { return minesweeperMenuClosing; }
 export function isMinesweeperInitialized() { return gameBoard.length > 0; }
+export function getMinesweeperGridSize() { return currentBoardSize; }

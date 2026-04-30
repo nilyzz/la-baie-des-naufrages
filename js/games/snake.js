@@ -1,20 +1,30 @@
-// Game module — Snake (Serpent de mer).
-// Extracted verbatim from script.js during the ES-modules migration.
+// Game module - Snake (Serpent de mer).
+// Extracted from script.js during the ES-modules migration.
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 import { closeGameOverModal } from '../core/modals.js';
 
-export const SNAKE_SIZE = 14;
+export const SNAKE_SIZE = 13;
 export const SNAKE_TICK_MS = 165;
 export const SNAKE_BEST_KEY = 'baie-des-naufrages-snake-best';
+export const SNAKE_GRID_SIZE_KEY = 'baie-des-naufrages-snake-grid-size';
+export const SNAKE_BEST_BY_SIZE_KEY = 'baie-des-naufrages-snake-best-by-size';
+export const SNAKE_GRID_SIZES = [10, 13, 16];
+
+const SNAKE_LEGACY_GRID_SIZE_MAP = {
+    15: 13,
+    20: 16
+};
 
 let snake = [];
 let snakeDirection = { x: 1, y: 0 };
 let snakeNextDirection = { x: 1, y: 0 };
 let snakeFoods = [];
 let snakeScore = 0;
-let snakeBestScore = (typeof window !== 'undefined' ? Number(window.localStorage.getItem(SNAKE_BEST_KEY)) : 0) || 0;
+let snakeGridSize = loadSnakeGridSize();
+let snakeBestScoresBySize = loadSnakeBestScores();
+let snakeBestScore = getSnakeBestScoreForSize(snakeGridSize);
 let snakeInterval = null;
 let snakeRunning = false;
 let snakeJustAte = false;
@@ -43,8 +53,101 @@ function dom() {
         snakeMenuTitle: $('snakeMenuTitle'),
         snakeMenuText: $('snakeMenuText'),
         snakeMenuActionButton: $('snakeMenuActionButton'),
-        snakeMenuRulesButton: $('snakeMenuRulesButton')
+        snakeMenuRulesButton: $('snakeMenuRulesButton'),
+        snakeGridSizePicker: $('snakeGridSizePicker'),
+        snakeGridSizeButtons: document.querySelectorAll('[data-snake-grid-size]')
     };
+}
+
+function normalizeSnakeGridSize(value) {
+    const numericValue = Number.parseInt(value, 10);
+    if (SNAKE_GRID_SIZES.includes(numericValue)) return numericValue;
+    return SNAKE_LEGACY_GRID_SIZE_MAP[numericValue] || SNAKE_SIZE;
+}
+
+function createDefaultSnakeBestScores() {
+    return Object.fromEntries(SNAKE_GRID_SIZES.map((size) => [String(size), 0]));
+}
+
+function loadSnakeGridSize() {
+    if (typeof window === 'undefined') return SNAKE_SIZE;
+    return normalizeSnakeGridSize(window.localStorage.getItem(SNAKE_GRID_SIZE_KEY));
+}
+
+function loadSnakeBestScores() {
+    const scores = createDefaultSnakeBestScores();
+
+    if (typeof window === 'undefined') return scores;
+
+    try {
+        const parsed = JSON.parse(window.localStorage.getItem(SNAKE_BEST_BY_SIZE_KEY) || 'null');
+        if (parsed && typeof parsed === 'object') {
+            Object.entries(parsed).forEach(([rawSize, rawScore]) => {
+                const nextSize = normalizeSnakeGridSize(rawSize);
+                const nextScore = Number(rawScore);
+                if (Number.isFinite(nextScore) && nextScore >= 0) {
+                    const key = String(nextSize);
+                    scores[key] = Math.max(scores[key] || 0, Math.floor(nextScore));
+                }
+            });
+        }
+    } catch {
+        // Ignore malformed persisted data and keep defaults.
+    }
+
+    const legacyBestScore = Number(window.localStorage.getItem(SNAKE_BEST_KEY));
+    if (Number.isFinite(legacyBestScore) && legacyBestScore > scores[String(SNAKE_SIZE)]) {
+        scores[String(SNAKE_SIZE)] = Math.floor(legacyBestScore);
+    }
+
+    return scores;
+}
+
+function getSnakeBestScoreForSize(size) {
+    return snakeBestScoresBySize[String(normalizeSnakeGridSize(size))] || 0;
+}
+
+function persistSnakeGridSize() {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(SNAKE_GRID_SIZE_KEY, String(snakeGridSize));
+}
+
+function persistSnakeBestScores() {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(SNAKE_BEST_BY_SIZE_KEY, JSON.stringify(snakeBestScoresBySize));
+    window.localStorage.setItem(SNAKE_BEST_KEY, String(getSnakeBestScoreForSize(SNAKE_SIZE)));
+}
+
+function syncSnakeBestScore() {
+    snakeBestScore = getSnakeBestScoreForSize(snakeGridSize);
+}
+
+function updateSnakeBestScore(nextScore) {
+    if (nextScore <= snakeBestScore) return;
+    snakeBestScore = nextScore;
+    snakeBestScoresBySize[String(snakeGridSize)] = nextScore;
+    persistSnakeBestScores();
+}
+
+function resetSnakeBoardElements() {
+    snakeOverlayLayer = null;
+    snakeSegmentElements = [];
+    snakeFoodElements = new Map();
+}
+
+function renderSnakeGridSizeButtons() {
+    const { snakeGridSizePicker, snakeGridSizeButtons } = dom();
+
+    if (snakeGridSizePicker) {
+        snakeGridSizePicker.hidden = snakeMenuShowingRules;
+    }
+
+    snakeGridSizeButtons.forEach((button) => {
+        const buttonSize = normalizeSnakeGridSize(button.dataset.snakeGridSize);
+        const isActive = buttonSize === snakeGridSize;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
 }
 
 export function stopSnake() {
@@ -56,11 +159,19 @@ export function stopSnake() {
 }
 
 export function getSnakeRulesText() {
-    return 'Utilise les flèches ou ZQSD pour tourner. Chaque lanterne ramassée allonge le serpent. Évite les bords et ta propre queue pour garder le cap.';
+    return 'Utilise les fl\u00e8ches ou ZQSD pour tourner. Chaque lanterne ramass\u00e9e allonge le serpent. \u00c9vite les bords et ta propre queue pour garder le cap.';
 }
 
 export function renderSnakeMenu() {
-    const { snakeMenuOverlay, snakeTable, snakeMenuEyebrow, snakeMenuTitle, snakeMenuText, snakeMenuActionButton, snakeMenuRulesButton } = dom();
+    const {
+        snakeMenuOverlay,
+        snakeTable,
+        snakeMenuEyebrow,
+        snakeMenuTitle,
+        snakeMenuText,
+        snakeMenuActionButton,
+        snakeMenuRulesButton
+    } = dom();
     if (!snakeMenuOverlay || !snakeTable) return;
 
     syncGameMenuOverlayBounds(snakeMenuOverlay, snakeTable);
@@ -91,6 +202,8 @@ export function renderSnakeMenu() {
         snakeMenuRulesButton.textContent = 'R\u00e8gles';
         snakeMenuRulesButton.hidden = snakeMenuShowingRules;
     }
+
+    renderSnakeGridSizeButtons();
 }
 
 export function closeSnakeMenu() {
@@ -125,7 +238,7 @@ export function updateSnakeHud() {
     const { snakeScoreDisplay, snakeBestScoreDisplay, snakeStartButton } = dom();
     if (snakeScoreDisplay) snakeScoreDisplay.textContent = String(snakeScore);
     if (snakeBestScoreDisplay) snakeBestScoreDisplay.textContent = String(snakeBestScore);
-    if (snakeStartButton) snakeStartButton.textContent = snakeRunning ? 'Changer de cap' : 'Lancer la traversée';
+    if (snakeStartButton) snakeStartButton.textContent = snakeRunning ? 'Changer de cap' : 'Lancer la travers\u00e9e';
 }
 
 export function queueSnakeDirectionInput(nextDirection) {
@@ -145,8 +258,8 @@ export function queueSnakeDirectionInput(nextDirection) {
 
 function getRandomSnakeFood(existingFoods = []) {
     const freeCells = [];
-    for (let row = 0; row < SNAKE_SIZE; row += 1) {
-        for (let col = 0; col < SNAKE_SIZE; col += 1) {
+    for (let row = 0; row < snakeGridSize; row += 1) {
+        for (let col = 0; col < snakeGridSize; col += 1) {
             const occupiedBySnake = snake.some((segment) => segment.row === row && segment.col === col);
             const occupiedByFood = existingFoods.some((food) => food.row === row && food.col === col);
             if (!occupiedBySnake && !occupiedByFood) {
@@ -168,19 +281,21 @@ function refillSnakeFoods() {
 
 function ensureSnakeBoard() {
     const { snakeBoard } = dom();
-    snakeBoard?.style.setProperty('--snake-size', String(SNAKE_SIZE));
+    snakeBoard?.style.setProperty('--snake-size', String(snakeGridSize));
 
     if (snakeOverlayLayer) {
         const grid = snakeBoard?.querySelector('.snake-grid');
-        const expectedCells = SNAKE_SIZE * SNAKE_SIZE;
+        const expectedCells = snakeGridSize * snakeGridSize;
         if (grid?.children.length === expectedCells) return;
     }
 
+    resetSnakeBoardElements();
+
     const grid = document.createElement('div');
     grid.className = 'snake-grid';
-    grid.innerHTML = Array.from({ length: SNAKE_SIZE * SNAKE_SIZE }, (_, index) => {
-        const row = Math.floor(index / SNAKE_SIZE);
-        const col = index % SNAKE_SIZE;
+    grid.innerHTML = Array.from({ length: snakeGridSize * snakeGridSize }, (_, index) => {
+        const row = Math.floor(index / snakeGridSize);
+        const col = index % snakeGridSize;
         const classes = ['snake-bg-cell'];
         if ((row + col) % 2 === 1) classes.push('snake-bg-cell-alt');
         return `<div class="${classes.join(' ')}" aria-hidden="true"></div>`;
@@ -202,7 +317,7 @@ function getSnakeGeometry() {
     const gap = parseFloat(styles.getPropertyValue('--snake-gap')) || 4;
     const padding = parseFloat(styles.getPropertyValue('--snake-padding')) || 10;
     const innerSize = snakeBoard.clientWidth - (padding * 2);
-    const cellSize = (innerSize - (gap * (SNAKE_SIZE - 1))) / SNAKE_SIZE;
+    const cellSize = (innerSize - (gap * (snakeGridSize - 1))) / snakeGridSize;
     return { gap, padding, cellSize };
 }
 
@@ -272,13 +387,14 @@ export function renderSnake() {
 }
 
 export function initializeSnake() {
-    const centerRow = Math.floor(SNAKE_SIZE / 2);
-    const centerCol = Math.floor(SNAKE_SIZE / 2);
+    const centerRow = Math.floor(snakeGridSize / 2);
+    const centerCol = Math.floor(snakeGridSize / 2);
     stopSnake();
     snakeMenuResult = null;
     snakeMenuShowingRules = false;
     snakeMenuClosing = false;
     snakeMenuEntering = false;
+    syncSnakeBestScore();
     snakeFoodElements.forEach((element) => element.remove());
     snakeFoodElements.clear();
     snake = [
@@ -304,15 +420,12 @@ export function initializeSnake() {
 
 function finishSnakeRun() {
     stopSnake();
-    if (snakeScore > snakeBestScore) {
-        snakeBestScore = snakeScore;
-        if (typeof window !== 'undefined') window.localStorage.setItem(SNAKE_BEST_KEY, String(snakeBestScore));
-    }
+    updateSnakeBestScore(snakeScore);
     updateSnakeHud();
     revealSnakeOutcomeMenu(
-        'Coque heurtée',
-        `Le serpent a percuté la coque. Score final : ${snakeScore}.`,
-        'Fin de traversée'
+        'Coque heurt\u00e9e',
+        `Le serpent a percut\u00e9 la coque. Score final : ${snakeScore}.`,
+        'Fin de travers\u00e9e'
     );
 }
 
@@ -335,7 +448,7 @@ function moveSnake() {
     const eatenFoodIndex = snakeFoods.findIndex((food) => food.row === nextHead.row && food.col === nextHead.col);
     const willGrow = eatenFoodIndex >= 0;
 
-    const hitsWall = nextHead.row < 0 || nextHead.row >= SNAKE_SIZE || nextHead.col < 0 || nextHead.col >= SNAKE_SIZE;
+    const hitsWall = nextHead.row < 0 || nextHead.row >= snakeGridSize || nextHead.col < 0 || nextHead.col >= snakeGridSize;
     const bodyToCheck = willGrow ? snake : snake.slice(0, -1);
     const hitsSelf = bodyToCheck.some((segment) => segment.row === nextHead.row && segment.col === nextHead.col);
 
@@ -353,16 +466,13 @@ function moveSnake() {
         snakeJustAte = true;
 
         if (!snakeFoods.length) {
-            if (snakeScore > snakeBestScore) {
-                snakeBestScore = snakeScore;
-                if (typeof window !== 'undefined') window.localStorage.setItem(SNAKE_BEST_KEY, String(snakeBestScore));
-            }
+            updateSnakeBestScore(snakeScore);
             stopSnake();
             updateSnakeHud();
             revealSnakeOutcomeMenu(
-                'Mer nettoyée',
-                `Toutes les lanternes ont été ramassées. Score final : ${snakeScore}.`,
-                'Traversée parfaite'
+                'Mer nettoy\u00e9e',
+                `Toutes les lanternes ont \u00e9t\u00e9 ramass\u00e9es. Score final : ${snakeScore}.`,
+                'Travers\u00e9e parfaite'
             );
             return;
         }
@@ -382,9 +492,20 @@ export function startSnake() {
     snakeInterval = window.setInterval(moveSnake, SNAKE_TICK_MS);
 }
 
+export function setSnakeGridSize(nextSize) {
+    const normalizedSize = normalizeSnakeGridSize(nextSize);
+    if (normalizedSize === snakeGridSize) return;
+
+    snakeGridSize = normalizedSize;
+    syncSnakeBestScore();
+    persistSnakeGridSize();
+    initializeSnake();
+}
+
 export function setSnakeMenuVisible(v) { snakeMenuVisible = Boolean(v); }
 export function setSnakeMenuShowingRules(v) { snakeMenuShowingRules = Boolean(v); }
 export function getSnakeMenuVisible() { return snakeMenuVisible; }
 export function getSnakeMenuClosing() { return snakeMenuClosing; }
 export function getSnakeRunning() { return snakeRunning; }
 export function getSnakeMenuShowingRules() { return snakeMenuShowingRules; }
+export function getSnakeGridSize() { return snakeGridSize; }

@@ -2714,7 +2714,16 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .minesweeper-topbar:has(#restartGameButton[hidden]),
 .snake-topbar:has(#snakeStartButton[hidden]),
-.airhockey-topbar:has(#airHockeyStartButton[hidden]) {
+.airhockey-topbar:has(#airHockeyStartButton[hidden]),
+.battleship-topbar:has(#battleshipRestartButton[hidden]),
+.tetris-topbar:has(#tetrisStartButton[hidden]),
+.pacman-topbar:has(#pacmanStartButton[hidden]),
+.solitaire-topbar:has(#solitaireRestartButton[hidden]),
+.flowfree-topbar:has(#flowFreeRestartButton[hidden]),
+.magicsort-topbar:has(#magicSortRestartButton[hidden]),
+.candycrush-topbar:has(#candyCrushRestartButton[hidden]),
+.harborrun-topbar:has(#harborRunStartButton[hidden]),
+.stacker-topbar:has(#stackerStartButton[hidden]) {
     grid-template-columns: repeat(2, minmax(150px, 180px));
 }
 
@@ -2722,15 +2731,23 @@ body:has(#servicesView.view-active) .services-legal-button {
     grid-template-columns: minmax(180px, 220px);
 }
 
+.aim-topbar:has(#aimStartButton[hidden]) {
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+}
+
 .game-2048-topbar:has(#game2048RestartButton[hidden]),
 .tictactoe-topbar:has(#ticTacToeRestartButton[hidden]) {
     grid-template-columns: repeat(2, minmax(150px, 180px));
 }
 
+.rhythm-topbar:has(#rhythmStartButton[hidden]) {
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+}
+
 .minesweeper-table {
     position: relative;
     z-index: 1;
-    width: min(100%, min(56vh, 520px));
+    width: min(100%, min(63vh, 580px));
     margin: 0 auto;
     overflow: hidden;
     border-radius: 22px;
@@ -2806,6 +2823,53 @@ body:has(#servicesView.view-active) .services-legal-button {
     line-height: 1.45;
 }
 
+.minesweeper-grid-size-picker {
+    display: grid;
+    gap: 10px;
+}
+
+.minesweeper-grid-size-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(253, 230, 138, 0.92);
+}
+
+.minesweeper-grid-size-options {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.minesweeper-grid-size-button {
+    min-width: 108px;
+    padding: 12px 16px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.54);
+    border-color: rgba(148, 163, 184, 0.28);
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.minesweeper-grid-size-button:hover {
+    transform: translateY(-1px);
+}
+
+.minesweeper-grid-size-button.is-active {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.94), rgba(59, 130, 246, 0.9));
+    border-color: rgba(253, 224, 71, 0.4);
+    box-shadow: 0 16px 28px -24px rgba(245, 158, 11, 0.72);
+}
+
+.minesweeper-grid-size-name {
+    font-size: 0.94rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
 .minesweeper-menu-actions {
     display: flex;
     gap: 12px;
@@ -2814,8 +2878,9 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .minesweeper-board {
+    --minesweeper-size: 13;
     display: grid;
-    grid-template-columns: repeat(14, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--minesweeper-size), minmax(0, 1fr));
     gap: 3px;
     padding: 7px;
     border-radius: 16px;
@@ -3057,7 +3122,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 .snake-table {
     position: relative;
     z-index: 1;
-    width: min(100%, min(62vh, 580px));
+    width: min(100%, min(67vh, 610px));
     margin: 0 auto;
     overflow: hidden;
     border-radius: 22px;
@@ -3133,6 +3198,53 @@ body:has(#servicesView.view-active) .services-legal-button {
     line-height: 1.45;
 }
 
+.snake-grid-size-picker {
+    display: grid;
+    gap: 10px;
+}
+
+.snake-grid-size-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(191, 219, 254, 0.92);
+}
+
+.snake-grid-size-options {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.snake-grid-size-button {
+    min-width: 108px;
+    padding: 12px 16px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.54);
+    border-color: rgba(148, 163, 184, 0.28);
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.snake-grid-size-button:hover {
+    transform: translateY(-1px);
+}
+
+.snake-grid-size-button.is-active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.94), rgba(15, 118, 110, 0.92));
+    border-color: rgba(191, 219, 254, 0.38);
+    box-shadow: 0 16px 28px -24px rgba(14, 165, 233, 0.72);
+}
+
+.snake-grid-size-name {
+    font-size: 0.94rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
 .snake-menu-actions {
     display: flex;
     gap: 12px;
@@ -3143,7 +3255,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 .snake-board {
     --snake-gap: 3px;
     --snake-padding: 6px;
-    --snake-size: 14;
+    --snake-size: 13;
     width: 100%;
     aspect-ratio: 1 / 1;
     margin: 0;
@@ -6229,12 +6341,106 @@ body:has(#servicesView.view-active) .services-legal-button {
     top: -14px;
 }
 
+.tetris-stage {
+    position: relative;
+    z-index: 1;
+    min-height: 0;
+}
+
 .tetris-table {
     position: relative;
     z-index: 1;
     width: min(100%, 320px);
     margin: 0 auto;
     border-radius: 20px;
+}
+
+.tetris-next-panel {
+    position: absolute;
+    top: 14px;
+    left: calc(50% + (var(--tetris-table-width, 320px) / 2) + 18px);
+    width: 146px;
+    padding: 12px;
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at top, rgba(148, 163, 184, 0.2), transparent 42%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.9));
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.9);
+}
+
+.tetris-next-title {
+    margin: 0 0 10px;
+    font-size: 0.69rem;
+    font-weight: 800;
+    white-space: nowrap;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(226, 232, 240, 0.92);
+}
+
+.tetris-next-queue {
+    display: grid;
+    gap: 10px;
+}
+
+.tetris-next-item {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.46);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.tetris-next-label {
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(191, 219, 254, 0.88);
+}
+
+.tetris-next-preview {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+    aspect-ratio: 1 / 1;
+}
+
+.tetris-next-cell {
+    border-radius: 6px;
+    background: rgba(30, 41, 59, 0.78);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.tetris-next-cell.is-filled {
+    background:
+        linear-gradient(180deg, rgba(255, 248, 220, 0.18), transparent 32%),
+        linear-gradient(135deg, rgba(120, 53, 15, 0.28), rgba(69, 26, 3, 0.08)),
+        var(--tetris-color);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 0 0 2px rgba(120, 53, 15, 0.34);
+}
+
+.tetris-next-cell.is-filled::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    background:
+        linear-gradient(45deg, transparent 42%, rgba(245, 158, 11, 0.22) 42% 48%, transparent 48%) center / 100% 100% no-repeat,
+        linear-gradient(-45deg, transparent 42%, rgba(245, 158, 11, 0.22) 42% 48%, transparent 48%) center / 100% 100% no-repeat,
+        linear-gradient(180deg, transparent 46%, rgba(69, 26, 3, 0.18) 46% 54%, transparent 54%) center / 100% 100% no-repeat,
+        linear-gradient(90deg, transparent 46%, rgba(69, 26, 3, 0.18) 46% 54%, transparent 54%) center / 100% 100% no-repeat;
+}
+
+.tetris-stage.is-menu-open .tetris-next-panel {
+    filter: blur(7px) saturate(0.86);
+    pointer-events: none;
+    user-select: none;
 }
 
 .tetris-table.is-menu-open > :not(.tetris-menu-overlay) {
@@ -6313,6 +6519,8 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .tetris-board {
+    position: relative;
+    overflow: hidden;
     width: 100%;
     aspect-ratio: 10 / 18;
     margin: 0 auto;
@@ -6326,12 +6534,39 @@ body:has(#servicesView.view-active) .services-legal-button {
         linear-gradient(180deg, rgba(59, 130, 246, 0.12), rgba(15, 23, 42, 0.24)),
         rgba(15, 23, 42, 0.72);
     border: 1px solid rgba(99, 102, 241, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.tetris-board::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 50% -10%, rgba(96, 165, 250, 0.16), transparent 36%),
+        linear-gradient(120deg, transparent 0 36%, rgba(148, 197, 255, 0.08) 46%, transparent 58% 100%);
+    transform: translate3d(-10%, 0, 0);
+    opacity: 0.58;
+}
+
+.tetris-board.is-live::before {
+    animation: tetrisBoardDrift 4.6s ease-in-out infinite alternate;
+}
+
+.tetris-board.is-piece-spawning {
+    animation: tetrisBoardSpawnPulse 420ms cubic-bezier(0.22, 0.82, 0.24, 1);
+}
+
+.tetris-board.is-line-clearing {
+    animation: tetrisBoardLineFlash 520ms ease-out;
 }
 
 .tetris-cell {
+    position: relative;
     border-radius: 8px;
     background: rgba(30, 41, 59, 0.62);
     border: 1px solid rgba(148, 163, 184, 0.08);
+    transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
 }
 
 .tetris-cell.is-filled {
@@ -6342,6 +6577,14 @@ body:has(#servicesView.view-active) .services-legal-button {
     box-shadow:
         inset 0 0 0 1px rgba(255, 255, 255, 0.08),
         inset 0 0 0 2px rgba(120, 53, 15, 0.34);
+}
+
+.tetris-cell.is-active-piece {
+    filter: saturate(1.12) brightness(1.06);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 0 0 2px rgba(120, 53, 15, 0.34),
+        0 0 14px rgba(96, 165, 250, 0.2);
 }
 
 .tetris-cell.is-filled::before {
@@ -6357,6 +6600,171 @@ body:has(#servicesView.view-active) .services-legal-button {
         linear-gradient(90deg, transparent 46%, rgba(69, 26, 3, 0.18) 46% 54%, transparent 54%) center / 100% 100% no-repeat;
     opacity: 0.95;
     pointer-events: none;
+}
+
+.tetris-cell.is-clearing-row {
+    animation: tetrisLineCellBurst 340ms cubic-bezier(0.2, 0.86, 0.24, 1) forwards;
+}
+
+.tetris-clear-particle {
+    position: absolute;
+    left: var(--tetris-particle-left);
+    top: var(--tetris-particle-top);
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.45) 35%, rgba(250, 204, 21, 0.9) 55%, rgba(251, 146, 60, 0.2) 100%);
+    box-shadow: 0 0 14px rgba(250, 204, 21, 0.42);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    animation: tetrisClearParticle 360ms ease-out forwards;
+}
+
+.tetris-counter-value.is-updating {
+    animation: tetrisHudPulse 420ms ease-out;
+}
+
+.tetris-next-item {
+    position: relative;
+    overflow: hidden;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.tetris-next-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 0 28%, rgba(255, 255, 255, 0.08) 48%, transparent 68% 100%);
+    transform: translateX(-130%);
+}
+
+.tetris-next-item.is-incoming {
+    border-color: rgba(125, 211, 252, 0.24);
+    box-shadow: 0 14px 24px -22px rgba(56, 189, 248, 0.9);
+    animation: tetrisNextIncoming 1.4s ease-in-out infinite;
+}
+
+.tetris-next-item.is-incoming::after {
+    animation: tetrisNextSweep 1.8s ease-in-out infinite;
+}
+
+@keyframes tetrisBoardDrift {
+    0% {
+        transform: translate3d(-10%, 0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translate3d(10%, 0, 0);
+        opacity: 0.72;
+    }
+}
+
+@keyframes tetrisBoardSpawnPulse {
+    0% {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 0 rgba(56, 189, 248, 0);
+    }
+    45% {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 16px rgba(56, 189, 248, 0.12);
+    }
+    100% {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 0 rgba(56, 189, 248, 0);
+    }
+}
+
+@keyframes tetrisBoardLineFlash {
+    0% {
+        transform: scale(1);
+        filter: saturate(1);
+    }
+    30% {
+        transform: scale(1.008);
+        filter: saturate(1.12) brightness(1.05);
+    }
+    100% {
+        transform: scale(1);
+        filter: saturate(1);
+    }
+}
+
+@keyframes tetrisLineCellBurst {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+        opacity: 1;
+    }
+    45% {
+        transform: scale(1.06);
+        filter: brightness(1.36) saturate(1.3);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.72);
+        filter: brightness(1.55) saturate(0.9);
+        opacity: 0;
+    }
+}
+
+@keyframes tetrisClearParticle {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.4);
+    }
+    18% {
+        opacity: 0.96;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--tetris-particle-drift-x)), calc(-50% + var(--tetris-particle-drift-y))) scale(0.3);
+    }
+}
+
+@keyframes tetrisHudPulse {
+    0% {
+        transform: scale(1);
+        color: var(--primary-color);
+        text-shadow: none;
+    }
+    35% {
+        transform: scale(1.16);
+        color: #93c5fd;
+        text-shadow: 0 0 14px rgba(96, 165, 250, 0.34);
+    }
+    100% {
+        transform: scale(1);
+        color: var(--primary-color);
+        text-shadow: none;
+    }
+}
+
+@keyframes tetrisNextIncoming {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes tetrisNextSweep {
+    0% {
+        transform: translateX(-130%);
+        opacity: 0;
+    }
+    26% {
+        opacity: 0.82;
+    }
+    62% {
+        transform: translateX(130%);
+        opacity: 0.28;
+    }
+    100% {
+        transform: translateX(130%);
+        opacity: 0;
+    }
 }
 
 .pacman-table {
@@ -10533,7 +10941,7 @@ button:hover {
     .minesweeper-board {
         gap: 4px;
         padding: 8px;
-        width: min(100%, min(52vh, 400px));
+        width: min(100%, min(64vh, 510px));
     }
 
     .snake-board {
@@ -10571,6 +10979,21 @@ button:hover {
 
     .mentalmath-form {
         grid-template-columns: 1fr;
+    }
+
+    .tetris-stage {
+        display: grid;
+        gap: 14px;
+    }
+
+    .tetris-next-panel {
+        position: static;
+        width: min(100%, 320px);
+        margin: 0 auto;
+    }
+
+    .tetris-next-queue {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
@@ -13806,6 +14229,10 @@ button:hover {
     background: rgba(15, 23, 42, 0.7);
     color: var(--text-color);
     border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.games-panel > p[class$="-help"] {
+    display: none;
 }
 
 .blockblast-help,

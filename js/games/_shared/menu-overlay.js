@@ -29,9 +29,12 @@ export function syncGameMenuOverlayBounds(overlayElement, hostElement) {
         return;
     }
 
+    const cardRect = cardElement.getBoundingClientRect();
+    const hostRect = hostElement.getBoundingClientRect();
+
     overlayElement.style.inset = 'auto';
-    overlayElement.style.top = `${-hostElement.offsetTop}px`;
-    overlayElement.style.left = `${-hostElement.offsetLeft}px`;
+    overlayElement.style.top = `${cardRect.top - hostRect.top}px`;
+    overlayElement.style.left = `${cardRect.left - hostRect.left}px`;
     overlayElement.style.width = `${cardElement.clientWidth}px`;
     overlayElement.style.height = `${cardElement.clientHeight}px`;
 }

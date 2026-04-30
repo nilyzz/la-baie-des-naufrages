@@ -2,7 +2,7 @@
 // Extracted verbatim from script.js during the ES-modules migration.
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
-import { normalizeBombWord } from '../core/utils.js';
+import { formatTenthsTimer, normalizeBombWord } from '../core/utils.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 import { closeGameOverModal } from '../core/modals.js';
 import {
@@ -258,12 +258,12 @@ export function getBombCurrentPlayer() {
     return bombState?.players?.[bombState.currentPlayerIndex] || null;
 }
 
-export function getBombTimerSecondsLeft() {
+export function getBombTimerMsLeft() {
     if (!bombState?.turnDeadlineAt) {
         return null;
     }
 
-    return Math.max(0, Math.ceil((bombState.turnDeadlineAt - Date.now()) / 1000));
+    return Math.max(0, bombState.turnDeadlineAt - Date.now());
 }
 
 export function maybeOpenBombOutcomeModal() {
@@ -371,14 +371,14 @@ export function renderBomb() {
     const isYourTurn = isLocal
         ? Boolean(currentPlayer && !bombState?.winner)
         : Boolean(currentPlayer?.id && currentPlayer.id === you?.id);
-    const secondsLeft = getBombTimerSecondsLeft();
+    const remainingMs = getBombTimerMsLeft();
     const waitingForReady = isOnline && !getMultiplayerActiveRoom()?.gameLaunched;
     const winner = bombState?.players?.find((player) => player.id === bombState?.winner) || null;
 
     bombSyllableDisplay.textContent = bombState?.currentSyllable?.toUpperCase?.() || '-';
     bombSpotlightSyllable.textContent = bombState?.currentSyllable?.toUpperCase?.() || '-';
     bombTurnDisplay.textContent = currentPlayer?.name || '-';
-    bombTimerDisplay.textContent = secondsLeft === null ? '--' : `${secondsLeft}s`;
+    bombTimerDisplay.textContent = remainingMs === null ? '--' : formatTenthsTimer(remainingMs);
     bombSpotlightPlayer.textContent = winner
         ? `${winner.name} garde son calme jusqu'au bout.`
         : (currentPlayer ? `${currentPlayer.name} doit répondre maintenant.` : "En attente d'équipage");

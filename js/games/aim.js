@@ -8,6 +8,7 @@ import { closeGameOverModal } from '../core/modals.js';
 export const AIM_GRID_SIZE = 6;
 export const AIM_TARGET_COUNT = 5;
 export const AIM_DEFAULT_ROUND_SECONDS = 20;
+export const AIM_TICK_MS = 100;
 export const AIM_HIT_SCORE = 12;
 export const AIM_MISS_SCORE = 5;
 export const AIM_BEST_KEY = 'baie-des-naufrages-aim-best';
@@ -26,8 +27,9 @@ let aimTargets = [];
 let aimScore = 0;
 let aimBestScore = (typeof window !== 'undefined' ? Number(window.localStorage.getItem(AIM_BEST_KEY)) : 0) || 0;
 let aimRoundSeconds = AIM_DEFAULT_ROUND_SECONDS;
-let aimTimeRemaining = AIM_DEFAULT_ROUND_SECONDS;
+let aimTimeRemaining = AIM_DEFAULT_ROUND_SECONDS * 1000;
 let aimRoundRunning = false;
+let aimTimerStarted = false;
 let aimRoundCompleted = false;
 let aimTimerInterval = null;
 let aimHitEffectPosition = null;
@@ -291,12 +293,12 @@ function pickRandomAimPosition(excludedId = null, boardMetrics = getAimBoardMetr
 export function updateAimHud() {
     const { aimScoreDisplay, aimTimerDisplay, aimBestScoreDisplay, aimStartButton, aimDurationButtons } = dom();
     if (aimScoreDisplay) aimScoreDisplay.textContent = String(aimScore);
-    if (aimTimerDisplay) aimTimerDisplay.textContent = String(aimTimeRemaining);
+    if (aimTimerDisplay) aimTimerDisplay.textContent = `${Math.max(0, aimTimeRemaining / 1000).toFixed(1)}s`;
     if (aimBestScoreDisplay) aimBestScoreDisplay.textContent = String(aimBestScore);
     if (aimStartButton) {
         aimStartButton.textContent = aimRoundRunning
-            ? 'Bordee en cours'
-            : (aimCountdownActive ? 'A l abordage...' : 'Nouvelle bordee');
+            ? (aimTimerStarted ? 'Bordee en cours' : 'Tire pour commencer')
+            : 'Nouvelle bordee';
     }
     aimDurationButtons.forEach((button) => {
         button.classList.toggle('is-active', Number(button.dataset.aimDuration) === aimRoundSeconds);
@@ -428,6 +430,7 @@ export function stopAimRound() {
     clearAimCountdownTimers();
     hideAimCountdown();
     aimCountdownActive = false;
+    aimTimerStarted = false;
     aimRoundRunning = false;
     updateAimHud();
 }
@@ -457,19 +460,28 @@ export function startAimRound() {
         return;
     }
 
-    startAimCountdown(() => {
-        aimCountdownActive = false;
-        aimRoundRunning = true;
-        updateAimHud();
+    clearAimCountdownTimers();
+    hideAimCountdown();
+    aimCountdownActive = false;
+    aimTimerStarted = false;
+    aimRoundRunning = true;
+    updateAimHud();
+}
 
-        aimTimerInterval = window.setInterval(() => {
-            aimTimeRemaining -= 1;
-            updateAimHud();
-            if (aimTimeRemaining <= 0) {
-                finishAimRound();
-            }
-        }, 1000);
-    });
+function startAimTimerIfNeeded() {
+    if (!aimRoundRunning || aimRoundCompleted || aimTimeRemaining <= 0 || aimTimerStarted) {
+        return;
+    }
+
+    aimTimerStarted = true;
+    updateAimHud();
+    aimTimerInterval = window.setInterval(() => {
+        aimTimeRemaining = Math.max(0, aimTimeRemaining - AIM_TICK_MS);
+        updateAimHud();
+        if (aimTimeRemaining <= 0) {
+            finishAimRound();
+        }
+    }, AIM_TICK_MS);
 }
 
 export function handleAimTargetHit(targetId) {
@@ -478,6 +490,7 @@ export function handleAimTargetHit(targetId) {
     const target = aimTargets.find((item) => item.id === targetId);
     if (!target) return;
 
+    startAimTimerIfNeeded();
     aimScore += AIM_HIT_SCORE;
     aimHitEffectPosition = {
         x: target.x,
@@ -520,6 +533,7 @@ export function handleAimTargetHit(targetId) {
 
 export function handleAimMiss() {
     if (!aimRoundRunning || aimRoundCompleted || aimTimeRemaining <= 0 || aimCountdownActive) return;
+    startAimTimerIfNeeded();
     aimScore = Math.max(0, aimScore - AIM_MISS_SCORE);
     updateAimHud();
     const { aimBoard } = dom();
@@ -581,7 +595,8 @@ export function initializeAim() {
     aimHitEffectPosition = null;
     aimSpawnEffectPosition = null;
     aimScore = 0;
-    aimTimeRemaining = aimRoundSeconds;
+    aimTimeRemaining = aimRoundSeconds * 1000;
+    aimTimerStarted = false;
     aimRoundCompleted = false;
     aimMenuResult = null;
     aimMenuShowingRules = false;

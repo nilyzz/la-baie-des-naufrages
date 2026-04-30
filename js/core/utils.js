@@ -32,6 +32,14 @@ export function formatMathNumber(value, digits = 6) {
 }
 
 /**
+ * Formats a duration in milliseconds as seconds with tenths, e.g. "12.3s".
+ */
+export function formatTenthsTimer(ms) {
+    const safeMs = Math.max(0, Number(ms) || 0);
+    return `${(safeMs / 1000).toFixed(1)}s`;
+}
+
+/**
  * Normalises a word (or syllable) for the Bombe word-typing game.
  * Drops accents, punctuation, and non-alphanumeric characters, lowercases.
  * Used both for the online (server-normalised) and local game modes.

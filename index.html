@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagmanager.com https://adservice.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://image.tmdb.org https://*.googlesyndication.com https://*.google.com https://googleads.g.doubleclick.net; connect-src 'self' https://la-baie-des-naufrages.onrender.com wss://la-baie-des-naufrages.onrender.com https://api.themoviedb.org; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; font-src 'self'; object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://la-baie-des-naufrages.onrender.com https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagmanager.com https://adservice.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://image.tmdb.org https://*.googlesyndication.com https://*.google.com https://googleads.g.doubleclick.net; connect-src 'self' https://la-baie-des-naufrages.onrender.com wss://la-baie-des-naufrages.onrender.com https://api.themoviedb.org; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; font-src 'self'; object-src 'none'; base-uri 'self';">
     <meta name="multiplayer-server-url" content="https://la-baie-des-naufrages.onrender.com">
     <meta name="google-adsense-account" content="ca-pub-1302716532000899">
     <meta name="description" content="La Baie des naufragés réunit 31 mini-jeux, un catalogue cinéma, des outils de calcul et un piano interactif dans un univers marin original.">
@@ -27,9 +27,9 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.min.css?v=v1-12">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-12">
-    <link rel="preload" as="script" href="/script.min.js?v=v1-12">
+    <link rel="stylesheet" href="style.min.css?v=v1-32">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-32">
+    <link rel="preload" as="script" href="/script.min.js?v=v1-32">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -130,7 +130,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 1.12</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 1.32</span>
                     </p>
                 </form>
             </div>
@@ -729,6 +729,20 @@
                                 <span id="minesweeperMenuEyebrow" class="minesweeper-menu-eyebrow">Champ de mines du récif</span>
                                 <h3 id="minesweeperMenuTitle" class="minesweeper-menu-title">Démineur</h3>
                                 <p id="minesweeperMenuText" class="minesweeper-menu-text">Repère les zones sûres du récif, pose tes drapeaux et traverse sans toucher une mine.</p>
+                                <div id="minesweeperGridSizePicker" class="minesweeper-grid-size-picker" role="group" aria-label="Taille de la grille du Démineur">
+                                    <span class="minesweeper-grid-size-label">Taille de grille</span>
+                                    <div class="minesweeper-grid-size-options">
+                                        <button type="button" class="secondary-button minesweeper-grid-size-button" data-minesweeper-grid-size="10" aria-pressed="false">
+                                            <span class="minesweeper-grid-size-name">Petite</span>
+                                        </button>
+                                        <button type="button" class="secondary-button minesweeper-grid-size-button" data-minesweeper-grid-size="13" aria-pressed="false">
+                                            <span class="minesweeper-grid-size-name">Moyenne</span>
+                                        </button>
+                                        <button type="button" class="secondary-button minesweeper-grid-size-button" data-minesweeper-grid-size="16" aria-pressed="false">
+                                            <span class="minesweeper-grid-size-name">Grande</span>
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="minesweeper-menu-actions">
                                     <button id="minesweeperMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
                                     <button id="minesweeperMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -761,6 +775,20 @@
                                 <span id="snakeMenuEyebrow" class="snake-menu-eyebrow">Serpent de mer</span>
                                 <h3 id="snakeMenuTitle" class="snake-menu-title">Snake</h3>
                                 <p id="snakeMenuText" class="snake-menu-text">Glisse entre les courants, ramasse les lanternes et allonge ton serpent sans heurter la coque.</p>
+                                <div id="snakeGridSizePicker" class="snake-grid-size-picker" role="group" aria-label="Taille de la grille du Snake">
+                                    <span class="snake-grid-size-label">Taille de grille</span>
+                                    <div class="snake-grid-size-options">
+                                        <button type="button" class="secondary-button snake-grid-size-button" data-snake-grid-size="10" aria-pressed="false">
+                                            <span class="snake-grid-size-name">Petite</span>
+                                        </button>
+                                        <button type="button" class="secondary-button snake-grid-size-button" data-snake-grid-size="13" aria-pressed="false">
+                                            <span class="snake-grid-size-name">Moyenne</span>
+                                        </button>
+                                        <button type="button" class="secondary-button snake-grid-size-button" data-snake-grid-size="16" aria-pressed="false">
+                                            <span class="snake-grid-size-name">Grande</span>
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="snake-menu-actions">
                                     <button id="snakeMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
                                     <button id="snakeMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -895,7 +923,7 @@
 
                         <div class="aim-counter-block">
                             <span class="aim-counter-label">Mar&eacute;e</span>
-                            <strong id="aimTimerDisplay" class="aim-counter-value">20</strong>
+                            <strong id="aimTimerDisplay" class="aim-counter-value">20.0s</strong>
                         </div>
 
                         <div class="aim-counter-block">
@@ -1052,19 +1080,25 @@
                     </div>
 
                     <p id="tetrisHelpText" class="tetris-help">Empile les caisses. Flèches ou ZQSD pour bouger, haut ou Z pour pivoter, espace pour tomber.</p>
-                    <div id="tetrisTable" class="tetris-table">
-                        <div id="tetrisMenuOverlay" class="tetris-menu-overlay">
-                            <div class="tetris-menu-card">
-                                <span id="tetrisMenuEyebrow" class="tetris-menu-eyebrow">Cale de cargaison</span>
-                                <h3 id="tetrisMenuTitle" class="tetris-menu-title">Baietris</h3>
-                                <p id="tetrisMenuText" class="tetris-menu-text">Empile les caisses dans la cale du navire sans laisser la pile atteindre le pont.</p>
-                                <div class="tetris-menu-actions">
-                                    <button id="tetrisMenuActionButton" type="button" class="game-menu-primary-button">Lancer la cale</button>
-                                    <button id="tetrisMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                    <div id="tetrisStage" class="tetris-stage">
+                        <div id="tetrisTable" class="tetris-table">
+                            <div id="tetrisMenuOverlay" class="tetris-menu-overlay">
+                                <div class="tetris-menu-card">
+                                    <span id="tetrisMenuEyebrow" class="tetris-menu-eyebrow">Cale de cargaison</span>
+                                    <h3 id="tetrisMenuTitle" class="tetris-menu-title">Baietris</h3>
+                                    <p id="tetrisMenuText" class="tetris-menu-text">Empile les caisses dans la cale du navire sans laisser la pile atteindre le pont.</p>
+                                    <div class="tetris-menu-actions">
+                                        <button id="tetrisMenuActionButton" type="button" class="game-menu-primary-button">Lancer la cale</button>
+                                        <button id="tetrisMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
+                                    </div>
                                 </div>
                             </div>
+                            <div id="tetrisBoard" class="tetris-board" aria-label="Plateau du Baietris"></div>
                         </div>
-                        <div id="tetrisBoard" class="tetris-board" aria-label="Plateau du Baietris"></div>
+                        <aside class="tetris-next-panel" aria-labelledby="tetrisNextTitle">
+                            <p id="tetrisNextTitle" class="tetris-next-title">Prochaines pièces</p>
+                            <div id="tetrisNextQueue" class="tetris-next-queue" aria-label="Aperçu des trois prochaines pièces"></div>
+                        </aside>
                     </div>
                 </div>
 
@@ -2388,8 +2422,8 @@
             applyConsent(initialMode);
         })();
     </script>
-    <script type="module" src="/js/main.bundle.min.js?v=v1-12"></script>
-    <script defer src="script.min.js?v=v1-12"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v1-32"></script>
+    <script defer src="script.min.js?v=v1-32"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

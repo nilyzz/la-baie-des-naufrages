@@ -1,7 +1,7 @@
 // Game module — Sudoku (Carte de navigation).
 // Extracted verbatim from script.js during the ES-modules migration.
 
-import { shuffleArray } from '../core/utils.js';
+import { formatTenthsTimer, shuffleArray } from '../core/utils.js';
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 import { closeGameOverModal } from '../core/modals.js';
@@ -21,7 +21,7 @@ let sudokuFailed = false;
 let sudokuScore = 0;
 let sudokuMistakes = 0;
 let sudokuCombo = 0;
-let sudokuElapsedSeconds = 0;
+let sudokuElapsedMs = 0;
 let sudokuTimerInterval = null;
 let sudokuTimerStarted = false;
 let sudokuFeedbackCell = null;
@@ -71,9 +71,9 @@ export function startSudokuTimer() {
     stopSudokuTimer();
     sudokuTimerStarted = true;
     sudokuTimerInterval = window.setInterval(() => {
-        sudokuElapsedSeconds += 1;
+        sudokuElapsedMs += 100;
         refreshSudokuHud();
-    }, 1000);
+    }, 100);
 }
 
 export function getSudokuDefaultHelpText() {
@@ -179,7 +179,7 @@ export function revealSudokuOutcomeMenu(title, text, eyebrow) {
 function calculateSudokuPoints() {
     const baseScore = getSudokuDifficultyBaseScore();
     const streakMultiplier = 1 + (Math.min(sudokuCombo, 6) * 0.18);
-    const timeMultiplier = Math.max(0.65, 1.45 - (sudokuElapsedSeconds / 240));
+    const timeMultiplier = Math.max(0.65, 1.45 - (sudokuElapsedMs / 240000));
     return Math.round(baseScore * streakMultiplier * timeMultiplier);
 }
 
@@ -340,7 +340,7 @@ export function updateSudokuHud() {
     const { sudokuFilledDisplay, sudokuMistakesDisplay, sudokuTimerDisplay, sudokuDifficultyButton, sudokuRestartButton } = dom();
     if (sudokuFilledDisplay) sudokuFilledDisplay.textContent = String(sudokuScore);
     if (sudokuMistakesDisplay) sudokuMistakesDisplay.textContent = `${sudokuMistakes} / 3`;
-    if (sudokuTimerDisplay) sudokuTimerDisplay.textContent = `${sudokuElapsedSeconds}s`;
+    if (sudokuTimerDisplay) sudokuTimerDisplay.textContent = formatTenthsTimer(sudokuElapsedMs);
     if (sudokuDifficultyButton) sudokuDifficultyButton.textContent = `Difficulte : ${sudokuPuzzle?.difficulty || SUDOKU_DIFFICULTIES[sudokuDifficultyIndex]?.difficulty || 'Moussaillon'}`;
     if (sudokuRestartButton) sudokuRestartButton.textContent = sudokuSolved ? 'Nouvelle grille' : 'Nouvelle grille';
 }
@@ -349,7 +349,7 @@ export function refreshSudokuHud() {
     const { sudokuFilledDisplay, sudokuMistakesDisplay, sudokuTimerDisplay, sudokuDifficultyButton, sudokuRestartButton } = dom();
     if (sudokuFilledDisplay) sudokuFilledDisplay.textContent = String(sudokuScore);
     if (sudokuMistakesDisplay) sudokuMistakesDisplay.textContent = `${sudokuMistakes} / 3`;
-    if (sudokuTimerDisplay) sudokuTimerDisplay.textContent = `${sudokuElapsedSeconds}s`;
+    if (sudokuTimerDisplay) sudokuTimerDisplay.textContent = formatTenthsTimer(sudokuElapsedMs);
     if (sudokuDifficultyButton) sudokuDifficultyButton.textContent = `Difficulte : ${sudokuPuzzle?.difficulty || SUDOKU_DIFFICULTIES[sudokuDifficultyIndex]?.difficulty || 'Moussaillon'}`;
     if (sudokuRestartButton) sudokuRestartButton.textContent = 'Nouvelle grille';
 }
@@ -405,7 +405,7 @@ export function initializeSudoku(startTimerImmediately = false) {
     sudokuScore = 0;
     sudokuMistakes = 0;
     sudokuCombo = 0;
-    sudokuElapsedSeconds = 0;
+    sudokuElapsedMs = 0;
     sudokuPuzzle = generateSudokuPuzzle();
     sudokuBoardState = Array.from({ length: SUDOKU_SIZE }, (_, rowIndex) => (
         Array.from({ length: SUDOKU_SIZE }, (_, colIndex) => {
@@ -465,7 +465,7 @@ export function updateSudokuCell(row, col, nextValue) {
         stopSudokuTimer();
         revealSudokuOutcomeMenu(
             'Carte complète',
-            `Grille résolue. Cap ${sudokuPuzzle?.difficulty || 'Moussaillon'} terminé en ${sudokuElapsedSeconds}s.`,
+            `Grille résolue. Cap ${sudokuPuzzle?.difficulty || 'Moussaillon'} terminé en ${formatTenthsTimer(sudokuElapsedMs)}.`,
             'Route tracée'
         );
     }

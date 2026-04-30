@@ -4,6 +4,7 @@
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 import { closeGameOverModal } from '../core/modals.js';
+import { formatTenthsTimer } from '../core/utils.js';
 
 export const RHYTHM_LANES = ['Q', 'S', 'D'];
 export const RHYTHM_DURATION_MS = 30000;
@@ -64,7 +65,7 @@ export function updateRhythmHud(timeRemainingMs = RHYTHM_DURATION_MS) {
     rhythmScoreDisplay.textContent = String(rhythmScore);
     rhythmStreakDisplay.textContent = String(rhythmStreak);
     rhythmMissesDisplay.textContent = `${rhythmMisses} / ${RHYTHM_MAX_MISSES}`;
-    rhythmTimerDisplay.textContent = String(Math.max(0, Math.ceil(timeRemainingMs / 1000)));
+    rhythmTimerDisplay.textContent = formatTenthsTimer(timeRemainingMs);
 }
 
 export function renderRhythmBoard() {

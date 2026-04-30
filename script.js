@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const minesweeperMenuText = document.getElementById('minesweeperMenuText');
     const minesweeperMenuActionButton = document.getElementById('minesweeperMenuActionButton');
     const minesweeperMenuRulesButton = document.getElementById('minesweeperMenuRulesButton');
+    const minesweeperGridSizeButtons = document.querySelectorAll('[data-minesweeper-grid-size]');
     const gamesSectionButtons = document.querySelectorAll('[data-games-section]');
     const gameHomeTiles = document.querySelectorAll('[data-open-game]');
     const gamesLayout = document.querySelector('#gamesView .games-layout');
@@ -133,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const snakeMenuText = document.getElementById('snakeMenuText');
     const snakeMenuActionButton = document.getElementById('snakeMenuActionButton');
     const snakeMenuRulesButton = document.getElementById('snakeMenuRulesButton');
+    const snakeGridSizeButtons = document.querySelectorAll('[data-snake-grid-size]');
     const pongBoard = document.getElementById('pongBoard');
     const pongTable = document.getElementById('pongTable');
     const pongCountdown = document.getElementById('pongCountdown');
@@ -462,6 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSnakeMenu = __sn.closeSnakeMenu;
     const startSnake = __sn.startSnake;
     const queueSnakeDirectionInput = __sn.queueSnakeDirectionInput;
+    const setSnakeGridSize = __sn.setSnakeGridSize;
     const stopSnake = __sn.stopSnake;
 
     // Bridge ESM — Tetris géré par js/games/tetris.js.
@@ -538,6 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initializeGame = __mw.initializeGame;
     const renderMinesweeperMenu = __mw.renderMinesweeperMenu;
     const closeMinesweeperMenu = __mw.closeMinesweeperMenu;
+    const setMinesweeperGridSize = __mw.setMinesweeperGridSize;
     const revealCell = __mw.revealCell;
     const toggleFlag = __mw.toggleFlag;
 
@@ -2391,9 +2395,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const cardRect = cardElement.getBoundingClientRect();
+        const hostRect = hostElement.getBoundingClientRect();
+
         overlayElement.style.inset = 'auto';
-        overlayElement.style.top = `${-hostElement.offsetTop}px`;
-        overlayElement.style.left = `${-hostElement.offsetLeft}px`;
+        overlayElement.style.top = `${cardRect.top - hostRect.top}px`;
+        overlayElement.style.left = `${cardRect.left - hostRect.left}px`;
         overlayElement.style.width = `${cardElement.clientWidth}px`;
         overlayElement.style.height = `${cardElement.clientHeight}px`;
     }
@@ -3664,6 +3671,12 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMinesweeperMenu();
     });
 
+    minesweeperGridSizeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setMinesweeperGridSize(button.dataset.minesweeperGridSize);
+        });
+    });
+
     snakeStartButton.addEventListener('click', () => {
         startSnake();
     });
@@ -3682,6 +3695,12 @@ document.addEventListener('DOMContentLoaded', () => {
     snakeMenuRulesButton?.addEventListener('click', () => {
         __sn.setSnakeMenuShowingRules(true);
         renderSnakeMenu();
+    });
+
+    snakeGridSizeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setSnakeGridSize(button.dataset.snakeGridSize);
+        });
     });
 
     pongMenuActionButton?.addEventListener('click', () => {
@@ -4014,6 +4033,7 @@ document.addEventListener('DOMContentLoaded', () => {
     aimBoard.addEventListener('pointerdown', (event) => {
         if (__am.getAimMenuVisible() || __am.getAimMenuClosing()) return;
         event.preventDefault();
+        startAimRound();
         const targetButton = event.target.closest('.aim-target-shell[data-target-id]');
         const targetId = targetButton?.dataset.targetId;
 
