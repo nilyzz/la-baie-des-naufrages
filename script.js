@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transitionToView(appView, {
             showHeader: true,
             headerMode: 'cinema',
-            onComplete: () => activatePanel('dashboardSection')
+            onComplete: () => window.activatePanel('dashboardSection')
         });
     }
 
@@ -214,10 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         transitionToView(servicesView, {
             headerMode: 'none'
         });
-    }
-
-    function activatePanel(targetId) {
-        window.activatePanel(targetId);
     }
 
     function activateMathPanel(targetId) {
@@ -300,10 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return __mpState.isMultiplayerLaunchPending(gameId);
     }
 
-    function syncMultiplayerPlayerNames(source = 'create') {
-        return window.syncMultiplayerPlayerNames(source);
-    }
-
     function setMultiplayerEntryMode(mode) {
         return window.setMultiplayerEntryMode(mode);
     }
@@ -360,10 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
         }
-    }
-
-    function syncAllGameMenuOverlayBounds() {
-        return window.syncAllGameMenuOverlayBounds();
     }
 
     function updateMultiplayerLobby(preserveStatus = false) {
@@ -469,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             loginForm.querySelector('button[type="submit"]')?.focus();
         },
-        onActivateCinemaPanel: activatePanel,
+        onActivateCinemaPanel: window.activatePanel,
         onActivateMathPanel: activateMathPanel,
         onActivateMusicPanel: activateMusicPanel
     });
@@ -547,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.bindResponsiveGameResize({
         getActiveGameTab,
-        syncAllGameMenuOverlayBounds,
+        syncAllGameMenuOverlayBounds: window.syncAllGameMenuOverlayBounds,
         renderSnake: __sn.renderSnake,
         isMultiplayerPongActive: __pg.isMultiplayerPongActive,
         syncMultiplayerPongState: __pg.syncMultiplayerPongState,
@@ -568,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
         onJoinRoom: joinMultiplayerRoom,
         onCopyCode: copyMultiplayerRoomCode,
         onSendChat: sendMultiplayerChatMessage,
-        onSyncPlayerNames: syncMultiplayerPlayerNames
+        onSyncPlayerNames: window.syncMultiplayerPlayerNames
     });
 
     renderAll();
@@ -604,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');
     __music.renderPiano();
-    syncAllGameMenuOverlayBounds();
+    window.syncAllGameMenuOverlayBounds();
 
     const activeSession = loadSession();
 
@@ -613,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showViewImmediately(appView, {
                 showHeader: true,
                 headerMode: 'cinema',
-                onComplete: () => activatePanel('dashboardSection')
+                onComplete: () => window.activatePanel('dashboardSection')
             });
         } else if (activeSession.lastDestination === 'games') {
             showViewImmediately(gamesView, {
