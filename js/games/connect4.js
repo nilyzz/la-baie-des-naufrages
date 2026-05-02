@@ -878,3 +878,4 @@ export function setConnect4MenuVisible(v) { connect4MenuVisible = Boolean(v); }
 export function setConnect4MenuShowingRules(v) { connect4MenuShowingRules = Boolean(v); }
 export function getConnect4MenuShowingRules() { return connect4MenuShowingRules; }
 export function getConnect4MenuResult() { return connect4MenuResult; }
+export function setConnect4MenuResult(v) { connect4MenuResult = Boolean(v); }

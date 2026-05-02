@@ -98,6 +98,7 @@ import {
     cleanupActiveGameForNavigation,
     openSelectedGame
 } from './games/_shared/game-lifecycle.js';
+import { bindAllGameEventControls } from './games/_shared/game-event-bindings.js';
 import * as boardHelpers from './games/_shared/board-helpers.js';
 
 import * as game2048 from './games/game2048.js';
@@ -173,7 +174,7 @@ if (typeof window !== 'undefined') {
         showGamePanel, showGamesHome, showGamesSection, updateGamesFilters, bindGamesNavigationControls,
         bindTouchGameControls,
         createDirectionalRepeatGuard, bindGameKeyReleaseControls,
-        cleanupActiveGameForNavigation, openSelectedGame,
+        cleanupActiveGameForNavigation, openSelectedGame, bindAllGameEventControls,
         PIANO_NOTES: musicModule.PIANO_NOTES,
         PIANO_NOTE_MAP: musicModule.PIANO_NOTE_MAP,
         PIANO_KEYBOARD_LAYOUT: musicModule.PIANO_KEYBOARD_LAYOUT,
