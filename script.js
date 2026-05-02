@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const defaultPoster = 'https://placehold.co/600x900/0f172a/f8fafc?text=Affiche';
     // MULTIPLAYER_SUPPORTED_GAMES : expose sur window par js/core/constants.js via js/main.js.
 
+    const loginView = document.getElementById('loginView');
     const servicesView = document.getElementById('servicesView');
     const appView = document.getElementById('appView');
     const gamesView = document.getElementById('gamesView');
@@ -27,7 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const excelSourceName = document.getElementById('excelSourceName');
     const movieCount = document.getElementById('movieCount');
     const averageRating = document.getElementById('averageRating');
+    const loginForm = document.getElementById('loginForm');
     const multiplayerChatInput = document.getElementById('multiplayerChatInput');
+    const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
     // GAME_FILTER_TAGS : expose sur window par js/core/constants.js via js/main.js.
 
     // Bridge ESM — Coin Clicker est maintenant géré par js/games/coinClicker.js.
