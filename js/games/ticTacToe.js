@@ -32,6 +32,10 @@ export function setTicTacToeActiveGameTabAccessor(fn) {
     if (typeof fn === 'function') activeGameTabAccessor = fn;
 }
 
+export function resetTicTacToeLastFinishedStateKey() {
+    ticTacToeLastFinishedStateKey = '';
+}
+
 const $ = (id) => document.getElementById(id);
 function dom() {
     return {

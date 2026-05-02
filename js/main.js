@@ -72,6 +72,7 @@ import {
     bindMultiplayerLobbyControls
 } from './multiplayer/lobby.js';
 import * as multiplayerState from './multiplayer/state.js';
+import { bindMultiplayerSession } from './multiplayer/session.js';
 
 import * as musicModule from './navires/music.js';
 import * as mathModule from './navires/math.js';
@@ -175,6 +176,7 @@ if (typeof window !== 'undefined') {
         showGamePanel, showGamesHome, showGamesSection, updateGamesFilters, bindGamesNavigationControls,
         bindTouchGameControls,
         createDirectionalRepeatGuard, bindGameKeyReleaseControls, bindGlobalKeyboardControls,
+        bindMultiplayerSession,
         cleanupActiveGameForNavigation, openSelectedGame, bindAllGameEventControls,
         PIANO_NOTES: musicModule.PIANO_NOTES,
         PIANO_NOTE_MAP: musicModule.PIANO_NOTE_MAP,
