@@ -1096,54 +1096,11 @@ document.addEventListener('DOMContentLoaded', () => {
         applyCinemaCatalogState(window.renderCinemaCatalogAll(getCinemaCatalogContext()));
     }
 
-    function closeDeleteModal() {
-        window.closeConfirmModal();
-    }
-
     // openLegalNoticeModal / closeLegalNoticeModal : exposes sur window par js/main.js (source = js/core/modals.js).
-
-    function getSelectedMultiplayerGame() {
-        return window.getSelectedMultiplayerGame(__mpState.getMultiplayerSelectedGameId());
-    }
-
-    function getSelectedMultiplayerGameLabel() {
-        return window.getSelectedMultiplayerGameLabel();
-    }
-
-    // getMultiplayerGameLabel : expose sur window par js/main.js (source = js/multiplayer/status.js).
-
-    function getCurrentMultiplayerPlayer() {
-        return __mpState.getCurrentMultiplayerPlayer();
-    }
-
-    function isCurrentMultiplayerHost() {
-        return __mpState.isCurrentMultiplayerHost();
-    }
-
-    function getMultiplayerReadySummary() {
-        return __mpState.getMultiplayerReadySummary();
-    }
-
-    function isCurrentPlayerMultiplayerReady() {
-        return __mpState.isCurrentPlayerMultiplayerReady();
-    }
 
     function isMultiplayerLaunchPending(gameId = __mpState.getMultiplayerActiveRoom()?.gameId) {
         return __mpState.isMultiplayerLaunchPending(gameId);
     }
-
-    function syncMultiplayerEntryModeAccess() {
-        window.syncMultiplayerEntryModeAccess();
-    }
-
-    function ensureMultiplayerCreateLeaveButton() {
-        return window.ensureMultiplayerCreateLeaveButton(() => leaveMultiplayerRoom());
-    }
-
-    function getPreferredMultiplayerPlayerName(preferredSource = __mpState.getMultiplayerEntryMode()) {
-        return window.getPreferredMultiplayerPlayerName(preferredSource);
-    }
-
 
     function syncMultiplayerPlayerNames(source = 'create') {
         return window.syncMultiplayerPlayerNames(source);
@@ -1155,10 +1112,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // setMultiplayerStatus : expose sur window par js/main.js (source = js/multiplayer/status.js).
 
-    function renderMultiplayerPlayers() {
-        return window.renderMultiplayerPlayers(__mpState.getMultiplayerActiveRoom());
-    }
-
     function isMultiplayerChatVisible() {
         const room = __mpState.getMultiplayerActiveRoom();
         return Boolean(
@@ -1167,10 +1120,6 @@ document.addEventListener('DOMContentLoaded', () => {
             && MULTIPLAYER_SUPPORTED_GAMES[activeGameTab]
             && room.gameId === activeGameTab
         );
-    }
-
-    function renderMultiplayerChatMessages() {
-        return window.renderMultiplayerChatMessages(__mpState.getMultiplayerActiveRoom());
     }
 
     function updateMultiplayerChatPanel() {
@@ -1214,14 +1163,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateMultiplayerGameTileSelection() {
-        return window.updateMultiplayerGameTileSelection();
-    }
-
-    function syncGameMenuOverlayBounds(overlayElement, hostElement) {
-        return window.syncGameMenuOverlayBounds(overlayElement, hostElement);
-    }
-
     function syncAllGameMenuOverlayBounds() {
         return window.syncAllGameMenuOverlayBounds();
     }
@@ -1261,10 +1202,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateGamesFilters() {
-        window.updateGamesFilters();
-    }
-
     function showGamesHome() {
         activeGameTab = window.showGamesHome({
             cleanupActiveGameForNavigation,
@@ -1289,7 +1226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (__mpState.getMultiplayerActiveRoom()?.code) {
-            if (!isCurrentMultiplayerHost()) {
+            if (!__mpState.isCurrentMultiplayerHost()) {
                 setMultiplayerStatus("Seul l'hôte peut changer le jeu du salon.");
                 return;
             }
@@ -1385,11 +1322,11 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCatalogFilters
     });
 
-    window.bindConfirmModalControls({ onClose: closeDeleteModal });
+    window.bindConfirmModalControls({ onClose: window.closeConfirmModal });
 
     window.bindCoreModalControls();
     window.bindEscapeModalControls({
-        closeDeleteModal,
+        closeDeleteModal: window.closeConfirmModal,
         closeLegalNoticeModal,
         closeGameOverModal
     });
