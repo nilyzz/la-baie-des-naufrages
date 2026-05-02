@@ -891,11 +891,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let catalogSortMode = 'default';
     let catalogDirectorTerm = '';
     let currentView = loginView;
-    let activeGameTab = 'home';
-    // Bridge pour les modules ESM : expose l'onglet actif courant.
-    if (typeof window !== 'undefined') {
-        window.__baieActiveGameTab = () => activeGameTab;
-    }
+    // Bridge pour les modules ESM : getActiveGameTab() lit l'état canonique de navigation.js via main.js.
+    const getActiveGameTab = window.__baieActiveGameTab;
     // UNO_MENU_CLOSE_DURATION_MS et GRID_OUTCOME_MENU_DELAY_MS : exposees sur window par js/main.js.
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
@@ -1114,11 +1111,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function isMultiplayerChatVisible() {
         const room = __mpState.getMultiplayerActiveRoom();
+        const tab = getActiveGameTab();
         return Boolean(
             room?.code
             && room?.gameLaunched
-            && MULTIPLAYER_SUPPORTED_GAMES[activeGameTab]
-            && room.gameId === activeGameTab
+            && MULTIPLAYER_SUPPORTED_GAMES[tab]
+            && room.gameId === tab
         );
     }
 
@@ -1126,7 +1124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return window.updateMultiplayerChatPanel({
             activeRoom: __mpState.getMultiplayerActiveRoom(),
             socket: __mpState.getMultiplayerSocket(),
-            activeGameTab
+            activeGameTab: getActiveGameTab()
         });
     }
 
@@ -1175,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.updateMultiplayerLobby({
             preserveStatus,
             onLeave: () => leaveMultiplayerRoom(),
-            activeGameTab
+            activeGameTab: getActiveGameTab()
         });
     }
 
@@ -1190,12 +1188,12 @@ document.addEventListener('DOMContentLoaded', () => {
         copyMultiplayerRoomCode,
         toggleMultiplayerReady
     } = window.bindMultiplayerSession({
-        getActiveGameTab: () => activeGameTab,
+        getActiveGameTab,
         openSelectedGame: (gameId) => openSelectedGame(gameId)
     });
 
     function showGamePanel(tabId) {
-        activeGameTab = window.showGamePanel(tabId, {
+        window.showGamePanel(tabId, {
             updateMultiplayerChatPanel,
             closeGameOverModal,
             updateMultiplayerLobby
@@ -1203,7 +1201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showGamesHome() {
-        activeGameTab = window.showGamesHome({
+        window.showGamesHome({
             cleanupActiveGameForNavigation,
             updateMultiplayerChatPanel,
             closeGameOverModal,
@@ -1212,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showGamesSection(section) {
-        activeGameTab = window.showGamesSection(section, {
+        window.showGamesSection(section, {
             cleanupActiveGameForNavigation,
             updateMultiplayerChatPanel,
             closeGameOverModal,
@@ -1253,7 +1251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function cleanupActiveGameForNavigation(nextTab) {
-        window.__baie.gameLifecycle.cleanupActiveGameForNavigation(nextTab, activeGameTab, window.__baie);
+        window.__baie.gameLifecycle.cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), window.__baie);
     }
 
     window.bindAppShellControls({
@@ -1284,7 +1282,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function openSelectedGame(nextTab) {
-        window.__baie.gameLifecycle.openSelectedGame(nextTab, activeGameTab, window.__baie, { setSelectedMultiplayerGame, closeGameOverModal });
+        window.__baie.gameLifecycle.openSelectedGame(nextTab, getActiveGameTab(), window.__baie, { setSelectedMultiplayerGame, closeGameOverModal });
     }
 
     window.bindGamesNavigationControls({
@@ -1301,7 +1299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.bindAllGameEventControls({
         getSocket: () => __mpState.getMultiplayerSocket(),
         getActiveRoom: () => __mpState.getMultiplayerActiveRoom(),
-        getActiveGameTab: () => activeGameTab,
+        getActiveGameTab,
         isMultiplayerLaunchPending,
         toggleMultiplayerReady,
         setMultiplayerStatus,
@@ -1332,7 +1330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.bindGlobalKeyboardControls({
-        getActiveGameTab: () => activeGameTab,
+        getActiveGameTab,
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
         isMultiplayerPongActive,
         pushMultiplayerPongInput,
@@ -1346,16 +1344,16 @@ document.addEventListener('DOMContentLoaded', () => {
         handlePianoKeyUp: __music.handlePianoKeyUp,
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
         getPongKeys: () => __pg.getPongKeys(),
-        isMultiplayerPongActive: () => activeGameTab === 'pong' && isMultiplayerPongActive(),
+        isMultiplayerPongActive: () => getActiveGameTab() === 'pong' && isMultiplayerPongActive(),
         pushMultiplayerPongInput,
         getAirHockeyKeys: () => __ah.getAirHockeyKeys(),
-        isMultiplayerAirHockeyActive: () => activeGameTab === 'airHockey' && isMultiplayerAirHockeyActive(),
+        isMultiplayerAirHockeyActive: () => getActiveGameTab() === 'airHockey' && isMultiplayerAirHockeyActive(),
         pushMultiplayerAirHockeyInput,
         getBreakoutKeys: () => __bk.getBreakoutKeys()
     });
 
     window.bindResponsiveGameResize({
-        getActiveGameTab: () => activeGameTab,
+        getActiveGameTab,
         syncAllGameMenuOverlayBounds,
         renderSnake,
         isMultiplayerPongActive,

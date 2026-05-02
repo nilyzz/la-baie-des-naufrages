@@ -42,6 +42,8 @@ let activeGamesSection = 'home';
 let activeGamesFilter = 'all';
 let activeGameTab = 'home';
 let gamesGridDominoFrame = null;
+
+export function getActiveGameTab() { return activeGameTab; }
 let gamesGridDominoCleanupTimer = null;
 const gameHomeTileReplayTimers = new WeakMap();
 

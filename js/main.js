@@ -88,7 +88,8 @@ import {
     showGamesHome,
     showGamesSection,
     updateGamesFilters,
-    bindGamesNavigationControls
+    bindGamesNavigationControls,
+    getActiveGameTab
 } from './games/_shared/navigation.js';
 import { bindTouchGameControls } from './games/_shared/touch-controls.js';
 import {
@@ -148,6 +149,7 @@ const GAME_MODULES = {
 // sans attendre DOMContentLoaded.
 if (typeof window !== 'undefined') {
     window.__baie = Object.assign(window.__baie || {}, GAME_MODULES);
+    window.__baieActiveGameTab = getActiveGameTab;
     // Bridge ESM → script.js : expose aussi tout ce que les modules core/multiplayer/navires/_shared
     // fournissent, pour que les identifiants référencés dans script.js (qui étaient définis
     // localement avant extraction) continuent de résoudre via la chaîne de scope globale.
