@@ -72,15 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerJoinPlayerField = document.getElementById('multiplayerJoinPlayerField');
     const multiplayerJoinPlayerNameInput = document.getElementById('multiplayerJoinPlayerNameInput');
     const multiplayerJoinCodeField = document.getElementById('multiplayerJoinCodeField');
-    const multiplayerJoinRoomCodeInput = document.getElementById('multiplayerJoinRoomCodeInput');
     const multiplayerCreateRoomButton = document.getElementById('multiplayerCreateRoomButton');
     const multiplayerJoinRoomButton = document.getElementById('multiplayerJoinRoomButton');
     const multiplayerCopyCodeButton = document.getElementById('multiplayerCopyCodeButton');
-    const multiplayerCurrentRoomCode = document.getElementById('multiplayerCurrentRoomCode');
-    const multiplayerLobbyPlayersBlock = document.getElementById('multiplayerLobbyPlayersBlock');
     const multiplayerRoomPlayers = document.getElementById('multiplayerRoomPlayers');
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
-    let multiplayerCreateLeaveButton = null;
     // GAME_FILTER_TAGS : expose sur window par js/core/constants.js via js/main.js.
     const snakeGame = document.getElementById('snakeGame');
     const pongGame = document.getElementById('pongGame');
@@ -736,14 +732,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // script.js garde ses variables locales, il faut donc propager chaque
     // mutation au module pour que isMultiplayer<Game>Active() voie la room.
     const __mpState = window.__baie.multiplayerState;
-    function syncMultiplayerStateBridge() {
-        __mpState.setMultiplayerSocket(multiplayerSocket);
-        __mpState.setMultiplayerActiveRoom(multiplayerActiveRoom);
-        __mpState.setMultiplayerSelectedGameId(multiplayerSelectedGameId);
-        __mpState.setMultiplayerEntryMode(multiplayerEntryMode);
-        __mpState.setMultiplayerBusy(multiplayerBusy);
-        __mpState.setMultiplayerChatSignature(multiplayerChatSignature);
-    }
 
     const chessGame = document.getElementById('chessGame');
     const chessBoard = document.getElementById('chessBoard');
@@ -903,13 +891,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let catalogSortMode = 'default';
     let catalogDirectorTerm = '';
     let currentView = loginView;
-    let multiplayerSocket = null;
-    let multiplayerActiveRoom = null;
-    let multiplayerBusy = false;
-    let multiplayerSelectedGameId = null;
-    let multiplayerEntryMode = 'create';
-    let multiplayerChatSignature = '';
-    let ticTacToeLastFinishedStateKey = '';
     let activeGameTab = 'home';
     // Bridge pour les modules ESM : expose l'onglet actif courant.
     if (typeof window !== 'undefined') {
@@ -1122,124 +1103,82 @@ document.addEventListener('DOMContentLoaded', () => {
     // openLegalNoticeModal / closeLegalNoticeModal : exposes sur window par js/main.js (source = js/core/modals.js).
 
     function getSelectedMultiplayerGame() {
-        syncMultiplayerStateBridge();
-        return window.getSelectedMultiplayerGame(multiplayerSelectedGameId);
+        return window.getSelectedMultiplayerGame(__mpState.getMultiplayerSelectedGameId());
     }
 
     function getSelectedMultiplayerGameLabel() {
-        syncMultiplayerStateBridge();
         return window.getSelectedMultiplayerGameLabel();
     }
 
     // getMultiplayerGameLabel : expose sur window par js/main.js (source = js/multiplayer/status.js).
 
     function getCurrentMultiplayerPlayer() {
-        syncMultiplayerStateBridge();
         return __mpState.getCurrentMultiplayerPlayer();
     }
 
     function isCurrentMultiplayerHost() {
-        syncMultiplayerStateBridge();
         return __mpState.isCurrentMultiplayerHost();
     }
 
     function getMultiplayerReadySummary() {
-        syncMultiplayerStateBridge();
         return __mpState.getMultiplayerReadySummary();
     }
 
     function isCurrentPlayerMultiplayerReady() {
-        syncMultiplayerStateBridge();
         return __mpState.isCurrentPlayerMultiplayerReady();
     }
 
-    function isMultiplayerLaunchPending(gameId = multiplayerActiveRoom?.gameId) {
-        syncMultiplayerStateBridge();
+    function isMultiplayerLaunchPending(gameId = __mpState.getMultiplayerActiveRoom()?.gameId) {
         return __mpState.isMultiplayerLaunchPending(gameId);
     }
 
     function syncMultiplayerEntryModeAccess() {
-        syncMultiplayerStateBridge();
         window.syncMultiplayerEntryModeAccess();
-        multiplayerEntryMode = __mpState.getMultiplayerEntryMode();
-        multiplayerCreateLeaveButton = document.getElementById('multiplayerCreateLeaveButton');
     }
 
     function ensureMultiplayerCreateLeaveButton() {
-        syncMultiplayerStateBridge();
-        multiplayerCreateLeaveButton = window.ensureMultiplayerCreateLeaveButton(() => leaveMultiplayerRoom());
-        return multiplayerCreateLeaveButton;
+        return window.ensureMultiplayerCreateLeaveButton(() => leaveMultiplayerRoom());
     }
 
-    function getPreferredMultiplayerPlayerName(preferredSource = multiplayerEntryMode) {
-        syncMultiplayerStateBridge();
+    function getPreferredMultiplayerPlayerName(preferredSource = __mpState.getMultiplayerEntryMode()) {
         return window.getPreferredMultiplayerPlayerName(preferredSource);
     }
 
-    function getMultiplayerRoomUiSignature(room) {
-        if (!room) {
-            return 'no-room';
-        }
-
-        const playersSignature = Array.isArray(room.players)
-            ? room.players.map((player) => `${player.id}:${player.name}:${player.isHost ? 'h' : '-'}:${player.isYou ? 'y' : '-'}:${player.roomReady ? 'r' : '-'}`).join('|')
-            : '';
-
-        return [
-            room.code || '',
-            room.gameId || '',
-            room.hostId || '',
-            Number(room.playerCount || 0),
-            Number(room.maxPlayers || 0),
-            Number(room.readyCount || 0),
-            Boolean(room.gameLaunched),
-            playersSignature
-        ].join('::');
-    }
 
     function syncMultiplayerPlayerNames(source = 'create') {
-        syncMultiplayerStateBridge();
         return window.syncMultiplayerPlayerNames(source);
     }
 
     function setMultiplayerEntryMode(mode) {
-        multiplayerEntryMode = mode === 'join' ? 'join' : 'create';
-        syncMultiplayerStateBridge();
-        return window.setMultiplayerEntryMode(multiplayerEntryMode);
+        return window.setMultiplayerEntryMode(mode);
     }
 
     // setMultiplayerStatus : expose sur window par js/main.js (source = js/multiplayer/status.js).
 
     function renderMultiplayerPlayers() {
-        syncMultiplayerStateBridge();
-        return window.renderMultiplayerPlayers(multiplayerActiveRoom);
+        return window.renderMultiplayerPlayers(__mpState.getMultiplayerActiveRoom());
     }
 
     function isMultiplayerChatVisible() {
+        const room = __mpState.getMultiplayerActiveRoom();
         return Boolean(
-            multiplayerActiveRoom?.code
-            && multiplayerActiveRoom?.gameLaunched
+            room?.code
+            && room?.gameLaunched
             && MULTIPLAYER_SUPPORTED_GAMES[activeGameTab]
-            && multiplayerActiveRoom.gameId === activeGameTab
+            && room.gameId === activeGameTab
         );
     }
 
     function renderMultiplayerChatMessages() {
-        syncMultiplayerStateBridge();
-        multiplayerChatSignature = window.renderMultiplayerChatMessages(multiplayerActiveRoom);
-        syncMultiplayerStateBridge();
-        return multiplayerChatSignature;
+        return window.renderMultiplayerChatMessages(__mpState.getMultiplayerActiveRoom());
     }
 
     function updateMultiplayerChatPanel() {
-        syncMultiplayerStateBridge();
-        multiplayerChatSignature = window.updateMultiplayerChatPanel({
-            activeRoom: multiplayerActiveRoom,
-            socket: multiplayerSocket,
+        return window.updateMultiplayerChatPanel({
+            activeRoom: __mpState.getMultiplayerActiveRoom(),
+            socket: __mpState.getMultiplayerSocket(),
             activeGameTab
         });
-        syncMultiplayerStateBridge();
-        return multiplayerChatSignature;
     }
 
     let multiplayerChatLastSentAt = 0;
@@ -1276,7 +1215,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateMultiplayerGameTileSelection() {
-        syncMultiplayerStateBridge();
         return window.updateMultiplayerGameTileSelection();
     }
 
@@ -1293,15 +1231,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function updateMultiplayerLobby(preserveStatus = false) {
-        syncMultiplayerStateBridge();
         window.updateMultiplayerLobby({
             preserveStatus,
             onLeave: () => leaveMultiplayerRoom(),
             activeGameTab
         });
-        multiplayerEntryMode = __mpState.getMultiplayerEntryMode();
-        multiplayerCreateLeaveButton = document.getElementById('multiplayerCreateLeaveButton');
-        multiplayerChatSignature = __mpState.getMultiplayerChatSignature();
     }
 
     // loadSocketIoClient, getMultiplayerServerOrigin, getMultiplayerApiUrl : exposes sur window par js/main.js (source = js/multiplayer/connection.js).
@@ -1354,21 +1288,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (multiplayerActiveRoom?.code) {
+        if (__mpState.getMultiplayerActiveRoom()?.code) {
             if (!isCurrentMultiplayerHost()) {
                 setMultiplayerStatus("Seul l'hôte peut changer le jeu du salon.");
                 return;
             }
 
-            if (multiplayerActiveRoom.gameId === gameId) {
-                multiplayerSelectedGameId = gameId;
+            if (__mpState.getMultiplayerActiveRoom().gameId === gameId) {
+                __mpState.setMultiplayerSelectedGameId(gameId);
                 updateMultiplayerLobby();
                 return;
             }
 
             try {
                 const socket = await ensureMultiplayerConnection();
-                multiplayerSelectedGameId = gameId;
+                __mpState.setMultiplayerSelectedGameId(gameId);
                 socket.emit('room:update-game', { gameId });
                 setMultiplayerStatus(`Jeu du salon change pour ${getMultiplayerGameLabel(gameId)}...`);
             } catch (error) {
@@ -1377,7 +1311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        multiplayerSelectedGameId = gameId;
+        __mpState.setMultiplayerSelectedGameId(gameId);
         updateMultiplayerLobby();
     }
 
@@ -1428,8 +1362,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.bindAllGameEventControls({
-        getSocket: () => multiplayerSocket,
-        getActiveRoom: () => multiplayerActiveRoom,
+        getSocket: () => __mpState.getMultiplayerSocket(),
+        getActiveRoom: () => __mpState.getMultiplayerActiveRoom(),
         getActiveGameTab: () => activeGameTab,
         isMultiplayerLaunchPending,
         toggleMultiplayerReady,
