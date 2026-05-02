@@ -377,348 +377,96 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ces alias permettent au reste de script.js (listeners, tab-switch, bootstrap)
     // d'appeler le module sans réécrire chaque identifiant.
     const __cc = window.__baie.coinClicker;
-    const COIN_CLICKER_UPGRADES = __cc.COIN_CLICKER_UPGRADES;
-    const saveCoinClickerState = __cc.saveCoinClickerState;
-    const getCoinClickerUpgradeCost = __cc.getCoinClickerUpgradeCost;
-    const getCoinClickerCoinsPerClick = __cc.getCoinClickerCoinsPerClick;
-    const renderCoinClicker = __cc.renderCoinClicker;
-    const startCoinClickerAutoLoop = __cc.startCoinClickerAutoLoop;
-    const renderCoinClickerMenu = __cc.renderCoinClickerMenu;
-    const closeCoinClickerMenu = __cc.closeCoinClickerMenu;
-    const initializeCoinClicker = __cc.initializeCoinClicker;
 
     // Bridge ESM — Rythme géré par js/games/rhythm.js.
     const __rh = window.__baie.rhythm;
-    const renderRhythmMenu = __rh.renderRhythmMenu;
-    const closeRhythmMenu = __rh.closeRhythmMenu;
-    const startRhythm = __rh.startRhythm;
-    const handleRhythmHit = __rh.handleRhythmHit;
-    const initializeRhythm = __rh.initializeRhythm;
 
     // Bridge ESM — Reaction géré par js/games/reaction.js.
     const __rx = window.__baie.reaction;
-    const initializeReaction = __rx.initializeReaction;
-    const renderReactionMenu = __rx.renderReactionMenu;
-    const closeReactionMenu = __rx.closeReactionMenu;
-    const startReactionRound = __rx.startReactionRound;
-    const handleReactionAttempt = __rx.handleReactionAttempt;
 
     // Bridge ESM — OursAim géré par js/games/aim.js.
     const __am = window.__baie.aim;
-    const initializeAim = __am.initializeAim;
-    const renderAimMenu = __am.renderAimMenu;
-    const closeAimMenu = __am.closeAimMenu;
-    const startAimRound = __am.startAimRound;
-    const handleAimTargetHit = __am.handleAimTargetHit;
-    const handleAimMiss = __am.handleAimMiss;
-    const setAimRoundDuration = __am.setAimRoundDuration;
 
     // Bridge ESM — MentalMath géré par js/games/mentalMath.js.
     const __mm = window.__baie.mentalMath;
-    const initializeMentalMath = __mm.initializeMentalMath;
-    const renderMentalMathMenu = __mm.renderMentalMathMenu;
-    const startMentalMathLaunchSequence = __mm.startMentalMathLaunchSequence;
-    const submitMentalMathAnswer = __mm.submitMentalMathAnswer;
-    const handleMentalMathKeypadInput = __mm.handleMentalMathKeypadInput;
-    const handleMentalMathKeypadAction = __mm.handleMentalMathKeypadAction;
 
     // Bridge ESM — Snake géré par js/games/snake.js.
     const __sn = window.__baie.snake;
-    const initializeSnake = __sn.initializeSnake;
-    const renderSnake = __sn.renderSnake;
-    const renderSnakeMenu = __sn.renderSnakeMenu;
-    const closeSnakeMenu = __sn.closeSnakeMenu;
-    const startSnake = __sn.startSnake;
-    const queueSnakeDirectionInput = __sn.queueSnakeDirectionInput;
-    const setSnakeGridSize = __sn.setSnakeGridSize;
-    const stopSnake = __sn.stopSnake;
 
     // Bridge ESM — Tetris géré par js/games/tetris.js.
     const __tt = window.__baie.tetris;
-    const initializeTetris = __tt.initializeTetris;
-    const renderTetrisMenu = __tt.renderTetrisMenu;
-    const closeTetrisMenu = __tt.closeTetrisMenu;
-    const startTetris = __tt.startTetris;
-    const dropTetrisStep = __tt.dropTetrisStep;
-    const moveTetrisHorizontally = __tt.moveTetrisHorizontally;
-    const rotateTetrisPiece = __tt.rotateTetrisPiece;
-    const hardDropTetrisPiece = __tt.hardDropTetrisPiece;
 
     // Bridge ESM — 2048 géré par js/games/game2048.js.
     const __g2 = window.__baie.game2048;
-    const initialize2048 = __g2.initialize2048;
-    const render2048 = __g2.render2048;
-    const render2048Menu = __g2.render2048Menu;
-    const close2048Menu = __g2.close2048Menu;
-    const move2048 = __g2.move2048;
-    const reveal2048OutcomeMenu = __g2.reveal2048OutcomeMenu;
 
     // Bridge ESM — Flappy géré par js/games/flappy.js.
     const __fl = window.__baie.flappy;
-    const initializeFlappy = __fl.initializeFlappy;
-    const renderFlappyMenu = __fl.renderFlappyMenu;
-    const startFlappyLaunchSequence = __fl.startFlappyLaunchSequence;
-    const flapFlappyBird = __fl.flapFlappyBird;
 
     // Bridge ESM — Pacman géré par js/games/pacman.js.
     const __pm = window.__baie.pacman;
-    const initializePacman = __pm.initializePacman;
-    const renderPacmanMenu = __pm.renderPacmanMenu;
-    const startPacman = __pm.startPacman;
-    const trySetPacmanDirection = __pm.trySetPacmanDirection;
-    const closePacmanMenu = __pm.closePacmanMenu;
-    const renderPacman = __pm.renderPacman;
-    const stopPacman = __pm.stopPacman;
 
     // Bridge ESM — Breakout géré par js/games/breakout.js.
     const __bk = window.__baie.breakout;
-    const initializeBreakout = __bk.initializeBreakout;
-    const renderBreakoutMenu = __bk.renderBreakoutMenu;
-    const startBreakoutLaunchSequence = __bk.startBreakoutLaunchSequence;
-    const updateBreakout = __bk.updateBreakout;
-    const drawBreakout = __bk.drawBreakout;
-    const stopBreakout = __bk.stopBreakout;
 
     // Bridge ESM — Memory géré par js/games/memory.js.
     const __mem = window.__baie.memory;
-    const initializeMemory = __mem.initializeMemory;
-    const renderMemoryMenu = __mem.renderMemoryMenu;
-    const startMemoryLaunchSequence = __mem.startMemoryLaunchSequence;
-    const handleMemoryCardFlip = __mem.handleMemoryCardFlip;
 
     // Bridge ESM — Magic Sort géré par js/games/magicSort.js.
     const __ms = window.__baie.magicSort;
-    const initializeMagicSort = __ms.initializeMagicSort;
-    const renderMagicSortMenu = __ms.renderMagicSortMenu;
-    const closeMagicSortMenu = __ms.closeMagicSortMenu;
-    const handleMagicSortTubeClick = __ms.handleMagicSortTubeClick;
 
     // Bridge ESM — HarborRun géré par js/games/harborRun.js.
     const __hr = window.__baie.harborRun;
-    const initializeHarborRun = __hr.initializeHarborRun;
-    const renderHarborRunMenu = __hr.renderHarborRunMenu;
-    const closeHarborRunMenu = __hr.closeHarborRunMenu;
-    const startHarborRun = __hr.startHarborRun;
-    const moveHarborRun = __hr.moveHarborRun;
-    const renderHarborRun = __hr.renderHarborRun;
 
     // Bridge ESM — Minesweeper géré par js/games/minesweeper.js.
     const __mw = window.__baie.minesweeper;
-    const initializeGame = __mw.initializeGame;
-    const renderMinesweeperMenu = __mw.renderMinesweeperMenu;
-    const closeMinesweeperMenu = __mw.closeMinesweeperMenu;
-    const setMinesweeperGridSize = __mw.setMinesweeperGridSize;
-    const revealCell = __mw.revealCell;
-    const toggleFlag = __mw.toggleFlag;
 
     // Bridge ESM — Stacker géré par js/games/stacker.js.
     const __st = window.__baie.stacker;
-    const initializeStacker = __st.initializeStacker;
-    const renderStackerMenu = __st.renderStackerMenu;
-    const closeStackerMenu = __st.closeStackerMenu;
-    const startStacker = __st.startStacker;
-    const dropStackerLayer = __st.dropStackerLayer;
 
     // Bridge ESM — Solitaire géré par js/games/solitaire.js.
     const __sol = window.__baie.solitaire;
-    const initializeSolitaire = __sol.initializeSolitaire;
-    const renderSolitaire = __sol.renderSolitaire;
-    const renderSolitaireMenu = __sol.renderSolitaireMenu;
-    const closeSolitaireMenu = __sol.closeSolitaireMenu;
-    const drawSolitaireCard = __sol.drawSolitaireCard;
-    const selectSolitaireSource = __sol.selectSolitaireSource;
-    const moveSelectedSolitaireToFoundation = __sol.moveSelectedSolitaireToFoundation;
-    const moveSelectedSolitaireToTableau = __sol.moveSelectedSolitaireToTableau;
-    const clearSolitaireSelection = __sol.clearSolitaireSelection;
 
     // Bridge ESM — Sudoku géré par js/games/sudoku.js.
     const __su = window.__baie.sudoku;
-    const initializeSudoku = __su.initializeSudoku;
-    const renderSudokuMenu = __su.renderSudokuMenu;
-    const closeSudokuMenu = __su.closeSudokuMenu;
-    const renderSudoku = __su.renderSudoku;
-    const updateSudokuCell = __su.updateSudokuCell;
-    const setSudokuSelectedCell = __su.setSudokuSelectedCell;
-    const cycleSudokuDifficulty = __su.cycleSudokuDifficulty;
-    const startSudokuTimer = __su.startSudokuTimer;
-    const stopSudokuTimer = __su.stopSudokuTimer;
 
     // Bridge ESM — BlockBlast géré par js/games/blockBlast.js.
     const __bb = window.__baie.blockBlast;
-    const initializeBlockBlast = __bb.initializeBlockBlast;
-    const renderBlockBlast = __bb.renderBlockBlast;
-    const renderBlockBlastMenu = __bb.renderBlockBlastMenu;
-    const closeBlockBlastMenu = __bb.closeBlockBlastMenu;
-    const placeBlockBlastPiece = __bb.placeBlockBlastPiece;
-    const placeBlockBlastPieceAtIndex = __bb.placeBlockBlastPieceAtIndex;
-    const updateBlockBlastPreview = __bb.updateBlockBlastPreview;
-    const clearBlockBlastPreview = __bb.clearBlockBlastPreview;
-    const getBlockBlastAnchorFromPoint = __bb.getBlockBlastAnchorFromPoint;
-    const stopBlockBlastDrag = __bb.stopBlockBlastDrag;
-    const canPlaceBlockBlastPiece = __bb.canPlaceBlockBlastPiece;
-    const renderBlockBlastPieces = __bb.renderBlockBlastPieces;
 
     // Bridge ESM — CandyCrush géré par js/games/candyCrush.js.
     const __cc2 = window.__baie.candyCrush;
-    const initializeCandyCrush = __cc2.initializeCandyCrush;
-    const renderCandyCrush = __cc2.renderCandyCrush;
-    const renderCandyCrushMenu = __cc2.renderCandyCrushMenu;
-    const closeCandyCrushMenu = __cc2.closeCandyCrushMenu;
-    const tryCandyCrushSwap = __cc2.tryCandyCrushSwap;
 
     // Bridge ESM — BaieBerry géré par js/games/baieBerry.js.
     const __bb2 = window.__baie.baieBerry;
-    const initializeBaieBerry = __bb2.initializeBaieBerry;
-    const renderBaieBerryMenu = __bb2.renderBaieBerryMenu;
-    const startBaieBerryLaunchSequence = __bb2.startBaieBerryLaunchSequence;
-    const drawBaieBerry = __bb2.drawBaieBerry;
-    const updateBaieBerry = __bb2.updateBaieBerry;
-    const dropBaieBerryAt = __bb2.dropBaieBerryAt;
-    const updateBaieBerryDropGuide = __bb2.updateBaieBerryDropGuide;
-    const stopBaieBerry = __bb2.stopBaieBerry;
 
     // Bridge ESM — FlowFree géré par js/games/flowFree.js.
     const __ff = window.__baie.flowFree;
-    const initializeFlowFree = __ff.initializeFlowFree;
-    const renderFlowFree = __ff.renderFlowFree;
-    const renderFlowFreeMenu = __ff.renderFlowFreeMenu;
-    const closeFlowFreeMenu = __ff.closeFlowFreeMenu;
-    const startFlowFreePath = __ff.startFlowFreePath;
-    const extendFlowFreePath = __ff.extendFlowFreePath;
-    const stopFlowFreePath = __ff.stopFlowFreePath;
-    const scheduleFlowFreeRender = __ff.scheduleFlowFreeRender;
-    const flushFlowFreePendingTarget = __ff.flushFlowFreePendingTarget;
 
     // Bridge ESM — Checkers géré par js/games/checkers.js.
     const __ck = window.__baie.checkers;
-    const initializeCheckers = __ck.initializeCheckers;
-    const renderCheckersMenu = __ck.renderCheckersMenu;
-    const startCheckersLaunchSequence = __ck.startCheckersLaunchSequence;
-    const handleCheckersCellClick = __ck.handleCheckersCellClick;
-    const handleCheckersPiecePointerDown = __ck.handleCheckersPiecePointerDown;
-    const handleCheckersPointerMove = __ck.handleCheckersPointerMove;
-    const handleCheckersPointerUp = __ck.handleCheckersPointerUp;
-    const setCheckersMode = __ck.setCheckersMode;
-    const isMultiplayerCheckersActive = __ck.isMultiplayerCheckersActive;
-    const syncMultiplayerCheckersState = __ck.syncMultiplayerCheckersState;
-    const renderCheckers = __ck.renderCheckers;
-    const maybeOpenCheckersOutcomeModal = __ck.maybeOpenCheckersOutcomeModal;
-    const maybePlayCheckersCaptureFx = __ck.maybePlayCheckersCaptureFx;
-    const scheduleCheckersMoveAnimationClear = __ck.scheduleCheckersMoveAnimationClear;
 
     // Bridge ESM — TicTacToe géré par js/games/ticTacToe.js.
     const __ttt = window.__baie.ticTacToe;
-    const initializeTicTacToe = __ttt.initializeTicTacToe;
-    const renderTicTacToeMenu = __ttt.renderTicTacToeMenu;
-    const closeTicTacToeMenu = __ttt.closeTicTacToeMenu;
-    const showTicTacToeMenu = __ttt.showTicTacToeMenu;
-    const handleTicTacToeMove = __ttt.handleTicTacToeMove;
-    const setTicTacToeMode = __ttt.setTicTacToeMode;
-    const isMultiplayerTicTacToeActive = __ttt.isMultiplayerTicTacToeActive;
-    const syncMultiplayerTicTacToeState = __ttt.syncMultiplayerTicTacToeState;
 
     // Bridge ESM — Connect4 géré par js/games/connect4.js.
     const __c4 = window.__baie.connect4;
-    const initializeConnect4 = __c4.initializeConnect4;
-    const renderConnect4Menu = __c4.renderConnect4Menu;
-    const startConnect4LaunchSequence = __c4.startConnect4LaunchSequence;
-    const handleConnect4Move = __c4.handleConnect4Move;
-    const setConnect4Mode = __c4.setConnect4Mode;
-    const isMultiplayerConnect4Active = __c4.isMultiplayerConnect4Active;
-    const syncMultiplayerConnect4State = __c4.syncMultiplayerConnect4State;
 
     // Bridge ESM — Battleship géré par js/games/battleship.js.
     const __bs = window.__baie.battleship;
-    const initializeBattleship = __bs.initializeBattleship;
-    const renderBattleship = __bs.renderBattleship;
-    const renderBattleshipMenu = __bs.renderBattleshipMenu;
-    const closeBattleshipMenu = __bs.closeBattleshipMenu;
-    const handleBattleshipShot = __bs.handleBattleshipShot;
-    const setBattleshipMode = __bs.setBattleshipMode;
-    const isMultiplayerBattleshipActive = __bs.isMultiplayerBattleshipActive;
-    const syncMultiplayerBattleshipState = __bs.syncMultiplayerBattleshipState;
 
     // Bridge ESM — Bomb géré par js/games/bomb.js.
     const __bm = window.__baie.bomb;
-    const initializeBomb = __bm.initializeBomb;
-    const renderBomb = __bm.renderBomb;
-    const renderBombMenu = __bm.renderBombMenu;
-    const closeBombMenu = __bm.closeBombMenu;
-    const handleBombLocalSubmit = __bm.handleBombLocalSubmit;
-    const startBombLocalRound = __bm.startBombLocalRound;
-    const isBombLocalActive = __bm.isBombLocalActive;
-    const isMultiplayerBombActive = __bm.isMultiplayerBombActive;
-    const stopBombTimerLoop = __bm.stopBombTimerLoop;
-    const startBombTimerLoop = __bm.startBombTimerLoop;
-    const syncMultiplayerBombState = __bm.syncMultiplayerBombState;
-    const maybeOpenBombOutcomeModal = __bm.maybeOpenBombOutcomeModal;
-    const renderBombPlayers = __bm.renderBombPlayers;
-    const renderBombUsedWords = __bm.renderBombUsedWords;
 
     // Bridge ESM — Chess géré par js/games/chess.js.
     const __ch = window.__baie.chess;
-    const initializeChess = __ch.initializeChess;
-    const renderChess = __ch.renderChess;
-    const renderChessMenu = __ch.renderChessMenu;
-    const startChessLaunchSequence = __ch.startChessLaunchSequence;
-    const handleChessCellClick = __ch.handleChessCellClick;
-    const handleChessPiecePointerDown = __ch.handleChessPiecePointerDown;
-    const handleChessPointerMove = __ch.handleChessPointerMove;
-    const handleChessPointerUp = __ch.handleChessPointerUp;
-    const setChessMode = __ch.setChessMode;
-    const isMultiplayerChessActive = __ch.isMultiplayerChessActive;
-    const syncMultiplayerChessState = __ch.syncMultiplayerChessState;
-    const maybeOpenChessOutcomeModal = __ch.maybeOpenChessOutcomeModal;
-    const maybePlayChessCaptureFx = __ch.maybePlayChessCaptureFx;
-    const scheduleChessMoveAnimationClear = __ch.scheduleChessMoveAnimationClear;
 
     // Bridge ESM — Uno géré par js/games/uno.js.
     const __uno = window.__baie.uno;
-    const initializeUno = __uno.initializeUno;
-    const renderUno = __uno.renderUno;
-    const renderUnoMenu = __uno.renderUnoMenu;
-    const startUnoLaunchSequence = __uno.startUnoLaunchSequence;
-    const setUnoMode = __uno.setUnoMode;
-    const isMultiplayerUnoActive = __uno.isMultiplayerUnoActive;
-    const syncMultiplayerUnoState = __uno.syncMultiplayerUnoState;
-    const handleSoloUnoCardPlay = __uno.handleSoloUnoCardPlay;
-    const drawSoloUnoCard = __uno.drawSoloUnoCard;
-    const chooseSoloUnoColor = __uno.chooseSoloUnoColor;
-    const maybeOpenUnoOutcomeModal = __uno.maybeOpenUnoOutcomeModal;
-    const showUnoEvent = __uno.showUnoEvent;
-    const getUnoDisplayColor = __uno.getUnoDisplayColor;
 
     // Bridge ESM — AirHockey géré par js/games/airHockey.js.
     const __ah = window.__baie.airHockey;
-    const initializeAirHockey = __ah.initializeAirHockey;
-    const renderAirHockey = __ah.renderAirHockey;
-    const renderAirHockeyMenu = __ah.renderAirHockeyMenu;
-    const closeAirHockeyMenu = __ah.closeAirHockeyMenu;
-    const setAirHockeyMode = __ah.setAirHockeyMode;
-    const isMultiplayerAirHockeyActive = __ah.isMultiplayerAirHockeyActive;
-    const syncMultiplayerAirHockeyState = __ah.syncMultiplayerAirHockeyState;
-    const pushMultiplayerAirHockeyInput = __ah.pushMultiplayerAirHockeyInput;
-    const startAirHockeyCountdown = __ah.startAirHockeyCountdown;
-    const launchAirHockeyPuck = __ah.launchAirHockeyPuck;
-    const stopAirHockeyRuntime = __ah.stopAirHockeyRuntime;
-    const updateAirHockey = __ah.updateAirHockey;
 
     // Bridge ESM — Pong géré par js/games/pong.js.
     const __pg = window.__baie.pong;
-    const initializePong = __pg.initializePong;
-    const renderPong = __pg.renderPong;
-    const renderPongMenu = __pg.renderPongMenu;
-    const startPong = __pg.startPong;
-    const stopPong = __pg.stopPong;
-    const setPongMode = __pg.setPongMode;
-    const isMultiplayerPongActive = __pg.isMultiplayerPongActive;
-    const syncMultiplayerPongState = __pg.syncMultiplayerPongState;
-    const pushMultiplayerPongInput = __pg.pushMultiplayerPongInput;
-    const startPongLaunchSequence = __pg.startPongLaunchSequence;
-    const resetPongRound = __pg.resetPongRound;
-    const resetPongMatch = __pg.resetPongMatch;
-    const pausePong = __pg.pausePong;
-    const resumePong = __pg.resumePong;
 
     // Bridge ESM — js/multiplayer/state.js est la source de vérité que lisent
     // les 9 modules games/ (getMultiplayerActiveRoom / getMultiplayerSocket).
@@ -952,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showGames() {
         if (!__mw.isMinesweeperInitialized()) {
-            initializeGame();
+            __mw.initializeGame();
         }
 
         closeGameOverModal();
@@ -1325,10 +1073,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.bindGlobalKeyboardControls({
         getActiveGameTab,
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
-        isMultiplayerPongActive,
-        pushMultiplayerPongInput,
-        isMultiplayerAirHockeyActive,
-        pushMultiplayerAirHockeyInput
+        isMultiplayerPongActive: __pg.isMultiplayerPongActive,
+        pushMultiplayerPongInput: __pg.pushMultiplayerPongInput,
+        isMultiplayerAirHockeyActive: __ah.isMultiplayerAirHockeyActive,
+        pushMultiplayerAirHockeyInput: __ah.pushMultiplayerAirHockeyInput
     });
 
     window.bindSessionActivityTracking();
@@ -1337,30 +1085,30 @@ document.addEventListener('DOMContentLoaded', () => {
         handlePianoKeyUp: __music.handlePianoKeyUp,
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
         getPongKeys: () => __pg.getPongKeys(),
-        isMultiplayerPongActive: () => getActiveGameTab() === 'pong' && isMultiplayerPongActive(),
-        pushMultiplayerPongInput,
+        isMultiplayerPongActive: () => getActiveGameTab() === 'pong' && __pg.isMultiplayerPongActive(),
+        pushMultiplayerPongInput: __pg.pushMultiplayerPongInput,
         getAirHockeyKeys: () => __ah.getAirHockeyKeys(),
-        isMultiplayerAirHockeyActive: () => getActiveGameTab() === 'airHockey' && isMultiplayerAirHockeyActive(),
-        pushMultiplayerAirHockeyInput,
+        isMultiplayerAirHockeyActive: () => getActiveGameTab() === 'airHockey' && __ah.isMultiplayerAirHockeyActive(),
+        pushMultiplayerAirHockeyInput: __ah.pushMultiplayerAirHockeyInput,
         getBreakoutKeys: () => __bk.getBreakoutKeys()
     });
 
     window.bindResponsiveGameResize({
         getActiveGameTab,
         syncAllGameMenuOverlayBounds,
-        renderSnake,
-        isMultiplayerPongActive,
-        syncMultiplayerPongState,
-        resetPongRound,
-        initializeAirHockey,
-        renderAirHockey,
-        render2048,
-        renderPacman,
-        renderFlappy,
-        renderHarborRun,
-        renderStacker,
-        drawBaieBerry,
-        drawBreakout
+        renderSnake: __sn.renderSnake,
+        isMultiplayerPongActive: __pg.isMultiplayerPongActive,
+        syncMultiplayerPongState: __pg.syncMultiplayerPongState,
+        resetPongRound: __pg.resetPongRound,
+        initializeAirHockey: __ah.initializeAirHockey,
+        renderAirHockey: __ah.renderAirHockey,
+        render2048: __g2.render2048,
+        renderPacman: __pm.renderPacman,
+        renderFlappy: __fl.renderFlappy,
+        renderHarborRun: __hr.renderHarborRun,
+        renderStacker: __st.renderStacker,
+        drawBaieBerry: __bb2.drawBaieBerry,
+        drawBreakout: __bk.drawBreakout
     });
 
     window.bindMultiplayerLobbyControls({
@@ -1381,25 +1129,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     showGamePanel('home');
     updateMultiplayerLobby();
-    initializeGame();
-    renderMinesweeperMenu();
-    renderStackerMenu();
-    renderPacmanMenu();
-    renderTetrisMenu();
-    renderBattleshipMenu();
-    renderHarborRunMenu();
-    renderCoinClickerMenu();
-    renderCandyCrushMenu();
-    renderFlowFreeMenu();
-    renderMagicSortMenu();
-    renderBlockBlastMenu();
-    renderAimMenu();
-    renderRhythmMenu();
-    renderSolitaireMenu();
-    renderBombMenu();
+    __mw.initializeGame();
+    __mw.renderMinesweeperMenu();
+    __st.renderStackerMenu();
+    __pm.renderPacmanMenu();
+    __tt.renderTetrisMenu();
+    __bs.renderBattleshipMenu();
+    __hr.renderHarborRunMenu();
+    __cc.renderCoinClickerMenu();
+    __cc2.renderCandyCrushMenu();
+    __ff.renderFlowFreeMenu();
+    __ms.renderMagicSortMenu();
+    __bb.renderBlockBlastMenu();
+    __am.renderAimMenu();
+    __rh.renderRhythmMenu();
+    __sol.renderSolitaireMenu();
+    __bm.renderBombMenu();
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
-    startCoinClickerAutoLoop();
+    __cc.startCoinClickerAutoLoop();
     __math.initializeConverter();
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');
