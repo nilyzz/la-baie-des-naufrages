@@ -89,7 +89,7 @@ export function evaluateCalculatorExpression() {
     }
 
     try {
-        const result = Function(`"use strict"; return (${normalizedExpression});`)();
+        const result = new Function('Math', `"use strict"; return (${normalizedExpression});`)(Math);
 
         if (!Number.isFinite(result)) {
             throw new Error('Resultat non fini');
@@ -262,4 +262,88 @@ export function calculateCircle() {
     const area = Math.PI * radius * radius;
 
     circleResult.textContent = `Diamètre : ${formatMathNumber(diameter)} | Circonférence : ${formatMathNumber(circumference)} | Aire : ${formatMathNumber(area)}`;
+}
+
+export function bindMathControls() {
+    const calculatorDisplay = document.getElementById('calculatorDisplay');
+    const calculatorStatus = document.getElementById('calculatorStatus');
+    const calculatorKeys = document.querySelectorAll('.calculator-key');
+    const converterCategory = document.getElementById('converterCategory');
+    const converterFrom = document.getElementById('converterFrom');
+    const converterTo = document.getElementById('converterTo');
+    const converterSwapButton = document.getElementById('converterSwapButton');
+    const converterConvertButton = document.getElementById('converterConvertButton');
+    const percentageButton = document.getElementById('percentageButton');
+    const ruleThreeButton = document.getElementById('ruleThreeButton');
+    const circleButton = document.getElementById('circleButton');
+
+    calculatorKeys.forEach((button) => {
+        button.addEventListener('click', () => {
+            if (!calculatorDisplay || !calculatorStatus) {
+                return;
+            }
+
+            const { action, value } = button.dataset;
+
+            if (action === 'clear') {
+                calculatorDisplay.value = '';
+                calculatorStatus.textContent = '';
+                calculatorStatus.classList.remove('feedback-success', 'feedback-error');
+                return;
+            }
+
+            if (action === 'backspace') {
+                calculatorDisplay.value = calculatorDisplay.value.slice(0, -1);
+                return;
+            }
+
+            if (action === 'evaluate') {
+                evaluateCalculatorExpression();
+                return;
+            }
+
+            const start = calculatorDisplay.selectionStart ?? calculatorDisplay.value.length;
+            const end = calculatorDisplay.selectionEnd ?? calculatorDisplay.value.length;
+            calculatorDisplay.setRangeText(value || '', start, end, 'end');
+            calculatorDisplay.focus();
+        });
+    });
+
+    calculatorDisplay?.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            evaluateCalculatorExpression();
+        }
+    });
+
+    converterCategory?.addEventListener('change', () => {
+        populateConverterUnits(converterCategory.value);
+    });
+
+    converterSwapButton?.addEventListener('click', () => {
+        if (!converterFrom || !converterTo) {
+            return;
+        }
+
+        const previousFrom = converterFrom.value;
+        converterFrom.value = converterTo.value;
+        converterTo.value = previousFrom;
+        convertUnits();
+    });
+
+    converterConvertButton?.addEventListener('click', () => {
+        convertUnits();
+    });
+
+    percentageButton?.addEventListener('click', () => {
+        calculatePercentage();
+    });
+
+    ruleThreeButton?.addEventListener('click', () => {
+        calculateRuleOfThree();
+    });
+
+    circleButton?.addEventListener('click', () => {
+        calculateCircle();
+    });
 }

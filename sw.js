@@ -1,13 +1,13 @@
-const CACHE_NAME = 'baie-des-naufrages-v1-32';
+const CACHE_NAME = 'baie-des-naufrages-v1-71';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
     '/confidentialite.html',
     '/mentions-legales.html',
     '/ads.txt',
-    '/style.min.css?v=v1-32',
-    '/script.min.js?v=v1-32',
-    '/js/main.bundle.min.js?v=v1-32',
+    '/style.min.css?v=v1-71',
+    '/script.min.js?v=v1-71',
+    '/js/main.bundle.min.js?v=v1-71',
     '/site.webmanifest',
     '/assets/branding/logo-baie-cartoon.svg',
     '/assets/navires/navire-cinema.svg',
@@ -19,7 +19,7 @@ const PRECACHE_URLS = [
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then((cache) => cache.addAll(PRECACHE_URLS).catch(() => null))
+            .then((cache) => cache.addAll(PRECACHE_URLS).catch((err) => { console.warn('[SW] precache partiel:', err.message || err); return null; }))
             .then(() => self.skipWaiting())
     );
 });

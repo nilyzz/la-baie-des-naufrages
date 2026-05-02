@@ -27,9 +27,9 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.min.css?v=v1-32">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-32">
-    <link rel="preload" as="script" href="/script.min.js?v=v1-32">
+    <link rel="stylesheet" href="style.min.css?v=v1-71">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-71">
+    <link rel="preload" as="script" href="/script.min.js?v=v1-71">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -130,7 +130,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 1.32</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 1.71</span>
                     </p>
                 </form>
             </div>
@@ -1705,7 +1705,6 @@
                             <div id="baieBerryNextDisplay" class="baieberry-next-preview" aria-label="Fruit suivant"></div>
                         </div>
                     </div>
-                    <p id="baieBerryObjectiveDisplay" class="baieberry-objective" aria-live="polite"></p>
                     <p id="baieBerryHelpText" class="baieberry-help">Clique dans la colonne pour laisser tomber un fruit. Deux fruits identiques fusionnent en plus gros.</p>
                     <div class="baieberry-layout">
                         <div id="baieBerryTable" class="baieberry-table">
@@ -2422,8 +2421,8 @@
             applyConsent(initialMode);
         })();
     </script>
-    <script type="module" src="/js/main.bundle.min.js?v=v1-32"></script>
-    <script defer src="script.min.js?v=v1-32"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v1-71"></script>
+    <script defer src="script.min.js?v=v1-71"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -2442,14 +2441,17 @@
                     'color:#e2e8f0', 'font-size:0.92rem', 'font-weight:600',
                     'white-space:nowrap', 'backdrop-filter:blur(12px)'
                 ].join(';');
-                banner.innerHTML = '🆕 Nouvelle version disponible &nbsp;'
-                    + '<button onclick="window.location.reload()" style="'
-                    + 'background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;border:0;'
-                    + 'border-radius:999px;padding:7px 16px;font-weight:700;cursor:pointer;font-size:0.88rem'
-                    + '">Mettre à jour</button>'
-                    + '<button onclick="this.parentElement.remove()" style="'
-                    + 'background:transparent;border:0;color:#64748b;cursor:pointer;font-size:1.1rem;padding:0 2px'
-                    + '" aria-label="Ignorer">✕</button>';
+                banner.appendChild(document.createTextNode('🆕 Nouvelle version disponible  '));
+                const updateBtn = document.createElement('button');
+                updateBtn.style.cssText = 'background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;border:0;border-radius:999px;padding:7px 16px;font-weight:700;cursor:pointer;font-size:0.88rem';
+                updateBtn.textContent = 'Mettre à jour';
+                updateBtn.addEventListener('click', () => window.location.reload());
+                const dismissBtn = document.createElement('button');
+                dismissBtn.style.cssText = 'background:transparent;border:0;color:#64748b;cursor:pointer;font-size:1.1rem;padding:0 2px';
+                dismissBtn.setAttribute('aria-label', 'Ignorer');
+                dismissBtn.textContent = '✕';
+                dismissBtn.addEventListener('click', () => banner.remove());
+                banner.append(updateBtn, dismissBtn);
                 document.body.appendChild(banner);
             });
         }
