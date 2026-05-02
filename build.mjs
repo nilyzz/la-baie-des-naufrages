@@ -125,6 +125,8 @@ function normalizeIndexContent(content) {
         .replace(/style\.min\.css\?v=[^"'\s>]+/g, 'style.min.css?v=__SITE_CACHE_KEY__')
         .replace(/script\.min\.js\?v=[^"'\s>]+/g, 'script.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^"'\s>]+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__')
+        .replace(/\/js\/core\/consent\.js\?v=[^"'\s>]+/g, '/js/core/consent.js?v=__SITE_CACHE_KEY__')
+        .replace(/\/js\/core\/sw-register\.js\?v=[^"'\s>]+/g, '/js/core/sw-register.js?v=__SITE_CACHE_KEY__')
         .replace(/(<span id="siteVersionDisplay"[^>]*>)([^<]*)(<\/span>)/, '$1Version __SITE_VERSION__$3');
 }
 
@@ -133,7 +135,9 @@ function normalizeSwContent(content) {
         .replace(/const CACHE_NAME = 'baie-des-naufrages-v[^']+';/, "const CACHE_NAME = 'baie-des-naufrages-v__SITE_CACHE_KEY__';")
         .replace(/\/style\.min\.css\?v=[^']+/g, '/style.min.css?v=__SITE_CACHE_KEY__')
         .replace(/\/script\.min\.js\?v=[^']+/g, '/script.min.js?v=__SITE_CACHE_KEY__')
-        .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__');
+        .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__')
+        .replace(/\/js\/core\/consent\.js\?v=[^']+/g, '/js/core/consent.js?v=__SITE_CACHE_KEY__')
+        .replace(/\/js\/core\/sw-register\.js\?v=[^']+/g, '/js/core/sw-register.js?v=__SITE_CACHE_KEY__');
 }
 
 function getNormalizedFileContent(filePath) {
@@ -167,6 +171,8 @@ function applyVersionToIndex(content, displayVersion, cacheKey) {
         .replace(/style\.min\.css\?v=[^"'\s>]+/g, `style.min.css?v=${cacheKey}`)
         .replace(/script\.min\.js\?v=[^"'\s>]+/g, `script.min.js?v=${cacheKey}`)
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^"'\s>]+/g, `/js/main.bundle.min.js?v=${cacheKey}`)
+        .replace(/\/js\/core\/consent\.js\?v=[^"'\s>]+/g, `/js/core/consent.js?v=${cacheKey}`)
+        .replace(/\/js\/core\/sw-register\.js\?v=[^"'\s>]+/g, `/js/core/sw-register.js?v=${cacheKey}`)
         .replace(/(<span id="siteVersionDisplay"[^>]*>)([^<]*)(<\/span>)/, `$1Version ${displayVersion}$3`);
 }
 
@@ -175,7 +181,9 @@ function applyVersionToSw(content, cacheKey) {
         .replace(/const CACHE_NAME = 'baie-des-naufrages-[^']+';/, `const CACHE_NAME = 'baie-des-naufrages-${cacheKey}';`)
         .replace(/\/style\.min\.css\?v=[^']+/g, `/style.min.css?v=${cacheKey}`)
         .replace(/\/script\.min\.js\?v=[^']+/g, `/script.min.js?v=${cacheKey}`)
-        .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, `/js/main.bundle.min.js?v=${cacheKey}`);
+        .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, `/js/main.bundle.min.js?v=${cacheKey}`)
+        .replace(/\/js\/core\/consent\.js\?v=[^']+/g, `/js/core/consent.js?v=${cacheKey}`)
+        .replace(/\/js\/core\/sw-register\.js\?v=[^']+/g, `/js/core/sw-register.js?v=${cacheKey}`);
 }
 
 function updateVersionedFiles(displayVersion, cacheKey) {

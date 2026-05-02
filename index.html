@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://la-baie-des-naufrages.onrender.com https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagmanager.com https://adservice.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://image.tmdb.org https://*.googlesyndication.com https://*.google.com https://googleads.g.doubleclick.net; connect-src 'self' https://la-baie-des-naufrages.onrender.com wss://la-baie-des-naufrages.onrender.com https://api.themoviedb.org; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; font-src 'self'; object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://la-baie-des-naufrages.onrender.com https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagmanager.com https://adservice.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://image.tmdb.org https://*.googlesyndication.com https://*.google.com https://googleads.g.doubleclick.net; connect-src 'self' https://la-baie-des-naufrages.onrender.com wss://la-baie-des-naufrages.onrender.com https://api.themoviedb.org; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; font-src 'self'; object-src 'none'; base-uri 'self';">
     <meta name="multiplayer-server-url" content="https://la-baie-des-naufrages.onrender.com">
     <meta name="google-adsense-account" content="ca-pub-1302716532000899">
     <meta name="description" content="La Baie des naufragés réunit 31 mini-jeux, un catalogue cinéma, des outils de calcul et un piano interactif dans un univers marin original.">
@@ -27,9 +27,9 @@
     <link rel="shortcut icon" href="/assets/branding/logo-baie-cartoon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/branding/logo-baie-cartoon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="style.min.css?v=v1-71">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-71">
-    <link rel="preload" as="script" href="/script.min.js?v=v1-71">
+    <link rel="stylesheet" href="style.min.css?v=v1-72">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v1-72">
+    <link rel="preload" as="script" href="/script.min.js?v=v1-72">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -130,7 +130,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 1.71</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 1.72</span>
                     </p>
                 </form>
             </div>
@@ -2226,235 +2226,9 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
-    <script>
-        (function () {
-            const CONSENT_KEY = 'baie-des-naufrages-ad-consent-v1';
-            const LEGACY_PERSONALIZED_MODE = 'personalized';
-            const ADSENSE_SCRIPT_ID = 'baieAdsenseLoader';
-            const ADSENSE_SRC = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1302716532000899';
-            const adContainer = document.querySelector('.site-ads');
-            const adSlot = document.querySelector('.ad-slot');
-            const consentBanner = document.getElementById('consentBanner');
-            const consentStatusText = document.getElementById('consentStatusText');
-            const openConsentPreferencesButton = document.getElementById('openConsentPreferencesButton');
-            const closeConsentButtons = document.querySelectorAll('[data-close-consent-banner="true"]');
-            const consentChoiceButtons = document.querySelectorAll('[data-consent-choice]');
-            let adRequestIssued = false;
-
-            function getAdsQueue() {
-                return window.adsbygoogle = window.adsbygoogle || [];
-            }
-
-            function readConsent() {
-                try {
-                    const storedConsent = JSON.parse(window.localStorage.getItem(CONSENT_KEY) || 'null');
-                    if (!storedConsent || ![LEGACY_PERSONALIZED_MODE, 'non-personalized', 'rejected'].includes(storedConsent.mode)) {
-                        return null;
-                    }
-                    if (storedConsent.mode === LEGACY_PERSONALIZED_MODE) {
-                        return {
-                            ...storedConsent,
-                            mode: 'non-personalized',
-                            legacyPersonalized: true
-                        };
-                    }
-                    return storedConsent;
-                } catch (error) {
-                    return null;
-                }
-            }
-
-            function writeConsent(mode) {
-                try {
-                    window.localStorage.setItem(CONSENT_KEY, JSON.stringify({
-                        mode,
-                        updatedAt: Date.now()
-                    }));
-                } catch (error) {
-                    console.warn('Impossible de sauvegarder le choix de consentement.', error);
-                }
-            }
-
-            function describeConsent(mode) {
-                if (mode === 'non-personalized') {
-                    return 'Tu autorises uniquement des annonces non personnalisees. La zone pub peut se charger sans ciblage publicitaire personnalise.';
-                }
-                if (mode === 'rejected') {
-                    return 'Tu refuses le chargement publicitaire. Les annonces restent désactivées tant que tu ne changes pas ce choix.';
-                }
-                return 'Aucun choix n\'est enregistré. Par défaut, la publicité reste bloquée tant que tu n\'as pas décidé.';
-            }
-
-            function openConsentBanner() {
-                if (!consentBanner) {
-                    return;
-                }
-                consentBanner.classList.remove('hidden');
-                consentBanner.setAttribute('aria-hidden', 'false');
-            }
-
-            function closeConsentBanner() {
-                if (!consentBanner) {
-                    return;
-                }
-                consentBanner.classList.add('hidden');
-                consentBanner.setAttribute('aria-hidden', 'true');
-                openConsentPreferencesButton?.focus();
-            }
-
-            function setAdsBlockedState(blocked) {
-                if (!adContainer) {
-                    return;
-                }
-                adContainer.classList.toggle('site-ads-consent-blocked', blocked);
-                if (blocked) {
-                    getAdsQueue().pauseAdRequests = 1;
-                    adContainer.classList.remove('site-ads-ready', 'site-ads-unconfigured');
-                }
-            }
-
-            function requestAdFill(mode) {
-                if (!adContainer || !adSlot) {
-                    return;
-                }
-                const adsQueue = getAdsQueue();
-                adsQueue.requestNonPersonalizedAds = mode === 'non-personalized' ? 1 : 0;
-                adsQueue.pauseAdRequests = 0;
-
-                if (adRequestIssued) {
-                    return;
-                }
-
-                try {
-                    adsQueue.push({});
-                    adRequestIssued = true;
-                    adContainer.classList.add('site-ads-ready');
-                } catch (error) {
-                    adContainer.classList.add('site-ads-unconfigured');
-                }
-            }
-
-            function ensureAdsenseLoaded(mode) {
-                if (!adContainer || !adSlot) {
-                    return;
-                }
-
-                if (mode !== 'non-personalized') {
-                    setAdsBlockedState(true);
-                    return;
-                }
-
-                setAdsBlockedState(false);
-                const adsQueue = getAdsQueue();
-                adsQueue.pauseAdRequests = 1;
-                adsQueue.requestNonPersonalizedAds = mode === 'non-personalized' ? 1 : 0;
-
-                const existingScript = document.getElementById(ADSENSE_SCRIPT_ID);
-                if (existingScript) {
-                    if (existingScript.dataset.loaded === 'true') {
-                        requestAdFill(mode);
-                    }
-                    return;
-                }
-
-                const adsenseScript = document.createElement('script');
-                adsenseScript.id = ADSENSE_SCRIPT_ID;
-                adsenseScript.async = true;
-                adsenseScript.src = ADSENSE_SRC;
-                adsenseScript.crossOrigin = 'anonymous';
-                adsenseScript.addEventListener('load', () => {
-                    adsenseScript.dataset.loaded = 'true';
-                    requestAdFill(mode);
-                }, { once: true });
-                adsenseScript.addEventListener('error', () => {
-                    adContainer.classList.add('site-ads-unconfigured');
-                }, { once: true });
-                document.head.appendChild(adsenseScript);
-            }
-
-            function applyConsent(mode) {
-                if (consentStatusText) {
-                    consentStatusText.textContent = describeConsent(mode);
-                }
-                openConsentPreferencesButton?.setAttribute('data-consent-mode', mode || 'unset');
-                ensureAdsenseLoaded(mode);
-            }
-
-            function requiresReload(previousMode, nextMode) {
-                if (!previousMode || previousMode === 'rejected') {
-                    return false;
-                }
-                return previousMode !== nextMode;
-            }
-
-            closeConsentButtons.forEach((button) => {
-                button.addEventListener('click', () => {
-                    closeConsentBanner();
-                });
-            });
-
-            openConsentPreferencesButton?.addEventListener('click', () => {
-                openConsentBanner();
-            });
-
-            consentChoiceButtons.forEach((button) => {
-                button.addEventListener('click', () => {
-                    const previousMode = readConsent()?.mode || null;
-                    const nextMode = button.dataset.consentChoice || 'rejected';
-                    writeConsent(nextMode);
-                    applyConsent(nextMode);
-                    closeConsentBanner();
-
-                    if (requiresReload(previousMode, nextMode)) {
-                        window.setTimeout(() => {
-                            window.location.reload();
-                        }, 120);
-                    }
-                });
-            });
-
-            const initialConsent = readConsent();
-            const initialMode = initialConsent?.mode || null;
-            if (initialConsent?.legacyPersonalized) {
-                writeConsent(initialMode);
-            }
-            applyConsent(initialMode);
-        })();
-    </script>
-    <script type="module" src="/js/main.bundle.min.js?v=v1-71"></script>
-    <script defer src="script.min.js?v=v1-71"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(() => null);
-            });
-            navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data?.type !== 'SW_UPDATED') return;
-                const banner = document.createElement('div');
-                banner.setAttribute('role', 'status');
-                banner.style.cssText = [
-                    'position:fixed', 'bottom:20px', 'left:50%', 'transform:translateX(-50%)',
-                    'z-index:99999', 'display:flex', 'align-items:center', 'gap:14px',
-                    'padding:14px 20px', 'border-radius:16px',
-                    'background:rgba(15,23,42,0.97)', 'border:1px solid rgba(148,163,184,0.18)',
-                    'box-shadow:0 8px 32px rgba(0,0,0,0.5)',
-                    'color:#e2e8f0', 'font-size:0.92rem', 'font-weight:600',
-                    'white-space:nowrap', 'backdrop-filter:blur(12px)'
-                ].join(';');
-                banner.appendChild(document.createTextNode('🆕 Nouvelle version disponible  '));
-                const updateBtn = document.createElement('button');
-                updateBtn.style.cssText = 'background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;border:0;border-radius:999px;padding:7px 16px;font-weight:700;cursor:pointer;font-size:0.88rem';
-                updateBtn.textContent = 'Mettre à jour';
-                updateBtn.addEventListener('click', () => window.location.reload());
-                const dismissBtn = document.createElement('button');
-                dismissBtn.style.cssText = 'background:transparent;border:0;color:#64748b;cursor:pointer;font-size:1.1rem;padding:0 2px';
-                dismissBtn.setAttribute('aria-label', 'Ignorer');
-                dismissBtn.textContent = '✕';
-                dismissBtn.addEventListener('click', () => banner.remove());
-                banner.append(updateBtn, dismissBtn);
-                document.body.appendChild(banner);
-            });
-        }
-    </script>
+    <script defer src="/js/core/consent.js?v=v1-72"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v1-72"></script>
+    <script defer src="script.min.js?v=v1-72"></script>
+    <script defer src="/js/core/sw-register.js?v=v1-72"></script>
 </body>
 </html>
