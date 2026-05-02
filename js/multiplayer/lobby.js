@@ -434,3 +434,67 @@ export function updateMultiplayerLobby({ preserveStatus = false, onLeave, active
 
     setMultiplayerStatus('Cree un salon prive ou rejoins-en un avec un code.');
 }
+
+export function bindMultiplayerLobbyControls(options = {}) {
+    const {
+        onCreateRoom,
+        onJoinRoom,
+        onCopyCode,
+        onSendChat,
+        onSyncPlayerNames
+    } = options;
+
+    const createRoomButton = document.getElementById('multiplayerCreateRoomButton');
+    const joinRoomButton = document.getElementById('multiplayerJoinRoomButton');
+    const createModeButton = document.getElementById('multiplayerCreateModeButton');
+    const joinModeButton = document.getElementById('multiplayerJoinModeButton');
+    const copyCodeButton = document.getElementById('multiplayerCopyCodeButton');
+    const joinRoomCodeInput = document.getElementById('multiplayerJoinRoomCodeInput');
+    const chatForm = document.getElementById('multiplayerChatForm');
+    const createPlayerNameInput = document.getElementById('multiplayerCreatePlayerNameInput');
+    const joinPlayerNameInput = document.getElementById('multiplayerJoinPlayerNameInput');
+
+    createRoomButton?.addEventListener('click', () => {
+        onCreateRoom?.();
+    });
+
+    joinRoomButton?.addEventListener('click', () => {
+        onJoinRoom?.();
+    });
+
+    createModeButton?.addEventListener('click', () => {
+        setMultiplayerEntryMode('create');
+    });
+
+    joinModeButton?.addEventListener('click', () => {
+        setMultiplayerEntryMode('join');
+    });
+
+    copyCodeButton?.addEventListener('click', () => {
+        onCopyCode?.();
+    });
+
+    joinRoomCodeInput?.addEventListener('input', () => {
+        joinRoomCodeInput.value = joinRoomCodeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    });
+
+    joinRoomCodeInput?.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            onJoinRoom?.();
+        }
+    });
+
+    chatForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        onSendChat?.();
+    });
+
+    createPlayerNameInput?.addEventListener('input', () => {
+        onSyncPlayerNames?.('create');
+    });
+
+    joinPlayerNameInput?.addEventListener('input', () => {
+        onSyncPlayerNames?.('join');
+    });
+}

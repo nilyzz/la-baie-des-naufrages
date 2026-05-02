@@ -53,7 +53,6 @@ function dom() {
         baieBerryScoreDisplay: $('baieBerryScoreDisplay'),
         baieBerryBestDisplay: $('baieBerryBestDisplay'),
         baieBerryNextDisplay: $('baieBerryNextDisplay'),
-        baieBerryObjectiveDisplay: $('baieBerryObjectiveDisplay'),
         baieBerryHelpText: $('baieBerryHelpText'),
         baieBerryMenuOverlay: $('baieBerryMenuOverlay'),
         baieBerryMenuEyebrow: $('baieBerryMenuEyebrow'),
@@ -68,18 +67,8 @@ function getRandomBaieBerryIndex() {
     return Math.floor(Math.random() * Math.min(4, BAIE_BERRY_FRUITS.length));
 }
 
-function getRandomBaieBerryObjective() {
-    const targets = [
-        { type: 'score', target: 1500, label: 'Atteins 1500 points' },
-        { type: 'score', target: 3000, label: 'Atteins 3000 points' },
-        { type: 'level', target: 6, label: 'Cree une Perle Marine' },
-        { type: 'level', target: 7, label: 'Cree un Rubis des Flots' }
-    ];
-    return { ...targets[Math.floor(Math.random() * targets.length)], completed: false };
-}
-
 export function refreshBaieBerryHud() {
-    const { baieBerryScoreDisplay, baieBerryBestDisplay, baieBerryNextDisplay, baieBerryObjectiveDisplay } = dom();
+    const { baieBerryScoreDisplay, baieBerryBestDisplay, baieBerryNextDisplay } = dom();
     if (!baieBerryState) {
         return;
     }
@@ -91,9 +80,6 @@ export function refreshBaieBerryHud() {
         baieBerryNextDisplay.style.setProperty('--baieberry-preview-color', nextFruit.color);
         baieBerryNextDisplay.setAttribute('aria-label', `Fruit suivant: ${nextFruit.name}`);
     }
-    if (baieBerryObjectiveDisplay) baieBerryObjectiveDisplay.textContent = baieBerryState.objective.completed
-        ? `${baieBerryState.objective.label} ✓`
-        : baieBerryState.objective.label;
 }
 
 function addBaieBerryParticles(x, y, color, count = 14) {
@@ -125,28 +111,6 @@ function addBaieBerryScorePopup(x, y, text, color = '#f8fafc') {
         text,
         color
     });
-}
-
-function updateBaieBerryObjective(lastMergedLevel = null) {
-    if (!baieBerryState || baieBerryState.objective.completed) {
-        return;
-    }
-
-    const { objective } = baieBerryState;
-    if (objective.type === 'score' && baieBerryState.score >= objective.target) {
-        objective.completed = true;
-    }
-
-    if (objective.type === 'level' && lastMergedLevel !== null && lastMergedLevel >= objective.target) {
-        objective.completed = true;
-    }
-
-    if (objective.completed) {
-        const { baieBerryHelpText, baieBerryCanvas } = dom();
-        if (baieBerryHelpText) baieBerryHelpText.textContent = `Objectif accompli: ${objective.label}. Continue de faire grimper la r\u00e9colte.`;
-        if (baieBerryCanvas) addBaieBerryScorePopup(baieBerryCanvas.width * 0.5, 108, 'Objectif atteint', '#fde68a');
-        refreshBaieBerryHud();
-    }
 }
 
 export function updateBaieBerryDropGuide(positionX = null) {
@@ -415,13 +379,6 @@ export function drawBaieBerry() {
     const context = baieBerryContext;
 
     context.clearRect(0, 0, baieBerryCanvas.width, baieBerryCanvas.height);
-    const backdrop = context.createLinearGradient(0, 0, 0, baieBerryCanvas.height);
-    backdrop.addColorStop(0, '#dbeafe');
-    backdrop.addColorStop(0.18, '#93c5fd');
-    backdrop.addColorStop(0.65, '#38bdf8');
-    backdrop.addColorStop(1, '#0f766e');
-    context.fillStyle = backdrop;
-    context.fillRect(0, 0, baieBerryCanvas.width, baieBerryCanvas.height);
 
     context.fillStyle = 'rgba(255,255,255,0.14)';
     for (let bubbleIndex = 0; bubbleIndex < 16; bubbleIndex += 1) {
@@ -520,9 +477,6 @@ export function renderBaieBerryMenu() {
     }
 
     const currentScore = baieBerryState?.score ?? 0;
-    const objectiveLabel = baieBerryState?.objective?.label ?? 'Atteins 1500 points';
-    const objectiveStatus = baieBerryState?.objective?.completed ? 'Objectif accompli.' : `Objectif du jour: ${objectiveLabel}.`;
-
     if (baieBerryMenuEyebrow) {
         baieBerryMenuEyebrow.textContent = baieBerryMenuShowingRules ? 'R\u00e8gles' : (baieBerryMenuResult ? 'Fin de r\u00e9colte' : "Baie d'arcade");
     }
@@ -535,7 +489,7 @@ export function renderBaieBerryMenu() {
         baieBerryMenuText.textContent = baieBerryMenuShowingRules
             ? getBaieBerryRulesText()
             : (baieBerryMenuResult
-                ? `Score ${currentScore}. ${objectiveStatus} La ligne rouge est restée occupée trop longtemps.`
+                ? `Score ${currentScore}. La ligne rouge est restée occupée trop longtemps.`
                 : 'Prepare ta r\u00e9colte avant de laisser tomber les fruits dans le panier.');
     }
     if (baieBerryMenuActionButton) {
@@ -596,7 +550,6 @@ export function initializeBaieBerry() {
         dangerTime: 0,
         comboCount: 0,
         comboExpiresAt: 0,
-        objective: getRandomBaieBerryObjective(),
         particles: [],
         scorePopups: [],
         shake: 0,
@@ -795,7 +748,6 @@ export function updateBaieBerry(timestamp) {
                             ? `Combo x${baieBerryState.comboCount}. Les fusions s enchainent.`
                             : `Fusion ${BAIE_BERRY_FRUITS[nextLevel].name}. Continue la r\u00e9colte.`;
                         refreshBaieBerryHud();
-                        updateBaieBerryObjective(nextLevel);
                         if (baieBerryState.score > baieBerryBestScore) {
                             baieBerryBestScore = baieBerryState.score;
                             window.localStorage.setItem(BAIE_BERRY_BEST_KEY, String(baieBerryBestScore));

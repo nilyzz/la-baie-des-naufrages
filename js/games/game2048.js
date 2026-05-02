@@ -85,6 +85,7 @@ export function close2048Menu() {
         game2048MenuShowingRules = false;
         game2048MenuResult = false;
         render2048Menu();
+        launch2048InitialTiles();
     }, 220);
 }
 
@@ -137,6 +138,8 @@ function place2048TileElement(element, row, col, geometry) {
     const offsetY = row * (geometry.cellSize + geometry.gap);
     element.style.width = `${geometry.cellSize}px`;
     element.style.height = `${geometry.cellSize}px`;
+    element.style.setProperty('--game-2048-tile-x', `${offsetX}px`);
+    element.style.setProperty('--game-2048-tile-y', `${offsetY}px`);
     element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
 }
 
@@ -162,6 +165,13 @@ function add2048Tile(isFresh = true) {
     game2048Tiles.push(nextTile);
     sync2048Grid();
     return nextTile;
+}
+
+function launch2048InitialTiles() {
+    if (game2048Tiles.length > 0) return;
+    add2048Tile(true);
+    add2048Tile(true);
+    render2048();
 }
 
 function get2048TileClasses(tile) {
@@ -219,8 +229,6 @@ export function initialize2048() {
     game2048TileElements.forEach((element) => element.remove());
     game2048TileElements.clear();
     game2048Score = 0;
-    add2048Tile(true);
-    add2048Tile(true);
     update2048Hud();
     render2048();
     game2048MenuVisible = true;

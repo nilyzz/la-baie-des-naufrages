@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Constantes LEGAL_NOTICE_ANIMATION_MS, SESSION_KEY, SESSION_TIMEOUT_MS,
-    // MULTIPLAYER_SERVER_URL, EXCEL_FILE_CANDIDATES : exposees sur window par
+    // MULTIPLAYER_SERVER_URL : exposee sur window par
     // js/main.js (source de verite = js/core/constants.js et js/multiplayer/connection.js).
     const defaultPoster = 'https://placehold.co/600x900/0f172a/f8fafc?text=Affiche';
     // MULTIPLAYER_SUPPORTED_GAMES : expose sur window par js/core/constants.js via js/main.js.
@@ -15,18 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const pageBackButton = document.getElementById('pageBackButton');
     const logoutButton = document.getElementById('logoutButton');
-    const serviceCards = document.querySelectorAll('.service-card');
-    const backToServicesButtons = document.querySelectorAll('[data-back-to-services="true"]');
-    const cinemaHeaderNav = document.getElementById('cinemaHeaderNav');
-    const gamesHeaderNav = document.getElementById('gamesHeaderNav');
-    const mathHeaderNav = document.getElementById('mathHeaderNav');
-    const musicHeaderNav = document.getElementById('musicHeaderNav');
-    const siteAds = document.querySelector('.site-ads');
-    const cinemaNavButtons = document.querySelectorAll('#cinemaHeaderNav .nav-button');
-    const mathNavButtons = document.querySelectorAll('#mathHeaderNav .nav-button');
-    const musicNavButtons = document.querySelectorAll('#musicHeaderNav .nav-button');
-    const allViews = document.querySelectorAll('.view');
-    const panels = document.querySelectorAll('.panel');
     const searchInput = document.getElementById('searchInput');
     const catalogGrid = document.getElementById('catalogGrid');
     const emptyCatalogMessage = document.getElementById('emptyCatalogMessage');
@@ -51,8 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelDeleteButton = document.getElementById('cancelDeleteButton');
     const confirmDeleteButton = document.getElementById('confirmDeleteButton');
     const legalNoticeModal = document.getElementById('legalNoticeModal');
-    const openLegalNoticeButton = document.getElementById('openLegalNoticeButton');
-    const closeLegalNoticeButton = document.getElementById('closeLegalNoticeButton');
     const minesweeperBoard = document.getElementById('minesweeperBoard');
     const minesweeperGame = document.getElementById('minesweeperGame');
     const mineCountDisplay = document.getElementById('mineCountDisplay');
@@ -67,14 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const minesweeperMenuActionButton = document.getElementById('minesweeperMenuActionButton');
     const minesweeperMenuRulesButton = document.getElementById('minesweeperMenuRulesButton');
     const minesweeperGridSizeButtons = document.querySelectorAll('[data-minesweeper-grid-size]');
-    const gamesSectionButtons = document.querySelectorAll('[data-games-section]');
-    const gameHomeTiles = document.querySelectorAll('[data-open-game]');
-    const gamesLayout = document.querySelector('#gamesView .games-layout');
-    const gamesFiltersCard = document.getElementById('gamesFiltersCard');
-    const gamesFilterSearchInput = document.getElementById('gamesFilterSearchInput');
-    const gamesFilterButtons = document.querySelectorAll('[data-games-filter]');
-    const gamesFilterCount = document.getElementById('gamesFilterCount');
-    const gamesFilterHint = document.getElementById('gamesFilterHint');
     const multiplayerChatCard = document.getElementById('multiplayerChatCard');
     const multiplayerChatSubtitle = document.getElementById('multiplayerChatSubtitle');
     const multiplayerChatMessages = document.getElementById('multiplayerChatMessages');
@@ -104,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
     let multiplayerCreateLeaveButton = null;
     // GAME_FILTER_TAGS : expose sur window par js/core/constants.js via js/main.js.
-    let activeGamesFilter = 'all';
     const snakeGame = document.getElementById('snakeGame');
     const pongGame = document.getElementById('pongGame');
     const sudokuGame = document.getElementById('sudokuGame');
@@ -765,6 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
         __mpState.setMultiplayerSelectedGameId(multiplayerSelectedGameId);
         __mpState.setMultiplayerEntryMode(multiplayerEntryMode);
         __mpState.setMultiplayerBusy(multiplayerBusy);
+        __mpState.setMultiplayerChatSignature(multiplayerChatSignature);
     }
 
     const chessGame = document.getElementById('chessGame');
@@ -911,38 +889,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const bombMenuActionButton = document.getElementById('bombMenuActionButton');
     const bombMenuRulesButton = document.getElementById('bombMenuRulesButton');
     const bombMenuModeButtons = document.querySelectorAll('[data-bomb-mode]');
-    const mathPanels = document.querySelectorAll('.math-panel');
-    const musicPanels = document.querySelectorAll('.music-panel');
-    const calculatorDisplay = document.getElementById('calculatorDisplay');
-    const calculatorStatus = document.getElementById('calculatorStatus');
-    const calculatorKeys = document.querySelectorAll('.calculator-key');
-    const converterCategory = document.getElementById('converterCategory');
-    const converterValue = document.getElementById('converterValue');
-    const converterFrom = document.getElementById('converterFrom');
-    const converterTo = document.getElementById('converterTo');
-    const converterSwapButton = document.getElementById('converterSwapButton');
-    const converterConvertButton = document.getElementById('converterConvertButton');
-    const converterResult = document.getElementById('converterResult');
-    const percentageRate = document.getElementById('percentageRate');
-    const percentageBase = document.getElementById('percentageBase');
-    const percentageButton = document.getElementById('percentageButton');
-    const percentageResult = document.getElementById('percentageResult');
-    const ruleThreeA = document.getElementById('ruleThreeA');
-    const ruleThreeB = document.getElementById('ruleThreeB');
-    const ruleThreeC = document.getElementById('ruleThreeC');
-    const ruleThreeButton = document.getElementById('ruleThreeButton');
-    const ruleThreeResult = document.getElementById('ruleThreeResult');
-    const circleRadius = document.getElementById('circleRadius');
-    const circleButton = document.getElementById('circleButton');
-    const circleResult = document.getElementById('circleResult');
     const musicHomePanel = document.getElementById('musicHomePanel');
     const pianoPanel = document.getElementById('pianoPanel');
-    const instrumentTiles = document.querySelectorAll('[data-open-instrument]');
-    const pianoKeyboard = document.getElementById('pianoKeyboard');
-    const pianoResetButton = document.getElementById('pianoResetButton');
-    const pianoHelpText = document.getElementById('pianoHelpText');
-
     // PIANO_NOTES, PIANO_NOTE_MAP, PIANO_KEYBOARD_LAYOUT, UNIT_GROUPS : exposes sur window par js/main.js.
+    const __math = window.__baie.math;
+    const __music = window.__baie.music;
 
     let movies = [];
     let searchTerm = '';
@@ -952,9 +903,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let catalogSortMode = 'default';
     let catalogDirectorTerm = '';
     let currentView = loginView;
-    let siteAdsEnterTimer = null;
-    let gamesFiltersEnterTimer = null;
-    let activeGamesSection = 'home';
     let multiplayerSocket = null;
     let multiplayerActiveRoom = null;
     let multiplayerBusy = false;
@@ -963,31 +911,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplayerChatSignature = '';
     let ticTacToeLastFinishedStateKey = '';
     let activeGameTab = 'home';
-    let gamesGridDominoFrame = null;
-    let gamesGridDominoCleanupTimer = null;
     // Bridge pour les modules ESM : expose l'onglet actif courant.
     if (typeof window !== 'undefined') {
         window.__baieActiveGameTab = () => activeGameTab;
     }
-    const gameHomeTileReplayTimers = new WeakMap();
-    let game2048TouchStartX = null;
-    let game2048TouchStartY = null;
-    let snakeTouchStartX = null;
-    let snakeTouchStartY = null;
-    let pacmanTouchStartX = null;
-    let pacmanTouchStartY = null;
-    let tetrisTouchStartX = null;
-    let tetrisTouchStartY = null;
     // UNO_MENU_CLOSE_DURATION_MS et GRID_OUTCOME_MENU_DELAY_MS : exposees sur window par js/main.js.
-    let resizeFrame = null;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
-    let pianoAudioContext = null;
-    let pianoMasterGain = null;
-    let pianoActiveNotes = new Map();
-    let pianoSustainActive = false;
-    let pianoPointerId = null;
-    let pianoPointerNoteId = null;
 
     // loadSession, saveSession, clearSession, scheduleSessionTimeout, registerActivity : exposes sur window par js/main.js (source = js/core/session.js).
 
@@ -995,177 +925,32 @@ document.addEventListener('DOMContentLoaded', () => {
         return [];
     }
 
-    function setHeaderMode(mode = 'none') {
-        const showCinemaHeader = mode === 'cinema';
-        const showGamesHeader = mode === 'games';
-        const showMathHeader = mode === 'math';
-        const showMusicHeader = mode === 'music';
-
-        cinemaHeaderNav.classList.toggle('hidden', !showCinemaHeader);
-        gamesHeaderNav.classList.toggle('hidden', !showGamesHeader);
-        mathHeaderNav.classList.toggle('hidden', !showMathHeader);
-        musicHeaderNav.classList.toggle('hidden', !showMusicHeader);
-    }
-
-    function syncSiteAdsVisibility(targetView, options = {}) {
-        if (!siteAds) {
-            return;
-        }
-
-        const { immediate = false } = options;
-        const shouldHide = shouldHideSiteAdsForView(targetView);
-
-        if (shouldHide) {
-            window.clearTimeout(siteAdsEnterTimer);
-            siteAds.classList.remove('site-ads-entering');
-        }
-
-        siteAds.classList.toggle('site-ads-no-transition', immediate);
-        siteAds.classList.toggle('site-ads-hidden', shouldHide);
-
-        if (immediate) {
-            window.requestAnimationFrame(() => {
-                siteAds.classList.remove('site-ads-no-transition');
-            });
-        }
-    }
-
-    function playSiteAdsEntrance() {
-        if (!siteAds) {
-            return;
-        }
-
-        window.clearTimeout(siteAdsEnterTimer);
-        siteAds.classList.remove('site-ads-entering');
-        void siteAds.offsetWidth;
-        siteAds.classList.add('site-ads-entering');
-        siteAdsEnterTimer = window.setTimeout(() => {
-            siteAds.classList.remove('site-ads-entering');
-        }, 550);
-    }
-
-    function syncGamesFiltersCardVisibility(targetView, options = {}) {
-        if (!gamesFiltersCard) {
-            return;
-        }
-
-        const { immediate = false } = options;
-        const shouldHide = targetView !== gamesView;
-
-        gamesFiltersCard.classList.toggle('games-filters-card-no-transition', immediate);
-        gamesFiltersCard.classList.toggle('games-filters-card-hidden', shouldHide);
-
-        if (immediate) {
-            window.requestAnimationFrame(() => {
-                gamesFiltersCard.classList.remove('games-filters-card-no-transition');
-            });
-        }
-    }
-
-    function playGamesFiltersEntrance() {
-        if (!gamesFiltersCard) {
-            return;
-        }
-
-        window.clearTimeout(gamesFiltersEnterTimer);
-        gamesFiltersCard.classList.remove('games-filters-card-entering');
-        void gamesFiltersCard.offsetWidth;
-        gamesFiltersCard.classList.add('games-filters-card-entering');
-        gamesFiltersEnterTimer = window.setTimeout(() => {
-            gamesFiltersCard.classList.remove('games-filters-card-entering');
-        }, 550);
-    }
-
-    function shouldHideSiteAdsForView(view) {
-        return view === loginView || view === servicesView || view === appView;
-    }
-
     function transitionToView(nextView, options = {}) {
-        const {
-            showHeader = false,
-            headerMode = 'none',
-            onComplete
-        } = options;
-        const shouldHideAdsOnCurrentView = shouldHideSiteAdsForView(currentView);
-        const shouldHideAdsOnNextView = shouldHideSiteAdsForView(nextView);
-        const shouldHideGamesFiltersOnCurrentView = currentView !== gamesView;
-        const shouldHideGamesFiltersOnNextView = nextView !== gamesView;
-
-        currentView.classList.add('view-leaving');
-
-        if (shouldHideAdsOnNextView) {
-            syncSiteAdsVisibility(nextView);
-        }
-
-        if (shouldHideGamesFiltersOnNextView) {
-            syncGamesFiltersCardVisibility(nextView);
-        }
-
-        window.setTimeout(() => {
-            if (currentView === musicView && nextView !== musicView) {
-                stopAllPianoNotes();
+        window.transitionToView(currentView, nextView, {
+            ...options,
+            onBeforeLeave: () => {
+                if (currentView === musicView && nextView !== musicView) {
+                    __music.stopAllPianoNotes();
+                }
+            },
+            onViewChanged: (view) => {
+                currentView = view;
             }
-
-            currentView.classList.remove('view-active', 'view-leaving');
-            currentView.setAttribute('aria-hidden', 'true');
-
-            siteHeader.classList.toggle('hidden', !showHeader);
-            siteHeader.setAttribute('aria-hidden', String(!showHeader));
-            setHeaderMode(headerMode);
-            logoutButton?.classList.toggle('hidden', nextView === loginView);
-            pageBackButton?.classList.toggle('hidden', nextView !== appView && nextView !== gamesView && nextView !== mathView && nextView !== musicView);
-
-            nextView.classList.add('view-active');
-            nextView.setAttribute('aria-hidden', 'false');
-            currentView = nextView;
-
-            if (!shouldHideAdsOnNextView && shouldHideAdsOnCurrentView) {
-                syncSiteAdsVisibility(nextView);
-                playSiteAdsEntrance();
-            }
-
-            if (!shouldHideGamesFiltersOnNextView && shouldHideGamesFiltersOnCurrentView) {
-                syncGamesFiltersCardVisibility(nextView);
-                playGamesFiltersEntrance();
-            }
-
-            if (typeof onComplete === 'function') {
-                onComplete();
-            }
-        }, 450);
+        });
     }
 
     function showViewImmediately(nextView, options = {}) {
-        const {
-            showHeader = false,
-            headerMode = 'none',
-            onComplete
-        } = options;
-
-        allViews.forEach((view) => {
-            view.classList.remove('view-active', 'view-leaving');
-            view.setAttribute('aria-hidden', 'true');
+        window.showViewImmediately(nextView, {
+            ...options,
+            onBeforeLeave: () => {
+                if (currentView === musicView && nextView !== musicView) {
+                    __music.stopAllPianoNotes();
+                }
+            },
+            onViewChanged: (view) => {
+                currentView = view;
+            }
         });
-
-        if (currentView === musicView && nextView !== musicView) {
-            stopAllPianoNotes();
-        }
-
-        siteHeader.classList.toggle('hidden', !showHeader);
-        siteHeader.setAttribute('aria-hidden', String(!showHeader));
-        setHeaderMode(headerMode);
-        syncSiteAdsVisibility(nextView, { immediate: true });
-        syncGamesFiltersCardVisibility(nextView, { immediate: true });
-        logoutButton?.classList.toggle('hidden', nextView === loginView);
-        pageBackButton?.classList.toggle('hidden', nextView !== appView && nextView !== gamesView && nextView !== mathView && nextView !== musicView);
-
-        nextView.classList.add('view-active');
-        nextView.setAttribute('aria-hidden', 'false');
-        currentView = nextView;
-
-        if (typeof onComplete === 'function') {
-            onComplete();
-        }
     }
 
     function showServices() {
@@ -1237,939 +1022,158 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function activatePanel(targetId) {
-        cinemaNavButtons.forEach((button) => {
-            const isActive = button.dataset.target === targetId;
-            button.classList.toggle('is-active', isActive);
-        });
-
-        panels.forEach((panel) => {
-            panel.classList.toggle('panel-active', panel.id === targetId);
-        });
+        window.activatePanel(targetId);
     }
 
     function activateMathPanel(targetId) {
-        activeMathTab = targetId;
-
-        mathNavButtons.forEach((button) => {
-            button.classList.toggle('is-active', button.dataset.mathTab === targetId);
-        });
-
-        mathPanels.forEach((panel) => {
-            panel.classList.toggle('math-panel-active', panel.id === targetId);
-        });
+        activeMathTab = window.activateMathPanel(targetId);
     }
 
     function activateMusicPanel(targetId) {
-        activeMusicTab = targetId;
-
-        musicNavButtons.forEach((button) => {
-            button.classList.toggle('is-active', button.dataset.musicTab === targetId);
+        activeMusicTab = window.activateMusicPanel(targetId, {
+            onPianoPanel: () => __music.renderPiano()
         });
-
-        musicPanels.forEach((panel) => {
-            panel.classList.toggle('music-panel-active', panel.id === targetId);
-        });
-
-        if (targetId === 'pianoPanel') {
-            renderPiano();
-        }
     }
 
-    function ensurePianoAudio() {
-        if (!pianoAudioContext) {
-            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-
-            if (!AudioContextClass) {
-                pianoHelpText.textContent = 'Le navigateur ne prend pas en charge le son du piano.';
-                return false;
-            }
-
-            pianoAudioContext = new AudioContextClass();
-            pianoMasterGain = pianoAudioContext.createGain();
-            pianoMasterGain.gain.value = 0.2;
-            pianoMasterGain.connect(pianoAudioContext.destination);
-        }
-
-        if (pianoAudioContext.state === 'suspended') {
-            pianoAudioContext.resume();
-        }
-
-        return true;
-    }
-
-    function renderPiano() {
-        if (!pianoKeyboard) {
-            return;
-        }
-
-        const whiteKeys = PIANO_NOTES.filter((note) => note.type === 'white');
-        const blackKeys = PIANO_NOTES.filter((note) => note.type === 'black');
-        pianoKeyboard.style.setProperty('--white-key-count', String(whiteKeys.length));
-
-        pianoKeyboard.innerHTML = `
-            <div class="piano-white-keys">
-                ${whiteKeys.map((note) => `
-                    <button
-                        type="button"
-                        class="piano-key piano-key-white${pianoActiveNotes.has(note.id) ? ' is-active' : ''}"
-                        data-piano-key="${note.id}"
-                        aria-label="${note.note} touche ${note.keyLabel}"
-                    >
-                        <span class="piano-key-note">${note.note}</span>
-                        <span class="piano-key-label">${note.keyLabel}</span>
-                    </button>
-                `).join('')}
-            </div>
-            <div class="piano-black-keys">
-                ${blackKeys.map((note) => `
-                    <button
-                        type="button"
-                        class="piano-key piano-key-black${pianoActiveNotes.has(note.id) ? ' is-active' : ''}"
-                        data-piano-key="${note.id}"
-                        style="left: calc(${note.anchor} * ((100% - (var(--white-key-gap) * (var(--white-key-count) - 1))) / var(--white-key-count)) + ${note.anchor} * var(--white-key-gap));"
-                        aria-label="${note.note} touche ${note.keyLabel}"
-                    >
-                        <span class="piano-key-note">${note.note}</span>
-                        <span class="piano-key-label">${note.keyLabel}</span>
-                    </button>
-                `).join('')}
-            </div>
-        `;
-    }
-
-    function updatePianoHelpText(note = null) {
-        if (note) {
-            pianoHelpText.textContent = `${note.note} en cours. ${pianoSustainActive ? 'Pédale active. ' : ''}Commande : ${note.keyLabel}.`;
-            return;
-        }
-
-        if (pianoSustainActive) {
-            pianoHelpText.textContent = 'Pédale active. Espace maintient les notes, relâche Espace pour couper celles qui ne sont plus tenues.';
-            return;
-        }
-
-        pianoHelpText.textContent = "Utilise A à K. Maintiens Maj pour l'octave au-dessus, Espace pour la pédale, ou clique directement sur le clavier.";
-    }
-
-    function releasePianoAudioNote(noteId) {
-        const activeNote = pianoActiveNotes.get(noteId);
-
-        if (!activeNote || !pianoAudioContext) {
-            return;
-        }
-
-        const now = pianoAudioContext.currentTime;
-        activeNote.noteGain.gain.cancelScheduledValues(now);
-        activeNote.noteGain.gain.setValueAtTime(Math.max(activeNote.noteGain.gain.value, 0.0001), now);
-        activeNote.noteGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-        activeNote.oscillator.stop(now + 0.14);
-        activeNote.overtone.stop(now + 0.14);
-        pianoActiveNotes.delete(noteId);
-    }
-
-    function startPianoNote(noteId, source = 'keyboard') {
-        const note = PIANO_NOTE_MAP.get(noteId);
-
-        if (!note || !ensurePianoAudio()) {
-            return;
-        }
-
-        const activeNote = pianoActiveNotes.get(noteId);
-
-        if (activeNote) {
-            activeNote.sources.add(source);
-            activeNote.sustained = false;
-            updatePianoHelpText(note);
-            renderPiano();
-            return;
-        }
-
-        const now = pianoAudioContext.currentTime;
-        const oscillator = pianoAudioContext.createOscillator();
-        const overtone = pianoAudioContext.createOscillator();
-        const noteGain = pianoAudioContext.createGain();
-
-        oscillator.type = 'triangle';
-        oscillator.frequency.setValueAtTime(note.frequency, now);
-        overtone.type = 'sine';
-        overtone.frequency.setValueAtTime(note.frequency * 2, now);
-
-        noteGain.gain.setValueAtTime(0.0001, now);
-        noteGain.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
-        noteGain.gain.exponentialRampToValueAtTime(0.12, now + 0.14);
-
-        oscillator.connect(noteGain);
-        overtone.connect(noteGain);
-        noteGain.connect(pianoMasterGain);
-
-        oscillator.start(now);
-        overtone.start(now);
-
-        pianoActiveNotes.set(noteId, {
-            oscillator,
-            overtone,
-            noteGain,
-            sources: new Set([source]),
-            sustained: false
-        });
-        updatePianoHelpText(note);
-        renderPiano();
-    }
-
-    function stopPianoNote(noteId, source = 'keyboard', force = false) {
-        const activeNote = pianoActiveNotes.get(noteId);
-
-        if (!activeNote) {
-            return;
-        }
-
-        if (force) {
-            releasePianoAudioNote(noteId);
-            updatePianoHelpText();
-            renderPiano();
-            return;
-        }
-
-        activeNote.sources.delete(source);
-
-        if (activeNote.sources.size) {
-            renderPiano();
-            return;
-        }
-
-        if (pianoSustainActive) {
-            activeNote.sustained = true;
-            updatePianoHelpText();
-            renderPiano();
-            return;
-        }
-
-        releasePianoAudioNote(noteId);
-        updatePianoHelpText();
-        renderPiano();
-    }
-
-    function stopAllPianoNotes(force = true) {
-        [...pianoActiveNotes.keys()].forEach((noteId) => stopPianoNote(noteId, 'all', force));
-    }
-
-    function releaseSustainedPianoNotes() {
-        [...pianoActiveNotes.entries()].forEach(([noteId, activeNote]) => {
-            if (!activeNote.sources.size) {
-                releasePianoAudioNote(noteId);
-            }
-        });
-
-        updatePianoHelpText();
-        renderPiano();
-    }
-
-    function getPianoNoteIdFromKeyboardEvent(event) {
-        const layout = PIANO_KEYBOARD_LAYOUT.get(event.key.toLowerCase());
-
-        if (!layout) {
-            return null;
-        }
-
-        return event.shiftKey && layout.shifted ? layout.shifted : layout.base;
-    }
-
-    function releaseKeyboardPianoKey(event) {
-        const layout = PIANO_KEYBOARD_LAYOUT.get(event.key.toLowerCase());
-
-        if (!layout) {
-            return false;
-        }
-
-        stopPianoNote(layout.base, 'keyboard');
-
-        if (layout.shifted) {
-            stopPianoNote(layout.shifted, 'keyboard');
-        }
-
-        return true;
-    }
-
-    function formatMathNumber(value, digits = 6) {
-        if (!Number.isFinite(value)) {
-            return 'Impossible';
-        }
-
-        const rounded = Number(value.toFixed(digits));
-        return new Intl.NumberFormat('fr-FR', {
-            maximumFractionDigits: digits
-        }).format(rounded);
-    }
-
-    // Fonctions math (normalize/evaluateCalculatorExpression, convertTemperature, convertUnits, populateConverterUnits, initializeConverter, calculate*) : exposes sur window par js/main.js (source = js/navires/math.js).
-
-    // formatDate, formatExcelDisplayValue, formatRating, formatRatingWithScale, getRatingBadgeTone : exposes sur window par js/main.js (source = js/navires/cinema.js).
-
-    // Parsing films Excel (normalizeHeader, getFirstFilledValue, parseNumberValue, parseExcelDateValue, normalizeMovieRow, parseMoviesFromFixedColumns, parseMoviesFromWorksheetRows, parseMoviesFromWorkbook) : exposes sur window par js/main.js (source = js/navires/cinema.js).
-
-    function setExcelImportFeedback(message, type = '') {
-        if (!excelImportStatus) {
-            return;
-        }
-
-        excelImportStatus.textContent = message;
-        excelImportStatus.classList.remove('feedback-success', 'feedback-error');
-
-        if (type === 'success') {
-            excelImportStatus.classList.add('feedback-success');
-        }
-
-        if (type === 'error') {
-            excelImportStatus.classList.add('feedback-error');
-        }
-    }
+    // Fonctions math (bindMathControls, initializeConverter, calculate*, etc.) : exposees sur window par js/main.js (source = js/navires/math.js).
 
     async function importMoviesFromExcel() {
-        if (!window.XLSX) {
-            setExcelImportFeedback('Lecture Excel indisponible pour le moment.', 'error');
-            renderAll();
-            return;
-        }
-
-        setExcelImportFeedback('Recherche du fichier Excel du cinema...', '');
-
-        const controller = new AbortController();
-        const timeoutId = window.setTimeout(() => controller.abort(), 8000);
-
-        try {
-            for (const fileName of EXCEL_FILE_CANDIDATES) {
-                if (controller.signal.aborted) {
-                    break;
-                }
-                try {
-                    const response = await fetch(fileName, { cache: 'no-store', signal: controller.signal });
-
-                    if (!response.ok) {
-                        continue;
-                    }
-
-                    const fileBuffer = await response.arrayBuffer();
-                    const importedMovies = await enrichMoviesWithRemotePosters(parseMoviesFromWorkbook(fileBuffer));
-
-                    movies = importedMovies;
-                    renderAll();
-                    setExcelImportFeedback(
-                        importedMovies.length
-                            ? `${importedMovies.length} film${importedMovies.length > 1 ? 's importés' : ' importé'} depuis Excel.`
-                            : "Le fichier Excel a été trouvé, mais aucune ligne film exploitable n'a été lue.",
-                        importedMovies.length ? 'success' : 'error'
-                    );
-
-                    if (excelSourceName) {
-                        excelSourceName.textContent = `Source détectée : ${fileName}`;
-                    }
-
-                    return;
-                } catch (error) {
-                    if (error?.name === 'AbortError') {
-                        break;
-                    }
-                    console.error(`Impossible de lire ${fileName}.`, error);
-                }
-            }
-
-            movies = loadMovies();
-            renderAll();
-            setExcelImportFeedback('Aucun fichier Excel trouvé. Place un fichier film.xlsx à la racine du dépôt pour importer des films.', 'error');
-
-            if (excelSourceName) {
-                excelSourceName.textContent = 'Ajoute par exemple film.xlsx ou film.xls à côté de index.html.';
-            }
-        } finally {
-            window.clearTimeout(timeoutId);
-        }
-    }
-
-    function formatDuration(minutes) {
-        const value = Number(minutes);
-
-        if (!value) {
-            return 'xxhxx';
-        }
-
-        const hours = Math.floor(value / 60);
-        const remainingMinutes = value % 60;
-
-        if (!hours) {
-            return `${remainingMinutes} min`;
-        }
-
-        if (!remainingMinutes) {
-            return `${hours}h`;
-        }
-
-        return `${hours}h${String(remainingMinutes).padStart(2, '0')}`;
-    }
-
-    function sanitizeImageUrl(url) {
-        const value = String(url || '').trim();
-
-        if (!value) {
-            return defaultPoster;
-        }
-
-        try {
-            const parsedUrl = new URL(value, window.location.href);
-            if (['http:', 'https:'].includes(parsedUrl.protocol)) {
-                return parsedUrl.href;
-            }
-        } catch (_error) {
-            return defaultPoster;
-        }
-
-        return defaultPoster;
-    }
-
-    function buildDirectorSearchUrl(directorName, fallbackUrl = '') {
-        const normalizedName = String(directorName || '').trim();
-
-        if (normalizedName) {
-            return `https://www.google.com/search?q=${encodeURIComponent(normalizedName)}`;
-        }
-
-        return String(fallbackUrl || '').trim();
-    }
-
-    async function enrichMoviesWithRemotePosters(importedMovies) {
-        const moviesNeedingPoster = importedMovies.filter((movie) => !movie.posterUrl || movie.posterUrl === defaultPoster);
-
-        if (!moviesNeedingPoster.length) {
-            return importedMovies;
-        }
-
-        try {
-            const response = await fetch('/api/posters/resolve', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    movies: moviesNeedingPoster.map((movie) => ({
-                        id: movie.id,
-                        title: movie.title,
-                        releaseDate: movie.releaseDate,
-                        releaseDisplay: movie.releaseDisplay
-                    }))
-                })
-            });
-
-            if (!response.ok) {
-                return importedMovies;
-            }
-
-            const payload = await response.json();
-            const posterUrlsById = new Map(
-                Array.isArray(payload?.resolutions)
-                    ? payload.resolutions.map((item) => [item.id, item.posterUrl])
-                    : []
-            );
-
-            return importedMovies.map((movie) => {
-                const resolvedPosterUrl = posterUrlsById.get(movie.id);
-                return resolvedPosterUrl ? { ...movie, posterUrl: resolvedPosterUrl } : movie;
-            });
-        } catch (_error) {
-            return importedMovies;
-        }
-    }
-
-    function normalizeCatalogText(value) {
-        return String(value || '')
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase()
-            .trim();
-    }
-
-    function getMovieGenreTokens(movie) {
-        return Array.from(new Set(
-            String(movie?.genre || '')
-                .split(/[,/;|]+/)
-                .map((entry) => entry.trim())
-                .filter(Boolean)
-        ));
-    }
-
-    function getMovieReleaseYear(movie) {
-        const directYear = Number(String(movie?.releaseDate || '').slice(0, 4));
-        if (Number.isFinite(directYear) && directYear > 1800) {
-            return directYear;
-        }
-
-        const fallbackMatch = String(movie?.releaseDisplay || '').match(/(19|20)\d{2}/);
-        return fallbackMatch ? Number(fallbackMatch[0]) : null;
-    }
-
-    function getMovieRatingOutOfTwenty(movie) {
-        const rating = Number(movie?.rating);
-        const scale = Number(movie?.ratingScale || 20);
-        if (!Number.isFinite(rating) || !Number.isFinite(scale) || scale <= 0) {
-            return null;
-        }
-        return (rating / scale) * 20;
-    }
-
-    function getMovieTitleLetter(movie) {
-        const normalizedTitle = normalizeCatalogText(movie?.title);
-        if (!normalizedTitle) {
-            return '#';
-        }
-
-        const firstCharacter = normalizedTitle.charAt(0).toUpperCase();
-        return /[A-Z]/.test(firstCharacter) ? firstCharacter : '#';
-    }
-
-    function syncCatalogSelectOptions(selectElement, options, currentValue) {
-        if (!selectElement) {
-            return;
-        }
-
-        const previousValue = currentValue ?? selectElement.value;
-        selectElement.textContent = '';
-        const fragment = document.createDocumentFragment();
-
-        options.forEach(({ value, label }) => {
-            const option = document.createElement('option');
-            option.value = value;
-            option.textContent = label;
-            fragment.appendChild(option);
+        return window.importMoviesFromExcelModule({
+            excelImportStatus,
+            excelSourceName,
+            defaultPoster,
+            setMovies: (nextMovies) => {
+                movies = nextMovies;
+            },
+            renderAll,
+            loadMovies
         });
+    }
 
-        selectElement.appendChild(fragment);
-        selectElement.value = options.some((option) => option.value === previousValue)
-            ? previousValue
-            : (options[0]?.value || '');
+    function getCinemaCatalogContext() {
+        return {
+            movies,
+            searchTerm,
+            catalogSelectedGenres,
+            catalogReleaseFilter,
+            catalogMinimumRatingFilter,
+            catalogSortMode,
+            catalogDirectorTerm,
+            defaultPoster,
+            catalogGrid,
+            emptyCatalogMessage,
+            catalogResultsSummary,
+            catalogGenreFilterGroup,
+            catalogDirectorFilterBlock,
+            catalogReleaseFilterBlock,
+            catalogRatingFilterBlock,
+            catalogReleaseFilterSelect,
+            catalogRatingFilterSelect,
+            catalogSortFilterSelect,
+            catalogDirectorFilterInput,
+            catalogDirectorSuggestions,
+            manageList,
+            movieCount,
+            averageRating
+        };
+    }
+
+    function applyCinemaCatalogState(nextState = {}) {
+        searchTerm = nextState.searchTerm ?? searchTerm;
+        catalogSelectedGenres = nextState.catalogSelectedGenres || catalogSelectedGenres;
+        catalogReleaseFilter = nextState.catalogReleaseFilter || catalogReleaseFilter;
+        catalogMinimumRatingFilter = nextState.catalogMinimumRatingFilter || catalogMinimumRatingFilter;
+        catalogSortMode = nextState.catalogSortMode || catalogSortMode;
+        catalogDirectorTerm = nextState.catalogDirectorTerm ?? catalogDirectorTerm;
     }
 
     function renderCatalogFilters() {
-        const genreCounts = new Map();
-        const directorNames = new Set();
-
-        movies.forEach((movie) => {
-            getMovieGenreTokens(movie).forEach((genre) => {
-                genreCounts.set(genre, Number(genreCounts.get(genre) || 0) + 1);
-            });
-
-            if (movie.director) {
-                directorNames.add(movie.director);
-            }
-        });
-
-        catalogSelectedGenres = new Set([...catalogSelectedGenres].filter((genre) => genreCounts.has(genre)));
-
-        if (catalogGenreFilterGroup) {
-            catalogGenreFilterGroup.textContent = '';
-            const fragment = document.createDocumentFragment();
-            const sortedGenres = [...genreCounts.entries()].sort((left, right) => left[0].localeCompare(right[0], 'fr'));
-
-            if (!sortedGenres.length) {
-                const empty = document.createElement('p');
-                empty.className = 'catalog-filter-empty';
-                empty.textContent = "Les genres appara\u00eetront ici apr\u00e8s l'import.";
-                fragment.appendChild(empty);
-            } else {
-                sortedGenres.forEach(([genre, count]) => {
-                    const label = document.createElement('label');
-                    label.className = 'catalog-genre-option';
-
-                    const input = document.createElement('input');
-                    input.type = 'checkbox';
-                    input.name = 'catalogGenreFilter';
-                    input.value = genre;
-                    input.checked = catalogSelectedGenres.has(genre);
-
-                    const copy = document.createElement('span');
-                    copy.className = 'catalog-genre-option-copy';
-                    copy.textContent = genre;
-
-                    const meta = document.createElement('span');
-                    meta.className = 'catalog-genre-option-count';
-                    meta.textContent = String(count);
-
-                    label.append(input, copy, meta);
-                    fragment.appendChild(label);
-                });
-            }
-
-            catalogGenreFilterGroup.appendChild(fragment);
-        }
-
-        syncCatalogSelectOptions(catalogReleaseFilterSelect, [
-            { value: 'all', label: 'Toutes les p\u00e9riodes' },
-            { value: '2020+', label: "2020 \u00e0 aujourd'hui" },
-            { value: '2010s', label: 'Ann\u00e9es 2010' },
-            { value: '2000s', label: 'Ann\u00e9es 2000' },
-            { value: '1990s', label: 'Ann\u00e9es 1990' },
-            { value: '1980s', label: 'Ann\u00e9es 1980' },
-            { value: 'before-1980', label: 'Avant 1980' }
-        ], catalogReleaseFilter);
-        catalogReleaseFilter = catalogReleaseFilterSelect?.value || 'all';
-
-        syncCatalogSelectOptions(catalogRatingFilterSelect, [
-            { value: 'all', label: 'Toutes les notes' },
-            { value: '16', label: '16 / 20 et plus' },
-            { value: '14', label: '14 / 20 et plus' },
-            { value: '12', label: '12 / 20 et plus' },
-            { value: '10', label: '10 / 20 et plus' },
-            { value: '8', label: '8 / 20 et plus' }
-        ], catalogMinimumRatingFilter);
-        catalogMinimumRatingFilter = catalogRatingFilterSelect?.value || 'all';
-
-        syncCatalogSelectOptions(catalogSortFilterSelect, [
-            { value: 'default', label: 'Ordre du catalogue' },
-            { value: 'rating-desc', label: 'Note d\u00e9croissante' },
-            { value: 'rating-asc', label: 'Note croissante' },
-            { value: 'release-desc', label: 'Sortie la plus r\u00e9cente' },
-            { value: 'release-asc', label: 'Sortie la plus ancienne' },
-            { value: 'director-asc', label: 'R\u00e9alisateur A \u00e0 Z' }
-        ], catalogSortMode);
-        catalogSortMode = catalogSortFilterSelect?.value || 'default';
-
-        if (catalogDirectorSuggestions) {
-            catalogDirectorSuggestions.textContent = '';
-            const fragment = document.createDocumentFragment();
-            [...directorNames].sort((left, right) => left.localeCompare(right, 'fr')).forEach((directorName) => {
-                const option = document.createElement('option');
-                option.value = directorName;
-                fragment.appendChild(option);
-            });
-            catalogDirectorSuggestions.appendChild(fragment);
-        }
-
-        if (catalogDirectorFilterInput && catalogDirectorFilterInput.value !== catalogDirectorTerm) {
-            catalogDirectorFilterInput.value = catalogDirectorTerm;
-        }
-
-        catalogDirectorFilterBlock?.classList.toggle('hidden', catalogSortMode !== 'director-asc');
-        catalogReleaseFilterBlock?.classList.toggle('hidden', !['release-desc', 'release-asc'].includes(catalogSortMode));
-        catalogRatingFilterBlock?.classList.toggle('hidden', !['rating-desc', 'rating-asc'].includes(catalogSortMode));
+        applyCinemaCatalogState(window.renderCatalogFilters(getCinemaCatalogContext()));
     }
 
     function updateCatalogResultsSummary(filteredMovies) {
-        if (!catalogResultsSummary) {
-            return;
-        }
-
-        const activeFilters = [
-            searchTerm,
-            catalogSortMode === 'director-asc' ? catalogDirectorTerm : '',
-            ['release-desc', 'release-asc'].includes(catalogSortMode) && catalogReleaseFilter !== 'all' ? catalogReleaseFilter : '',
-            ['rating-desc', 'rating-asc'].includes(catalogSortMode) && catalogMinimumRatingFilter !== 'all' ? catalogMinimumRatingFilter : '',
-            catalogSortMode !== 'default' ? catalogSortMode : '',
-            catalogSelectedGenres.size ? 'genres' : ''
-        ].filter(Boolean).length;
-
-        if (!movies.length) {
-            catalogResultsSummary.textContent = 'Le panneau sera prêt dès que les films seront importés.';
-            return;
-        }
-
-        catalogResultsSummary.textContent = activeFilters
-            ? `${filteredMovies.length} film${filteredMovies.length > 1 ? 's correspondent' : ' correspond'} aux filtres sur ${movies.length}.`
-            : `${movies.length} film${movies.length > 1 ? 's disponibles' : ' disponible'} dans le catalogue.`;
+        window.updateCatalogResultsSummary(getCinemaCatalogContext(), filteredMovies);
     }
 
     function getFilteredMovies() {
-        const normalizedSearch = normalizeCatalogText(searchTerm);
-        const normalizedDirectorSearch = catalogSortMode === 'director-asc'
-            ? normalizeCatalogText(catalogDirectorTerm)
-            : '';
-        const minimumRating = ['rating-desc', 'rating-asc'].includes(catalogSortMode) && catalogMinimumRatingFilter !== 'all'
-            ? Number(catalogMinimumRatingFilter)
-            : null;
-
-        const filteredMovies = movies.filter((movie) => {
-            if (normalizedSearch) {
-                const titleMatches = normalizeCatalogText(movie.title).includes(normalizedSearch);
-                const directorMatches = normalizeCatalogText(movie.director).includes(normalizedSearch);
-                if (!titleMatches && !directorMatches) {
-                    return false;
-                }
-            }
-
-            if (normalizedDirectorSearch && !normalizeCatalogText(movie.director).includes(normalizedDirectorSearch)) {
-                return false;
-            }
-
-            if (catalogSelectedGenres.size) {
-                const movieGenres = new Set(getMovieGenreTokens(movie));
-                if (![...catalogSelectedGenres].every((genre) => movieGenres.has(genre))) {
-                    return false;
-                }
-            }
-
-            const releaseYear = getMovieReleaseYear(movie);
-            if (['release-desc', 'release-asc'].includes(catalogSortMode)) {
-                if (catalogReleaseFilter === '2020+' && (!releaseYear || releaseYear < 2020)) {
-                    return false;
-                }
-                if (catalogReleaseFilter === '2010s' && (!releaseYear || releaseYear < 2010 || releaseYear > 2019)) {
-                    return false;
-                }
-                if (catalogReleaseFilter === '2000s' && (!releaseYear || releaseYear < 2000 || releaseYear > 2009)) {
-                    return false;
-                }
-                if (catalogReleaseFilter === '1990s' && (!releaseYear || releaseYear < 1990 || releaseYear > 1999)) {
-                    return false;
-                }
-                if (catalogReleaseFilter === '1980s' && (!releaseYear || releaseYear < 1980 || releaseYear > 1989)) {
-                    return false;
-                }
-                if (catalogReleaseFilter === 'before-1980' && (!releaseYear || releaseYear >= 1980)) {
-                    return false;
-                }
-            }
-
-            if (minimumRating !== null) {
-                const ratingOnTwenty = getMovieRatingOutOfTwenty(movie);
-                if (!Number.isFinite(ratingOnTwenty) || ratingOnTwenty < minimumRating) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-
-        const compareText = (left, right) => String(left || '').localeCompare(String(right || ''), 'fr', { sensitivity: 'base' });
-
-        filteredMovies.sort((left, right) => {
-            if (catalogSortMode === 'rating-desc') {
-                return (getMovieRatingOutOfTwenty(right) ?? -Infinity) - (getMovieRatingOutOfTwenty(left) ?? -Infinity);
-            }
-            if (catalogSortMode === 'rating-asc') {
-                return (getMovieRatingOutOfTwenty(left) ?? Infinity) - (getMovieRatingOutOfTwenty(right) ?? Infinity);
-            }
-            if (catalogSortMode === 'release-desc') {
-                return (getMovieReleaseYear(right) ?? -Infinity) - (getMovieReleaseYear(left) ?? -Infinity);
-            }
-            if (catalogSortMode === 'release-asc') {
-                return (getMovieReleaseYear(left) ?? Infinity) - (getMovieReleaseYear(right) ?? Infinity);
-            }
-            if (catalogSortMode === 'director-asc') {
-                return compareText(left.director, right.director) || compareText(left.title, right.title);
-            }
-            return 0;
-        });
-
-        return filteredMovies;
+        return window.getFilteredMovies(getCinemaCatalogContext());
     }
 
     function renderStats() {
-        const count = movies.length;
-        const ratedMovies = movies.filter((movie) => Number.isFinite(Number(movie.rating)));
-        const total = ratedMovies.reduce((sum, movie) => sum + Number(movie.rating), 0);
-        const average = ratedMovies.length ? (total / ratedMovies.length).toFixed(1) : null;
-        const ratingScale = ratedMovies[0]?.ratingScale || movies[0]?.ratingScale || 20;
-
-        movieCount.textContent = `${count} film${count > 1 ? 's' : ''}`;
-        averageRating.textContent = average ? `${average} / ${ratingScale}` : 'Non note';
+        window.renderStats(getCinemaCatalogContext());
     }
 
     function renderCatalog() {
-        const filteredMovies = getFilteredMovies();
-        updateCatalogResultsSummary(filteredMovies);
-        catalogGrid.textContent = '';
-        const fragment = document.createDocumentFragment();
-
-        filteredMovies.forEach((movie) => {
-            const article = document.createElement('article');
-            article.className = 'movie-card';
-
-            const posterShell = document.createElement('div');
-            posterShell.className = 'movie-poster-shell';
-
-            const ratingBadge = document.createElement('span');
-            ratingBadge.className = `rating-badge rating-badge-floating ${getRatingBadgeTone(movie.rating, movie.ratingScale)}`;
-            ratingBadge.textContent = formatRatingWithScale(movie.rating, movie.ratingScale);
-
-            const poster = document.createElement('img');
-            poster.className = 'movie-poster';
-            poster.src = sanitizeImageUrl(movie.posterUrl);
-            poster.alt = `Affiche de ${movie.title}`;
-            poster.loading = 'lazy';
-            poster.addEventListener('error', () => {
-                poster.src = defaultPoster;
-            }, { once: true });
-
-            posterShell.append(ratingBadge, poster);
-
-            const body = document.createElement('div');
-            body.className = 'card movie-card-body';
-
-            const title = document.createElement('h4');
-            title.textContent = movie.title;
-
-            const meta = document.createElement('div');
-            meta.className = 'movie-meta';
-
-            const releaseAndDuration = document.createElement('p');
-            releaseAndDuration.textContent = `${movie.releaseDisplay || formatDate(movie.releaseDate)} • ${formatDuration(movie.duration)}`;
-
-            const genre = document.createElement('p');
-            genre.textContent = movie.genre || 'Inconnu';
-
-            const director = document.createElement('p');
-            if (movie.directorLink) {
-                const directorLink = document.createElement('a');
-                directorLink.href = buildDirectorSearchUrl(movie.director, movie.directorLink);
-                directorLink.target = '_blank';
-                directorLink.rel = 'noreferrer noopener';
-                directorLink.textContent = movie.director || 'Inconnu';
-                director.appendChild(directorLink);
-            } else {
-                director.textContent = movie.director || 'Inconnu';
-            }
-
-            meta.append(releaseAndDuration, genre, director);
-
-            body.append(title, meta);
-            article.append(posterShell, body);
-            fragment.appendChild(article);
-        });
-
-        catalogGrid.appendChild(fragment);
-
-        emptyCatalogMessage.classList.toggle('hidden', filteredMovies.length > 0);
+        return window.renderCatalog(getCinemaCatalogContext());
     }
 
     function renderManageList() {
-        if (!movies.length) {
-            manageList.innerHTML = '<p class="empty-state">Aucun film importé pour le moment.</p>';
-            return;
-        }
-
-        manageList.textContent = '';
-        const fragment = document.createDocumentFragment();
-
-        movies.forEach((movie) => {
-            const article = document.createElement('article');
-            article.className = 'manage-item';
-
-            const copy = document.createElement('div');
-            copy.className = 'manage-item-copy';
-
-            const title = document.createElement('h4');
-            title.textContent = movie.title;
-
-            const details = document.createElement('p');
-            details.textContent = `${movie.genre || 'Genre inconnu'} | ${movie.director || 'Réalisateur inconnu'} | ${formatDuration(movie.duration)} | ${formatRatingWithScale(movie.rating, movie.ratingScale)}`;
-
-            copy.append(title, details);
-            article.appendChild(copy);
-            fragment.appendChild(article);
-        });
-
-        manageList.appendChild(fragment);
+        window.renderManageList(getCinemaCatalogContext());
     }
 
     function renderAll() {
-        renderStats();
-        renderCatalogFilters();
-        renderCatalog();
-        renderManageList();
+        applyCinemaCatalogState(window.renderCinemaCatalogAll(getCinemaCatalogContext()));
     }
 
     function closeDeleteModal() {
-        confirmModal.classList.add('hidden');
-        confirmModal.setAttribute('aria-hidden', 'true');
+        window.closeConfirmModal();
     }
 
     // openLegalNoticeModal / closeLegalNoticeModal : exposes sur window par js/main.js (source = js/core/modals.js).
 
     function getSelectedMultiplayerGame() {
-        const fallbackGameId = multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || null;
-        const activeGameId = MULTIPLAYER_SUPPORTED_GAMES[multiplayerSelectedGameId]
-            ? multiplayerSelectedGameId
-            : fallbackGameId;
-        return MULTIPLAYER_SUPPORTED_GAMES[activeGameId] ? activeGameId : null;
+        syncMultiplayerStateBridge();
+        return window.getSelectedMultiplayerGame(multiplayerSelectedGameId);
     }
 
     function getSelectedMultiplayerGameLabel() {
-        const gameId = getSelectedMultiplayerGame();
-        return gameId ? MULTIPLAYER_SUPPORTED_GAMES[gameId] : 'Aucun';
+        syncMultiplayerStateBridge();
+        return window.getSelectedMultiplayerGameLabel();
     }
 
     // getMultiplayerGameLabel : expose sur window par js/main.js (source = js/multiplayer/status.js).
 
     function getCurrentMultiplayerPlayer() {
-        return multiplayerActiveRoom?.players?.find((player) => player.isYou)
-            || multiplayerActiveRoom?.players?.find((player) => player.id === multiplayerSocket?.id)
-            || null;
+        syncMultiplayerStateBridge();
+        return __mpState.getCurrentMultiplayerPlayer();
     }
 
     function isCurrentMultiplayerHost() {
-        const currentPlayer = getCurrentMultiplayerPlayer();
-        return Boolean(currentPlayer?.isHost || (multiplayerSocket?.id && multiplayerActiveRoom?.hostId === multiplayerSocket.id));
+        syncMultiplayerStateBridge();
+        return __mpState.isCurrentMultiplayerHost();
     }
 
     function getMultiplayerReadySummary() {
-        const readyCount = Number(multiplayerActiveRoom?.readyCount || 0);
-        const readyTotal = Number(multiplayerActiveRoom?.readyTotal || multiplayerActiveRoom?.playerCount || 0);
-        return `${readyCount}/${readyTotal || 0}`;
+        syncMultiplayerStateBridge();
+        return __mpState.getMultiplayerReadySummary();
     }
 
     function isCurrentPlayerMultiplayerReady() {
-        return Boolean(getCurrentMultiplayerPlayer()?.roomReady);
+        syncMultiplayerStateBridge();
+        return __mpState.isCurrentPlayerMultiplayerReady();
     }
 
     function isMultiplayerLaunchPending(gameId = multiplayerActiveRoom?.gameId) {
-        return multiplayerActiveRoom?.gameId === gameId && !multiplayerActiveRoom?.gameLaunched;
+        syncMultiplayerStateBridge();
+        return __mpState.isMultiplayerLaunchPending(gameId);
     }
 
     function syncMultiplayerEntryModeAccess() {
-        const currentPlayer = getCurrentMultiplayerPlayer();
-        const hasActiveRoom = Boolean(multiplayerActiveRoom?.code && currentPlayer);
-        const isHost = isCurrentMultiplayerHost();
-        const isGuest = hasActiveRoom && !isHost;
-
-        if (multiplayerCreateModeButton) {
-            multiplayerCreateModeButton.disabled = isGuest;
-        }
-
-        if (multiplayerJoinModeButton) {
-            multiplayerJoinModeButton.disabled = isHost;
-        }
-
-        if (hasActiveRoom) {
-            multiplayerEntryMode = isHost ? 'create' : 'join';
-        }
-
-        if (multiplayerCreateLeaveButton) {
-            multiplayerCreateLeaveButton.hidden = !isHost;
-        }
+        syncMultiplayerStateBridge();
+        window.syncMultiplayerEntryModeAccess();
+        multiplayerEntryMode = __mpState.getMultiplayerEntryMode();
+        multiplayerCreateLeaveButton = document.getElementById('multiplayerCreateLeaveButton');
     }
 
     function ensureMultiplayerCreateLeaveButton() {
-        if (multiplayerCreateLeaveButton || !multiplayerCopyCodeButton?.parentElement) {
-            return;
-        }
-
-        multiplayerCreateLeaveButton = document.createElement('button');
-        multiplayerCreateLeaveButton.type = 'button';
-        multiplayerCreateLeaveButton.id = 'multiplayerCreateLeaveButton';
-        multiplayerCreateLeaveButton.className = 'secondary-button multiplayer-button-danger';
-        multiplayerCreateLeaveButton.textContent = 'Quitter le salon';
-        multiplayerCreateLeaveButton.hidden = true;
-        multiplayerCreateLeaveButton.addEventListener('click', () => {
-            leaveMultiplayerRoom();
-        });
-        multiplayerCopyCodeButton.parentElement.appendChild(multiplayerCreateLeaveButton);
+        syncMultiplayerStateBridge();
+        multiplayerCreateLeaveButton = window.ensureMultiplayerCreateLeaveButton(() => leaveMultiplayerRoom());
+        return multiplayerCreateLeaveButton;
     }
 
     function getPreferredMultiplayerPlayerName(preferredSource = multiplayerEntryMode) {
-        const createName = multiplayerCreatePlayerNameInput?.value.trim() || '';
-        const joinName = multiplayerJoinPlayerNameInput?.value.trim() || '';
-
-        if (preferredSource === 'join') {
-            return joinName || createName;
-        }
-
-        return createName || joinName;
+        syncMultiplayerStateBridge();
+        return window.getPreferredMultiplayerPlayerName(preferredSource);
     }
 
     function getMultiplayerRoomUiSignature(room) {
@@ -2194,51 +1198,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function syncMultiplayerPlayerNames(source = 'create') {
-        if (source === 'create' && multiplayerJoinPlayerNameInput && !multiplayerJoinPlayerNameInput.value.trim()) {
-            multiplayerJoinPlayerNameInput.value = multiplayerCreatePlayerNameInput?.value.trim() || '';
-        }
-
-        if (source === 'join' && multiplayerCreatePlayerNameInput && !multiplayerCreatePlayerNameInput.value.trim()) {
-            multiplayerCreatePlayerNameInput.value = multiplayerJoinPlayerNameInput?.value.trim() || '';
-        }
+        syncMultiplayerStateBridge();
+        return window.syncMultiplayerPlayerNames(source);
     }
 
     function setMultiplayerEntryMode(mode) {
         multiplayerEntryMode = mode === 'join' ? 'join' : 'create';
-        multiplayerCreateModeButton?.classList.toggle('is-active', multiplayerEntryMode === 'create');
-        multiplayerJoinModeButton?.classList.toggle('is-active', multiplayerEntryMode === 'join');
-        multiplayerCreatePanel?.classList.toggle('is-active', multiplayerEntryMode === 'create');
-        multiplayerJoinPanel?.classList.toggle('is-active', multiplayerEntryMode === 'join');
+        syncMultiplayerStateBridge();
+        return window.setMultiplayerEntryMode(multiplayerEntryMode);
     }
 
     // setMultiplayerStatus : expose sur window par js/main.js (source = js/multiplayer/status.js).
 
     function renderMultiplayerPlayers() {
-        if (!multiplayerActiveRoom?.players?.length) {
-            multiplayerRoomPlayers.textContent = "Personne n'a embarqué pour l'instant.";
-            return;
-        }
-
-        multiplayerRoomPlayers.textContent = '';
-        const fragment = document.createDocumentFragment();
-
-        multiplayerActiveRoom.players.forEach((player) => {
-            const pill = document.createElement('span');
-            pill.className = 'multiplayer-lobby-player-pill';
-
-            if (player.isYou) {
-                pill.classList.add('is-you');
-            }
-            if (player.isHost) {
-                pill.classList.add('is-host');
-            }
-
-            const suffix = [player.isHost ? 'hôte' : '', player.isYou ? 'toi' : ''].filter(Boolean).join(' - ');
-            pill.textContent = `${player.name}${suffix ? ` (${suffix})` : ''}`;
-            fragment.appendChild(pill);
-        });
-
-        multiplayerRoomPlayers.appendChild(fragment);
+        syncMultiplayerStateBridge();
+        return window.renderMultiplayerPlayers(multiplayerActiveRoom);
     }
 
     function isMultiplayerChatVisible() {
@@ -2250,100 +1224,22 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
-    function formatMultiplayerChatTime(timestamp) {
-        if (!timestamp) {
-            return '';
-        }
-
-        return new Intl.DateTimeFormat('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit'
-        }).format(new Date(timestamp));
-    }
-
     function renderMultiplayerChatMessages() {
-        if (!multiplayerChatMessages) {
-            return;
-        }
-
-        const messages = Array.isArray(multiplayerActiveRoom?.chatMessages) ? multiplayerActiveRoom.chatMessages : [];
-        multiplayerChatMessages.textContent = '';
-
-        if (!messages.length) {
-            const emptyState = document.createElement('p');
-            emptyState.className = 'multiplayer-chat-empty';
-            emptyState.textContent = 'La partie est lanc\u00e9e. \u00c9cris le premier message \u00e0 ton \u00e9quipage.';
-            multiplayerChatMessages.appendChild(emptyState);
-            multiplayerChatSignature = '';
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-        messages.forEach((message) => {
-            const item = document.createElement('article');
-            item.className = 'multiplayer-chat-message';
-            if (message.isYou) {
-                item.classList.add('is-you');
-            }
-
-            const meta = document.createElement('div');
-            meta.className = 'multiplayer-chat-message-meta';
-
-            const author = document.createElement('strong');
-            author.className = 'multiplayer-chat-message-author';
-            author.textContent = message.playerName || 'Equipage';
-
-            const time = document.createElement('span');
-            time.textContent = formatMultiplayerChatTime(message.createdAt);
-
-            const text = document.createElement('p');
-            text.className = 'multiplayer-chat-message-text';
-            text.textContent = message.text || '';
-
-            meta.append(author, time);
-            item.append(meta, text);
-            fragment.appendChild(item);
-        });
-
-        multiplayerChatMessages.appendChild(fragment);
-        const nextSignature = messages.map((message) => message.id).join('|');
-        multiplayerChatMessages.scrollTop = multiplayerChatMessages.scrollHeight;
-        multiplayerChatSignature = nextSignature;
+        syncMultiplayerStateBridge();
+        multiplayerChatSignature = window.renderMultiplayerChatMessages(multiplayerActiveRoom);
+        syncMultiplayerStateBridge();
+        return multiplayerChatSignature;
     }
 
     function updateMultiplayerChatPanel() {
-        if (!multiplayerChatCard || !multiplayerChatInput || !multiplayerChatSendButton) {
-            return;
-        }
-
-        const chatVisible = isMultiplayerChatVisible();
-        multiplayerChatCard.classList.toggle('hidden', !chatVisible);
-        multiplayerChatCard.classList.toggle('is-visible', chatVisible);
-
-        const canSend = Boolean(chatVisible && multiplayerSocket?.connected);
-        multiplayerChatInput.disabled = !canSend;
-        multiplayerChatSendButton.disabled = !canSend;
-
-        if (multiplayerChatSubtitle) {
-            multiplayerChatSubtitle.textContent = chatVisible
-                ? `Salon ${multiplayerActiveRoom.code} sur ${getMultiplayerGameLabel(multiplayerActiveRoom.gameId)}.`
-                : "Le chat apparaît quand l'hôte lance la partie en ligne.";
-        }
-
-        if (!chatVisible) {
-            multiplayerChatMessages.textContent = '';
-            const emptyState = document.createElement('p');
-            emptyState.className = 'multiplayer-chat-empty';
-            emptyState.textContent = multiplayerActiveRoom?.code
-                ? 'Le salon attend encore le lancement de la partie.'
-                : 'Rejoins un salon multijoueur pour ouvrir le chat de bord.';
-            multiplayerChatMessages.appendChild(emptyState);
-            multiplayerChatSignature = '';
-            multiplayerChatInput.value = '';
-            return;
-        }
-
-        renderMultiplayerChatMessages();
+        syncMultiplayerStateBridge();
+        multiplayerChatSignature = window.updateMultiplayerChatPanel({
+            activeRoom: multiplayerActiveRoom,
+            socket: multiplayerSocket,
+            activeGameTab
+        });
+        syncMultiplayerStateBridge();
+        return multiplayerChatSignature;
     }
 
     let multiplayerChatLastSentAt = 0;
@@ -2380,108 +1276,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateMultiplayerGameTileSelection() {
-        multiplayerGameTiles.forEach((tile) => {
-            tile.classList.toggle('is-selected', tile.dataset.multiplayerGameSelect === getSelectedMultiplayerGame());
-        });
+        syncMultiplayerStateBridge();
+        return window.updateMultiplayerGameTileSelection();
     }
 
     function syncGameMenuOverlayBounds(overlayElement, hostElement) {
-        if (!overlayElement || !hostElement) {
-            return;
-        }
-
-        const cardElement = hostElement.closest('.games-panel');
-        if (!cardElement) {
-            return;
-        }
-
-        const cardRect = cardElement.getBoundingClientRect();
-        const hostRect = hostElement.getBoundingClientRect();
-
-        overlayElement.style.inset = 'auto';
-        overlayElement.style.top = `${cardRect.top - hostRect.top}px`;
-        overlayElement.style.left = `${cardRect.left - hostRect.left}px`;
-        overlayElement.style.width = `${cardElement.clientWidth}px`;
-        overlayElement.style.height = `${cardElement.clientHeight}px`;
+        return window.syncGameMenuOverlayBounds(overlayElement, hostElement);
     }
 
     function syncAllGameMenuOverlayBounds() {
-        syncGameMenuOverlayBounds(minesweeperMenuOverlay, minesweeperTable);
-        syncGameMenuOverlayBounds(snakeMenuOverlay, snakeTable);
-        syncGameMenuOverlayBounds(pongMenuOverlay, pongTable);
-        syncGameMenuOverlayBounds(sudokuMenuOverlay, sudokuTable);
-        syncGameMenuOverlayBounds(game2048MenuOverlay, game2048Table);
-        syncGameMenuOverlayBounds(memoryMenuOverlay, memoryTable);
-        syncGameMenuOverlayBounds(ticTacToeMenuOverlay, ticTacToeTable);
-        syncGameMenuOverlayBounds(connect4MenuOverlay, connect4Table);
-        syncGameMenuOverlayBounds(flappyMenuOverlay, flappyTable);
-        syncGameMenuOverlayBounds(mentalMathMenuOverlay, mentalMathTable);
-        syncGameMenuOverlayBounds(chessMenuOverlay, chessTable);
-        syncGameMenuOverlayBounds(checkersMenuOverlay, checkersTable);
-        syncGameMenuOverlayBounds(airHockeyMenuOverlay, airHockeyBoard);
-        syncGameMenuOverlayBounds(reactionMenuOverlay, reactionTable);
-        syncGameMenuOverlayBounds(baieBerryMenuOverlay, baieBerryGame);
-        syncGameMenuOverlayBounds(breakoutMenuOverlay, breakoutTable);
-        syncGameMenuOverlayBounds(unoMenuOverlay, unoTable);
-        syncGameMenuOverlayBounds(stackerMenuOverlay, stackerTable);
-        syncGameMenuOverlayBounds(pacmanMenuOverlay, pacmanTable);
-        syncGameMenuOverlayBounds(tetrisMenuOverlay, tetrisTable);
-        syncGameMenuOverlayBounds(battleshipMenuOverlay, battleshipTable);
-        syncGameMenuOverlayBounds(harborRunMenuOverlay, harborRunTable);
-        syncGameMenuOverlayBounds(coinClickerMenuOverlay, coinClickerTable);
-        syncGameMenuOverlayBounds(candyCrushMenuOverlay, candyCrushTable);
-        syncGameMenuOverlayBounds(flowFreeMenuOverlay, flowFreeTable);
-        syncGameMenuOverlayBounds(magicSortMenuOverlay, magicSortTable);
-        syncGameMenuOverlayBounds(blockBlastMenuOverlay, blockBlastTable);
-        syncGameMenuOverlayBounds(aimMenuOverlay, aimTable);
-        syncGameMenuOverlayBounds(rhythmMenuOverlay, rhythmTable);
-        syncGameMenuOverlayBounds(solitaireMenuOverlay, solitaireTable);
-        syncGameMenuOverlayBounds(bombMenuOverlay, bombTable);
-    }
-
-    function getBoardMoveAnimationMetadata(lastMove, row, col, flip = false) {
-        if (!lastMove || lastMove.toRow !== row || lastMove.toCol !== col) {
-            return { className: '', style: '' };
-        }
-
-        const direction = flip ? -1 : 1;
-        const moveX = (Number(lastMove.fromCol) - Number(lastMove.toCol)) * direction;
-        const moveY = (Number(lastMove.fromRow) - Number(lastMove.toRow)) * direction;
-        const isKnightMove = lastMove.pieceType === 'knight' && Math.abs(moveX) + Math.abs(moveY) === 3 && Math.abs(moveX) > 0 && Math.abs(moveY) > 0;
-        const className = [
-            'is-moving',
-            lastMove.capture ? 'is-capture-move' : '',
-            isKnightMove ? 'is-knight-move' : ''
-        ].filter(Boolean).join(' ');
-        const midX = Math.abs(moveX) === 2 ? 0 : moveX;
-        const midY = Math.abs(moveY) === 2 ? 0 : moveY;
-        const style = `style="--move-x:${moveX}; --move-y:${moveY}; --move-mid-x:${midX}; --move-mid-y:${midY};"`;
-        return { className, style };
-    }
-
-    function getBoardMoveAnimationKey(lastMove) {
-        if (!lastMove) {
-            return '';
-        }
-
-        return [
-            lastMove.pieceType,
-            lastMove.fromRow,
-            lastMove.fromCol,
-            lastMove.toRow,
-            lastMove.toCol,
-            lastMove.capture?.row ?? '-',
-            lastMove.capture?.col ?? '-',
-            lastMove.captureColor ?? '-'
-        ].join(':');
-    }
-
-    function isBoardCaptureCell(lastMove, row, col) {
-        if (!lastMove?.capture) {
-            return false;
-        }
-
-        return lastMove.capture.row === row && lastMove.capture.col === col;
+        return window.syncAllGameMenuOverlayBounds();
     }
 
 
@@ -2489,67 +1293,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function updateMultiplayerLobby(preserveStatus = false) {
-        ensureMultiplayerCreateLeaveButton();
-        syncMultiplayerEntryModeAccess();
-        if (multiplayerCreateLeaveButton) {
-            multiplayerCreateLeaveButton.disabled = multiplayerBusy;
-        }
-        const selectedGame = getSelectedMultiplayerGame();
-        const selectedLabel = getSelectedMultiplayerGameLabel();
-        const canUseMultiplayer = Boolean(selectedGame);
-        const activeRoomGameLabel = multiplayerActiveRoom?.gameId && MULTIPLAYER_SUPPORTED_GAMES[multiplayerActiveRoom.gameId]
-            ? MULTIPLAYER_SUPPORTED_GAMES[multiplayerActiveRoom.gameId]
-            : selectedLabel;
-        const currentPlayer = multiplayerActiveRoom?.players?.find((player) => player.isYou) || null;
-        const hasActiveRoom = Boolean(multiplayerActiveRoom?.code);
-        const isHost = isCurrentMultiplayerHost();
-        multiplayerCurrentRoomCode.textContent = multiplayerActiveRoom?.code || '-';
-        multiplayerLobbyPlayersBlock?.classList.toggle('hidden', !hasActiveRoom);
-        multiplayerCreatePlayerField?.classList.toggle('hidden', hasActiveRoom);
-        multiplayerJoinPlayerField?.classList.toggle('hidden', hasActiveRoom);
-        multiplayerJoinCodeField?.classList.toggle('hidden', hasActiveRoom);
-        multiplayerCreateRoomButton.disabled = multiplayerBusy || (!hasActiveRoom && !canUseMultiplayer) || (hasActiveRoom && (!isHost || (multiplayerActiveRoom?.playerCount || 0) < 2 || Boolean(multiplayerActiveRoom?.gameLaunched)));
-        multiplayerJoinRoomButton.disabled = multiplayerBusy;
-        multiplayerCreateRoomButton.textContent = hasActiveRoom
-            ? 'Lancer le jeu'
-            : 'Creer le salon';
-        multiplayerJoinRoomButton.textContent = hasActiveRoom
-            ? 'Quitter le salon'
-            : 'Rejoindre avec le code';
-        multiplayerJoinRoomButton.classList.toggle('multiplayer-button-success', !hasActiveRoom);
-        multiplayerJoinRoomButton.classList.toggle('multiplayer-button-danger', hasActiveRoom);
-        multiplayerCopyCodeButton.disabled = !hasActiveRoom;
-        updateMultiplayerGameTileSelection();
-        renderMultiplayerPlayers();
-        updateMultiplayerChatPanel();
-
-        if (preserveStatus) {
-            return;
-        }
-
-        if (hasActiveRoom) {
-            if (multiplayerActiveRoom.playerCount < 2) {
-                setMultiplayerStatus(`Salon ${multiplayerActiveRoom.code} cree. Attends un autre joueur avant de lancer ${activeRoomGameLabel}.`);
-                return;
-            }
-
-            if (!multiplayerActiveRoom.gameLaunched) {
-                setMultiplayerStatus(isHost
-                    ? `Salon ${multiplayerActiveRoom.code} prêt. Tu peux lancer ${activeRoomGameLabel} quand tout le monde est là.`
-                    : `Salon ${multiplayerActiveRoom.code} prêt. Attends que l'hôte lance ${activeRoomGameLabel}.`);
-                return;
-            }
-
-            setMultiplayerStatus(`${activeRoomGameLabel} est en cours dans le salon ${multiplayerActiveRoom.code}.`);
-            return;
-        }
-
-        if (!canUseMultiplayer) {
-            setMultiplayerStatus('Le multijoueur est pr\u00e9vu pour Bataille, Sea Hockey, Pong, Morpion, Coin 4, \u00c9checs, Dames, Buno et La Bombe.');
-            return;
-        }
-
-        setMultiplayerStatus('Cree un salon prive ou rejoins-en un avec un code.');
+        syncMultiplayerStateBridge();
+        window.updateMultiplayerLobby({
+            preserveStatus,
+            onLeave: () => leaveMultiplayerRoom(),
+            activeGameTab
+        });
+        multiplayerEntryMode = __mpState.getMultiplayerEntryMode();
+        multiplayerCreateLeaveButton = document.getElementById('multiplayerCreateLeaveButton');
+        multiplayerChatSignature = __mpState.getMultiplayerChatSignature();
     }
 
     // loadSocketIoClient, getMultiplayerServerOrigin, getMultiplayerApiUrl : exposes sur window par js/main.js (source = js/multiplayer/connection.js).
@@ -2768,30 +1520,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function leaveMultiplayerRoom() {
+        syncMultiplayerStateBridge();
         if (!multiplayerActiveRoom?.code) {
-            return;
+            return window.leaveMultiplayerRoom(multiplayerSocket, multiplayerActiveRoom);
         }
-
-        try {
-            const socket = await ensureMultiplayerConnection();
-            socket.emit('room:leave');
-        } catch (error) {
-            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
-        }
+        const socket = multiplayerSocket?.connected ? multiplayerSocket : await ensureMultiplayerConnection();
+        return window.leaveMultiplayerRoom(socket, multiplayerActiveRoom);
     }
 
     async function copyMultiplayerRoomCode() {
-        if (!multiplayerActiveRoom?.code) {
-            setMultiplayerStatus('Aucune room active a copier pour le moment.');
-            return;
-        }
-
-        try {
-            await navigator.clipboard.writeText(multiplayerActiveRoom.code);
-            setMultiplayerStatus(`Code ${multiplayerActiveRoom.code} copie dans le presse-papiers.`);
-        } catch (_error) {
-            setMultiplayerStatus(`Code actif: ${multiplayerActiveRoom.code}`);
-        }
+        syncMultiplayerStateBridge();
+        return window.copyMultiplayerRoomCode(multiplayerActiveRoom);
     }
 
     async function toggleMultiplayerReady() {
@@ -2824,205 +1563,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showGamePanel(tabId) {
-        activeGameTab = tabId;
-        const isDiscoveryPanel = ['home', 'solo', 'multiplayer'].includes(tabId);
-        const visibleSection = ['home', 'solo', 'multiplayer'].includes(tabId) ? tabId : activeGamesSection;
-        gamesSectionButtons.forEach((button) => {
-            button.classList.toggle('is-active', visibleSection === button.dataset.gamesSection);
+        activeGameTab = window.showGamePanel(tabId, {
+            updateMultiplayerChatPanel,
+            closeGameOverModal,
+            updateMultiplayerLobby
         });
-        gamesLayout?.classList.toggle('games-layout-focus', !isDiscoveryPanel);
-        gamesFiltersCard?.classList.toggle('hidden', !isDiscoveryPanel);
-        gamesHomePanel.classList.toggle('games-panel-active', tabId === 'home');
-        gamesSoloPanel.classList.toggle('games-panel-active', tabId === 'solo');
-        gamesMultiplayerPanel.classList.toggle('games-panel-active', tabId === 'multiplayer');
-        minesweeperGame.classList.toggle('games-panel-active', tabId === 'minesweeper');
-        snakeGame.classList.toggle('games-panel-active', tabId === 'snake');
-        pongGame.classList.toggle('games-panel-active', tabId === 'pong');
-        sudokuGame.classList.toggle('games-panel-active', tabId === 'sudoku');
-        game2048.classList.toggle('games-panel-active', tabId === '2048');
-        aimGame.classList.toggle('games-panel-active', tabId === 'aim');
-        memoryGame.classList.toggle('games-panel-active', tabId === 'memory');
-        ticTacToeGame.classList.toggle('games-panel-active', tabId === 'ticTacToe');
-        battleshipGame.classList.toggle('games-panel-active', tabId === 'battleship');
-        tetrisGame.classList.toggle('games-panel-active', tabId === 'tetris');
-        pacmanGame.classList.toggle('games-panel-active', tabId === 'pacman');
-        solitaireGame.classList.toggle('games-panel-active', tabId === 'solitaire');
-        connect4Game.classList.toggle('games-panel-active', tabId === 'connect4');
-        rhythmGame.classList.toggle('games-panel-active', tabId === 'rhythm');
-        flappyGame.classList.toggle('games-panel-active', tabId === 'flappy');
-        flowFreeGame.classList.toggle('games-panel-active', tabId === 'flowFree');
-        magicSortGame.classList.toggle('games-panel-active', tabId === 'magicSort');
-        mentalMathGame.classList.toggle('games-panel-active', tabId === 'mentalMath');
-        candyCrushGame.classList.toggle('games-panel-active', tabId === 'candyCrush');
-        harborRunGame.classList.toggle('games-panel-active', tabId === 'harborRun');
-        stackerGame.classList.toggle('games-panel-active', tabId === 'stacker');
-        coinClickerGame.classList.toggle('games-panel-active', tabId === 'coinClicker');
-        chessGame.classList.toggle('games-panel-active', tabId === 'chess');
-        checkersGame.classList.toggle('games-panel-active', tabId === 'checkers');
-        airHockeyGame.classList.toggle('games-panel-active', tabId === 'airHockey');
-        reactionGame.classList.toggle('games-panel-active', tabId === 'reaction');
-        baieBerryGame.classList.toggle('games-panel-active', tabId === 'baieBerry');
-        breakoutGame.classList.toggle('games-panel-active', tabId === 'breakout');
-        blockBlastGame.classList.toggle('games-panel-active', tabId === 'blockBlast');
-        unoGame.classList.toggle('games-panel-active', tabId === 'uno');
-        bombGame.classList.toggle('games-panel-active', tabId === 'bomb');
-        updateMultiplayerChatPanel();
-
-        if (tabId !== 'snake') {
-            closeGameOverModal();
-        }
-
-        updateMultiplayerLobby();
-        updateGamesFilters();
-
-        if (isDiscoveryPanel) {
-            playGamesGridDominoAnimation();
-        }
-    }
-
-    function getCurrentGamesGrid() {
-        if (activeGameTab === 'solo') {
-            return gamesSoloPanel?.querySelector('.games-home-grid') || null;
-        }
-
-        if (activeGameTab === 'multiplayer') {
-            return gamesMultiplayerPanel?.querySelector('.games-home-grid') || null;
-        }
-
-        return gamesHomePanel?.querySelector('.games-home-grid') || null;
-    }
-
-    function getVisibleGameHomeTiles(grid = getCurrentGamesGrid()) {
-        if (!grid) {
-            return [];
-        }
-
-        return Array.from(grid.querySelectorAll('[data-open-game]')).filter((tile) => !tile.hidden);
-    }
-
-    function syncGamesGridDominoOrder(grid = getCurrentGamesGrid()) {
-        getVisibleGameHomeTiles(grid).forEach((tile, index) => {
-            tile.style.setProperty('--domino-order', String(index));
-        });
-    }
-
-    function clearGamesGridDominoAnimation() {
-        if (gamesGridDominoFrame !== null) {
-            window.cancelAnimationFrame(gamesGridDominoFrame);
-            gamesGridDominoFrame = null;
-        }
-
-        if (gamesGridDominoCleanupTimer) {
-            window.clearTimeout(gamesGridDominoCleanupTimer);
-            gamesGridDominoCleanupTimer = null;
-        }
-
-        document.querySelectorAll('.games-home-grid.is-domino-running').forEach((activeGrid) => {
-            activeGrid.classList.remove('is-domino-running');
-        });
-    }
-
-    function playGamesGridDominoAnimation(grid = getCurrentGamesGrid()) {
-        const visibleTiles = getVisibleGameHomeTiles(grid);
-        clearGamesGridDominoAnimation();
-
-        if (!visibleTiles.length) {
-            return;
-        }
-
-        grid?.classList.add('is-domino-running');
-        visibleTiles.forEach((tile, index) => {
-            tile.style.setProperty('--domino-order', String(index));
-            tile.classList.remove('is-domino-entering');
-        });
-
-        gamesGridDominoFrame = window.requestAnimationFrame(() => {
-            gamesGridDominoFrame = window.requestAnimationFrame(() => {
-                visibleTiles.forEach((tile) => {
-                    tile.classList.add('is-domino-entering');
-                    tile.addEventListener('animationend', (e) => {
-                        if (e.animationName === 'gameHomeTileDominoIn') {
-                            tile.classList.remove('is-domino-entering');
-                        }
-                    }, { once: true });
-                });
-                gamesGridDominoFrame = null;
-            });
-        });
-
-        const totalDuration = 620 + Math.max(0, visibleTiles.length - 1) * 58;
-        gamesGridDominoCleanupTimer = window.setTimeout(() => {
-            visibleTiles.forEach((tile) => {
-                tile.classList.remove('is-domino-entering');
-            });
-            grid?.classList.remove('is-domino-running');
-            gamesGridDominoCleanupTimer = null;
-        }, totalDuration);
-    }
-
-    function replayGameHomeTileAnimation(tile) {
-        const currentGrid = getCurrentGamesGrid();
-        if (!tile || tile.hidden || !currentGrid || tile.closest('.games-home-grid') !== currentGrid) {
-            return;
-        }
-
-        if (currentGrid.classList.contains('is-domino-running')) {
-            return;
-        }
-
-        const previousTimer = gameHomeTileReplayTimers.get(tile);
-        if (previousTimer) {
-            window.clearTimeout(previousTimer);
-        }
-
-        tile.classList.remove('is-domino-replaying');
-        void tile.offsetWidth;
-        tile.classList.add('is-domino-replaying');
-
-        const cleanupTimer = window.setTimeout(() => {
-            tile.classList.remove('is-domino-replaying');
-            gameHomeTileReplayTimers.delete(tile);
-        }, 380);
-
-        gameHomeTileReplayTimers.set(tile, cleanupTimer);
     }
 
     function updateGamesFilters() {
-        const currentGrid = getCurrentGamesGrid();
-        const currentTiles = currentGrid ? Array.from(currentGrid.querySelectorAll('[data-open-game]')) : [];
-        const query = (gamesFilterSearchInput?.value || '').trim().toLowerCase();
-        let visibleCount = 0;
+        window.updateGamesFilters();
+    }
 
-        gameHomeTiles.forEach((tile) => {
-            if (!currentGrid || tile.closest('.games-home-grid') !== currentGrid) {
-                tile.hidden = false;
-                return;
-            }
-
-            const title = tile.querySelector('.game-home-title')?.textContent?.trim().toLowerCase() || '';
-            const tags = GAME_FILTER_TAGS[tile.dataset.openGame] || [];
-            const matchesQuery = !query || title.includes(query);
-            const matchesFilter = activeGamesFilter === 'all' || tags.includes(activeGamesFilter);
-            const isVisible = matchesQuery && matchesFilter;
-            tile.hidden = !isVisible;
-
-            if (isVisible) {
-                visibleCount += 1;
-            }
+    function showGamesHome() {
+        activeGameTab = window.showGamesHome({
+            cleanupActiveGameForNavigation,
+            updateMultiplayerChatPanel,
+            closeGameOverModal,
+            updateMultiplayerLobby
         });
+    }
 
-        if (gamesFilterCount) {
-            const label = currentTiles.length > 1 ? 'jeux visibles' : 'jeu visible';
-            gamesFilterCount.textContent = `${visibleCount} ${label}`;
-        }
-
-        if (gamesFilterHint) {
-            gamesFilterHint.textContent = visibleCount
-                ? ''
-                : 'Aucun jeu ne correspond a cette recherche. Essaie un autre mot ou un autre filtre.';
-        }
-
-        syncGamesGridDominoOrder(currentGrid);
+    function showGamesSection(section) {
+        activeGameTab = window.showGamesSection(section, {
+            cleanupActiveGameForNavigation,
+            updateMultiplayerChatPanel,
+            closeGameOverModal,
+            updateMultiplayerLobby
+        });
     }
 
     async function setSelectedMultiplayerGame(gameId) {
@@ -3055,16 +1622,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         multiplayerSelectedGameId = gameId;
         updateMultiplayerLobby();
-    }
-
-    function showGamesHome() {
-        showGamesSection('home');
-    }
-
-    function showGamesSection(section) {
-        activeGamesSection = section;
-        cleanupActiveGameForNavigation(section);
-        showGamePanel(section);
     }
 
     function cleanupActiveGameForNavigation(nextTab) {
@@ -3220,88 +1777,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function shuffleArray(items) {
-        const array = [...items];
-
-        for (let index = array.length - 1; index > 0; index -= 1) {
-            const swapIndex = Math.floor(Math.random() * (index + 1));
-            [array[index], array[swapIndex]] = [array[swapIndex], array[index]];
-        }
-
-        return array;
-    }
-
-    function waitMs(duration) {
-        return new Promise((resolve) => {
-            window.setTimeout(resolve, duration);
-        });
-    }
-
-
-
-
-
-
-
-
-    loginForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        saveSession({ lastDestination: 'services' });
-        showServices();
-    });
-
-    cinemaNavButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            activatePanel(button.dataset.target);
-        });
-    });
-
-    mathNavButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            activateMathPanel(button.dataset.mathTab);
-        });
-    });
-
-    musicNavButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            activateMusicPanel(button.dataset.musicTab);
-        });
-    });
-
-    serviceCards.forEach((card) => {
-        card.addEventListener('click', () => {
-            if (card.dataset.service === 'cinema') {
-                showCinema();
-                return;
-            }
-
-            if (card.dataset.service === 'math') {
-                showMath();
-                return;
-            }
-
-            if (card.dataset.service === 'music') {
-                showMusic();
-                return;
-            }
-
-            showGames();
-        });
-    });
-
-    backToServicesButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            returnToServices();
-        });
-    });
-
-    logoutButton?.addEventListener('click', () => {
-        closeGameOverModal();
-        clearSession();
-        showViewImmediately(loginView, {
-            headerMode: 'none'
-        });
-        loginForm.querySelector('button[type="submit"]')?.focus();
+    window.bindAppShellControls({
+        onLogin: () => {
+            saveSession({ lastDestination: 'services' });
+            showServices();
+        },
+        onCinema: showCinema,
+        onGames: showGames,
+        onMath: showMath,
+        onMusic: showMusic,
+        onBackToServices: returnToServices,
+        onLogout: () => {
+            closeGameOverModal();
+            clearSession();
+            showViewImmediately(loginView, {
+                headerMode: 'none'
+            });
+            loginForm.querySelector('button[type="submit"]')?.focus();
+        },
+        onActivateCinemaPanel: activatePanel,
+        onActivateMathPanel: activateMathPanel,
+        onActivateMusicPanel: activateMusicPanel
     });
 
 
@@ -3490,142 +1986,15 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeGame();
     }
 
-    gameHomeTiles.forEach((tile) => {
-        tile.addEventListener('click', () => {
-            if (tile.dataset.multiplayerGameSelect) {
-                setSelectedMultiplayerGame(tile.dataset.multiplayerGameSelect);
-                setMultiplayerEntryMode('create');
-                return;
-            }
-
-            openSelectedGame(tile.dataset.openGame);
-        });
-
-        tile.addEventListener('pointerenter', () => {
-            replayGameHomeTileAnimation(tile);
-        });
-
-        tile.addEventListener('focus', () => {
-            replayGameHomeTileAnimation(tile);
-        });
+    window.bindGamesNavigationControls({
+        openSelectedGame,
+        setSelectedMultiplayerGame,
+        setMultiplayerEntryMode,
+        showGamesSection
     });
 
-    gamesSectionButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            showGamesSection(button.dataset.gamesSection || 'home');
-        });
-    });
-
-    gamesFilterSearchInput?.addEventListener('input', () => {
-        updateGamesFilters();
-    });
-
-    gamesFilterButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            activeGamesFilter = button.dataset.gamesFilter || 'all';
-            gamesFilterButtons.forEach((chip) => {
-                chip.classList.toggle('is-active', chip === button);
-            });
-            updateGamesFilters();
-        });
-    });
-
-    instrumentTiles.forEach((tile) => {
-        tile.addEventListener('click', () => {
-            if (tile.dataset.openInstrument === 'piano') {
-                activateMusicPanel('pianoPanel');
-            }
-        });
-    });
-
-    pianoResetButton?.addEventListener('click', () => {
-        pianoSustainActive = false;
-        stopAllPianoNotes(true);
-        pianoPointerId = null;
-        pianoPointerNoteId = null;
-
-        if (pianoAudioContext?.state === 'closed') {
-            pianoAudioContext = null;
-            pianoMasterGain = null;
-        }
-
-        renderPiano();
-        updatePianoHelpText();
-    });
-
-    pianoKeyboard?.addEventListener('pointerdown', (event) => {
-        const keyButton = event.target.closest('[data-piano-key]');
-
-        if (!keyButton) {
-            return;
-        }
-
-        event.preventDefault();
-        activateMusicPanel('pianoPanel');
-        pianoPointerId = event.pointerId;
-        pianoPointerNoteId = keyButton.dataset.pianoKey;
-        pianoKeyboard.setPointerCapture?.(event.pointerId);
-        startPianoNote(pianoPointerNoteId, 'pointer');
-    });
-
-    pianoKeyboard?.addEventListener('pointermove', (event) => {
-        if (event.pointerId !== pianoPointerId) {
-            return;
-        }
-
-        const elementAtPoint = document.elementFromPoint(event.clientX, event.clientY);
-        const keyButton = elementAtPoint?.closest?.('[data-piano-key]');
-        const nextNoteId = keyButton?.dataset.pianoKey || null;
-
-        if (nextNoteId === pianoPointerNoteId) {
-            return;
-        }
-
-        if (pianoPointerNoteId) {
-            stopPianoNote(pianoPointerNoteId, 'pointer');
-        }
-
-        pianoPointerNoteId = nextNoteId;
-
-        if (pianoPointerNoteId) {
-            startPianoNote(pianoPointerNoteId, 'pointer');
-        }
-    });
-
-    pianoKeyboard?.addEventListener('pointerup', (event) => {
-        if (event.pointerId !== pianoPointerId) {
-            return;
-        }
-
-        if (pianoPointerNoteId) {
-            stopPianoNote(pianoPointerNoteId, 'pointer');
-        }
-
-        pianoPointerId = null;
-        pianoPointerNoteId = null;
-        pianoKeyboard.releasePointerCapture?.(event.pointerId);
-    });
-
-    pianoKeyboard?.addEventListener('pointercancel', (event) => {
-        if (event.pointerId !== pianoPointerId) {
-            return;
-        }
-
-        if (pianoPointerNoteId) {
-            stopPianoNote(pianoPointerNoteId, 'pointer');
-        }
-
-        pianoPointerId = null;
-        pianoPointerNoteId = null;
-    });
-
-    pianoKeyboard?.addEventListener('lostpointercapture', () => {
-        if (pianoPointerNoteId) {
-            stopPianoNote(pianoPointerNoteId, 'pointer');
-        }
-
-        pianoPointerId = null;
-        pianoPointerNoteId = null;
+    __music.bindMusicControls({
+        onActivateMusicPanel: activateMusicPanel
     });
 
     minesweeperBoard.addEventListener('click', (event) => {
@@ -3802,205 +2171,18 @@ document.addEventListener('DOMContentLoaded', () => {
         render2048Menu();
     });
 
-    game2048Board?.addEventListener('touchstart', (event) => {
-        if (__g2.get2048MenuVisible() || activeGameTab !== '2048') {
-            return;
-        }
-
-        const touch = event.changedTouches[0];
-        if (!touch) {
-            return;
-        }
-
-        game2048TouchStartX = touch.clientX;
-        game2048TouchStartY = touch.clientY;
-    }, { passive: true });
-
-    game2048Board?.addEventListener('touchend', (event) => {
-        if (__g2.get2048MenuVisible() || activeGameTab !== '2048') {
-            game2048TouchStartX = null;
-            game2048TouchStartY = null;
-            return;
-        }
-
-        const touch = event.changedTouches[0];
-        if (!touch || game2048TouchStartX === null || game2048TouchStartY === null) {
-            game2048TouchStartX = null;
-            game2048TouchStartY = null;
-            return;
-        }
-
-        const deltaX = touch.clientX - game2048TouchStartX;
-        const deltaY = touch.clientY - game2048TouchStartY;
-        const absX = Math.abs(deltaX);
-        const absY = Math.abs(deltaY);
-        const minSwipeDistance = 24;
-        let direction = null;
-
-        if (Math.max(absX, absY) >= minSwipeDistance) {
-            direction = absX > absY
-                ? (deltaX > 0 ? 'right' : 'left')
-                : (deltaY > 0 ? 'down' : 'up');
-        }
-
-        game2048TouchStartX = null;
-        game2048TouchStartY = null;
-
-        if (direction) {
-            event.preventDefault();
-            move2048(direction);
-        }
-    }, { passive: false });
-
-    snakeBoard?.addEventListener('touchstart', (event) => {
-        if (activeGameTab !== 'snake') {
-            return;
-        }
-
-        const touch = event.changedTouches[0];
-        if (!touch) {
-            return;
-        }
-
-        snakeTouchStartX = touch.clientX;
-        snakeTouchStartY = touch.clientY;
-    }, { passive: true });
-
-    snakeBoard?.addEventListener('touchend', (event) => {
-        if (activeGameTab !== 'snake') {
-            snakeTouchStartX = null;
-            snakeTouchStartY = null;
-            return;
-        }
-
-        const touch = event.changedTouches[0];
-        if (!touch || snakeTouchStartX === null || snakeTouchStartY === null) {
-            snakeTouchStartX = null;
-            snakeTouchStartY = null;
-            return;
-        }
-
-        const deltaX = touch.clientX - snakeTouchStartX;
-        const deltaY = touch.clientY - snakeTouchStartY;
-        const absX = Math.abs(deltaX);
-        const absY = Math.abs(deltaY);
-        const minSwipeDistance = 20;
-
-        snakeTouchStartX = null;
-        snakeTouchStartY = null;
-
-        if (Math.max(absX, absY) < minSwipeDistance) {
-            return;
-        }
-
-        queueSnakeDirectionInput(
-            absX > absY
-                ? (deltaX > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 })
-                : (deltaY > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 })
-        );
-        event.preventDefault();
-    }, { passive: false });
-
-    pacmanBoard?.addEventListener('touchstart', (event) => {
-        if (activeGameTab !== 'pacman' || __pm.getPacmanMenuVisible() || __pm.getPacmanMenuClosing()) {
-            return;
-        }
-
-        const touch = event.changedTouches[0];
-        if (!touch) {
-            return;
-        }
-
-        pacmanTouchStartX = touch.clientX;
-        pacmanTouchStartY = touch.clientY;
-    }, { passive: true });
-
-    pacmanBoard?.addEventListener('touchend', (event) => {
-        if (activeGameTab !== 'pacman' || __pm.getPacmanMenuVisible() || __pm.getPacmanMenuClosing()) {
-            pacmanTouchStartX = null;
-            pacmanTouchStartY = null;
-            return;
-        }
-
-        const touch = event.changedTouches[0];
-        if (!touch || pacmanTouchStartX === null || pacmanTouchStartY === null) {
-            pacmanTouchStartX = null;
-            pacmanTouchStartY = null;
-            return;
-        }
-
-        const deltaX = touch.clientX - pacmanTouchStartX;
-        const deltaY = touch.clientY - pacmanTouchStartY;
-        const absX = Math.abs(deltaX);
-        const absY = Math.abs(deltaY);
-        const minSwipeDistance = 20;
-
-        pacmanTouchStartX = null;
-        pacmanTouchStartY = null;
-
-        if (Math.max(absX, absY) < minSwipeDistance) {
-            return;
-        }
-
-        __pm.setPacmanNextDirection(absX > absY
-            ? (deltaX > 0 ? { row: 0, col: 1 } : { row: 0, col: -1 })
-            : (deltaY > 0 ? { row: 1, col: 0 } : { row: -1, col: 0 }));
-        event.preventDefault();
-    }, { passive: false });
-
-    tetrisBoard?.addEventListener('touchstart', (event) => {
-        if (activeGameTab !== 'tetris' || __tt.getTetrisMenuVisible() || __tt.getTetrisMenuClosing()) {
-            return;
-        }
-
-        const touch = event.changedTouches[0];
-        if (!touch) {
-            return;
-        }
-
-        tetrisTouchStartX = touch.clientX;
-        tetrisTouchStartY = touch.clientY;
-    }, { passive: true });
-
-    tetrisBoard?.addEventListener('touchend', (event) => {
-        if (activeGameTab !== 'tetris' || __tt.getTetrisMenuVisible() || __tt.getTetrisMenuClosing()) {
-            tetrisTouchStartX = null;
-            tetrisTouchStartY = null;
-            return;
-        }
-
-        const touch = event.changedTouches[0];
-        if (!touch || tetrisTouchStartX === null || tetrisTouchStartY === null) {
-            tetrisTouchStartX = null;
-            tetrisTouchStartY = null;
-            return;
-        }
-
-        const deltaX = touch.clientX - tetrisTouchStartX;
-        const deltaY = touch.clientY - tetrisTouchStartY;
-        const absX = Math.abs(deltaX);
-        const absY = Math.abs(deltaY);
-        const minSwipeDistance = 20;
-
-        tetrisTouchStartX = null;
-        tetrisTouchStartY = null;
-
-        if (Math.max(absX, absY) < minSwipeDistance) {
-            rotateTetrisPiece();
-            event.preventDefault();
-            return;
-        }
-
-        if (absX > absY) {
-            moveTetrisHorizontally(deltaX > 0 ? 1 : -1);
-        } else if (deltaY > 0) {
-            dropTetrisStep();
-        } else {
-            rotateTetrisPiece();
-        }
-
-        event.preventDefault();
-    }, { passive: false });
+    window.bindTouchGameControls({
+        getActiveGameTab: () => activeGameTab,
+        is2048Blocked: () => __g2.get2048MenuVisible(),
+        move2048,
+        queueSnakeDirectionInput,
+        isPacmanBlocked: () => __pm.getPacmanMenuVisible() || __pm.getPacmanMenuClosing(),
+        setPacmanNextDirection: (direction) => __pm.setPacmanNextDirection(direction),
+        isTetrisBlocked: () => __tt.getTetrisMenuVisible() || __tt.getTetrisMenuClosing(),
+        moveTetrisHorizontally,
+        dropTetrisStep,
+        rotateTetrisPiece
+    });
 
     aimMenuActionButton?.addEventListener('click', () => {
         if (__am.getAimMenuShowingRules()) {
@@ -5456,199 +3638,44 @@ document.addEventListener('DOMContentLoaded', () => {
         dropStackerLayer();
     });
 
-    calculatorKeys.forEach((button) => {
-        button.addEventListener('click', () => {
-            const { action, value } = button.dataset;
+    __math.bindMathControls();
 
-            if (action === 'clear') {
-                calculatorDisplay.value = '';
-                calculatorStatus.textContent = '';
-                calculatorStatus.classList.remove('feedback-success', 'feedback-error');
-                return;
-            }
-
-            if (action === 'backspace') {
-                calculatorDisplay.value = calculatorDisplay.value.slice(0, -1);
-                return;
-            }
-
-            if (action === 'evaluate') {
-                evaluateCalculatorExpression();
-                return;
-            }
-
-            const start = calculatorDisplay.selectionStart ?? calculatorDisplay.value.length;
-            const end = calculatorDisplay.selectionEnd ?? calculatorDisplay.value.length;
-            calculatorDisplay.setRangeText(value || '', start, end, 'end');
-            calculatorDisplay.focus();
-        });
+    window.bindCinemaCatalogControls({
+        getContext: getCinemaCatalogContext,
+        setState: applyCinemaCatalogState,
+        renderCatalog,
+        renderCatalogFilters
     });
 
-    calculatorDisplay.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            evaluateCalculatorExpression();
-        }
+    window.bindConfirmModalControls({ onClose: closeDeleteModal });
+
+    window.bindCoreModalControls();
+    window.bindEscapeModalControls({
+        closeDeleteModal,
+        closeLegalNoticeModal,
+        closeGameOverModal
     });
 
-    converterCategory.addEventListener('change', () => {
-        populateConverterUnits(converterCategory.value);
-    });
-
-    converterSwapButton.addEventListener('click', () => {
-        const previousFrom = converterFrom.value;
-        converterFrom.value = converterTo.value;
-        converterTo.value = previousFrom;
-        convertUnits();
-    });
-
-    converterConvertButton.addEventListener('click', () => {
-        convertUnits();
-    });
-
-    percentageButton.addEventListener('click', () => {
-        calculatePercentage();
-    });
-
-    ruleThreeButton.addEventListener('click', () => {
-        calculateRuleOfThree();
-    });
-
-    circleButton.addEventListener('click', () => {
-        calculateCircle();
-    });
-
-    searchInput.addEventListener('input', (event) => {
-        searchTerm = event.target.value;
-        renderCatalog();
-    });
-
-    catalogDirectorFilterInput?.addEventListener('input', (event) => {
-        catalogDirectorTerm = event.target.value;
-        renderCatalog();
-    });
-
-    catalogReleaseFilterSelect?.addEventListener('change', (event) => {
-        catalogReleaseFilter = event.target.value;
-        renderCatalog();
-    });
-
-    catalogRatingFilterSelect?.addEventListener('change', (event) => {
-        catalogMinimumRatingFilter = event.target.value;
-        renderCatalog();
-    });
-
-    catalogSortFilterSelect?.addEventListener('change', (event) => {
-        catalogSortMode = event.target.value;
-        renderCatalogFilters();
-        renderCatalog();
-    });
-
-    catalogGenreFilterGroup?.addEventListener('change', (event) => {
-        const genreInput = event.target.closest('input[name="catalogGenreFilter"]');
-        if (!genreInput) {
-            return;
-        }
-
-        if (genreInput.checked) {
-            catalogSelectedGenres.add(genreInput.value);
-        } else {
-            catalogSelectedGenres.delete(genreInput.value);
-        }
-        renderCatalog();
-    });
-
-    catalogResetFiltersButton?.addEventListener('click', () => {
-        catalogSelectedGenres = new Set();
-        catalogReleaseFilter = 'all';
-        catalogMinimumRatingFilter = 'all';
-        catalogSortMode = 'default';
-        catalogDirectorTerm = '';
-        searchTerm = '';
-
-        if (searchInput) {
-            searchInput.value = '';
-        }
-
-        renderCatalogFilters();
-        renderCatalog();
-    });
-
-    confirmModal.addEventListener('click', (event) => {
-        if (event.target.dataset.closeModal === 'true') {
-            closeDeleteModal();
-        }
-    });
-
-    legalNoticeModal?.addEventListener('click', (event) => {
-        if (event.target.dataset.closeLegalNotice === 'true') {
-            closeLegalNoticeModal();
-        }
-    });
-
-    openLegalNoticeButton?.addEventListener('click', () => {
-        openLegalNoticeModal();
-    });
-
-    closeLegalNoticeButton?.addEventListener('click', () => {
-        closeLegalNoticeModal();
-    });
-
-    gameOverModal.addEventListener('click', (event) => {
-        if (event.target.dataset.closeGameOver === 'true') {
-            closeGameOverModal();
-        }
-    });
-
-    const TRACKED_DIR_CODES = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'KeyQ', 'KeyD', 'KeyZ', 'KeyS', 'KeyA', 'KeyW']);
-    let heldDirectionKeys = [];
+    const directionalRepeatGuard = window.createDirectionalRepeatGuard();
 
     document.addEventListener('keyup', (event) => {
-        const idx = heldDirectionKeys.indexOf(event.code);
-        if (idx !== -1) heldDirectionKeys.splice(idx, 1);
+        directionalRepeatGuard.release(event);
     });
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !confirmModal.classList.contains('hidden')) {
-            closeDeleteModal();
-        }
-
-        if (event.key === 'Escape' && legalNoticeModal && !legalNoticeModal.classList.contains('hidden')) {
-            closeLegalNoticeModal();
-        }
-
-        if (event.key === 'Escape' && !gameOverModal.classList.contains('hidden')) {
-            closeGameOverModal();
-        }
-
         const targetTag = event.target?.tagName;
         const isTypingTarget = ['INPUT', 'TEXTAREA', 'SELECT'].includes(targetTag) || event.target?.isContentEditable;
-        const pianoNoteId = getPianoNoteIdFromKeyboardEvent(event);
 
-        if (currentView === musicView && activeMusicTab === 'pianoPanel' && event.code === 'Space' && !isTypingTarget) {
-            event.preventDefault();
-            if (!pianoSustainActive) {
-                pianoSustainActive = true;
-                updatePianoHelpText();
-                renderPiano();
-            }
+        if (__music.handlePianoKeyDown(event, {
+            active: currentView === musicView && activeMusicTab === 'pianoPanel',
+            isTypingTarget
+        })) {
             return;
         }
 
-        if (currentView === musicView && activeMusicTab === 'pianoPanel' && pianoNoteId && !isTypingTarget && !event.repeat) {
+        if (directionalRepeatGuard.shouldBlock(event, isTypingTarget)) {
             event.preventDefault();
-            startPianoNote(pianoNoteId, 'keyboard');
             return;
-        }
-
-        if (!isTypingTarget && TRACKED_DIR_CODES.has(event.code)) {
-            if (!event.repeat && !heldDirectionKeys.includes(event.code)) {
-                heldDirectionKeys.push(event.code);
-            }
-            if (event.repeat && heldDirectionKeys[heldDirectionKeys.length - 1] !== event.code) {
-                event.preventDefault();
-                return;
-            }
         }
 
         if (!isTypingTarget && event.code === 'Space') {
@@ -5925,131 +3952,44 @@ document.addEventListener('DOMContentLoaded', () => {
         move2048(nextMove2048);
     });
 
-    ['click', 'keydown', 'mousemove', 'touchstart'].forEach((eventName) => {
-        document.addEventListener(eventName, registerActivity, { passive: true });
+    window.bindSessionActivityTracking();
+
+    window.bindGameKeyReleaseControls({
+        handlePianoKeyUp: __music.handlePianoKeyUp,
+        isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
+        getPongKeys: () => __pg.getPongKeys(),
+        isMultiplayerPongActive: () => activeGameTab === 'pong' && isMultiplayerPongActive(),
+        pushMultiplayerPongInput,
+        getAirHockeyKeys: () => __ah.getAirHockeyKeys(),
+        isMultiplayerAirHockeyActive: () => activeGameTab === 'airHockey' && isMultiplayerAirHockeyActive(),
+        pushMultiplayerAirHockeyInput,
+        getBreakoutKeys: () => __bk.getBreakoutKeys()
     });
 
-    document.addEventListener('keyup', (event) => {
-        if (currentView === musicView && activeMusicTab === 'pianoPanel' && event.code === 'Space') {
-            pianoSustainActive = false;
-            releaseSustainedPianoNotes();
-            return;
-        }
-
-        if (currentView === musicView && activeMusicTab === 'pianoPanel' && releaseKeyboardPianoKey(event)) {
-            return;
-        }
-
-        __pg.getPongKeys().delete(event.key);
-        if (activeGameTab === 'pong' && isMultiplayerPongActive()) {
-            pushMultiplayerPongInput();
-        }
-        __ah.getAirHockeyKeys().delete(event.key.toLowerCase());
-        if (activeGameTab === 'airHockey' && isMultiplayerAirHockeyActive()) {
-            pushMultiplayerAirHockeyInput();
-        }
-        __bk.getBreakoutKeys().delete(event.key.toLowerCase());
+    window.bindResponsiveGameResize({
+        getActiveGameTab: () => activeGameTab,
+        syncAllGameMenuOverlayBounds,
+        renderSnake,
+        isMultiplayerPongActive,
+        syncMultiplayerPongState,
+        resetPongRound,
+        initializeAirHockey,
+        renderAirHockey,
+        render2048,
+        renderPacman,
+        renderFlappy,
+        renderHarborRun,
+        renderStacker,
+        drawBaieBerry,
+        drawBreakout
     });
 
-    window.addEventListener('resize', () => {
-        if (resizeFrame !== null) {
-            window.cancelAnimationFrame(resizeFrame);
-        }
-
-        resizeFrame = window.requestAnimationFrame(() => {
-            resizeFrame = null;
-            syncAllGameMenuOverlayBounds();
-
-        if (activeGameTab === 'snake') {
-            renderSnake();
-        }
-
-        if (activeGameTab === 'pong') {
-            if (isMultiplayerPongActive()) {
-                syncMultiplayerPongState();
-            } else {
-                resetPongRound();
-            }
-        }
-
-        if (activeGameTab === 'airHockey') {
-            initializeAirHockey(false);
-        }
-
-        if (activeGameTab === '2048') {
-            render2048();
-        }
-
-        if (activeGameTab === 'pacman') {
-            renderPacman();
-        }
-
-        if (activeGameTab === 'flappy') {
-            renderFlappy();
-        }
-
-        if (activeGameTab === 'harborRun') {
-            renderHarborRun();
-        }
-
-        if (activeGameTab === 'stacker') {
-            renderStacker();
-        }
-
-        if (activeGameTab === 'airHockey') {
-            renderAirHockey();
-        }
-
-        if (activeGameTab === 'baieBerry') {
-            drawBaieBerry();
-        }
-
-        if (activeGameTab === 'breakout') {
-            drawBreakout();
-        }
-        });
-    });
-
-    multiplayerCreateRoomButton?.addEventListener('click', () => {
-        createMultiplayerRoom();
-    });
-
-    multiplayerJoinRoomButton?.addEventListener('click', () => {
-        joinMultiplayerRoom();
-    });
-
-    multiplayerCreateModeButton?.addEventListener('click', () => {
-        setMultiplayerEntryMode('create');
-    });
-
-    multiplayerJoinModeButton?.addEventListener('click', () => {
-        setMultiplayerEntryMode('join');
-    });
-
-    multiplayerCopyCodeButton?.addEventListener('click', () => {
-        copyMultiplayerRoomCode();
-    });
-
-    multiplayerJoinRoomCodeInput?.addEventListener('input', () => {
-        multiplayerJoinRoomCodeInput.value = multiplayerJoinRoomCodeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
-    });
-    multiplayerJoinRoomCodeInput?.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            joinMultiplayerRoom();
-        }
-    });
-    multiplayerChatForm?.addEventListener('submit', (event) => {
-        event.preventDefault();
-        sendMultiplayerChatMessage();
-    });
-
-    multiplayerCreatePlayerNameInput?.addEventListener('input', () => {
-        syncMultiplayerPlayerNames('create');
-    });
-
-    multiplayerJoinPlayerNameInput?.addEventListener('input', () => {
-        syncMultiplayerPlayerNames('join');
+    window.bindMultiplayerLobbyControls({
+        onCreateRoom: createMultiplayerRoom,
+        onJoinRoom: joinMultiplayerRoom,
+        onCopyCode: copyMultiplayerRoomCode,
+        onSendChat: sendMultiplayerChatMessage,
+        onSyncPlayerNames: syncMultiplayerPlayerNames
     });
 
     renderAll();
@@ -6081,10 +4021,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     startCoinClickerAutoLoop();
-    initializeConverter();
+    __math.initializeConverter();
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');
-    renderPiano();
+    __music.renderPiano();
     syncAllGameMenuOverlayBounds();
 
     const activeSession = loadSession();

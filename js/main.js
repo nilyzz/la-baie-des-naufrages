@@ -13,14 +13,36 @@ import {
 } from './core/constants.js';
 
 import { shuffleArray, formatMathNumber, normalizeBombWord } from './core/utils.js';
+import { bindAppShellControls } from './core/app-shell.js';
+import {
+    bindSessionActivityTracking,
+    bindEscapeModalControls,
+    bindResponsiveGameResize,
+    runInitialAppStartup
+} from './core/lifecycle.js';
 import { loadSession, saveSession, clearSession, scheduleSessionTimeout, registerActivity } from './core/session.js';
 import {
     openLegalNoticeModal,
     closeLegalNoticeModal,
     openGameOverModal,
-    closeGameOverModal
+    closeGameOverModal,
+    bindCoreModalControls,
+    closeConfirmModal,
+    bindConfirmModalControls
 } from './core/modals.js';
-import { showViewImmediately } from './core/router.js';
+import {
+    setHeaderMode,
+    shouldHideSiteAdsForView,
+    syncSiteAdsVisibility,
+    playSiteAdsEntrance,
+    syncGamesFiltersCardVisibility,
+    playGamesFiltersEntrance,
+    transitionToView,
+    showViewImmediately,
+    activatePanel,
+    activateMathPanel,
+    activateMusicPanel
+} from './core/router.js';
 
 import {
     MULTIPLAYER_SERVER_URL,
@@ -46,7 +68,8 @@ import {
     updateMultiplayerGameTileSelection,
     getSelectedMultiplayerGameLabel,
     syncMultiplayerEntryModeAccess,
-    updateMultiplayerLobby
+    updateMultiplayerLobby,
+    bindMultiplayerLobbyControls
 } from './multiplayer/lobby.js';
 import * as multiplayerState from './multiplayer/state.js';
 
@@ -59,6 +82,18 @@ import {
     syncAllGameMenuOverlayBounds,
     GAME_MENU_OVERLAY_PAIRS
 } from './games/_shared/menu-overlay.js';
+import {
+    showGamePanel,
+    showGamesHome,
+    showGamesSection,
+    updateGamesFilters,
+    bindGamesNavigationControls
+} from './games/_shared/navigation.js';
+import { bindTouchGameControls } from './games/_shared/touch-controls.js';
+import {
+    createDirectionalRepeatGuard,
+    bindGameKeyReleaseControls
+} from './games/_shared/keyboard.js';
 import * as boardHelpers from './games/_shared/board-helpers.js';
 
 import * as game2048 from './games/game2048.js';
@@ -113,11 +148,15 @@ if (typeof window !== 'undefined') {
         LEGAL_NOTICE_ANIMATION_MS, SESSION_KEY, SESSION_TIMEOUT_MS,
         EXCEL_FILE_CANDIDATES, MULTIPLAYER_SUPPORTED_GAMES, GAME_FILTER_TAGS,
         UNO_MENU_CLOSE_DURATION_MS, GRID_OUTCOME_MENU_DELAY_MS,
-        shuffleArray, formatMathNumber, normalizeBombWord,
+        shuffleArray, formatMathNumber, normalizeBombWord, bindAppShellControls,
+        bindSessionActivityTracking, bindEscapeModalControls, bindResponsiveGameResize, runInitialAppStartup,
         loadSession, saveSession, clearSession, scheduleSessionTimeout, registerActivity,
         openLegalNoticeModal, closeLegalNoticeModal,
-        openGameOverModal, closeGameOverModal,
-        showViewImmediately,
+        openGameOverModal, closeGameOverModal, bindCoreModalControls,
+        closeConfirmModal, bindConfirmModalControls,
+        setHeaderMode, shouldHideSiteAdsForView, syncSiteAdsVisibility,
+        playSiteAdsEntrance, syncGamesFiltersCardVisibility, playGamesFiltersEntrance,
+        transitionToView, showViewImmediately, activatePanel, activateMathPanel, activateMusicPanel,
         MULTIPLAYER_SERVER_URL, getMultiplayerServerOrigin, getMultiplayerApiUrl, loadSocketIoClient,
         setMultiplayerStatus, getMultiplayerGameLabel, getSelectedMultiplayerGame,
         getPreferredMultiplayerPlayerName, syncMultiplayerPlayerNames,
@@ -125,11 +164,16 @@ if (typeof window !== 'undefined') {
         renderMultiplayerChatMessages, updateMultiplayerChatPanel, setMultiplayerEntryMode,
         ensureMultiplayerCreateLeaveButton, updateMultiplayerGameTileSelection,
         getSelectedMultiplayerGameLabel, syncMultiplayerEntryModeAccess, updateMultiplayerLobby,
+        bindMultiplayerLobbyControls,
         syncGameMenuOverlayBounds, syncAllGameMenuOverlayBounds, GAME_MENU_OVERLAY_PAIRS,
+        showGamePanel, showGamesHome, showGamesSection, updateGamesFilters, bindGamesNavigationControls,
+        bindTouchGameControls,
+        createDirectionalRepeatGuard, bindGameKeyReleaseControls,
         PIANO_NOTES: musicModule.PIANO_NOTES,
         PIANO_NOTE_MAP: musicModule.PIANO_NOTE_MAP,
         PIANO_KEYBOARD_LAYOUT: musicModule.PIANO_KEYBOARD_LAYOUT,
         UNIT_GROUPS: mathModule.UNIT_GROUPS,
+        bindMathControls: mathModule.bindMathControls,
         parseMoviesFromWorkbook: cinemaModule.parseMoviesFromWorkbook,
         normalizeMovieRow: cinemaModule.normalizeMovieRow,
         formatDate: cinemaModule.formatDate,
@@ -137,6 +181,26 @@ if (typeof window !== 'undefined') {
         formatRating: cinemaModule.formatRating,
         formatRatingWithScale: cinemaModule.formatRatingWithScale,
         getRatingBadgeTone: cinemaModule.getRatingBadgeTone,
+        formatDuration: cinemaModule.formatDuration,
+        sanitizeImageUrl: cinemaModule.sanitizeImageUrl,
+        buildDirectorSearchUrl: cinemaModule.buildDirectorSearchUrl,
+        normalizeCatalogText: cinemaModule.normalizeCatalogText,
+        getMovieGenreTokens: cinemaModule.getMovieGenreTokens,
+        getMovieReleaseYear: cinemaModule.getMovieReleaseYear,
+        getMovieRatingOutOfTwenty: cinemaModule.getMovieRatingOutOfTwenty,
+        getMovieTitleLetter: cinemaModule.getMovieTitleLetter,
+        setExcelImportFeedback: cinemaModule.setExcelImportFeedback,
+        enrichMoviesWithRemotePosters: cinemaModule.enrichMoviesWithRemotePosters,
+        importMoviesFromExcelModule: cinemaModule.importMoviesFromExcel,
+        syncCatalogSelectOptions: cinemaModule.syncCatalogSelectOptions,
+        renderCatalogFilters: cinemaModule.renderCatalogFilters,
+        updateCatalogResultsSummary: cinemaModule.updateCatalogResultsSummary,
+        getFilteredMovies: cinemaModule.getFilteredMovies,
+        renderStats: cinemaModule.renderStats,
+        renderCatalog: cinemaModule.renderCatalog,
+        renderManageList: cinemaModule.renderManageList,
+        renderCinemaCatalogAll: cinemaModule.renderAll,
+        bindCinemaCatalogControls: cinemaModule.bindCinemaCatalogControls,
         normalizeCalculatorExpression: mathModule.normalizeCalculatorExpression,
         evaluateCalculatorExpression: mathModule.evaluateCalculatorExpression,
         populateConverterUnits: mathModule.populateConverterUnits,
@@ -187,7 +251,18 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof closeLegalNoticeModal === 'function',
         typeof openGameOverModal === 'function',
         typeof closeGameOverModal === 'function',
+        typeof bindCoreModalControls === 'function',
+        typeof setHeaderMode === 'function',
+        typeof shouldHideSiteAdsForView === 'function',
+        typeof syncSiteAdsVisibility === 'function',
+        typeof playSiteAdsEntrance === 'function',
+        typeof syncGamesFiltersCardVisibility === 'function',
+        typeof playGamesFiltersEntrance === 'function',
+        typeof transitionToView === 'function',
         typeof showViewImmediately === 'function',
+        typeof activatePanel === 'function',
+        typeof activateMathPanel === 'function',
+        typeof activateMusicPanel === 'function',
         typeof MULTIPLAYER_SERVER_URL === 'string',
         typeof getMultiplayerServerOrigin === 'function',
         typeof getMultiplayerApiUrl === 'function' && getMultiplayerApiUrl('/api/health').endsWith('/api/health'),
@@ -209,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof getSelectedMultiplayerGameLabel === 'function',
         typeof syncMultiplayerEntryModeAccess === 'function',
         typeof updateMultiplayerLobby === 'function',
+        typeof bindMultiplayerLobbyControls === 'function',
         multiplayerState.getMultiplayerSocket() === null,
         multiplayerState.getMultiplayerActiveRoom() === null,
         multiplayerState.getMultiplayerEntryMode() === 'create',
@@ -218,13 +294,28 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof musicModule.renderPiano === 'function',
         typeof musicModule.startPianoNote === 'function',
         typeof musicModule.stopAllPianoNotes === 'function',
+        typeof musicModule.releaseKeyboardPianoKey === 'function',
+        typeof musicModule.setPianoSustainActive === 'function',
+        typeof musicModule.isPianoSustainActive === 'function',
+        typeof musicModule.bindPianoPointerControls === 'function',
+        typeof musicModule.handlePianoKeyDown === 'function',
+        typeof musicModule.handlePianoKeyUp === 'function',
+        typeof musicModule.resetPianoInteraction === 'function',
         mathModule.UNIT_GROUPS.temperature.units.length === 3,
+        typeof mathModule.bindMathControls === 'function',
         typeof mathModule.evaluateCalculatorExpression === 'function',
         typeof mathModule.convertTemperature === 'function',
         mathModule.convertTemperature(100, 'c', 'f') === 212,
         typeof cinemaModule.parseMoviesFromWorkbook === 'function',
         typeof cinemaModule.formatDate === 'function',
         cinemaModule.getRatingBadgeTone(18, 20) === 'is-excellent',
+        cinemaModule.formatDuration(125) === '2h05',
+        cinemaModule.getMovieReleaseYear({ releaseDisplay: 'Sortie 1999' }) === 1999,
+        cinemaModule.getMovieRatingOutOfTwenty({ rating: 4, ratingScale: 5 }) === 16,
+        cinemaModule.getMovieTitleLetter({ title: 'Alien' }) === 'A',
+        typeof cinemaModule.importMoviesFromExcel === 'function',
+        typeof cinemaModule.enrichMoviesWithRemotePosters === 'function',
+        typeof cinemaModule.bindCinemaCatalogControls === 'function',
         cinemaModule.DEFAULT_POSTER_URL.startsWith('https://'),
         typeof syncGameMenuOverlayBounds === 'function',
         typeof syncAllGameMenuOverlayBounds === 'function',

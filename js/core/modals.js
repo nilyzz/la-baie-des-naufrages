@@ -102,3 +102,51 @@ export function closeGameOverModal() {
     gameOverModal.classList.add('hidden');
     gameOverModal.setAttribute('aria-hidden', 'true');
 }
+
+export function bindCoreModalControls(options = {}) {
+    const {
+        onOpenLegalNotice = openLegalNoticeModal,
+        onCloseLegalNotice = closeLegalNoticeModal,
+        onCloseGameOver = closeGameOverModal
+    } = options;
+
+    getLegalNoticeModal()?.addEventListener('click', (event) => {
+        if (event.target.dataset.closeLegalNotice === 'true') {
+            onCloseLegalNotice();
+        }
+    });
+
+    getOpenLegalNoticeButton()?.addEventListener('click', () => {
+        onOpenLegalNotice();
+    });
+
+    getCloseLegalNoticeButton()?.addEventListener('click', () => {
+        onCloseLegalNotice();
+    });
+
+    getGameOverModal()?.addEventListener('click', (event) => {
+        if (event.target.dataset.closeGameOver === 'true') {
+            onCloseGameOver();
+        }
+    });
+}
+
+export function closeConfirmModal() {
+    const confirmModal = document.getElementById('confirmModal');
+    if (!confirmModal) {
+        return;
+    }
+
+    confirmModal.classList.add('hidden');
+    confirmModal.setAttribute('aria-hidden', 'true');
+}
+
+export function bindConfirmModalControls(options = {}) {
+    const { onClose = closeConfirmModal } = options;
+
+    document.getElementById('confirmModal')?.addEventListener('click', (event) => {
+        if (event.target.dataset.closeModal === 'true') {
+            onClose();
+        }
+    });
+}

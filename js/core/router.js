@@ -1,30 +1,205 @@
-// View / router primitives for La Baie des Naufragés.
+// View / router primitives for La Baie des Naufrages.
 // Extracted from script.js during the ES-modules migration.
 //
-// Only the pure view-switching primitive `showViewImmediately` is extracted
-// at this stage. The heavier `showGamePanel` still lives in script.js because
-// it branches through every single game's init/cleanup — it will be moved
-// once the individual game modules have been extracted.
-//
-// Side-effects that the IIFE version layers on top of the view switch
-// (stopping the piano, toggling site ads, refreshing the games filter card,
-// initialising panels) are left as callbacks the caller can pass in via
-// options. main.js does not invoke this module yet; cohabitation only.
+// showGamePanel still lives in script.js because it branches through every
+// game's init/cleanup. The global nav/router chrome lives here and receives
+// tiny callbacks for app-local state when needed.
+
+let siteAdsEnterTimer = null;
+let gamesFiltersEnterTimer = null;
+
+function getLoginView() {
+    return document.getElementById('loginView');
+}
+
+function getServicesView() {
+    return document.getElementById('servicesView');
+}
+
+function getAppView() {
+    return document.getElementById('appView');
+}
+
+function getGamesView() {
+    return document.getElementById('gamesView');
+}
+
+function getMathView() {
+    return document.getElementById('mathView');
+}
+
+function getMusicView() {
+    return document.getElementById('musicView');
+}
+
+export function setHeaderMode(mode = 'none') {
+    const headerMap = {
+        cinema: document.getElementById('cinemaHeaderNav'),
+        games: document.getElementById('gamesHeaderNav'),
+        math: document.getElementById('mathHeaderNav'),
+        music: document.getElementById('musicHeaderNav')
+    };
+
+    Object.entries(headerMap).forEach(([key, element]) => {
+        element?.classList.toggle('hidden', mode !== key);
+    });
+}
+
+export function shouldHideSiteAdsForView(view) {
+    return view === getLoginView() || view === getServicesView() || view === getAppView();
+}
+
+export function syncSiteAdsVisibility(targetView, options = {}) {
+    const siteAds = document.querySelector('.site-ads');
+    if (!siteAds) {
+        return;
+    }
+
+    const { immediate = false } = options;
+    const shouldHide = shouldHideSiteAdsForView(targetView);
+
+    if (shouldHide) {
+        window.clearTimeout(siteAdsEnterTimer);
+        siteAds.classList.remove('site-ads-entering');
+    }
+
+    siteAds.classList.toggle('site-ads-no-transition', immediate);
+    siteAds.classList.toggle('site-ads-hidden', shouldHide);
+
+    if (immediate) {
+        window.requestAnimationFrame(() => {
+            siteAds.classList.remove('site-ads-no-transition');
+        });
+    }
+}
+
+export function playSiteAdsEntrance() {
+    const siteAds = document.querySelector('.site-ads');
+    if (!siteAds) {
+        return;
+    }
+
+    window.clearTimeout(siteAdsEnterTimer);
+    siteAds.classList.remove('site-ads-entering');
+    void siteAds.offsetWidth;
+    siteAds.classList.add('site-ads-entering');
+    siteAdsEnterTimer = window.setTimeout(() => {
+        siteAds.classList.remove('site-ads-entering');
+    }, 550);
+}
+
+export function syncGamesFiltersCardVisibility(targetView, options = {}) {
+    const gamesFiltersCard = document.getElementById('gamesFiltersCard');
+    if (!gamesFiltersCard) {
+        return;
+    }
+
+    const { immediate = false } = options;
+    const shouldHide = targetView !== getGamesView();
+
+    gamesFiltersCard.classList.toggle('games-filters-card-no-transition', immediate);
+    gamesFiltersCard.classList.toggle('games-filters-card-hidden', shouldHide);
+
+    if (immediate) {
+        window.requestAnimationFrame(() => {
+            gamesFiltersCard.classList.remove('games-filters-card-no-transition');
+        });
+    }
+}
+
+export function playGamesFiltersEntrance() {
+    const gamesFiltersCard = document.getElementById('gamesFiltersCard');
+    if (!gamesFiltersCard) {
+        return;
+    }
+
+    window.clearTimeout(gamesFiltersEnterTimer);
+    gamesFiltersCard.classList.remove('games-filters-card-entering');
+    void gamesFiltersCard.offsetWidth;
+    gamesFiltersCard.classList.add('games-filters-card-entering');
+    gamesFiltersEnterTimer = window.setTimeout(() => {
+        gamesFiltersCard.classList.remove('games-filters-card-entering');
+    }, 550);
+}
+
+export function transitionToView(currentView, nextView, options = {}) {
+    const {
+        showHeader = false,
+        headerMode = 'none',
+        onComplete,
+        onBeforeLeave,
+        onViewChanged
+    } = options;
+
+    if (!currentView || !nextView) {
+        return;
+    }
+
+    const loginView = getLoginView();
+    const appView = getAppView();
+    const gamesView = getGamesView();
+    const mathView = getMathView();
+    const musicView = getMusicView();
+    const shouldHideAdsOnCurrentView = shouldHideSiteAdsForView(currentView);
+    const shouldHideAdsOnNextView = shouldHideSiteAdsForView(nextView);
+    const shouldHideGamesFiltersOnCurrentView = currentView !== gamesView;
+    const shouldHideGamesFiltersOnNextView = nextView !== gamesView;
+
+    currentView.classList.add('view-leaving');
+
+    if (shouldHideAdsOnNextView) {
+        syncSiteAdsVisibility(nextView);
+    }
+
+    if (shouldHideGamesFiltersOnNextView) {
+        syncGamesFiltersCardVisibility(nextView);
+    }
+
+    window.setTimeout(() => {
+        if (typeof onBeforeLeave === 'function') {
+            onBeforeLeave(nextView);
+        }
+
+        currentView.classList.remove('view-active', 'view-leaving');
+        currentView.setAttribute('aria-hidden', 'true');
+
+        const siteHeader = document.getElementById('siteHeader');
+        const logoutButton = document.getElementById('logoutButton');
+        const pageBackButton = document.getElementById('pageBackButton');
+
+        siteHeader?.classList.toggle('hidden', !showHeader);
+        siteHeader?.setAttribute('aria-hidden', String(!showHeader));
+        setHeaderMode(headerMode);
+        logoutButton?.classList.toggle('hidden', nextView === loginView);
+        pageBackButton?.classList.toggle('hidden', nextView !== appView && nextView !== gamesView && nextView !== mathView && nextView !== musicView);
+
+        nextView.classList.add('view-active');
+        nextView.setAttribute('aria-hidden', 'false');
+
+        if (typeof onViewChanged === 'function') {
+            onViewChanged(nextView);
+        }
+
+        if (!shouldHideAdsOnNextView && shouldHideAdsOnCurrentView) {
+            syncSiteAdsVisibility(nextView);
+            playSiteAdsEntrance();
+        }
+
+        if (!shouldHideGamesFiltersOnNextView && shouldHideGamesFiltersOnCurrentView) {
+            syncGamesFiltersCardVisibility(nextView);
+            playGamesFiltersEntrance();
+        }
+
+        if (typeof onComplete === 'function') {
+            onComplete();
+        }
+    }, 450);
+}
 
 /**
- * Switches the active view. Hides every `.view` element, then reveals the
- * given one, synchronising `aria-hidden`, header visibility, and the
- * `logoutButton` / `pageBackButton` chrome.
- *
- * Options:
- *   - showHeader (bool, default false)
- *   - headerMode ('cinema' | 'games' | 'math' | 'music' | 'none', default 'none')
- *   - onComplete (callback fired once the view has been swapped)
- *   - onBeforeLeave (callback fired before hiding all views, useful e.g. for
- *     stopping piano notes when leaving the music view)
- *   - setHeaderMode (callback to sync header nav with `headerMode`)
- *   - syncSiteAdsVisibility (callback receiving the next view)
- *   - syncGamesFiltersCardVisibility (callback receiving the next view)
+ * Switches the active view immediately. Hides every `.view` element, then
+ * reveals the given one, synchronising `aria-hidden`, header visibility, and
+ * the `logoutButton` / `pageBackButton` chrome.
  */
 export function showViewImmediately(nextView, options = {}) {
     const {
@@ -32,9 +207,10 @@ export function showViewImmediately(nextView, options = {}) {
         headerMode = 'none',
         onComplete,
         onBeforeLeave,
-        setHeaderMode,
-        syncSiteAdsVisibility,
-        syncGamesFiltersCardVisibility
+        onViewChanged,
+        setHeaderMode: setHeaderModeCallback = setHeaderMode,
+        syncSiteAdsVisibility: syncSiteAdsVisibilityCallback = syncSiteAdsVisibility,
+        syncGamesFiltersCardVisibility: syncGamesFiltersCardVisibilityCallback = syncGamesFiltersCardVisibility
     } = options;
 
     if (!nextView) {
@@ -45,8 +221,7 @@ export function showViewImmediately(nextView, options = {}) {
         onBeforeLeave(nextView);
     }
 
-    const allViews = document.querySelectorAll('.view');
-    allViews.forEach((view) => {
+    document.querySelectorAll('.view').forEach((view) => {
         view.classList.remove('view-active', 'view-leaving');
         view.setAttribute('aria-hidden', 'true');
     });
@@ -57,23 +232,23 @@ export function showViewImmediately(nextView, options = {}) {
         siteHeader.setAttribute('aria-hidden', String(!showHeader));
     }
 
-    if (typeof setHeaderMode === 'function') {
-        setHeaderMode(headerMode);
+    if (typeof setHeaderModeCallback === 'function') {
+        setHeaderModeCallback(headerMode);
     }
 
-    if (typeof syncSiteAdsVisibility === 'function') {
-        syncSiteAdsVisibility(nextView, { immediate: true });
+    if (typeof syncSiteAdsVisibilityCallback === 'function') {
+        syncSiteAdsVisibilityCallback(nextView, { immediate: true });
     }
 
-    if (typeof syncGamesFiltersCardVisibility === 'function') {
-        syncGamesFiltersCardVisibility(nextView, { immediate: true });
+    if (typeof syncGamesFiltersCardVisibilityCallback === 'function') {
+        syncGamesFiltersCardVisibilityCallback(nextView, { immediate: true });
     }
 
-    const loginView = document.getElementById('loginView');
-    const appView = document.getElementById('appView');
-    const gamesView = document.getElementById('gamesView');
-    const mathView = document.getElementById('mathView');
-    const musicView = document.getElementById('musicView');
+    const loginView = getLoginView();
+    const appView = getAppView();
+    const gamesView = getGamesView();
+    const mathView = getMathView();
+    const musicView = getMusicView();
     const logoutButton = document.getElementById('logoutButton');
     const pageBackButton = document.getElementById('pageBackButton');
 
@@ -86,7 +261,52 @@ export function showViewImmediately(nextView, options = {}) {
     nextView.classList.add('view-active');
     nextView.setAttribute('aria-hidden', 'false');
 
+    if (typeof onViewChanged === 'function') {
+        onViewChanged(nextView);
+    }
+
     if (typeof onComplete === 'function') {
         onComplete();
     }
+}
+
+export function activatePanel(targetId) {
+    document.querySelectorAll('#cinemaHeaderNav .nav-button').forEach((button) => {
+        const isActive = button.dataset.target === targetId;
+        button.classList.toggle('is-active', isActive);
+    });
+
+    document.querySelectorAll('.panel').forEach((panel) => {
+        panel.classList.toggle('panel-active', panel.id === targetId);
+    });
+}
+
+export function activateMathPanel(targetId) {
+    document.querySelectorAll('#mathHeaderNav .nav-button').forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.mathTab === targetId);
+    });
+
+    document.querySelectorAll('.math-panel').forEach((panel) => {
+        panel.classList.toggle('math-panel-active', panel.id === targetId);
+    });
+
+    return targetId;
+}
+
+export function activateMusicPanel(targetId, options = {}) {
+    const { onPianoPanel } = options;
+
+    document.querySelectorAll('#musicHeaderNav .nav-button').forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.musicTab === targetId);
+    });
+
+    document.querySelectorAll('.music-panel').forEach((panel) => {
+        panel.classList.toggle('music-panel-active', panel.id === targetId);
+    });
+
+    if (targetId === 'pianoPanel' && typeof onPianoPanel === 'function') {
+        onPianoPanel();
+    }
+
+    return targetId;
 }

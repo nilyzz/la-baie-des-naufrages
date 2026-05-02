@@ -53,6 +53,8 @@ let pianoAudioContext = null;
 let pianoMasterGain = null;
 const pianoActiveNotes = new Map();
 let pianoSustainActive = false;
+let pianoPointerId = null;
+let pianoPointerNoteId = null;
 
 function getPianoKeyboard() {
     return document.getElementById('pianoKeyboard');
@@ -257,10 +259,178 @@ export function getPianoNoteIdFromKeyboardEvent(event) {
     return event.shiftKey && layout.shifted ? layout.shifted : layout.base;
 }
 
+export function releaseKeyboardPianoKey(event) {
+    const layout = PIANO_KEYBOARD_LAYOUT.get(event.key.toLowerCase());
+
+    if (!layout) {
+        return false;
+    }
+
+    stopPianoNote(layout.base, 'keyboard');
+
+    if (layout.shifted) {
+        stopPianoNote(layout.shifted, 'keyboard');
+    }
+
+    return true;
+}
+
 export function setPianoSustainActive(active) {
     pianoSustainActive = Boolean(active);
 }
 
 export function isPianoSustainActive() {
     return pianoSustainActive;
+}
+
+export function resetPianoInteraction() {
+    pianoSustainActive = false;
+    stopAllPianoNotes(true);
+    pianoPointerId = null;
+    pianoPointerNoteId = null;
+    renderPiano();
+    updatePianoHelpText();
+}
+
+function stopPointerPianoNote() {
+    if (pianoPointerNoteId) {
+        stopPianoNote(pianoPointerNoteId, 'pointer');
+    }
+    pianoPointerId = null;
+    pianoPointerNoteId = null;
+}
+
+export function bindPianoPointerControls(options = {}) {
+    const { onActivate } = options;
+    const pianoKeyboard = getPianoKeyboard();
+    if (!pianoKeyboard || pianoKeyboard.dataset.pianoPointerBound === 'true') {
+        return;
+    }
+
+    pianoKeyboard.dataset.pianoPointerBound = 'true';
+
+    pianoKeyboard.addEventListener('pointerdown', (event) => {
+        const keyButton = event.target.closest('[data-piano-key]');
+
+        if (!keyButton) {
+            return;
+        }
+
+        event.preventDefault();
+        if (typeof onActivate === 'function') {
+            onActivate();
+        }
+        pianoPointerId = event.pointerId;
+        pianoPointerNoteId = keyButton.dataset.pianoKey;
+        pianoKeyboard.setPointerCapture?.(event.pointerId);
+        startPianoNote(pianoPointerNoteId, 'pointer');
+    });
+
+    pianoKeyboard.addEventListener('pointermove', (event) => {
+        if (event.pointerId !== pianoPointerId) {
+            return;
+        }
+
+        const elementAtPoint = document.elementFromPoint(event.clientX, event.clientY);
+        const keyButton = elementAtPoint?.closest?.('[data-piano-key]');
+        const nextNoteId = keyButton?.dataset.pianoKey || null;
+
+        if (nextNoteId === pianoPointerNoteId) {
+            return;
+        }
+
+        if (pianoPointerNoteId) {
+            stopPianoNote(pianoPointerNoteId, 'pointer');
+        }
+
+        pianoPointerNoteId = nextNoteId;
+
+        if (pianoPointerNoteId) {
+            startPianoNote(pianoPointerNoteId, 'pointer');
+        }
+    });
+
+    pianoKeyboard.addEventListener('pointerup', (event) => {
+        if (event.pointerId !== pianoPointerId) {
+            return;
+        }
+
+        stopPointerPianoNote();
+        pianoKeyboard.releasePointerCapture?.(event.pointerId);
+    });
+
+    pianoKeyboard.addEventListener('pointercancel', (event) => {
+        if (event.pointerId !== pianoPointerId) {
+            return;
+        }
+
+        stopPointerPianoNote();
+    });
+
+    pianoKeyboard.addEventListener('lostpointercapture', () => {
+        stopPointerPianoNote();
+    });
+}
+
+export function bindMusicControls(options = {}) {
+    const { onActivateMusicPanel } = options;
+
+    document.querySelectorAll('[data-open-instrument]').forEach((tile) => {
+        tile.addEventListener('click', () => {
+            if (tile.dataset.openInstrument === 'piano') {
+                onActivateMusicPanel?.('pianoPanel');
+            }
+        });
+    });
+
+    document.getElementById('pianoResetButton')?.addEventListener('click', () => {
+        resetPianoInteraction();
+    });
+
+    bindPianoPointerControls({
+        onActivate: () => onActivateMusicPanel?.('pianoPanel')
+    });
+}
+
+export function handlePianoKeyDown(event, options = {}) {
+    const { active = false, isTypingTarget = false } = options;
+    const pianoNoteId = getPianoNoteIdFromKeyboardEvent(event);
+
+    if (!active) {
+        return false;
+    }
+
+    if (event.code === 'Space' && !isTypingTarget) {
+        event.preventDefault();
+        if (!pianoSustainActive) {
+            pianoSustainActive = true;
+            updatePianoHelpText();
+            renderPiano();
+        }
+        return true;
+    }
+
+    if (pianoNoteId && !isTypingTarget && !event.repeat) {
+        event.preventDefault();
+        startPianoNote(pianoNoteId, 'keyboard');
+        return true;
+    }
+
+    return false;
+}
+
+export function handlePianoKeyUp(event, options = {}) {
+    const { active = false } = options;
+
+    if (!active) {
+        return false;
+    }
+
+    if (event.code === 'Space') {
+        pianoSustainActive = false;
+        releaseSustainedPianoNotes();
+        return true;
+    }
+
+    return releaseKeyboardPianoKey(event);
 }
