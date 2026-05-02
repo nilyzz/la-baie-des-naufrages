@@ -120,10 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // loadSession, saveSession, clearSession, scheduleSessionTimeout, registerActivity : exposes sur window par js/main.js (source = js/core/session.js).
 
-    function loadMovies() {
-        return [];
-    }
-
     function transitionToView(nextView, options = {}) {
         window.transitionToView(currentView, nextView, {
             ...options,
@@ -245,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 movies = nextMovies;
             },
             renderAll,
-            loadMovies
+            loadMovies: () => []
         });
     }
 
@@ -290,24 +286,8 @@ document.addEventListener('DOMContentLoaded', () => {
         applyCinemaCatalogState(window.renderCatalogFilters(getCinemaCatalogContext()));
     }
 
-    function updateCatalogResultsSummary(filteredMovies) {
-        window.updateCatalogResultsSummary(getCinemaCatalogContext(), filteredMovies);
-    }
-
-    function getFilteredMovies() {
-        return window.getFilteredMovies(getCinemaCatalogContext());
-    }
-
-    function renderStats() {
-        window.renderStats(getCinemaCatalogContext());
-    }
-
     function renderCatalog() {
         return window.renderCatalog(getCinemaCatalogContext());
-    }
-
-    function renderManageList() {
-        window.renderManageList(getCinemaCatalogContext());
     }
 
     function renderAll() {
