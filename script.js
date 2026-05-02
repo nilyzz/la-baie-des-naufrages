@@ -33,112 +33,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
     // GAME_FILTER_TAGS : expose sur window par js/core/constants.js via js/main.js.
 
-    // Bridge ESM — Coin Clicker est maintenant géré par js/games/coinClicker.js.
-    // Ces alias permettent au reste de script.js (listeners, tab-switch, bootstrap)
     // d'appeler le module sans réécrire chaque identifiant.
     const __cc = window.__baie.coinClicker;
 
-    // Bridge ESM — Rythme géré par js/games/rhythm.js.
     const __rh = window.__baie.rhythm;
 
-    // Bridge ESM — Reaction géré par js/games/reaction.js.
     const __rx = window.__baie.reaction;
 
-    // Bridge ESM — OursAim géré par js/games/aim.js.
     const __am = window.__baie.aim;
 
-    // Bridge ESM — MentalMath géré par js/games/mentalMath.js.
     const __mm = window.__baie.mentalMath;
 
-    // Bridge ESM — Snake géré par js/games/snake.js.
     const __sn = window.__baie.snake;
 
-    // Bridge ESM — Tetris géré par js/games/tetris.js.
     const __tt = window.__baie.tetris;
 
-    // Bridge ESM — 2048 géré par js/games/game2048.js.
     const __g2 = window.__baie.game2048;
 
-    // Bridge ESM — Flappy géré par js/games/flappy.js.
     const __fl = window.__baie.flappy;
 
-    // Bridge ESM — Pacman géré par js/games/pacman.js.
     const __pm = window.__baie.pacman;
 
-    // Bridge ESM — Breakout géré par js/games/breakout.js.
     const __bk = window.__baie.breakout;
 
-    // Bridge ESM — Memory géré par js/games/memory.js.
     const __mem = window.__baie.memory;
 
-    // Bridge ESM — Magic Sort géré par js/games/magicSort.js.
     const __ms = window.__baie.magicSort;
 
-    // Bridge ESM — HarborRun géré par js/games/harborRun.js.
     const __hr = window.__baie.harborRun;
 
-    // Bridge ESM — Minesweeper géré par js/games/minesweeper.js.
     const __mw = window.__baie.minesweeper;
 
-    // Bridge ESM — Stacker géré par js/games/stacker.js.
     const __st = window.__baie.stacker;
 
-    // Bridge ESM — Solitaire géré par js/games/solitaire.js.
     const __sol = window.__baie.solitaire;
 
-    // Bridge ESM — Sudoku géré par js/games/sudoku.js.
     const __su = window.__baie.sudoku;
 
-    // Bridge ESM — BlockBlast géré par js/games/blockBlast.js.
     const __bb = window.__baie.blockBlast;
 
-    // Bridge ESM — CandyCrush géré par js/games/candyCrush.js.
     const __cc2 = window.__baie.candyCrush;
 
-    // Bridge ESM — BaieBerry géré par js/games/baieBerry.js.
     const __bb2 = window.__baie.baieBerry;
 
-    // Bridge ESM — FlowFree géré par js/games/flowFree.js.
     const __ff = window.__baie.flowFree;
 
-    // Bridge ESM — Checkers géré par js/games/checkers.js.
     const __ck = window.__baie.checkers;
 
-    // Bridge ESM — TicTacToe géré par js/games/ticTacToe.js.
     const __ttt = window.__baie.ticTacToe;
 
-    // Bridge ESM — Connect4 géré par js/games/connect4.js.
     const __c4 = window.__baie.connect4;
 
-    // Bridge ESM — Battleship géré par js/games/battleship.js.
     const __bs = window.__baie.battleship;
 
-    // Bridge ESM — Bomb géré par js/games/bomb.js.
     const __bm = window.__baie.bomb;
 
-    // Bridge ESM — Chess géré par js/games/chess.js.
     const __ch = window.__baie.chess;
 
-    // Bridge ESM — Uno géré par js/games/uno.js.
     const __uno = window.__baie.uno;
 
-    // Bridge ESM — AirHockey géré par js/games/airHockey.js.
     const __ah = window.__baie.airHockey;
 
-    // Bridge ESM — Pong géré par js/games/pong.js.
     const __pg = window.__baie.pong;
 
-    // Bridge ESM — js/multiplayer/state.js est la source de vérité que lisent
-    // les 9 modules games/ (getMultiplayerActiveRoom / getMultiplayerSocket).
-    // script.js garde ses variables locales, il faut donc propager chaque
-    // mutation au module pour que isMultiplayer<Game>Active() voie la room.
     const __mpState = window.__baie.multiplayerState;
 
-    const baieBerryContext = baieBerryCanvas?.getContext('2d');
-    const baieBerryStage = baieBerryGame?.querySelector('.baieberry-stage');
-    const baieBerryObjectiveDisplay = { textContent: '' };
-    const breakoutContext = breakoutCanvas?.getContext('2d');
-    const unoTable = unoGame?.querySelector('.uno-table') || null;
     const musicHomePanel = document.getElementById('musicHomePanel');
     const pianoPanel = document.getElementById('pianoPanel');
     // PIANO_NOTES, PIANO_NOTE_MAP, PIANO_KEYBOARD_LAYOUT, UNIT_GROUPS : exposes sur window par js/main.js.
@@ -427,10 +386,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return window.syncAllGameMenuOverlayBounds();
     }
 
-
-
-
-
     function updateMultiplayerLobby(preserveStatus = false) {
         window.updateMultiplayerLobby({
             preserveStatus,
@@ -538,10 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
         onActivateMathPanel: activateMathPanel,
         onActivateMusicPanel: activateMusicPanel
     });
-
-
-
-
 
     function openSelectedGame(nextTab) {
         window.__baie.gameLifecycle.openSelectedGame(nextTab, getActiveGameTab(), window.__baie, { setSelectedMultiplayerGame, closeGameOverModal });
@@ -711,8 +662,3 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleSessionTimeout();
     }
 });
-
-
-
-
-
