@@ -92,7 +92,8 @@ import {
 import { bindTouchGameControls } from './games/_shared/touch-controls.js';
 import {
     createDirectionalRepeatGuard,
-    bindGameKeyReleaseControls
+    bindGameKeyReleaseControls,
+    bindGlobalKeyboardControls
 } from './games/_shared/keyboard.js';
 import {
     cleanupActiveGameForNavigation,
@@ -173,7 +174,7 @@ if (typeof window !== 'undefined') {
         syncGameMenuOverlayBounds, syncAllGameMenuOverlayBounds, GAME_MENU_OVERLAY_PAIRS,
         showGamePanel, showGamesHome, showGamesSection, updateGamesFilters, bindGamesNavigationControls,
         bindTouchGameControls,
-        createDirectionalRepeatGuard, bindGameKeyReleaseControls,
+        createDirectionalRepeatGuard, bindGameKeyReleaseControls, bindGlobalKeyboardControls,
         cleanupActiveGameForNavigation, openSelectedGame, bindAllGameEventControls,
         PIANO_NOTES: musicModule.PIANO_NOTES,
         PIANO_NOTE_MAP: musicModule.PIANO_NOTE_MAP,
@@ -363,7 +364,8 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof ticTacToe.isMultiplayerTicTacToeActive === 'function',
         typeof uno.initializeUno === 'function',
         typeof cleanupActiveGameForNavigation === 'function',
-        typeof openSelectedGame === 'function'
+        typeof openSelectedGame === 'function',
+        typeof bindGlobalKeyboardControls === 'function'
     ];
 
     const allOk = sanityChecks.every(Boolean);
