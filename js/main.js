@@ -94,6 +94,10 @@ import {
     createDirectionalRepeatGuard,
     bindGameKeyReleaseControls
 } from './games/_shared/keyboard.js';
+import {
+    cleanupActiveGameForNavigation,
+    openSelectedGame
+} from './games/_shared/game-lifecycle.js';
 import * as boardHelpers from './games/_shared/board-helpers.js';
 
 import * as game2048 from './games/game2048.js';
@@ -169,6 +173,7 @@ if (typeof window !== 'undefined') {
         showGamePanel, showGamesHome, showGamesSection, updateGamesFilters, bindGamesNavigationControls,
         bindTouchGameControls,
         createDirectionalRepeatGuard, bindGameKeyReleaseControls,
+        cleanupActiveGameForNavigation, openSelectedGame,
         PIANO_NOTES: musicModule.PIANO_NOTES,
         PIANO_NOTE_MAP: musicModule.PIANO_NOTE_MAP,
         PIANO_KEYBOARD_LAYOUT: musicModule.PIANO_KEYBOARD_LAYOUT,
@@ -216,6 +221,7 @@ if (typeof window !== 'undefined') {
     window.__baie.math = mathModule;
     window.__baie.cinema = cinemaModule;
     window.__baie.boardHelpers = boardHelpers;
+    window.__baie.gameLifecycle = { cleanupActiveGameForNavigation, openSelectedGame };
 }
 
 function injectActiveGameTabAccessors() {
@@ -354,7 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
         typeof sudoku.initializeSudoku === 'function' || typeof sudoku.renderSudoku === 'function',
         typeof tetris.initializeTetris === 'function' || typeof tetris.renderTetris === 'function',
         typeof ticTacToe.isMultiplayerTicTacToeActive === 'function',
-        typeof uno.initializeUno === 'function'
+        typeof uno.initializeUno === 'function',
+        typeof cleanupActiveGameForNavigation === 'function',
+        typeof openSelectedGame === 'function'
     ];
 
     const allOk = sanityChecks.every(Boolean);
