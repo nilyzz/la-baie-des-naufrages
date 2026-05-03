@@ -29,7 +29,6 @@ const TRACKED_ROOT_FILES = [
 ];
 const TRACKED_DIRECTORIES = ['assets', 'js'];
 const IGNORED_TRACKED_FILES = new Set([
-    'script.min.js',
     'style.min.css',
     'js/main.bundle.min.js',
     VERSION_STATE_PATH
@@ -123,7 +122,6 @@ function getTrackedSourceFiles() {
 function normalizeIndexContent(content) {
     return content
         .replace(/style\.min\.css\?v=[^"'\s>]+/g, 'style.min.css?v=__SITE_CACHE_KEY__')
-        .replace(/script\.min\.js\?v=[^"'\s>]+/g, 'script.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^"'\s>]+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/consent\.js\?v=[^"'\s>]+/g, '/js/core/consent.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/sw-register\.js\?v=[^"'\s>]+/g, '/js/core/sw-register.js?v=__SITE_CACHE_KEY__')
@@ -134,7 +132,6 @@ function normalizeSwContent(content) {
     return content
         .replace(/const CACHE_NAME = 'baie-des-naufrages-v[^']+';/, "const CACHE_NAME = 'baie-des-naufrages-v__SITE_CACHE_KEY__';")
         .replace(/\/style\.min\.css\?v=[^']+/g, '/style.min.css?v=__SITE_CACHE_KEY__')
-        .replace(/\/script\.min\.js\?v=[^']+/g, '/script.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/consent\.js\?v=[^']+/g, '/js/core/consent.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/sw-register\.js\?v=[^']+/g, '/js/core/sw-register.js?v=__SITE_CACHE_KEY__');
@@ -169,7 +166,6 @@ function computeSourceHash() {
 function applyVersionToIndex(content, displayVersion, cacheKey) {
     return content
         .replace(/style\.min\.css\?v=[^"'\s>]+/g, `style.min.css?v=${cacheKey}`)
-        .replace(/script\.min\.js\?v=[^"'\s>]+/g, `script.min.js?v=${cacheKey}`)
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^"'\s>]+/g, `/js/main.bundle.min.js?v=${cacheKey}`)
         .replace(/\/js\/core\/consent\.js\?v=[^"'\s>]+/g, `/js/core/consent.js?v=${cacheKey}`)
         .replace(/\/js\/core\/sw-register\.js\?v=[^"'\s>]+/g, `/js/core/sw-register.js?v=${cacheKey}`)
@@ -180,7 +176,6 @@ function applyVersionToSw(content, cacheKey) {
     return content
         .replace(/const CACHE_NAME = 'baie-des-naufrages-[^']+';/, `const CACHE_NAME = 'baie-des-naufrages-${cacheKey}';`)
         .replace(/\/style\.min\.css\?v=[^']+/g, `/style.min.css?v=${cacheKey}`)
-        .replace(/\/script\.min\.js\?v=[^']+/g, `/script.min.js?v=${cacheKey}`)
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, `/js/main.bundle.min.js?v=${cacheKey}`)
         .replace(/\/js\/core\/consent\.js\?v=[^']+/g, `/js/core/consent.js?v=${cacheKey}`)
         .replace(/\/js\/core\/sw-register\.js\?v=[^']+/g, `/js/core/sw-register.js?v=${cacheKey}`);
@@ -225,27 +220,16 @@ async function main() {
 
     const before = {
         script: gzipSize('script.js'),
-        main: gzipSize('js/main.js'),
         css: gzipSize('style.css')
     };
 
     await build({
-        entryPoints: ['js/main.js'],
+        entryPoints: ['script.js'],
         bundle: true,
         minify: true,
         format: 'esm',
         target: ['es2020'],
         outfile: 'js/main.bundle.min.js',
-        legalComments: 'none',
-        logLevel: 'info'
-    });
-
-    await build({
-        entryPoints: ['script.js'],
-        bundle: false,
-        minify: true,
-        target: ['es2020'],
-        outfile: 'script.min.js',
         legalComments: 'none',
         logLevel: 'info'
     });
@@ -260,12 +244,10 @@ async function main() {
     });
 
     const after = {
-        script: gzipSize('script.min.js'),
-        main: gzipSize('js/main.bundle.min.js'),
+        bundle: gzipSize('js/main.bundle.min.js'),
         css: gzipSize('style.min.css')
     };
 
-    const savedScriptGzip = before.script.gz - after.script.gz;
     const savedCssGzip = before.css.gz - after.css.gz;
 
     console.log('\n=== Version ===');
@@ -274,13 +256,10 @@ async function main() {
 
     console.log('\n=== Tailles ===');
     console.log(`script.js       : ${formatKilobytes(before.script.raw)} raw / ${formatKilobytes(before.script.gz)} gz`);
-    console.log(`script.min.js   : ${formatKilobytes(after.script.raw)} raw / ${formatKilobytes(after.script.gz)} gz`);
-    console.log(`main.js (seul)  : ${formatKilobytes(before.main.raw)} raw / ${formatKilobytes(before.main.gz)} gz`);
-    console.log(`main.bundle.min : ${formatKilobytes(after.main.raw)} raw / ${formatKilobytes(after.main.gz)} gz  (inclut ~45 modules)`);
+    console.log(`main.bundle.min : ${formatKilobytes(after.bundle.raw)} raw / ${formatKilobytes(after.bundle.gz)} gz  (bundle complet)`);
     console.log(`style.css       : ${formatKilobytes(before.css.raw)} raw / ${formatKilobytes(before.css.gz)} gz`);
     console.log(`style.min.css   : ${formatKilobytes(after.css.raw)} raw / ${formatKilobytes(after.css.gz)} gz`);
-    console.log(`\nGain script.js gz : ${formatKilobytes(savedScriptGzip)} (-${(100 * savedScriptGzip / before.script.gz).toFixed(1)}%)`);
-    console.log(`Gain CSS gz       : ${formatKilobytes(savedCssGzip)} (-${(100 * savedCssGzip / before.css.gz).toFixed(1)}%)`);
+    console.log(`\nGain CSS gz       : ${formatKilobytes(savedCssGzip)} (-${(100 * savedCssGzip / before.css.gz).toFixed(1)}%)`);
 }
 
 main().catch((error) => {

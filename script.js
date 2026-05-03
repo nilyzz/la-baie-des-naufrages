@@ -1,4 +1,76 @@
+import * as game2048 from './js/games/game2048.js';
+import * as aimModule from './js/games/aim.js';
+import * as airHockey from './js/games/airHockey.js';
+import * as baieBerry from './js/games/baieBerry.js';
+import * as battleship from './js/games/battleship.js';
+import * as blockBlast from './js/games/blockBlast.js';
+import * as bomb from './js/games/bomb.js';
+import * as breakout from './js/games/breakout.js';
+import * as candyCrush from './js/games/candyCrush.js';
+import * as checkers from './js/games/checkers.js';
+import * as chess from './js/games/chess.js';
+import * as coinClicker from './js/games/coinClicker.js';
+import * as connect4 from './js/games/connect4.js';
+import * as flappy from './js/games/flappy.js';
+import * as flowFree from './js/games/flowFree.js';
+import * as harborRun from './js/games/harborRun.js';
+import * as magicSort from './js/games/magicSort.js';
+import * as memoryGame from './js/games/memory.js';
+import * as mentalMath from './js/games/mentalMath.js';
+import * as minesweeper from './js/games/minesweeper.js';
+import * as pacman from './js/games/pacman.js';
+import * as pong from './js/games/pong.js';
+import * as reaction from './js/games/reaction.js';
+import * as rhythm from './js/games/rhythm.js';
+import * as snake from './js/games/snake.js';
+import * as solitaire from './js/games/solitaire.js';
+import * as stacker from './js/games/stacker.js';
+import * as sudoku from './js/games/sudoku.js';
+import * as tetris from './js/games/tetris.js';
+import * as ticTacToe from './js/games/ticTacToe.js';
+import * as uno from './js/games/uno.js';
+
+import * as multiplayerState from './js/multiplayer/state.js';
+import * as musicModule from './js/navires/music.js';
+import * as mathModule from './js/navires/math.js';
+import * as cinemaModule from './js/navires/cinema.js';
+
+import { loadSession, saveSession, clearSession, scheduleSessionTimeout } from './js/core/session.js';
+import { closeGameOverModal, closeLegalNoticeModal, closeConfirmModal, bindCoreModalControls, bindConfirmModalControls } from './js/core/modals.js';
+import { transitionToView as _transitionToView, showViewImmediately as _showViewImmediately, activatePanel, activateMathPanel as _activateMathPanel, activateMusicPanel as _activateMusicPanel } from './js/core/router.js';
+import { bindAppShellControls } from './js/core/app-shell.js';
+import { bindSessionActivityTracking, bindEscapeModalControls, bindResponsiveGameResize } from './js/core/lifecycle.js';
+import { setMultiplayerStatus, syncMultiplayerPlayerNames } from './js/multiplayer/status.js';
+import { updateMultiplayerChatPanel as _updateMpChatPanel, updateMultiplayerLobby as _updateMpLobby, bindMultiplayerLobbyControls, setMultiplayerEntryMode } from './js/multiplayer/lobby.js';
+import { bindMultiplayerSession, bindSetSelectedMultiplayerGame } from './js/multiplayer/session.js';
+import { bindMultiplayerChat } from './js/multiplayer/chat.js';
+import { syncAllGameMenuOverlayBounds } from './js/games/_shared/menu-overlay.js';
+import { showGamePanel as _showGamePanel, showGamesHome as _showGamesHome, showGamesSection as _showGamesSection, bindGamesNavigationControls, getActiveGameTab } from './js/games/_shared/navigation.js';
+import { bindGameKeyReleaseControls, bindGlobalKeyboardControls } from './js/games/_shared/keyboard.js';
+import { cleanupActiveGameForNavigation, openSelectedGame as _openSelectedGame } from './js/games/_shared/game-lifecycle.js';
+import { bindAllGameEventControls } from './js/games/_shared/game-event-bindings.js';
+
+const GAME_MODULES = {
+    game2048, aim: aimModule, airHockey, baieBerry, battleship, blockBlast,
+    bomb, breakout, candyCrush, checkers, chess, coinClicker, connect4,
+    flappy, flowFree, harborRun, magicSort, memory: memoryGame, mentalMath,
+    minesweeper, pacman, pong, reaction, rhythm, snake, solitaire, stacker,
+    sudoku, tetris, ticTacToe, uno
+};
+
+function injectActiveGameTabAccessors() {
+    for (const mod of Object.values(GAME_MODULES)) {
+        for (const [key, value] of Object.entries(mod)) {
+            if (typeof value === 'function' && /^set[A-Z].*ActiveGameTabAccessor$/.test(key)) {
+                value(getActiveGameTab);
+            }
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    injectActiveGameTabAccessors();
+
     const loginView = document.getElementById('loginView');
     const servicesView = document.getElementById('servicesView');
     const appView = document.getElementById('appView');
@@ -9,41 +81,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerChatInput = document.getElementById('multiplayerChatInput');
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
 
-    // Aliases courts vers les modules de jeux exposés sur window.__baie.
-    const __cc = window.__baie.coinClicker;
-    const __rh = window.__baie.rhythm;
-    const __am = window.__baie.aim;
-    const __sn = window.__baie.snake;
-    const __tt = window.__baie.tetris;
-    const __g2 = window.__baie.game2048;
-    const __fl = window.__baie.flappy;
-    const __pm = window.__baie.pacman;
-    const __bk = window.__baie.breakout;
-    const __ms = window.__baie.magicSort;
-    const __hr = window.__baie.harborRun;
-    const __mw = window.__baie.minesweeper;
-    const __st = window.__baie.stacker;
-    const __sol = window.__baie.solitaire;
-    const __bb = window.__baie.blockBlast;
-    const __cc2 = window.__baie.candyCrush;
-    const __bb2 = window.__baie.baieBerry;
-    const __ff = window.__baie.flowFree;
-    const __bs = window.__baie.battleship;
-    const __bm = window.__baie.bomb;
-    const __ah = window.__baie.airHockey;
-    const __pg = window.__baie.pong;
-    const __mpState = window.__baie.multiplayerState;
-    const __math = window.__baie.math;
-    const __music = window.__baie.music;
-    const __cin = window.__baie.cinema;
-    const { loadSession, saveSession, clearSession, scheduleSessionTimeout } = window.__baie.session;
-    const { closeGameOverModal, closeLegalNoticeModal, closeConfirmModal, bindCoreModalControls, bindConfirmModalControls, bindEscapeModalControls } = window.__baie.modals;
-    const { setMultiplayerStatus, setMultiplayerEntryMode, syncMultiplayerPlayerNames } = window.__baie.mpStatus;
-    const { transitionToView: _transitionToView, showViewImmediately: _showViewImmediately, activatePanel, activateMathPanel: _activateMathPanel, activateMusicPanel: _activateMusicPanel, syncAllGameMenuOverlayBounds, getActiveGameTab } = window.__baie.router;
-    const { bindAppShellControls, showGamePanel: _showGamePanel, showGamesHome: _showGamesHome, showGamesSection: _showGamesSection, bindGamesNavigationControls } = window.__baie.navigation;
-    const { bindMultiplayerSession, bindMultiplayerLobbyControls, updateMultiplayerChatPanel: _updateMpChatPanel, updateMultiplayerLobby: _updateMpLobby, bindMultiplayerChat, bindSetSelectedMultiplayerGame } = window.__baie.mp;
-    const { bindAllGameEventControls, bindGlobalKeyboardControls, bindGameKeyReleaseControls, bindResponsiveGameResize, bindSessionActivityTracking } = window.__baie.controls;
-    const { bindCinemaCatalogControls } = window.__baie.cinema;
+    const __cc = coinClicker;
+    const __rh = rhythm;
+    const __am = aimModule;
+    const __sn = snake;
+    const __tt = tetris;
+    const __g2 = game2048;
+    const __fl = flappy;
+    const __pm = pacman;
+    const __bk = breakout;
+    const __ms = magicSort;
+    const __hr = harborRun;
+    const __mw = minesweeper;
+    const __st = stacker;
+    const __sol = solitaire;
+    const __bb = blockBlast;
+    const __cc2 = candyCrush;
+    const __bb2 = baieBerry;
+    const __ff = flowFree;
+    const __bs = battleship;
+    const __bm = bomb;
+    const __ah = airHockey;
+    const __pg = pong;
+    const __math = mathModule;
+    const __music = musicModule;
+    const __cin = cinemaModule;
 
     let currentView = loginView;
     let activeMathTab = 'mathCalculatorPanel';
@@ -80,9 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showServices() {
         closeGameOverModal();
         saveSession({ lastDestination: 'services' });
-        transitionToView(servicesView, {
-            headerMode: 'none'
-        });
+        transitionToView(servicesView, { headerMode: 'none' });
     }
 
     function showCinema() {
@@ -100,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!__mw.isMinesweeperInitialized()) {
             __mw.initializeGame();
         }
-
         closeGameOverModal();
         saveSession({ lastDestination: 'games' });
         transitionToView(gamesView, {
@@ -142,8 +201,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateMultiplayerChatPanel() {
         return _updateMpChatPanel({
-            activeRoom: __mpState.getMultiplayerActiveRoom(),
-            socket: __mpState.getMultiplayerSocket(),
+            activeRoom: multiplayerState.getMultiplayerActiveRoom(),
+            socket: multiplayerState.getMultiplayerSocket(),
             activeGameTab: getActiveGameTab()
         });
     }
@@ -180,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const _navCbs = {
-        cleanupActiveGameForNavigation: (nextTab) => window.__baie.lifecycle.cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), window.__baie),
+        cleanupActiveGameForNavigation: (nextTab) => cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), GAME_MODULES),
         updateMultiplayerChatPanel,
         closeGameOverModal,
         updateMultiplayerLobby
@@ -189,6 +248,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function showGamePanel(tabId) { _showGamePanel(tabId, _navCbs); }
     function showGamesHome() { _showGamesHome(_navCbs); }
     function showGamesSection(section) { _showGamesSection(section, _navCbs); }
+
+    function openSelectedGame(nextTab) {
+        _openSelectedGame(nextTab, getActiveGameTab(), GAME_MODULES, { setSelectedMultiplayerGame, closeGameOverModal });
+    }
 
     bindAppShellControls({
         onLogin: () => {
@@ -203,19 +266,13 @@ document.addEventListener('DOMContentLoaded', () => {
         onLogout: () => {
             closeGameOverModal();
             clearSession();
-            showViewImmediately(loginView, {
-                headerMode: 'none'
-            });
+            showViewImmediately(loginView, { headerMode: 'none' });
             loginForm.querySelector('button[type="submit"]')?.focus();
         },
         onActivateCinemaPanel: activatePanel,
         onActivateMathPanel: activateMathPanel,
         onActivateMusicPanel: activateMusicPanel
     });
-
-    function openSelectedGame(nextTab) {
-        window.__baie.lifecycle.openSelectedGame(nextTab, getActiveGameTab(), window.__baie, { setSelectedMultiplayerGame, closeGameOverModal });
-    }
 
     bindGamesNavigationControls({
         openSelectedGame,
@@ -224,15 +281,13 @@ document.addEventListener('DOMContentLoaded', () => {
         showGamesSection
     });
 
-    __music.bindMusicControls({
-        onActivateMusicPanel: activateMusicPanel
-    });
+    __music.bindMusicControls({ onActivateMusicPanel: activateMusicPanel });
 
     bindAllGameEventControls({
-        getSocket: () => __mpState.getMultiplayerSocket(),
-        getActiveRoom: () => __mpState.getMultiplayerActiveRoom(),
+        getSocket: () => multiplayerState.getMultiplayerSocket(),
+        getActiveRoom: () => multiplayerState.getMultiplayerActiveRoom(),
         getActiveGameTab,
-        isMultiplayerLaunchPending: (gameId = __mpState.getMultiplayerActiveRoom()?.gameId) => __mpState.isMultiplayerLaunchPending(gameId),
+        isMultiplayerLaunchPending: (gameId = multiplayerState.getMultiplayerActiveRoom()?.gameId) => multiplayerState.isMultiplayerLaunchPending(gameId),
         toggleMultiplayerReady,
         setMultiplayerStatus,
         showGamePanel,
@@ -245,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     __math.bindMathControls();
 
-    bindCinemaCatalogControls({
+    cinemaModule.bindCinemaCatalogControls({
         getContext: __cin.getCinemaCatalogContext,
         setState: __cin.applyCinemaCatalogState
     });
@@ -371,9 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 onComplete: () => activateMusicPanel(activeMusicTab)
             });
         } else {
-            showViewImmediately(servicesView, {
-                headerMode: 'none'
-            });
+            showViewImmediately(servicesView, { headerMode: 'none' });
         }
 
         scheduleSessionTimeout();
