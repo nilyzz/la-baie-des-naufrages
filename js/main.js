@@ -72,7 +72,7 @@ import {
     bindMultiplayerLobbyControls
 } from './multiplayer/lobby.js';
 import * as multiplayerState from './multiplayer/state.js';
-import { bindMultiplayerSession } from './multiplayer/session.js';
+import { bindMultiplayerSession, bindSetSelectedMultiplayerGame } from './multiplayer/session.js';
 import { bindMultiplayerChat } from './multiplayer/chat.js';
 
 import * as musicModule from './navires/music.js';
@@ -155,7 +155,6 @@ if (typeof window !== 'undefined') {
     // fournissent, pour que les identifiants référencés dans script.js (qui étaient définis
     // localement avant extraction) continuent de résoudre via la chaîne de scope globale.
     Object.assign(window, {
-        MULTIPLAYER_SUPPORTED_GAMES,
         bindAppShellControls,
         bindSessionActivityTracking, bindEscapeModalControls, bindResponsiveGameResize,
         loadSession, saveSession, clearSession, scheduleSessionTimeout,
@@ -176,6 +175,7 @@ if (typeof window !== 'undefined') {
     });
     window.__baie.multiplayerState = multiplayerState;
     window.__baie.multiplayerChat = { bindMultiplayerChat };
+    window.__baie.multiplayerSession = { bindSetSelectedMultiplayerGame };
     window.__baie.music = musicModule;
     window.__baie.math = mathModule;
     window.__baie.cinema = cinemaModule;

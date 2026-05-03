@@ -334,3 +334,35 @@ export function bindMultiplayerSession(options = {}) {
         launchMultiplayerGame: boundLaunchMultiplayerGame
     };
 }
+
+export function bindSetSelectedMultiplayerGame({ ensureMultiplayerConnection, updateMultiplayerLobby }) {
+    return async function setSelectedMultiplayerGame(gameId) {
+        if (!MULTIPLAYER_SUPPORTED_GAMES[gameId]) return;
+
+        if (getMultiplayerActiveRoom()?.code) {
+            if (!isCurrentMultiplayerHost()) {
+                setMultiplayerStatus("Seul l'hôte peut changer le jeu du salon.");
+                return;
+            }
+
+            if (getMultiplayerActiveRoom().gameId === gameId) {
+                setMultiplayerSelectedGameId(gameId);
+                updateMultiplayerLobby();
+                return;
+            }
+
+            try {
+                const socket = await ensureMultiplayerConnection();
+                setMultiplayerSelectedGameId(gameId);
+                socket.emit('room:update-game', { gameId });
+                setMultiplayerStatus(`Jeu du salon change pour ${getMultiplayerGameLabel(gameId)}...`);
+            } catch (error) {
+                setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+            }
+            return;
+        }
+
+        setMultiplayerSelectedGameId(gameId);
+        updateMultiplayerLobby();
+    };
+}

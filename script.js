@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // MULTIPLAYER_SUPPORTED_GAMES : expose sur window par js/core/constants.js via js/main.js.
-
     const loginView = document.getElementById('loginView');
     const servicesView = document.getElementById('servicesView');
     const appView = document.getElementById('appView');
@@ -179,43 +177,16 @@ document.addEventListener('DOMContentLoaded', () => {
         multiplayerChatInput
     });
 
+    const setSelectedMultiplayerGame = window.__baie.multiplayerSession.bindSetSelectedMultiplayerGame({
+        ensureMultiplayerConnection,
+        updateMultiplayerLobby
+    });
+
     const _navCbs = { cleanupActiveGameForNavigation, updateMultiplayerChatPanel, closeGameOverModal, updateMultiplayerLobby };
 
     function showGamePanel(tabId) { window.showGamePanel(tabId, _navCbs); }
     function showGamesHome() { window.showGamesHome(_navCbs); }
     function showGamesSection(section) { window.showGamesSection(section, _navCbs); }
-
-    async function setSelectedMultiplayerGame(gameId) {
-        if (!MULTIPLAYER_SUPPORTED_GAMES[gameId]) {
-            return;
-        }
-
-        if (__mpState.getMultiplayerActiveRoom()?.code) {
-            if (!__mpState.isCurrentMultiplayerHost()) {
-                setMultiplayerStatus("Seul l'hôte peut changer le jeu du salon.");
-                return;
-            }
-
-            if (__mpState.getMultiplayerActiveRoom().gameId === gameId) {
-                __mpState.setMultiplayerSelectedGameId(gameId);
-                updateMultiplayerLobby();
-                return;
-            }
-
-            try {
-                const socket = await ensureMultiplayerConnection();
-                __mpState.setMultiplayerSelectedGameId(gameId);
-                socket.emit('room:update-game', { gameId });
-                setMultiplayerStatus(`Jeu du salon change pour ${getMultiplayerGameLabel(gameId)}...`);
-            } catch (error) {
-                setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
-            }
-            return;
-        }
-
-        __mpState.setMultiplayerSelectedGameId(gameId);
-        updateMultiplayerLobby();
-    }
 
     function cleanupActiveGameForNavigation(nextTab) {
         window.__baie.gameLifecycle.cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), window.__baie);
