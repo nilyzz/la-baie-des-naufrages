@@ -73,6 +73,7 @@ import {
 } from './multiplayer/lobby.js';
 import * as multiplayerState from './multiplayer/state.js';
 import { bindMultiplayerSession } from './multiplayer/session.js';
+import { bindMultiplayerChat } from './multiplayer/chat.js';
 
 import * as musicModule from './navires/music.js';
 import * as mathModule from './navires/math.js';
@@ -174,6 +175,7 @@ if (typeof window !== 'undefined') {
         bindCinemaCatalogControls: cinemaModule.bindCinemaCatalogControls
     });
     window.__baie.multiplayerState = multiplayerState;
+    window.__baie.multiplayerChat = { bindMultiplayerChat };
     window.__baie.music = musicModule;
     window.__baie.math = mathModule;
     window.__baie.cinema = cinemaModule;

@@ -150,42 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    let multiplayerChatLastSentAt = 0;
-    const MULTIPLAYER_CHAT_COOLDOWN_MS = 3000;
-
-    async function sendMultiplayerChatMessage() {
-        const message = multiplayerChatInput?.value.trim() || '';
-        if (!message) {
-            return;
-        }
-
-        const _room = __mpState.getMultiplayerActiveRoom();
-        const _tab = getActiveGameTab();
-        const _chatVisible = Boolean(_room?.code && _room?.gameLaunched && MULTIPLAYER_SUPPORTED_GAMES[_tab] && _room.gameId === _tab);
-        if (!_chatVisible) {
-            setMultiplayerStatus('Le chat sera disponible une fois la partie lanc\u00e9e.');
-            return;
-        }
-
-        const now = Date.now();
-        const remaining = MULTIPLAYER_CHAT_COOLDOWN_MS - (now - multiplayerChatLastSentAt);
-        if (remaining > 0) {
-            setMultiplayerStatus(`Attends ${Math.ceil(remaining / 1000)}s avant le prochain message.`);
-            return;
-        }
-
-        multiplayerChatLastSentAt = now;
-
-        try {
-            const socket = await ensureMultiplayerConnection();
-            socket.emit('room:chat:send', { message });
-            multiplayerChatInput.value = '';
-            multiplayerChatInput.focus();
-        } catch (error) {
-            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
-        }
-    }
-
     function updateMultiplayerLobby(preserveStatus = false) {
         window.updateMultiplayerLobby({
             preserveStatus,
@@ -207,6 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } = window.bindMultiplayerSession({
         getActiveGameTab,
         openSelectedGame: (gameId) => openSelectedGame(gameId)
+    });
+
+    const sendMultiplayerChatMessage = window.__baie.multiplayerChat.bindMultiplayerChat({
+        getActiveGameTab,
+        ensureMultiplayerConnection,
+        multiplayerChatInput
     });
 
     const _navCbs = { cleanupActiveGameForNavigation, updateMultiplayerChatPanel, closeGameOverModal, updateMultiplayerLobby };
