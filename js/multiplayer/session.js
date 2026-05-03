@@ -198,8 +198,9 @@ export function bindMultiplayerSession(options = {}) {
         }
 
         await new Promise((resolve, reject) => {
-            currentSocket.once('connect', resolve);
-            currentSocket.once('connect_error', () => reject(new Error('Serveur multijoueur inaccessible.')));
+            const timer = setTimeout(() => reject(new Error('Serveur multijoueur inaccessible.')), 10000);
+            currentSocket.once('connect', () => { clearTimeout(timer); resolve(); });
+            currentSocket.once('connect_error', () => { clearTimeout(timer); reject(new Error('Serveur multijoueur inaccessible.')); });
         });
 
         return currentSocket;

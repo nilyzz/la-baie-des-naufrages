@@ -2342,6 +2342,12 @@ setInterval(() => {
       roomCreationRateMap.delete(ip);
     }
   }
+
+  for (const [ip, entry] of posterResolveRateMap) {
+    if (entry.windowStart < cutoff) {
+      posterResolveRateMap.delete(ip);
+    }
+  }
 }, 60000);
 
 app.post('/api/rooms', (request, response) => {
@@ -3245,7 +3251,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!room.players.some((player) => player.id === socket.id)) {
+    if (room.hostId !== socket.id) {
       return;
     }
 
