@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Constantes LEGAL_NOTICE_ANIMATION_MS, SESSION_KEY, SESSION_TIMEOUT_MS,
-    // MULTIPLAYER_SERVER_URL : exposee sur window par
-    // js/main.js (source de verite = js/core/constants.js et js/multiplayer/connection.js).
     const defaultPoster = 'https://placehold.co/600x900/0f172a/f8fafc?text=Affiche';
     // MULTIPLAYER_SUPPORTED_GAMES : expose sur window par js/core/constants.js via js/main.js.
 
@@ -31,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const multiplayerChatInput = document.getElementById('multiplayerChatInput');
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
-    // GAME_FILTER_TAGS : expose sur window par js/core/constants.js via js/main.js.
 
     // Aliases courts vers les modules de jeux exposés sur window.__baie.
     const __cc = window.__baie.coinClicker;
@@ -57,8 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const __ah = window.__baie.airHockey;
     const __pg = window.__baie.pong;
     const __mpState = window.__baie.multiplayerState;
-
-    // PIANO_NOTES, PIANO_NOTE_MAP, PIANO_KEYBOARD_LAYOUT, UNIT_GROUPS : exposes sur window par js/main.js.
     const __math = window.__baie.math;
     const __music = window.__baie.music;
 
@@ -70,9 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let catalogSortMode = 'default';
     let catalogDirectorTerm = '';
     let currentView = loginView;
-    // Bridge pour les modules ESM : getActiveGameTab() lit l'état canonique de navigation.js via main.js.
     const getActiveGameTab = window.__baieActiveGameTab;
-    // UNO_MENU_CLOSE_DURATION_MS et GRID_OUTCOME_MENU_DELAY_MS : exposees sur window par js/main.js.
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
 
