@@ -391,7 +391,8 @@ function createChessState() {
     turn: 'white',
     winner: null,
     lastMove: null,
-    round: 1
+    round: 1,
+    enPassantTarget: null
   };
 }
 
@@ -1949,6 +1950,11 @@ function simulateChessMove(state, fromRow, fromCol, toRow, toCol) {
     }
   }
 
+  if (piece?.type === 'pawn' && state.enPassantTarget &&
+      toRow === state.enPassantTarget.row && toCol === state.enPassantTarget.col) {
+    board[fromRow][toCol] = null;
+  }
+
   return { ...state, board };
 }
 
@@ -2074,6 +2080,9 @@ function getChessMoves(state, row, col) {
       }
       const target = state.board[attackRow][attackCol];
       if (target && target.color !== piece.color) {
+        moves.push({ row: attackRow, col: attackCol });
+      } else if (!target && state.enPassantTarget &&
+          attackRow === state.enPassantTarget.row && attackCol === state.enPassantTarget.col) {
         moves.push({ row: attackRow, col: attackCol });
       }
     });
@@ -2895,6 +2904,7 @@ io.on('connection', (socket) => {
       return;
     }
 
+    const prevEnPassantTarget = room.gameState.enPassantTarget;
     const nextPiece = { ...movingPiece, hasMoved: true };
     const capturedPiece = room.gameState.board[toRow][toCol];
     room.gameState.board[toRow][toCol] = nextPiece;
@@ -2910,11 +2920,22 @@ io.on('connection', (socket) => {
       }
     }
 
+    let enPassantCapture = null;
+    if (nextPiece.type === 'pawn' && prevEnPassantTarget &&
+        toRow === prevEnPassantTarget.row && toCol === prevEnPassantTarget.col) {
+      room.gameState.board[fromRow][toCol] = null;
+      enPassantCapture = { row: fromRow, col: toCol };
+    }
+
     if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
       const validPromos = ['queen', 'rook', 'bishop', 'knight'];
       const chosenPromo = validPromos.includes(promotionPiece) ? promotionPiece : 'queen';
       room.gameState.board[toRow][toCol] = createChessPiece(chosenPromo, nextPiece.color);
     }
+
+    room.gameState.enPassantTarget = (nextPiece.type === 'pawn' && Math.abs(toRow - fromRow) === 2)
+      ? { row: (fromRow + toRow) / 2, col: toCol }
+      : null;
 
     room.gameState.lastMove = {
       fromRow,
@@ -2922,8 +2943,8 @@ io.on('connection', (socket) => {
       toRow,
       toCol,
       pieceType: movingPiece.type,
-      capture: capturedPiece ? { row: toRow, col: toCol } : null,
-      captureColor: capturedPiece?.color || null
+      capture: capturedPiece ? { row: toRow, col: toCol } : enPassantCapture,
+      captureColor: capturedPiece?.color || (enPassantCapture ? (movingPiece.color === 'white' ? 'black' : 'white') : null)
     };
 
     room.gameState.turn = room.gameState.turn === 'white' ? 'black' : 'white';

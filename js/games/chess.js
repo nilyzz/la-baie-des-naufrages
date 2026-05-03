@@ -123,7 +123,8 @@ export function initializeChess() {
         board: createInitialChessBoard(),
         turn: 'white',
         winner: null,
-        lastMove: null
+        lastMove: null,
+        enPassantTarget: null
     };
     chessLastMoveAnimationKey = '';
     chessSelectedSquare = null;
@@ -138,7 +139,7 @@ export function initializeChess() {
 }
 
 export function getChessRulesText() {
-    return "Les pièces se déplacent selon les règles classiques. La promotion laisse le choix de la pièce et le roque est disponible. La prise en passant n'est pas gérée ici.";
+    return "Les pièces se déplacent selon les règles classiques. La promotion laisse le choix de la pièce, le roque et la prise en passant sont disponibles.";
 }
 
 export function getChessReadySummary() {
@@ -430,10 +431,19 @@ export function applyChessMoveToState(state, fromRow, fromCol, toRow, toCol) {
         }
     }
 
+    if (nextPiece.type === 'pawn' && state.enPassantTarget &&
+        toRow === state.enPassantTarget.row && toCol === state.enPassantTarget.col) {
+        nextState.board[fromRow][toCol] = null;
+    }
+
     if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
         nextState.board[toRow][toCol] = createChessPiece('queen', nextPiece.color);
         nextState.board[toRow][toCol].hasMoved = true;
     }
+
+    nextState.enPassantTarget = (nextPiece.type === 'pawn' && Math.abs(toRow - fromRow) === 2)
+        ? { row: (fromRow + toRow) / 2, col: toCol }
+        : null;
 
     nextState.lastMove = {
         fromRow,
@@ -613,6 +623,9 @@ export function getChessMovesForState(state, row, col) {
             }
             const target = state.board[attackRow][attackCol];
             if (target && target.color !== piece.color) {
+                moves.push({ row: attackRow, col: attackCol });
+            } else if (!target && state.enPassantTarget &&
+                attackRow === state.enPassantTarget.row && attackCol === state.enPassantTarget.col) {
                 moves.push({ row: attackRow, col: attackCol });
             }
         });
@@ -1042,6 +1055,7 @@ export function applyChessMove(fromRow, fromCol, toRow, toCol, promotionPiece = 
         return false;
     }
 
+    const prevEnPassantTarget = chessState.enPassantTarget;
     const nextPiece = { ...movingPiece, hasMoved: true };
     const capturedPiece = chessState.board[toRow][toCol];
     chessState.board[toRow][toCol] = nextPiece;
@@ -1057,9 +1071,20 @@ export function applyChessMove(fromRow, fromCol, toRow, toCol, promotionPiece = 
         }
     }
 
+    let enPassantCapture = null;
+    if (nextPiece.type === 'pawn' && prevEnPassantTarget &&
+        toRow === prevEnPassantTarget.row && toCol === prevEnPassantTarget.col) {
+        chessState.board[fromRow][toCol] = null;
+        enPassantCapture = { row: fromRow, col: toCol };
+    }
+
     if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
         chessState.board[toRow][toCol] = createChessPiece(promotionPiece, nextPiece.color);
     }
+
+    chessState.enPassantTarget = (nextPiece.type === 'pawn' && Math.abs(toRow - fromRow) === 2)
+        ? { row: (fromRow + toRow) / 2, col: toCol }
+        : null;
 
     chessSelectedSquare = null;
     chessState.lastMove = {
@@ -1068,8 +1093,8 @@ export function applyChessMove(fromRow, fromCol, toRow, toCol, promotionPiece = 
         toRow,
         toCol,
         pieceType: movingPiece.type,
-        capture: capturedPiece ? { row: toRow, col: toCol } : null,
-        captureColor: capturedPiece?.color || null
+        capture: capturedPiece ? { row: toRow, col: toCol } : enPassantCapture,
+        captureColor: capturedPiece?.color || (enPassantCapture ? (movingPiece.color === 'white' ? 'black' : 'white') : null)
     };
 
     if (capturedPiece?.type === 'king') {
@@ -1329,6 +1354,9 @@ export function syncMultiplayerChessState() {
                     ? { ...multiplayerActiveRoom.gameState.lastMove.capture }
                     : null
             }
+            : null,
+        enPassantTarget: multiplayerActiveRoom.gameState.enPassantTarget
+            ? { ...multiplayerActiveRoom.gameState.enPassantTarget }
             : null
     };
     chessSelectedSquare = null;
