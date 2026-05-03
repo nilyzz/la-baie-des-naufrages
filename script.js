@@ -37,8 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const __music = window.__baie.music;
     const __cin = window.__baie.cinema;
     const { loadSession, saveSession, clearSession, scheduleSessionTimeout } = window.__baie.session;
-    const { closeGameOverModal, closeLegalNoticeModal } = window.__baie.modals;
-    const { setMultiplayerStatus } = window.__baie.mpStatus;
+    const { closeGameOverModal, closeLegalNoticeModal, closeConfirmModal, bindCoreModalControls, bindConfirmModalControls, bindEscapeModalControls } = window.__baie.modals;
+    const { setMultiplayerStatus, setMultiplayerEntryMode, syncMultiplayerPlayerNames } = window.__baie.mpStatus;
+    const { transitionToView: _transitionToView, showViewImmediately: _showViewImmediately, activatePanel, activateMathPanel: _activateMathPanel, activateMusicPanel: _activateMusicPanel, syncAllGameMenuOverlayBounds } = window.__baie.router;
+    const { bindAppShellControls, showGamePanel: _showGamePanel, showGamesHome: _showGamesHome, showGamesSection: _showGamesSection, bindGamesNavigationControls } = window.__baie.navigation;
+    const { bindMultiplayerSession, bindMultiplayerLobbyControls, updateMultiplayerChatPanel: _updateMpChatPanel, updateMultiplayerLobby: _updateMpLobby } = window.__baie.mp;
+    const { bindAllGameEventControls, bindGlobalKeyboardControls, bindGameKeyReleaseControls, bindResponsiveGameResize, bindSessionActivityTracking } = window.__baie.controls;
+    const { bindCinemaCatalogControls } = window.__baie.cinema;
 
     let currentView = loginView;
     const getActiveGameTab = window.__baieActiveGameTab;
@@ -46,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeMusicTab = 'musicHomePanel';
 
     function transitionToView(nextView, options = {}) {
-        window.transitionToView(currentView, nextView, {
+        _transitionToView(currentView, nextView, {
             ...options,
             onBeforeLeave: () => {
                 if (currentView === musicView && nextView !== musicView) {
@@ -60,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showViewImmediately(nextView, options = {}) {
-        window.showViewImmediately(nextView, {
+        _showViewImmediately(nextView, {
             ...options,
             onBeforeLeave: () => {
                 if (currentView === musicView && nextView !== musicView) {
@@ -88,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transitionToView(appView, {
             showHeader: true,
             headerMode: 'cinema',
-            onComplete: () => window.activatePanel('dashboardSection')
+            onComplete: () => activatePanel('dashboardSection')
         });
     }
 
@@ -127,19 +132,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function activateMathPanel(targetId) {
-        activeMathTab = window.activateMathPanel(targetId);
+        activeMathTab = _activateMathPanel(targetId);
     }
 
     function activateMusicPanel(targetId) {
-        activeMusicTab = window.activateMusicPanel(targetId, {
+        activeMusicTab = _activateMusicPanel(targetId, {
             onPianoPanel: () => __music.renderPiano()
         });
     }
 
-    // Fonctions math (bindMathControls, initializeConverter, calculate*, etc.) : exposees sur window par js/main.js (source = js/navires/math.js).
-
     function updateMultiplayerChatPanel() {
-        return window.updateMultiplayerChatPanel({
+        return _updateMpChatPanel({
             activeRoom: __mpState.getMultiplayerActiveRoom(),
             socket: __mpState.getMultiplayerSocket(),
             activeGameTab: getActiveGameTab()
@@ -147,15 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateMultiplayerLobby(preserveStatus = false) {
-        window.updateMultiplayerLobby({
+        _updateMpLobby({
             preserveStatus,
             onLeave: () => leaveMultiplayerRoom(),
             activeGameTab: getActiveGameTab()
         });
     }
-
-    // loadSocketIoClient, getMultiplayerServerOrigin, getMultiplayerApiUrl : exposes sur window par js/main.js (source = js/multiplayer/connection.js).
-    // ensureMultiplayerConnection + room action functions : extraites dans js/multiplayer/session.js.
 
     const {
         ensureMultiplayerConnection,
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         leaveMultiplayerRoom,
         copyMultiplayerRoomCode,
         toggleMultiplayerReady
-    } = window.bindMultiplayerSession({
+    } = bindMultiplayerSession({
         getActiveGameTab,
         openSelectedGame: (gameId) => openSelectedGame(gameId)
     });
@@ -187,11 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMultiplayerLobby
     };
 
-    function showGamePanel(tabId) { window.showGamePanel(tabId, _navCbs); }
-    function showGamesHome() { window.showGamesHome(_navCbs); }
-    function showGamesSection(section) { window.showGamesSection(section, _navCbs); }
+    function showGamePanel(tabId) { _showGamePanel(tabId, _navCbs); }
+    function showGamesHome() { _showGamesHome(_navCbs); }
+    function showGamesSection(section) { _showGamesSection(section, _navCbs); }
 
-    window.bindAppShellControls({
+    bindAppShellControls({
         onLogin: () => {
             saveSession({ lastDestination: 'services' });
             showServices();
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             loginForm.querySelector('button[type="submit"]')?.focus();
         },
-        onActivateCinemaPanel: window.activatePanel,
+        onActivateCinemaPanel: activatePanel,
         onActivateMathPanel: activateMathPanel,
         onActivateMusicPanel: activateMusicPanel
     });
@@ -218,10 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.__baie.gameLifecycle.openSelectedGame(nextTab, getActiveGameTab(), window.__baie, { setSelectedMultiplayerGame, closeGameOverModal });
     }
 
-    window.bindGamesNavigationControls({
+    bindGamesNavigationControls({
         openSelectedGame,
         setSelectedMultiplayerGame,
-        setMultiplayerEntryMode: window.setMultiplayerEntryMode,
+        setMultiplayerEntryMode,
         showGamesSection
     });
 
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         onActivateMusicPanel: activateMusicPanel
     });
 
-    window.bindAllGameEventControls({
+    bindAllGameEventControls({
         getSocket: () => __mpState.getMultiplayerSocket(),
         getActiveRoom: () => __mpState.getMultiplayerActiveRoom(),
         getActiveGameTab,
@@ -239,28 +239,28 @@ document.addEventListener('DOMContentLoaded', () => {
         showGamePanel,
         showGamesSection,
         setSelectedMultiplayerGame,
-        setMultiplayerEntryMode: window.setMultiplayerEntryMode,
+        setMultiplayerEntryMode,
         openSelectedGame,
         closeGameOverModal
     });
 
     __math.bindMathControls();
 
-    window.bindCinemaCatalogControls({
+    bindCinemaCatalogControls({
         getContext: __cin.getCinemaCatalogContext,
         setState: __cin.applyCinemaCatalogState
     });
 
-    window.bindConfirmModalControls({ onClose: window.closeConfirmModal });
+    bindConfirmModalControls({ onClose: closeConfirmModal });
 
-    window.bindCoreModalControls();
-    window.bindEscapeModalControls({
-        closeDeleteModal: window.closeConfirmModal,
+    bindCoreModalControls();
+    bindEscapeModalControls({
+        closeDeleteModal: closeConfirmModal,
         closeLegalNoticeModal,
         closeGameOverModal
     });
 
-    window.bindGlobalKeyboardControls({
+    bindGlobalKeyboardControls({
         getActiveGameTab,
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
         isMultiplayerPongActive: __pg.isMultiplayerPongActive,
@@ -269,9 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
         pushMultiplayerAirHockeyInput: __ah.pushMultiplayerAirHockeyInput
     });
 
-    window.bindSessionActivityTracking();
+    bindSessionActivityTracking();
 
-    window.bindGameKeyReleaseControls({
+    bindGameKeyReleaseControls({
         handlePianoKeyUp: __music.handlePianoKeyUp,
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
         getPongKeys: () => __pg.getPongKeys(),
@@ -283,9 +283,9 @@ document.addEventListener('DOMContentLoaded', () => {
         getBreakoutKeys: () => __bk.getBreakoutKeys()
     });
 
-    window.bindResponsiveGameResize({
+    bindResponsiveGameResize({
         getActiveGameTab,
-        syncAllGameMenuOverlayBounds: window.syncAllGameMenuOverlayBounds,
+        syncAllGameMenuOverlayBounds,
         renderSnake: __sn.renderSnake,
         isMultiplayerPongActive: __pg.isMultiplayerPongActive,
         syncMultiplayerPongState: __pg.syncMultiplayerPongState,
@@ -301,12 +301,12 @@ document.addEventListener('DOMContentLoaded', () => {
         drawBreakout: __bk.drawBreakout
     });
 
-    window.bindMultiplayerLobbyControls({
+    bindMultiplayerLobbyControls({
         onCreateRoom: createMultiplayerRoom,
         onJoinRoom: joinMultiplayerRoom,
         onCopyCode: copyMultiplayerRoomCode,
         onSendChat: sendMultiplayerChatMessage,
-        onSyncPlayerNames: window.syncMultiplayerPlayerNames
+        onSyncPlayerNames: syncMultiplayerPlayerNames
     });
 
     __cin.initCinemaCatalogState();
@@ -335,14 +335,14 @@ document.addEventListener('DOMContentLoaded', () => {
     __rh.renderRhythmMenu();
     __sol.renderSolitaireMenu();
     __bm.renderBombMenu();
-    window.setMultiplayerEntryMode('create');
+    setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     __cc.startCoinClickerAutoLoop();
     __math.initializeConverter();
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');
     __music.renderPiano();
-    window.syncAllGameMenuOverlayBounds();
+    syncAllGameMenuOverlayBounds();
 
     const activeSession = loadSession();
 
@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showViewImmediately(appView, {
                 showHeader: true,
                 headerMode: 'cinema',
-                onComplete: () => window.activatePanel('dashboardSection')
+                onComplete: () => activatePanel('dashboardSection')
             });
         } else if (activeSession.lastDestination === 'games') {
             showViewImmediately(gamesView, {

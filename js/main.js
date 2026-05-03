@@ -151,32 +151,17 @@ const GAME_MODULES = {
 if (typeof window !== 'undefined') {
     window.__baie = Object.assign(window.__baie || {}, GAME_MODULES);
     window.__baieActiveGameTab = getActiveGameTab;
-    // Bridge ESM → script.js : expose aussi tout ce que les modules core/multiplayer/navires/_shared
-    // fournissent, pour que les identifiants référencés dans script.js (qui étaient définis
-    // localement avant extraction) continuent de résoudre via la chaîne de scope globale.
-    Object.assign(window, {
-        bindAppShellControls,
-        bindSessionActivityTracking, bindEscapeModalControls, bindResponsiveGameResize,
-        bindCoreModalControls,
-        closeConfirmModal, bindConfirmModalControls,
-        transitionToView, showViewImmediately, activatePanel, activateMathPanel, activateMusicPanel,
-        syncMultiplayerPlayerNames,
-        updateMultiplayerChatPanel, setMultiplayerEntryMode,
-        updateMultiplayerLobby, bindMultiplayerLobbyControls,
-        syncAllGameMenuOverlayBounds,
-        showGamePanel, showGamesHome, showGamesSection, bindGamesNavigationControls,
-        bindTouchGameControls,
-        bindGameKeyReleaseControls, bindGlobalKeyboardControls,
-        bindMultiplayerSession,
-        bindAllGameEventControls,
-        bindCinemaCatalogControls: cinemaModule.bindCinemaCatalogControls
-    });
+    Object.assign(window, { bindTouchGameControls });
     window.__baie.multiplayerState = multiplayerState;
     window.__baie.multiplayerChat = { bindMultiplayerChat };
     window.__baie.multiplayerSession = { bindSetSelectedMultiplayerGame };
     window.__baie.session = { loadSession, saveSession, clearSession, scheduleSessionTimeout };
-    window.__baie.modals = { closeGameOverModal, closeLegalNoticeModal };
-    window.__baie.mpStatus = { setMultiplayerStatus };
+    window.__baie.modals = { closeGameOverModal, closeLegalNoticeModal, closeConfirmModal, bindCoreModalControls, bindConfirmModalControls, bindEscapeModalControls };
+    window.__baie.mpStatus = { setMultiplayerStatus, setMultiplayerEntryMode, syncMultiplayerPlayerNames };
+    window.__baie.router = { transitionToView, showViewImmediately, activatePanel, activateMathPanel, activateMusicPanel, syncAllGameMenuOverlayBounds };
+    window.__baie.navigation = { bindAppShellControls, showGamePanel, showGamesHome, showGamesSection, bindGamesNavigationControls };
+    window.__baie.mp = { bindMultiplayerSession, bindMultiplayerLobbyControls, updateMultiplayerChatPanel, updateMultiplayerLobby };
+    window.__baie.controls = { bindAllGameEventControls, bindGlobalKeyboardControls, bindGameKeyReleaseControls, bindResponsiveGameResize, bindSessionActivityTracking };
     window.__baie.music = musicModule;
     window.__baie.math = mathModule;
     window.__baie.cinema = cinemaModule;
