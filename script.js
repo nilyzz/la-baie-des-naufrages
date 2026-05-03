@@ -209,31 +209,11 @@ document.addEventListener('DOMContentLoaded', () => {
         openSelectedGame: (gameId) => openSelectedGame(gameId)
     });
 
-    function showGamePanel(tabId) {
-        window.showGamePanel(tabId, {
-            updateMultiplayerChatPanel,
-            closeGameOverModal,
-            updateMultiplayerLobby
-        });
-    }
+    const _navCbs = { cleanupActiveGameForNavigation, updateMultiplayerChatPanel, closeGameOverModal, updateMultiplayerLobby };
 
-    function showGamesHome() {
-        window.showGamesHome({
-            cleanupActiveGameForNavigation,
-            updateMultiplayerChatPanel,
-            closeGameOverModal,
-            updateMultiplayerLobby
-        });
-    }
-
-    function showGamesSection(section) {
-        window.showGamesSection(section, {
-            cleanupActiveGameForNavigation,
-            updateMultiplayerChatPanel,
-            closeGameOverModal,
-            updateMultiplayerLobby
-        });
-    }
+    function showGamePanel(tabId) { window.showGamePanel(tabId, _navCbs); }
+    function showGamesHome() { window.showGamesHome(_navCbs); }
+    function showGamesSection(section) { window.showGamesSection(section, _navCbs); }
 
     async function setSelectedMultiplayerGame(gameId) {
         if (!MULTIPLAYER_SUPPORTED_GAMES[gameId]) {
