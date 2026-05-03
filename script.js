@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const defaultPoster = 'https://placehold.co/600x900/0f172a/f8fafc?text=Affiche';
+    const defaultPoster = window.__baie.cinema.DEFAULT_POSTER_URL;
     // MULTIPLAYER_SUPPORTED_GAMES : expose sur window par js/core/constants.js via js/main.js.
 
     const loginView = document.getElementById('loginView');
