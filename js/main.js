@@ -157,12 +157,10 @@ if (typeof window !== 'undefined') {
     Object.assign(window, {
         bindAppShellControls,
         bindSessionActivityTracking, bindEscapeModalControls, bindResponsiveGameResize,
-        loadSession, saveSession, clearSession, scheduleSessionTimeout,
-        closeLegalNoticeModal,
-        closeGameOverModal, bindCoreModalControls,
+        bindCoreModalControls,
         closeConfirmModal, bindConfirmModalControls,
         transitionToView, showViewImmediately, activatePanel, activateMathPanel, activateMusicPanel,
-        setMultiplayerStatus, syncMultiplayerPlayerNames,
+        syncMultiplayerPlayerNames,
         updateMultiplayerChatPanel, setMultiplayerEntryMode,
         updateMultiplayerLobby, bindMultiplayerLobbyControls,
         syncAllGameMenuOverlayBounds,
@@ -176,6 +174,9 @@ if (typeof window !== 'undefined') {
     window.__baie.multiplayerState = multiplayerState;
     window.__baie.multiplayerChat = { bindMultiplayerChat };
     window.__baie.multiplayerSession = { bindSetSelectedMultiplayerGame };
+    window.__baie.session = { loadSession, saveSession, clearSession, scheduleSessionTimeout };
+    window.__baie.modals = { closeGameOverModal, closeLegalNoticeModal };
+    window.__baie.mpStatus = { setMultiplayerStatus };
     window.__baie.music = musicModule;
     window.__baie.math = mathModule;
     window.__baie.cinema = cinemaModule;

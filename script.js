@@ -36,13 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const __math = window.__baie.math;
     const __music = window.__baie.music;
     const __cin = window.__baie.cinema;
+    const { loadSession, saveSession, clearSession, scheduleSessionTimeout } = window.__baie.session;
+    const { closeGameOverModal, closeLegalNoticeModal } = window.__baie.modals;
+    const { setMultiplayerStatus } = window.__baie.mpStatus;
 
     let currentView = loginView;
     const getActiveGameTab = window.__baieActiveGameTab;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
-
-    // loadSession, saveSession, clearSession, scheduleSessionTimeout : exposes sur window par js/main.js (source = js/core/session.js).
 
     function transitionToView(nextView, options = {}) {
         window.transitionToView(currentView, nextView, {
@@ -136,9 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Fonctions math (bindMathControls, initializeConverter, calculate*, etc.) : exposees sur window par js/main.js (source = js/navires/math.js).
-
-    // closeLegalNoticeModal, closeGameOverModal : exposes sur window par js/main.js (source = js/core/modals.js).
-    // setMultiplayerStatus : expose sur window par js/main.js (source = js/multiplayer/status.js).
 
     function updateMultiplayerChatPanel() {
         return window.updateMultiplayerChatPanel({
