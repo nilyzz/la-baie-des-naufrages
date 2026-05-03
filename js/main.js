@@ -180,10 +180,6 @@ if (typeof window !== 'undefined') {
         createDirectionalRepeatGuard, bindGameKeyReleaseControls, bindGlobalKeyboardControls,
         bindMultiplayerSession,
         cleanupActiveGameForNavigation, openSelectedGame, bindAllGameEventControls,
-        importMoviesFromExcelModule: cinemaModule.importMoviesFromExcel,
-        renderCatalogFilters: cinemaModule.renderCatalogFilters,
-        renderCatalog: cinemaModule.renderCatalog,
-        renderCinemaCatalogAll: cinemaModule.renderAll,
         bindCinemaCatalogControls: cinemaModule.bindCinemaCatalogControls
     });
     window.__baie.multiplayerState = multiplayerState;

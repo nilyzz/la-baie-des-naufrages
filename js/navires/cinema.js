@@ -1072,3 +1072,82 @@ export function parseMoviesFromWorkbook(arrayBuffer) {
  * can still reference the same source of truth.
  */
 export { EXCEL_FILE_CANDIDATES };
+
+// ---------------------------------------------------------------------------
+// Catalog state — owned by this module after initCinemaCatalogState() is called
+// ---------------------------------------------------------------------------
+
+let _movies = [];
+let _searchTerm = '';
+let _catalogSelectedGenres = new Set();
+let _catalogReleaseFilter = 'all';
+let _catalogMinimumRatingFilter = 'all';
+let _catalogSortMode = 'default';
+let _catalogDirectorTerm = '';
+let _moviesLoadStarted = false;
+let _catalogDomRefs = null;
+
+export function initCinemaCatalogState() {
+    _catalogDomRefs = {
+        catalogGrid: document.getElementById('catalogGrid'),
+        emptyCatalogMessage: document.getElementById('emptyCatalogMessage'),
+        catalogResultsSummary: document.getElementById('catalogResultsSummary'),
+        catalogGenreFilterGroup: document.getElementById('catalogGenreFilterGroup'),
+        catalogDirectorFilterBlock: document.getElementById('catalogDirectorFilterBlock'),
+        catalogReleaseFilterBlock: document.getElementById('catalogReleaseFilterBlock'),
+        catalogRatingFilterBlock: document.getElementById('catalogRatingFilterBlock'),
+        catalogReleaseFilterSelect: document.getElementById('catalogReleaseFilterSelect'),
+        catalogRatingFilterSelect: document.getElementById('catalogRatingFilterSelect'),
+        catalogSortFilterSelect: document.getElementById('catalogSortFilterSelect'),
+        catalogDirectorFilterInput: document.getElementById('catalogDirectorFilterInput'),
+        catalogDirectorSuggestions: document.getElementById('catalogDirectorSuggestions'),
+        manageList: document.getElementById('manageList'),
+        excelImportStatus: document.getElementById('excelImportStatus'),
+        excelSourceName: document.getElementById('excelSourceName'),
+        movieCount: document.getElementById('movieCount'),
+        averageRating: document.getElementById('averageRating')
+    };
+}
+
+export function getCinemaCatalogContext() {
+    return {
+        movies: _movies,
+        searchTerm: _searchTerm,
+        catalogSelectedGenres: _catalogSelectedGenres,
+        catalogReleaseFilter: _catalogReleaseFilter,
+        catalogMinimumRatingFilter: _catalogMinimumRatingFilter,
+        catalogSortMode: _catalogSortMode,
+        catalogDirectorTerm: _catalogDirectorTerm,
+        defaultPoster: DEFAULT_POSTER_URL,
+        ..._catalogDomRefs
+    };
+}
+
+export function applyCinemaCatalogState(nextState = {}) {
+    _searchTerm = nextState.searchTerm ?? _searchTerm;
+    _catalogSelectedGenres = nextState.catalogSelectedGenres || _catalogSelectedGenres;
+    _catalogReleaseFilter = nextState.catalogReleaseFilter || _catalogReleaseFilter;
+    _catalogMinimumRatingFilter = nextState.catalogMinimumRatingFilter || _catalogMinimumRatingFilter;
+    _catalogSortMode = nextState.catalogSortMode || _catalogSortMode;
+    _catalogDirectorTerm = nextState.catalogDirectorTerm ?? _catalogDirectorTerm;
+}
+
+export function renderCinemaCatalogAll() {
+    applyCinemaCatalogState(renderAll(getCinemaCatalogContext()));
+}
+
+export function ensureMoviesLoaded() {
+    if (_moviesLoadStarted) return;
+    _moviesLoadStarted = true;
+    importMoviesFromCinema();
+}
+
+export async function importMoviesFromCinema() {
+    return importMoviesFromExcel({
+        ..._catalogDomRefs,
+        defaultPoster: DEFAULT_POSTER_URL,
+        setMovies: (nextMovies) => { _movies = nextMovies; },
+        renderAll: renderCinemaCatalogAll,
+        loadMovies: () => []
+    });
+}

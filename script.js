@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const defaultPoster = window.__baie.cinema.DEFAULT_POSTER_URL;
     // MULTIPLAYER_SUPPORTED_GAMES : expose sur window par js/core/constants.js via js/main.js.
 
     const loginView = document.getElementById('loginView');
@@ -8,23 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamesView = document.getElementById('gamesView');
     const mathView = document.getElementById('mathView');
     const musicView = document.getElementById('musicView');
-    const catalogGrid = document.getElementById('catalogGrid');
-    const emptyCatalogMessage = document.getElementById('emptyCatalogMessage');
-    const catalogResultsSummary = document.getElementById('catalogResultsSummary');
-    const catalogGenreFilterGroup = document.getElementById('catalogGenreFilterGroup');
-    const catalogDirectorFilterBlock = document.getElementById('catalogDirectorFilterBlock');
-    const catalogReleaseFilterBlock = document.getElementById('catalogReleaseFilterBlock');
-    const catalogRatingFilterBlock = document.getElementById('catalogRatingFilterBlock');
-    const catalogReleaseFilterSelect = document.getElementById('catalogReleaseFilterSelect');
-    const catalogRatingFilterSelect = document.getElementById('catalogRatingFilterSelect');
-    const catalogSortFilterSelect = document.getElementById('catalogSortFilterSelect');
-    const catalogDirectorFilterInput = document.getElementById('catalogDirectorFilterInput');
-    const catalogDirectorSuggestions = document.getElementById('catalogDirectorSuggestions');
-    const manageList = document.getElementById('manageList');
-    const excelImportStatus = document.getElementById('excelImportStatus');
-    const excelSourceName = document.getElementById('excelSourceName');
-    const movieCount = document.getElementById('movieCount');
-    const averageRating = document.getElementById('averageRating');
     const loginForm = document.getElementById('loginForm');
     const multiplayerChatInput = document.getElementById('multiplayerChatInput');
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
@@ -55,14 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const __mpState = window.__baie.multiplayerState;
     const __math = window.__baie.math;
     const __music = window.__baie.music;
+    const __cin = window.__baie.cinema;
 
-    let movies = [];
-    let searchTerm = '';
-    let catalogSelectedGenres = new Set();
-    let catalogReleaseFilter = 'all';
-    let catalogMinimumRatingFilter = 'all';
-    let catalogSortMode = 'default';
-    let catalogDirectorTerm = '';
     let currentView = loginView;
     const getActiveGameTab = window.__baieActiveGameTab;
     let activeMathTab = 'mathCalculatorPanel';
@@ -106,17 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    let moviesLoadStarted = false;
-    function ensureMoviesLoaded() {
-        if (moviesLoadStarted) return;
-        moviesLoadStarted = true;
-        importMoviesFromExcel();
-    }
-
     function showCinema() {
         closeGameOverModal();
         saveSession({ lastDestination: 'cinema' });
-        ensureMoviesLoaded();
+        __cin.ensureMoviesLoaded();
         transitionToView(appView, {
             showHeader: true,
             headerMode: 'cinema',
@@ -177,56 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Fonctions math (bindMathControls, initializeConverter, calculate*, etc.) : exposees sur window par js/main.js (source = js/navires/math.js).
-
-    async function importMoviesFromExcel() {
-        return window.importMoviesFromExcelModule({
-            excelImportStatus,
-            excelSourceName,
-            defaultPoster,
-            setMovies: (nextMovies) => {
-                movies = nextMovies;
-            },
-            renderAll: () => applyCinemaCatalogState(window.renderCinemaCatalogAll(getCinemaCatalogContext())),
-            loadMovies: () => []
-        });
-    }
-
-    function getCinemaCatalogContext() {
-        return {
-            movies,
-            searchTerm,
-            catalogSelectedGenres,
-            catalogReleaseFilter,
-            catalogMinimumRatingFilter,
-            catalogSortMode,
-            catalogDirectorTerm,
-            defaultPoster,
-            catalogGrid,
-            emptyCatalogMessage,
-            catalogResultsSummary,
-            catalogGenreFilterGroup,
-            catalogDirectorFilterBlock,
-            catalogReleaseFilterBlock,
-            catalogRatingFilterBlock,
-            catalogReleaseFilterSelect,
-            catalogRatingFilterSelect,
-            catalogSortFilterSelect,
-            catalogDirectorFilterInput,
-            catalogDirectorSuggestions,
-            manageList,
-            movieCount,
-            averageRating
-        };
-    }
-
-    function applyCinemaCatalogState(nextState = {}) {
-        searchTerm = nextState.searchTerm ?? searchTerm;
-        catalogSelectedGenres = nextState.catalogSelectedGenres || catalogSelectedGenres;
-        catalogReleaseFilter = nextState.catalogReleaseFilter || catalogReleaseFilter;
-        catalogMinimumRatingFilter = nextState.catalogMinimumRatingFilter || catalogMinimumRatingFilter;
-        catalogSortMode = nextState.catalogSortMode || catalogSortMode;
-        catalogDirectorTerm = nextState.catalogDirectorTerm ?? catalogDirectorTerm;
-    }
 
     // openLegalNoticeModal / closeLegalNoticeModal : exposes sur window par js/main.js (source = js/core/modals.js).
     // setMultiplayerStatus : expose sur window par js/main.js (source = js/multiplayer/status.js).
@@ -424,10 +343,8 @@ document.addEventListener('DOMContentLoaded', () => {
     __math.bindMathControls();
 
     window.bindCinemaCatalogControls({
-        getContext: getCinemaCatalogContext,
-        setState: applyCinemaCatalogState,
-        renderCatalog: () => window.renderCatalog(getCinemaCatalogContext()),
-        renderCatalogFilters: () => applyCinemaCatalogState(window.renderCatalogFilters(getCinemaCatalogContext()))
+        getContext: __cin.getCinemaCatalogContext,
+        setState: __cin.applyCinemaCatalogState
     });
 
     window.bindConfirmModalControls({ onClose: window.closeConfirmModal });
@@ -488,13 +405,13 @@ document.addEventListener('DOMContentLoaded', () => {
         onSyncPlayerNames: window.syncMultiplayerPlayerNames
     });
 
-    applyCinemaCatalogState(window.renderCinemaCatalogAll(getCinemaCatalogContext()));
+    __cin.initCinemaCatalogState();
+    __cin.renderCinemaCatalogAll();
     // film.xlsx (~137KB) n'est chargé qu'à la première visite du cinéma
     // (voir ensureMoviesLoaded dans showCinema). Si la session précédente
     // s'est terminée sur le cinéma, on le précharge pour éviter l'attente.
     if (loadSession()?.lastDestination === 'cinema') {
-        importMoviesFromExcel();
-        moviesLoadStarted = true;
+        __cin.importMoviesFromCinema();
     }
     showGamePanel('home');
     updateMultiplayerLobby();
