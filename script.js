@@ -33,69 +33,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
     // GAME_FILTER_TAGS : expose sur window par js/core/constants.js via js/main.js.
 
-    // d'appeler le module sans réécrire chaque identifiant.
+    // Aliases courts vers les modules de jeux exposés sur window.__baie.
     const __cc = window.__baie.coinClicker;
-
     const __rh = window.__baie.rhythm;
-
     const __rx = window.__baie.reaction;
-
     const __am = window.__baie.aim;
-
     const __mm = window.__baie.mentalMath;
-
     const __sn = window.__baie.snake;
-
     const __tt = window.__baie.tetris;
-
     const __g2 = window.__baie.game2048;
-
     const __fl = window.__baie.flappy;
-
     const __pm = window.__baie.pacman;
-
     const __bk = window.__baie.breakout;
-
     const __mem = window.__baie.memory;
-
     const __ms = window.__baie.magicSort;
-
     const __hr = window.__baie.harborRun;
-
     const __mw = window.__baie.minesweeper;
-
     const __st = window.__baie.stacker;
-
     const __sol = window.__baie.solitaire;
-
     const __su = window.__baie.sudoku;
-
     const __bb = window.__baie.blockBlast;
-
     const __cc2 = window.__baie.candyCrush;
-
     const __bb2 = window.__baie.baieBerry;
-
     const __ff = window.__baie.flowFree;
-
     const __ck = window.__baie.checkers;
-
     const __ttt = window.__baie.ticTacToe;
-
     const __c4 = window.__baie.connect4;
-
     const __bs = window.__baie.battleship;
-
     const __bm = window.__baie.bomb;
-
     const __ch = window.__baie.chess;
-
     const __uno = window.__baie.uno;
-
     const __ah = window.__baie.airHockey;
-
     const __pg = window.__baie.pong;
-
     const __mpState = window.__baie.multiplayerState;
 
     const musicHomePanel = document.getElementById('musicHomePanel');
@@ -484,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isMultiplayerLaunchPending,
         toggleMultiplayerReady,
         setMultiplayerStatus,
-        showGamePanel: window.showGamePanel,
+        showGamePanel,
         showGamesSection,
         setSelectedMultiplayerGame,
         setMultiplayerEntryMode,
