@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
 
-    // loadSession, saveSession, clearSession, scheduleSessionTimeout, registerActivity : exposes sur window par js/main.js (source = js/core/session.js).
+    // loadSession, saveSession, clearSession, scheduleSessionTimeout : exposes sur window par js/main.js (source = js/core/session.js).
 
     function transitionToView(nextView, options = {}) {
         window.transitionToView(currentView, nextView, {
@@ -127,14 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function returnToServices() {
-        closeGameOverModal();
-        saveSession({ lastDestination: 'services' });
-        transitionToView(servicesView, {
-            headerMode: 'none'
-        });
-    }
-
     function activateMathPanel(targetId) {
         activeMathTab = window.activateMathPanel(targetId);
     }
@@ -147,19 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fonctions math (bindMathControls, initializeConverter, calculate*, etc.) : exposees sur window par js/main.js (source = js/navires/math.js).
 
-    // openLegalNoticeModal / closeLegalNoticeModal : exposes sur window par js/main.js (source = js/core/modals.js).
-    // setMultiplayerStatus : expose sur window par js/main.js (source = js/multiplayer/status.js).
-
-    function isMultiplayerChatVisible() {
-        const room = __mpState.getMultiplayerActiveRoom();
-        const tab = getActiveGameTab();
-        return Boolean(
-            room?.code
-            && room?.gameLaunched
-            && MULTIPLAYER_SUPPORTED_GAMES[tab]
-            && room.gameId === tab
-        );
-    }
+    // closeLegalNoticeModal, closeGameOverModal : exposes sur window par js/main.js (source = js/core/modals.js).
+    // setMultiplayerStatus, getMultiplayerGameLabel : exposes sur window par js/main.js (source = js/multiplayer/status.js).
 
     function updateMultiplayerChatPanel() {
         return window.updateMultiplayerChatPanel({
@@ -178,7 +159,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!isMultiplayerChatVisible()) {
+        const _room = __mpState.getMultiplayerActiveRoom();
+        const _tab = getActiveGameTab();
+        const _chatVisible = Boolean(_room?.code && _room?.gameLaunched && MULTIPLAYER_SUPPORTED_GAMES[_tab] && _room.gameId === _tab);
+        if (!_chatVisible) {
             setMultiplayerStatus('Le chat sera disponible une fois la partie lanc\u00e9e.');
             return;
         }
@@ -296,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         onGames: showGames,
         onMath: showMath,
         onMusic: showMusic,
-        onBackToServices: returnToServices,
+        onBackToServices: showServices,
         onLogout: () => {
             closeGameOverModal();
             clearSession();
