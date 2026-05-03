@@ -95,7 +95,15 @@ const roomCreationRateMap = new Map();
 const posterResolveRateMap = new Map();
 
 function parseCorsOrigin(value) {
-  const origins = String(value || '*')
+  if (!value) {
+    if (process.env.NODE_ENV === 'production') {
+      console.warn('[CORS] CORS_ORIGIN non défini en production — CORS bloqué par défaut.');
+      return [];
+    }
+    return '*';
+  }
+
+  const origins = String(value)
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
@@ -2858,7 +2866,7 @@ io.on('connection', (socket) => {
     emitRoomUpdate(room);
   });
 
-  socket.on('chess:move', ({ fromRow, fromCol, toRow, toCol }) => {
+  socket.on('chess:move', ({ fromRow, fromCol, toRow, toCol, promotionPiece }) => {
     const room = getRoom(socket.data.roomCode);
 
     if (!room || room.gameId !== 'chess') {
