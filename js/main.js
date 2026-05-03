@@ -162,7 +162,7 @@ if (typeof window !== 'undefined') {
         closeGameOverModal, bindCoreModalControls,
         closeConfirmModal, bindConfirmModalControls,
         transitionToView, showViewImmediately, activatePanel, activateMathPanel, activateMusicPanel,
-        setMultiplayerStatus, getMultiplayerGameLabel, syncMultiplayerPlayerNames,
+        setMultiplayerStatus, syncMultiplayerPlayerNames,
         updateMultiplayerChatPanel, setMultiplayerEntryMode,
         updateMultiplayerLobby, bindMultiplayerLobbyControls,
         syncAllGameMenuOverlayBounds,

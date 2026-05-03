@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fonctions math (bindMathControls, initializeConverter, calculate*, etc.) : exposees sur window par js/main.js (source = js/navires/math.js).
 
     // closeLegalNoticeModal, closeGameOverModal : exposes sur window par js/main.js (source = js/core/modals.js).
-    // setMultiplayerStatus, getMultiplayerGameLabel : exposes sur window par js/main.js (source = js/multiplayer/status.js).
+    // setMultiplayerStatus : expose sur window par js/main.js (source = js/multiplayer/status.js).
 
     function updateMultiplayerChatPanel() {
         return window.updateMultiplayerChatPanel({
@@ -182,15 +182,16 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMultiplayerLobby
     });
 
-    const _navCbs = { cleanupActiveGameForNavigation, updateMultiplayerChatPanel, closeGameOverModal, updateMultiplayerLobby };
+    const _navCbs = {
+        cleanupActiveGameForNavigation: (nextTab) => window.__baie.gameLifecycle.cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), window.__baie),
+        updateMultiplayerChatPanel,
+        closeGameOverModal,
+        updateMultiplayerLobby
+    };
 
     function showGamePanel(tabId) { window.showGamePanel(tabId, _navCbs); }
     function showGamesHome() { window.showGamesHome(_navCbs); }
     function showGamesSection(section) { window.showGamesSection(section, _navCbs); }
-
-    function cleanupActiveGameForNavigation(nextTab) {
-        window.__baie.gameLifecycle.cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), window.__baie);
-    }
 
     window.bindAppShellControls({
         onLogin: () => {
