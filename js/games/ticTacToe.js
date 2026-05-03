@@ -3,6 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS, GRID_OUTCOME_MENU_DELAY_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
+import { getActiveGameTab } from './_shared/navigation.js';
 import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
@@ -27,10 +28,6 @@ let ticTacToeMenuResult = null;
 let ticTacToeOutcomeMenuTimeout = null;
 let ticTacToeLastFinishedStateKey = '';
 
-let activeGameTabAccessor = () => null;
-export function setTicTacToeActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 export function resetTicTacToeLastFinishedStateKey() {
     ticTacToeLastFinishedStateKey = '';
@@ -420,7 +417,7 @@ export function syncMultiplayerTicTacToeState() {
 
     ticTacToeLastFinishedStateKey = finishedStateKey;
 
-    if (activeGameTabAccessor() !== 'ticTacToe') {
+    if (getActiveGameTab() !== 'ticTacToe') {
         return;
     }
 

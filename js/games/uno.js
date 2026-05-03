@@ -3,6 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
+import { getActiveGameTab } from './_shared/navigation.js';
 import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
@@ -36,10 +37,6 @@ let unoMenuShowingRules = false;
 let unoMenuClosing = false;
 let unoMenuResult = null;
 
-let activeGameTabAccessor = () => null;
-export function setUnoActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 const $ = (id) => document.getElementById(id);
 function dom() {
@@ -871,7 +868,7 @@ export function renderUno() {
     if (unoOpponentDrawFx.size) {
         window.setTimeout(() => {
             unoOpponentDrawFx.clear();
-            if (activeGameTabAccessor() === 'uno') {
+            if (getActiveGameTab() === 'uno') {
                 renderUno();
             }
         }, 420);
@@ -1069,7 +1066,7 @@ export function isMultiplayerUnoActive() {
 
 export function syncMultiplayerUnoState() {
     if (!isMultiplayerUnoActive()) {
-        if (unoMode === 'online' && activeGameTabAccessor() === 'uno' && !getMultiplayerActiveRoom()) {
+        if (unoMode === 'online' && getActiveGameTab() === 'uno' && !getMultiplayerActiveRoom()) {
             initializeUno();
         }
         return;

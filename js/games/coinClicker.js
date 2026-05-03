@@ -29,12 +29,6 @@ let coinClickerState = {
 let coinClickerAutoTimer = null;
 let coinClickerLastAutoTick = (typeof performance !== 'undefined' ? performance.now() : 0);
 
-let activeGameTabAccessor = () => null;
-export function setCoinClickerActiveGameTabAccessor(accessor) {
-    if (typeof accessor === 'function') {
-        activeGameTabAccessor = accessor;
-    }
-}
 
 const $ = (id) => document.getElementById(id);
 

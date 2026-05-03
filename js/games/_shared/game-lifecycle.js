@@ -1,8 +1,47 @@
 import { showGamePanel } from './navigation.js';
 import { closeGameOverModal } from '../../core/modals.js';
 import { MULTIPLAYER_SUPPORTED_GAMES } from '../../core/constants.js';
+import * as game2048 from '../game2048.js';
+import * as aimModule from '../aim.js';
+import * as airHockey from '../airHockey.js';
+import * as baieBerry from '../baieBerry.js';
+import * as battleship from '../battleship.js';
+import * as blockBlast from '../blockBlast.js';
+import * as bomb from '../bomb.js';
+import * as breakout from '../breakout.js';
+import * as candyCrush from '../candyCrush.js';
+import * as checkers from '../checkers.js';
+import * as chess from '../chess.js';
+import * as coinClicker from '../coinClicker.js';
+import * as connect4 from '../connect4.js';
+import * as flappy from '../flappy.js';
+import * as flowFree from '../flowFree.js';
+import * as harborRun from '../harborRun.js';
+import * as magicSort from '../magicSort.js';
+import * as memoryGame from '../memory.js';
+import * as mentalMath from '../mentalMath.js';
+import * as minesweeper from '../minesweeper.js';
+import * as pacman from '../pacman.js';
+import * as pong from '../pong.js';
+import * as reaction from '../reaction.js';
+import * as rhythm from '../rhythm.js';
+import * as snake from '../snake.js';
+import * as solitaire from '../solitaire.js';
+import * as stacker from '../stacker.js';
+import * as sudoku from '../sudoku.js';
+import * as tetris from '../tetris.js';
+import * as ticTacToe from '../ticTacToe.js';
+import * as uno from '../uno.js';
 
-export function cleanupActiveGameForNavigation(nextTab, activeGameTab, modules = {}) {
+const modules = {
+    game2048, aim: aimModule, airHockey, baieBerry, battleship, blockBlast,
+    bomb, breakout, candyCrush, checkers, chess, coinClicker, connect4,
+    flappy, flowFree, harborRun, magicSort, memory: memoryGame, mentalMath,
+    minesweeper, pacman, pong, reaction, rhythm, snake, solitaire, stacker,
+    sudoku, tetris, ticTacToe, uno
+};
+
+export function cleanupActiveGameForNavigation(nextTab, activeGameTab) {
     const prev = activeGameTab;
 
     if (prev === 'minesweeper' && nextTab !== 'minesweeper') {
@@ -155,10 +194,10 @@ export function cleanupActiveGameForNavigation(nextTab, activeGameTab, modules =
     }
 }
 
-export function openSelectedGame(nextTab, activeGameTab, modules = {}, options = {}) {
+export function openSelectedGame(nextTab, activeGameTab, options = {}) {
     const { setSelectedMultiplayerGame } = options;
 
-    cleanupActiveGameForNavigation(nextTab, activeGameTab, modules);
+    cleanupActiveGameForNavigation(nextTab, activeGameTab);
 
     if (MULTIPLAYER_SUPPORTED_GAMES[nextTab] && typeof setSelectedMultiplayerGame === 'function') {
         setSelectedMultiplayerGame(nextTab);

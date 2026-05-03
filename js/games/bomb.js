@@ -4,6 +4,7 @@
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { formatTenthsTimer, normalizeBombWord } from '../core/utils.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
+import { getActiveGameTab } from './_shared/navigation.js';
 import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
@@ -43,10 +44,6 @@ let bombMenuEntering = false;
 let bombSelectedMode = 'local';
 let bombLocalState = null;
 
-let activeGameTabAccessor = () => null;
-export function setBombActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 const $ = (id) => document.getElementById(id);
 function dom() {
@@ -245,7 +242,7 @@ export function stopBombTimerLoop() {
 export function startBombTimerLoop() {
     stopBombTimerLoop();
     bombTimerInterval = window.setInterval(() => {
-        if (activeGameTabAccessor() === 'bomb') {
+        if (getActiveGameTab() === 'bomb') {
             if (isBombLocalActive()) {
                 tickBombLocal();
             }
@@ -506,7 +503,7 @@ export function revealBombOutcomeMenu(title, text, eyebrow) {
 export function syncMultiplayerBombState() {
     const { bombWordInput } = dom();
     if (!isMultiplayerBombActive()) {
-        if (activeGameTabAccessor() === 'bomb') {
+        if (getActiveGameTab() === 'bomb') {
             initializeBomb();
         }
         return;
@@ -527,7 +524,7 @@ export function syncMultiplayerBombState() {
     renderBomb();
     const currentPlayer = getBombCurrentPlayer();
     const you = getMultiplayerActiveRoom()?.players?.find((player) => player.isYou) || null;
-    if (activeGameTabAccessor() === 'bomb' && currentPlayer?.id === you?.id && !bombState?.winner) {
+    if (getActiveGameTab() === 'bomb' && currentPlayer?.id === you?.id && !bombState?.winner) {
         window.setTimeout(() => {
             bombWordInput?.focus();
             bombWordInput?.select?.();

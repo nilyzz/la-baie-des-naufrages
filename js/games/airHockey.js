@@ -3,6 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
+import { getActiveGameTab } from './_shared/navigation.js';
 import {
     getMultiplayerActiveRoom,
     getMultiplayerSocket,
@@ -40,10 +41,6 @@ let airHockeyMenuClosing = false;
 let airHockeyMenuEntering = false;
 let airHockeyMenuResult = null;
 
-let activeGameTabAccessor = () => null;
-export function setAirHockeyActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 const $ = (id) => document.getElementById(id);
 function dom() {
@@ -321,7 +318,7 @@ export function syncMultiplayerAirHockeyState() {
     }
 
     const finishedKey = `${airHockeyState.round}:${airHockeyState.winner || 'none'}`;
-    if (finishedKey === airHockeyLastFinishedStateKey || activeGameTabAccessor() !== 'airHockey') {
+    if (finishedKey === airHockeyLastFinishedStateKey || getActiveGameTab() !== 'airHockey') {
         return;
     }
 

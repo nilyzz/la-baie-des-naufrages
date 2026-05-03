@@ -3,6 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
+import { getActiveGameTab } from './_shared/navigation.js';
 import {
     isInsideGameGrid,
     getBoardMoveAnimationMetadata,
@@ -41,10 +42,6 @@ let checkersLastMoveAnimationKey = '';
 let checkersLastFinishedStateKey = '';
 let checkersLastCaptureFxKey = '';
 
-let activeGameTabAccessor = () => null;
-export function setCheckersActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 const $ = (id) => document.getElementById(id);
 function dom() {
@@ -773,7 +770,7 @@ export function syncMultiplayerCheckersState() {
         return;
     }
 
-    if (nextFinishedKey === checkersLastFinishedStateKey || activeGameTabAccessor() !== 'checkers') {
+    if (nextFinishedKey === checkersLastFinishedStateKey || getActiveGameTab() !== 'checkers') {
         return;
     }
 

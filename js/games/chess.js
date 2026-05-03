@@ -3,6 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
+import { getActiveGameTab } from './_shared/navigation.js';
 import {
     CHESS_SIZE,
     isInsideGameGrid,
@@ -45,10 +46,6 @@ let chessMenuEntering = false;
 let chessOutcomeMenuTimer = null;
 let chessOutcomeMenuEnterTimer = null;
 
-let activeGameTabAccessor = () => null;
-export function setChessActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 const $ = (id) => document.getElementById(id);
 function dom() {
@@ -1302,7 +1299,7 @@ export function syncMultiplayerChessState() {
         return;
     }
 
-    if (nextFinishedKey === chessLastFinishedStateKey || activeGameTabAccessor() !== 'chess') {
+    if (nextFinishedKey === chessLastFinishedStateKey || getActiveGameTab() !== 'chess') {
         return;
     }
 

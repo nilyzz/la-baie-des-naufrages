@@ -3,6 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
+import { getActiveGameTab } from './_shared/navigation.js';
 import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
@@ -49,10 +50,6 @@ let pongMenuResult = null;
 let pongBoardMetrics = null;
 let pongRenderMetrics = null;
 
-let activeGameTabAccessor = () => null;
-export function setPongActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 const $ = (id) => document.getElementById(id);
 function dom() {
@@ -369,7 +366,7 @@ export function syncMultiplayerPongState() {
     }
 
     const finishedStateKey = `${nextState.round}:${nextState.winner || 'none'}`;
-    if (finishedStateKey === pongLastFinishedStateKey || activeGameTabAccessor() !== 'pong') {
+    if (finishedStateKey === pongLastFinishedStateKey || getActiveGameTab() !== 'pong') {
         return;
     }
 

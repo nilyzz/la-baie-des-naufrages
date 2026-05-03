@@ -3,6 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS, GRID_OUTCOME_MENU_DELAY_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
+import { getActiveGameTab } from './_shared/navigation.js';
 import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
@@ -34,10 +35,6 @@ let connect4OutcomeMenuTimeout = null;
 let connect4LastFinishedStateKey = '';
 let connect4LastMoveAnimationKey = '';
 
-let activeGameTabAccessor = () => null;
-export function setConnect4ActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 const $ = (id) => document.getElementById(id);
 function dom() {
@@ -325,7 +322,7 @@ export function syncMultiplayerConnect4State() {
 
     connect4LastFinishedStateKey = finishedStateKey;
 
-    if (activeGameTabAccessor() !== 'connect4') {
+    if (getActiveGameTab() !== 'connect4') {
         return;
     }
     revealConnect4OutcomeMenuWithDelay();

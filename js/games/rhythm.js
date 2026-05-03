@@ -34,10 +34,6 @@ let rhythmPadHighlightTimeout = null;
 let rhythmBoardEffectTimeout = null;
 let rhythmBursts = [];
 
-let activeGameTabAccessor = () => null;
-export function setRhythmActiveGameTabAccessor(fn) {
-    if (typeof fn === 'function') activeGameTabAccessor = fn;
-}
 
 const $ = (id) => document.getElementById(id);
 

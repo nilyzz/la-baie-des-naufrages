@@ -47,29 +47,10 @@ import { bindMultiplayerChat } from './js/multiplayer/chat.js';
 import { syncAllGameMenuOverlayBounds } from './js/games/_shared/menu-overlay.js';
 import { showGamePanel as _showGamePanel, showGamesHome as _showGamesHome, showGamesSection as _showGamesSection, bindGamesNavigationControls, getActiveGameTab } from './js/games/_shared/navigation.js';
 import { bindGameKeyReleaseControls, bindGlobalKeyboardControls } from './js/games/_shared/keyboard.js';
-import { cleanupActiveGameForNavigation, openSelectedGame as _openSelectedGame } from './js/games/_shared/game-lifecycle.js';
+import { openSelectedGame as _openSelectedGame, cleanupActiveGameForNavigation } from './js/games/_shared/game-lifecycle.js';
 import { bindAllGameEventControls } from './js/games/_shared/game-event-bindings.js';
 
-const GAME_MODULES = {
-    game2048, aim: aimModule, airHockey, baieBerry, battleship, blockBlast,
-    bomb, breakout, candyCrush, checkers, chess, coinClicker, connect4,
-    flappy, flowFree, harborRun, magicSort, memory: memoryGame, mentalMath,
-    minesweeper, pacman, pong, reaction, rhythm, snake, solitaire, stacker,
-    sudoku, tetris, ticTacToe, uno
-};
-
-function injectActiveGameTabAccessors() {
-    for (const mod of Object.values(GAME_MODULES)) {
-        for (const [key, value] of Object.entries(mod)) {
-            if (typeof value === 'function' && /^set[A-Z].*ActiveGameTabAccessor$/.test(key)) {
-                value(getActiveGameTab);
-            }
-        }
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    injectActiveGameTabAccessors();
 
     const loginView = document.getElementById('loginView');
     const servicesView = document.getElementById('servicesView');
@@ -239,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const _navCbs = {
-        cleanupActiveGameForNavigation: (nextTab) => cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), GAME_MODULES),
+        cleanupActiveGameForNavigation: (nextTab) => cleanupActiveGameForNavigation(nextTab, getActiveGameTab()),
         updateMultiplayerChatPanel,
         closeGameOverModal,
         updateMultiplayerLobby
@@ -250,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showGamesSection(section) { _showGamesSection(section, _navCbs); }
 
     function openSelectedGame(nextTab) {
-        _openSelectedGame(nextTab, getActiveGameTab(), GAME_MODULES, { setSelectedMultiplayerGame, closeGameOverModal });
+        _openSelectedGame(nextTab, getActiveGameTab(), { setSelectedMultiplayerGame, closeGameOverModal });
     }
 
     bindAppShellControls({
