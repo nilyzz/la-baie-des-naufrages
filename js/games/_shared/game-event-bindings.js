@@ -848,7 +848,13 @@ export function bindAllGameEventControls(options = {}) {
         const [row, col] = cell.dataset.chessCell.split('-').map(Number);
         chess.handleChessCellClick(row, col);
     });
-    
+
+    document.getElementById('chessPromotionOverlay')?.addEventListener('click', (event) => {
+        const btn = event.target.closest('[data-chess-promote]');
+        if (!btn) return;
+        chess.handleChessPromotion(btn.dataset.chessPromote);
+    });
+
     document.getElementById('checkersMenuActionButton')?.addEventListener('click', () => {
         if (checkers.getCheckersMenuShowingRules()) {
             checkers.setCheckersMenuShowingRules(false);

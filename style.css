@@ -5098,6 +5098,69 @@ body:has(#servicesView.view-active) .services-legal-button {
     transform: scale(1.02);
 }
 
+.chess-promotion-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: grid;
+    place-items: center;
+    border-radius: 24px 24px 22px 22px;
+    background: rgba(8, 47, 73, 0.82);
+    backdrop-filter: blur(4px);
+}
+
+.chess-promotion-overlay.hidden {
+    display: none;
+}
+
+.chess-promotion-label {
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-align: center;
+    margin: 0 0 12px;
+    text-transform: uppercase;
+}
+
+.chess-promotion-choices {
+    display: flex;
+    gap: 10px;
+}
+
+.chess-promotion-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 14px;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+    cursor: pointer;
+    transition: background 120ms, border-color 120ms, transform 80ms;
+}
+
+.chess-promotion-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.42);
+    transform: translateY(-2px);
+}
+
+.chess-promo-glyph {
+    font-size: 2.2rem;
+    line-height: 1;
+}
+
+.chess-promo-name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
 .chess-menu-card {
     width: min(100%, 420px);
     padding: 26px 24px;

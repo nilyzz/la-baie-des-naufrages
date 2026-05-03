@@ -29,8 +29,8 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="preconnect" href="https://la-baie-des-naufrages.onrender.com">
     <link rel="preconnect" href="https://image.tmdb.org">
-    <link rel="stylesheet" href="style.min.css?v=v2-12">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v2-12">
+    <link rel="stylesheet" href="style.min.css?v=v2-13">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v2-13">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -131,7 +131,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 2.12</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 2.13</span>
                     </p>
                 </form>
             </div>
@@ -1560,8 +1560,17 @@
                         <button type="button" class="secondary-button chess-mode-button is-active" data-chess-mode="solo">1 joueur</button>
                         <button type="button" class="secondary-button chess-mode-button" data-chess-mode="duo">2 joueurs</button>
                     </div>
-                    <p id="chessHelpText" class="chess-help">Échecs local à deux joueurs. Roque et prise en passant ne sont pas gérés, la promotion devient une reine.</p>
+                    <p id="chessHelpText" class="chess-help">Échecs local à deux joueurs. Roque et prise en passant ne sont pas gérés.</p>
                     <div id="chessTable" class="chess-table">
+                        <div id="chessPromotionOverlay" class="chess-promotion-overlay hidden" role="dialog" aria-modal="true" aria-label="Promotion du pion">
+                            <p class="chess-promotion-label">Choisir la pièce</p>
+                            <div class="chess-promotion-choices">
+                                <button type="button" class="chess-promotion-btn" data-chess-promote="queen"><span class="chess-promo-glyph">&#9819;</span><span class="chess-promo-name">Dame</span></button>
+                                <button type="button" class="chess-promotion-btn" data-chess-promote="rook"><span class="chess-promo-glyph">&#9820;</span><span class="chess-promo-name">Tour</span></button>
+                                <button type="button" class="chess-promotion-btn" data-chess-promote="bishop"><span class="chess-promo-glyph">&#9821;</span><span class="chess-promo-name">Fou</span></button>
+                                <button type="button" class="chess-promotion-btn" data-chess-promote="knight"><span class="chess-promo-glyph">&#9822;</span><span class="chess-promo-name">Cavalier</span></button>
+                            </div>
+                        </div>
                         <div id="chessMenuOverlay" class="chess-menu-overlay">
                             <div class="chess-menu-card">
                                 <span id="chessMenuEyebrow" class="chess-menu-eyebrow">Baie stratégique</span>
@@ -2169,6 +2178,9 @@
             <p class="section-tag">Naufrage</p>
             <h3 id="gameOverTitle">C'est perdu</h3>
             <p id="gameOverText">Le joueur s'est noy&eacute;.</p>
+            <div class="form-actions">
+                <button type="button" class="secondary-button" data-close-game-over="true">Fermer</button>
+            </div>
         </div>
     </div>
 
@@ -2226,8 +2238,8 @@
         </div>
     </section>
 
-    <script defer src="/js/core/consent.js?v=v2-12"></script>
-    <script type="module" src="/js/main.bundle.min.js?v=v2-12"></script>
-    <script defer src="/js/core/sw-register.js?v=v2-12"></script>
+    <script defer src="/js/core/consent.js?v=v2-13"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v2-13"></script>
+    <script defer src="/js/core/sw-register.js?v=v2-13"></script>
 </body>
 </html>

@@ -45,6 +45,7 @@ let chessMenuClosing = false;
 let chessMenuEntering = false;
 let chessOutcomeMenuTimer = null;
 let chessOutcomeMenuEnterTimer = null;
+let chessPromotionPending = null;
 
 
 const $ = (id) => document.getElementById(id);
@@ -126,6 +127,8 @@ export function initializeChess() {
     };
     chessLastMoveAnimationKey = '';
     chessSelectedSquare = null;
+    chessPromotionPending = null;
+    document.getElementById('chessPromotionOverlay')?.classList.add('hidden');
     chessMenuVisible = true;
     chessMenuShowingRules = false;
     chessMenuClosing = false;
@@ -135,7 +138,7 @@ export function initializeChess() {
 }
 
 export function getChessRulesText() {
-    return "Les pièces se déplacent selon les règles classiques. La promotion devient une reine et le roque est disponible. La prise en passant n'est pas gérée ici.";
+    return "Les pièces se déplacent selon les règles classiques. La promotion laisse le choix de la pièce et le roque est disponible. La prise en passant n'est pas gérée ici.";
 }
 
 export function getChessReadySummary() {
@@ -685,6 +688,23 @@ export function submitChessMove(toRow, toCol) {
         return false;
     }
 
+    const movingPiece = chessState.board[chessSelectedSquare.row]?.[chessSelectedSquare.col];
+    const isPromotion = movingPiece?.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1);
+
+    if (isPromotion) {
+        chessPromotionPending = {
+            fromRow: chessSelectedSquare.row,
+            fromCol: chessSelectedSquare.col,
+            toRow,
+            toCol,
+            isMultiplayer: isMultiplayerChessActive()
+        };
+        chessSelectedSquare = null;
+        showChessPromotionOverlay(movingPiece.color);
+        renderChess();
+        return true;
+    }
+
     if (isMultiplayerChessActive()) {
         getMultiplayerSocket()?.emit('chess:move', {
             fromRow: chessSelectedSquare.row,
@@ -696,6 +716,30 @@ export function submitChessMove(toRow, toCol) {
     }
 
     return applyChessMove(chessSelectedSquare.row, chessSelectedSquare.col, toRow, toCol);
+}
+
+function showChessPromotionOverlay(color) {
+    const overlay = document.getElementById('chessPromotionOverlay');
+    if (!overlay) return;
+    overlay.querySelectorAll('[data-chess-promote]').forEach((btn) => {
+        const glyph = btn.querySelector('.chess-promo-glyph');
+        if (glyph) glyph.textContent = CHESS_PIECES[btn.dataset.chessPromote]?.[color] || '';
+    });
+    overlay.classList.remove('hidden');
+}
+
+export function handleChessPromotion(piece) {
+    const validPieces = ['queen', 'rook', 'bishop', 'knight'];
+    const promotionPiece = validPieces.includes(piece) ? piece : 'queen';
+    document.getElementById('chessPromotionOverlay')?.classList.add('hidden');
+    if (!chessPromotionPending) return;
+    const { fromRow, fromCol, toRow, toCol, isMultiplayer } = chessPromotionPending;
+    chessPromotionPending = null;
+    if (isMultiplayer) {
+        getMultiplayerSocket()?.emit('chess:move', { fromRow, fromCol, toRow, toCol, promotionPiece });
+    } else {
+        applyChessMove(fromRow, fromCol, toRow, toCol, promotionPiece);
+    }
 }
 
 export function clearChessDragState(shouldRender = true) {
@@ -987,7 +1031,7 @@ export function handleChessCellClick(row, col) {
     }
 }
 
-export function applyChessMove(fromRow, fromCol, toRow, toCol) {
+export function applyChessMove(fromRow, fromCol, toRow, toCol, promotionPiece = 'queen') {
     const movingPiece = chessState.board[fromRow][fromCol];
     if (!movingPiece || movingPiece.color !== chessState.turn || chessState.winner) {
         return false;
@@ -1014,7 +1058,7 @@ export function applyChessMove(fromRow, fromCol, toRow, toCol) {
     }
 
     if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
-        chessState.board[toRow][toCol] = createChessPiece('queen', nextPiece.color);
+        chessState.board[toRow][toCol] = createChessPiece(promotionPiece, nextPiece.color);
     }
 
     chessSelectedSquare = null;

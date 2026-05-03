@@ -2903,7 +2903,9 @@ io.on('connection', (socket) => {
     }
 
     if (nextPiece.type === 'pawn' && (toRow === 0 || toRow === CHESS_SIZE - 1)) {
-      room.gameState.board[toRow][toCol] = createChessPiece('queen', nextPiece.color);
+      const validPromos = ['queen', 'rook', 'bishop', 'knight'];
+      const chosenPromo = validPromos.includes(promotionPiece) ? promotionPiece : 'queen';
+      room.gameState.board[toRow][toCol] = createChessPiece(chosenPromo, nextPiece.color);
     }
 
     room.gameState.lastMove = {
