@@ -29,6 +29,7 @@ import * as breakout from '../breakout.js';
 import * as blockBlast from '../blockBlast.js';
 import * as uno from '../uno.js';
 import * as bomb from '../bomb.js';
+import { bindTouchGameControls } from './touch-controls.js';
 
 // options: { getSocket, getActiveRoom, getActiveGameTab,
 //   isMultiplayerLaunchPending, toggleMultiplayerReady, setMultiplayerStatus,
@@ -209,7 +210,7 @@ export function bindAllGameEventControls(options = {}) {
         _2048.render2048Menu();
     });
     
-    window.bindTouchGameControls({
+    bindTouchGameControls({
         getActiveGameTab: options.getActiveGameTab,
         is2048Blocked: () => _2048.get2048MenuVisible(),
         move2048: _2048.move2048,

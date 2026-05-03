@@ -39,14 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const { loadSession, saveSession, clearSession, scheduleSessionTimeout } = window.__baie.session;
     const { closeGameOverModal, closeLegalNoticeModal, closeConfirmModal, bindCoreModalControls, bindConfirmModalControls, bindEscapeModalControls } = window.__baie.modals;
     const { setMultiplayerStatus, setMultiplayerEntryMode, syncMultiplayerPlayerNames } = window.__baie.mpStatus;
-    const { transitionToView: _transitionToView, showViewImmediately: _showViewImmediately, activatePanel, activateMathPanel: _activateMathPanel, activateMusicPanel: _activateMusicPanel, syncAllGameMenuOverlayBounds } = window.__baie.router;
+    const { transitionToView: _transitionToView, showViewImmediately: _showViewImmediately, activatePanel, activateMathPanel: _activateMathPanel, activateMusicPanel: _activateMusicPanel, syncAllGameMenuOverlayBounds, getActiveGameTab } = window.__baie.router;
     const { bindAppShellControls, showGamePanel: _showGamePanel, showGamesHome: _showGamesHome, showGamesSection: _showGamesSection, bindGamesNavigationControls } = window.__baie.navigation;
-    const { bindMultiplayerSession, bindMultiplayerLobbyControls, updateMultiplayerChatPanel: _updateMpChatPanel, updateMultiplayerLobby: _updateMpLobby } = window.__baie.mp;
+    const { bindMultiplayerSession, bindMultiplayerLobbyControls, updateMultiplayerChatPanel: _updateMpChatPanel, updateMultiplayerLobby: _updateMpLobby, bindMultiplayerChat, bindSetSelectedMultiplayerGame } = window.__baie.mp;
     const { bindAllGameEventControls, bindGlobalKeyboardControls, bindGameKeyReleaseControls, bindResponsiveGameResize, bindSessionActivityTracking } = window.__baie.controls;
     const { bindCinemaCatalogControls } = window.__baie.cinema;
 
     let currentView = loginView;
-    const getActiveGameTab = window.__baieActiveGameTab;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
 
@@ -169,19 +168,19 @@ document.addEventListener('DOMContentLoaded', () => {
         openSelectedGame: (gameId) => openSelectedGame(gameId)
     });
 
-    const sendMultiplayerChatMessage = window.__baie.multiplayerChat.bindMultiplayerChat({
+    const sendMultiplayerChatMessage = bindMultiplayerChat({
         getActiveGameTab,
         ensureMultiplayerConnection,
         multiplayerChatInput
     });
 
-    const setSelectedMultiplayerGame = window.__baie.multiplayerSession.bindSetSelectedMultiplayerGame({
+    const setSelectedMultiplayerGame = bindSetSelectedMultiplayerGame({
         ensureMultiplayerConnection,
         updateMultiplayerLobby
     });
 
     const _navCbs = {
-        cleanupActiveGameForNavigation: (nextTab) => window.__baie.gameLifecycle.cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), window.__baie),
+        cleanupActiveGameForNavigation: (nextTab) => window.__baie.lifecycle.cleanupActiveGameForNavigation(nextTab, getActiveGameTab(), window.__baie),
         updateMultiplayerChatPanel,
         closeGameOverModal,
         updateMultiplayerLobby
@@ -215,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function openSelectedGame(nextTab) {
-        window.__baie.gameLifecycle.openSelectedGame(nextTab, getActiveGameTab(), window.__baie, { setSelectedMultiplayerGame, closeGameOverModal });
+        window.__baie.lifecycle.openSelectedGame(nextTab, getActiveGameTab(), window.__baie, { setSelectedMultiplayerGame, closeGameOverModal });
     }
 
     bindGamesNavigationControls({

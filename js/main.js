@@ -150,27 +150,23 @@ const GAME_MODULES = {
 // sans attendre DOMContentLoaded.
 if (typeof window !== 'undefined') {
     window.__baie = Object.assign(window.__baie || {}, GAME_MODULES);
-    window.__baieActiveGameTab = getActiveGameTab;
-    Object.assign(window, { bindTouchGameControls });
     window.__baie.multiplayerState = multiplayerState;
-    window.__baie.multiplayerChat = { bindMultiplayerChat };
-    window.__baie.multiplayerSession = { bindSetSelectedMultiplayerGame };
     window.__baie.session = { loadSession, saveSession, clearSession, scheduleSessionTimeout };
     window.__baie.modals = { closeGameOverModal, closeLegalNoticeModal, closeConfirmModal, bindCoreModalControls, bindConfirmModalControls, bindEscapeModalControls };
     window.__baie.mpStatus = { setMultiplayerStatus, setMultiplayerEntryMode, syncMultiplayerPlayerNames };
-    window.__baie.router = { transitionToView, showViewImmediately, activatePanel, activateMathPanel, activateMusicPanel, syncAllGameMenuOverlayBounds };
+    window.__baie.router = { transitionToView, showViewImmediately, activatePanel, activateMathPanel, activateMusicPanel, syncAllGameMenuOverlayBounds, getActiveGameTab };
     window.__baie.navigation = { bindAppShellControls, showGamePanel, showGamesHome, showGamesSection, bindGamesNavigationControls };
-    window.__baie.mp = { bindMultiplayerSession, bindMultiplayerLobbyControls, updateMultiplayerChatPanel, updateMultiplayerLobby };
+    window.__baie.mp = { bindMultiplayerSession, bindMultiplayerLobbyControls, updateMultiplayerChatPanel, updateMultiplayerLobby, bindMultiplayerChat, bindSetSelectedMultiplayerGame };
     window.__baie.controls = { bindAllGameEventControls, bindGlobalKeyboardControls, bindGameKeyReleaseControls, bindResponsiveGameResize, bindSessionActivityTracking };
+    window.__baie.lifecycle = { cleanupActiveGameForNavigation, openSelectedGame };
     window.__baie.music = musicModule;
     window.__baie.math = mathModule;
     window.__baie.cinema = cinemaModule;
     window.__baie.boardHelpers = boardHelpers;
-    window.__baie.gameLifecycle = { cleanupActiveGameForNavigation, openSelectedGame };
 }
 
 function injectActiveGameTabAccessors() {
-    const accessor = () => (typeof window !== 'undefined' ? window.__baieActiveGameTab?.() ?? null : null);
+    const accessor = () => (typeof window !== 'undefined' ? window.__baie?.router?.getActiveGameTab?.() ?? null : null);
     for (const mod of Object.values(GAME_MODULES)) {
         for (const [key, value] of Object.entries(mod)) {
             if (typeof value === 'function' && /^set[A-Z].*ActiveGameTabAccessor$/.test(key)) {
