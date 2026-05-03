@@ -9,6 +9,22 @@ import { EXCEL_FILE_CANDIDATES } from '../core/constants.js';
 
 export const DEFAULT_POSTER_URL = 'https://placehold.co/600x900/0f172a/f8fafc?text=Affiche';
 
+const XLSX_CDN = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+let _xlsxLoadPromise = null;
+
+function loadXlsx() {
+    if (window.XLSX) return Promise.resolve();
+    if (_xlsxLoadPromise) return _xlsxLoadPromise;
+    _xlsxLoadPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = XLSX_CDN;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error('Chargement xlsx échoué.'));
+        document.head.appendChild(script);
+    });
+    return _xlsxLoadPromise;
+}
+
 // --- formatters ---
 
 export function formatDate(dateString) {
@@ -254,6 +270,12 @@ export async function importMoviesFromExcel(context = {}) {
             renderAll();
         }
     };
+
+    try {
+        await loadXlsx();
+    } catch (_err) {
+        // window.XLSX restera falsy, géré ci-dessous
+    }
 
     if (!window.XLSX) {
         setExcelImportFeedback(excelImportStatus, 'Lecture Excel indisponible pour le moment.', 'error');

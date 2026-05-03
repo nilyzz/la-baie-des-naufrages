@@ -3303,6 +3303,17 @@ io.on('connection', (socket) => {
   });
 
   socket.on('room:chat:send', ({ message }) => {
+    const now = Date.now();
+    if (!socket.data.chatWindowStart || now - socket.data.chatWindowStart >= 5000) {
+      socket.data.chatMessageCount = 0;
+      socket.data.chatWindowStart = now;
+    }
+    socket.data.chatMessageCount = (socket.data.chatMessageCount || 0) + 1;
+    if (socket.data.chatMessageCount > 5) {
+      socket.disconnect(true);
+      return;
+    }
+
     const room = getRoom(socket.data.roomCode);
 
     if (!room) {
