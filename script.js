@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setMovies: (nextMovies) => {
                 movies = nextMovies;
             },
-            renderAll,
+            renderAll: () => applyCinemaCatalogState(window.renderCinemaCatalogAll(getCinemaCatalogContext())),
             loadMovies: () => []
         });
     }
@@ -236,28 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         catalogDirectorTerm = nextState.catalogDirectorTerm ?? catalogDirectorTerm;
     }
 
-    function renderCatalogFilters() {
-        applyCinemaCatalogState(window.renderCatalogFilters(getCinemaCatalogContext()));
-    }
-
-    function renderCatalog() {
-        return window.renderCatalog(getCinemaCatalogContext());
-    }
-
-    function renderAll() {
-        applyCinemaCatalogState(window.renderCinemaCatalogAll(getCinemaCatalogContext()));
-    }
-
     // openLegalNoticeModal / closeLegalNoticeModal : exposes sur window par js/main.js (source = js/core/modals.js).
-
-    function isMultiplayerLaunchPending(gameId = __mpState.getMultiplayerActiveRoom()?.gameId) {
-        return __mpState.isMultiplayerLaunchPending(gameId);
-    }
-
-    function setMultiplayerEntryMode(mode) {
-        return window.setMultiplayerEntryMode(mode);
-    }
-
     // setMultiplayerStatus : expose sur window par js/main.js (source = js/multiplayer/status.js).
 
     function isMultiplayerChatVisible() {
@@ -427,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.bindGamesNavigationControls({
         openSelectedGame,
         setSelectedMultiplayerGame,
-        setMultiplayerEntryMode,
+        setMultiplayerEntryMode: window.setMultiplayerEntryMode,
         showGamesSection
     });
 
@@ -439,13 +418,13 @@ document.addEventListener('DOMContentLoaded', () => {
         getSocket: () => __mpState.getMultiplayerSocket(),
         getActiveRoom: () => __mpState.getMultiplayerActiveRoom(),
         getActiveGameTab,
-        isMultiplayerLaunchPending,
+        isMultiplayerLaunchPending: (gameId = __mpState.getMultiplayerActiveRoom()?.gameId) => __mpState.isMultiplayerLaunchPending(gameId),
         toggleMultiplayerReady,
         setMultiplayerStatus,
         showGamePanel,
         showGamesSection,
         setSelectedMultiplayerGame,
-        setMultiplayerEntryMode,
+        setMultiplayerEntryMode: window.setMultiplayerEntryMode,
         openSelectedGame,
         closeGameOverModal
     });
@@ -455,8 +434,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.bindCinemaCatalogControls({
         getContext: getCinemaCatalogContext,
         setState: applyCinemaCatalogState,
-        renderCatalog,
-        renderCatalogFilters
+        renderCatalog: () => window.renderCatalog(getCinemaCatalogContext()),
+        renderCatalogFilters: () => applyCinemaCatalogState(window.renderCatalogFilters(getCinemaCatalogContext()))
     });
 
     window.bindConfirmModalControls({ onClose: window.closeConfirmModal });
@@ -517,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
         onSyncPlayerNames: window.syncMultiplayerPlayerNames
     });
 
-    renderAll();
+    applyCinemaCatalogState(window.renderCinemaCatalogAll(getCinemaCatalogContext()));
     // film.xlsx (~137KB) n'est chargé qu'à la première visite du cinéma
     // (voir ensureMoviesLoaded dans showCinema). Si la session précédente
     // s'est terminée sur le cinéma, on le précharge pour éviter l'attente.
@@ -543,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
     __rh.renderRhythmMenu();
     __sol.renderSolitaireMenu();
     __bm.renderBombMenu();
-    setMultiplayerEntryMode('create');
+    window.setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     __cc.startCoinClickerAutoLoop();
     __math.initializeConverter();
