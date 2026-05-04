@@ -7,7 +7,7 @@
 
 import { createHash } from 'node:crypto';
 import { build } from 'esbuild';
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 
@@ -221,6 +221,11 @@ async function main() {
 
     updateVersionedFiles(displayVersion, cacheKey);
     writeVersionState(nextVersion, sourceHash);
+
+    // Nettoyer les chunks obsolètes avant de rebuilder
+    if (existsSync('js/chunks')) {
+        rmSync('js/chunks', { recursive: true, force: true });
+    }
 
     const before = {
         script: gzipSize('script.js'),

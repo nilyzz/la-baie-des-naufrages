@@ -1,26 +1,3 @@
-import * as game2048 from './js/games/game2048.js';
-import * as aimModule from './js/games/aim.js';
-import * as airHockey from './js/games/airHockey.js';
-import * as baieBerry from './js/games/baieBerry.js';
-import * as battleship from './js/games/battleship.js';
-import * as blockBlast from './js/games/blockBlast.js';
-import * as bomb from './js/games/bomb.js';
-import * as breakout from './js/games/breakout.js';
-import * as candyCrush from './js/games/candyCrush.js';
-import * as coinClicker from './js/games/coinClicker.js';
-import * as flappy from './js/games/flappy.js';
-import * as flowFree from './js/games/flowFree.js';
-import * as harborRun from './js/games/harborRun.js';
-import * as magicSort from './js/games/magicSort.js';
-import * as minesweeper from './js/games/minesweeper.js';
-import * as pacman from './js/games/pacman.js';
-import * as pong from './js/games/pong.js';
-import * as rhythm from './js/games/rhythm.js';
-import * as snake from './js/games/snake.js';
-import * as solitaire from './js/games/solitaire.js';
-import * as stacker from './js/games/stacker.js';
-import * as tetris from './js/games/tetris.js';
-
 import * as multiplayerState from './js/multiplayer/state.js';
 
 import { loadSession, saveSession, clearSession, scheduleSessionTimeout } from './js/core/session.js';
@@ -35,8 +12,6 @@ import { bindMultiplayerChat } from './js/multiplayer/chat.js';
 import { syncAllGameMenuOverlayBounds } from './js/games/_shared/menu-overlay.js';
 import { showGamePanel as _showGamePanel, showGamesHome as _showGamesHome, showGamesSection as _showGamesSection, bindGamesNavigationControls, getActiveGameTab } from './js/games/_shared/navigation.js';
 import { bindGameKeyReleaseControls, bindGlobalKeyboardControls } from './js/games/_shared/keyboard.js';
-import { openSelectedGame as _openSelectedGame, cleanupActiveGameForNavigation } from './js/games/_shared/game-lifecycle.js';
-import { bindAllGameEventControls } from './js/games/_shared/game-event-bindings.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -50,30 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerChatInput = document.getElementById('multiplayerChatInput');
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
 
-    const __cc = coinClicker;
-    const __rh = rhythm;
-    const __am = aimModule;
-    const __sn = snake;
-    const __tt = tetris;
-    const __g2 = game2048;
-    const __fl = flappy;
-    const __pm = pacman;
-    const __bk = breakout;
-    const __ms = magicSort;
-    const __hr = harborRun;
-    const __mw = minesweeper;
-    const __st = stacker;
-    const __sol = solitaire;
-    const __bb = blockBlast;
-    const __cc2 = candyCrush;
-    const __bb2 = baieBerry;
-    const __ff = flowFree;
-    const __bs = battleship;
-    const __bm = bomb;
-    const __ah = airHockey;
-    const __pg = pong;
-
-    // Navires chargés à la demande (lazy)
+    // Chunks lazy — chargés à la première navigation vers la section correspondante
+    let lifecycleBundle = null;
+    let gameEventBundle = null;
     let cinemaModule = null;
     let mathModule = null;
     let musicModule = null;
@@ -81,6 +35,53 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentView = loginView;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
+
+    // --- Lazy loaders ---
+
+    async function loadGamesBundle() {
+        if (!lifecycleBundle) {
+            [lifecycleBundle, gameEventBundle] = await Promise.all([
+                import('./js/games/_shared/game-lifecycle.js'),
+                import('./js/games/_shared/game-event-bindings.js'),
+            ]);
+
+            const g = (id) => lifecycleBundle.getGameModule(id);
+
+            g('minesweeper')?.initializeGame();
+            g('minesweeper')?.renderMinesweeperMenu();
+            g('stacker')?.renderStackerMenu();
+            g('pacman')?.renderPacmanMenu();
+            g('tetris')?.renderTetrisMenu();
+            g('battleship')?.renderBattleshipMenu();
+            g('harborRun')?.renderHarborRunMenu();
+            g('coinClicker')?.renderCoinClickerMenu();
+            g('candyCrush')?.renderCandyCrushMenu();
+            g('flowFree')?.renderFlowFreeMenu();
+            g('magicSort')?.renderMagicSortMenu();
+            g('blockBlast')?.renderBlockBlastMenu();
+            g('aim')?.renderAimMenu();
+            g('rhythm')?.renderRhythmMenu();
+            g('solitaire')?.renderSolitaireMenu();
+            g('bomb')?.renderBombMenu();
+            g('coinClicker')?.startCoinClickerAutoLoop();
+
+            gameEventBundle.bindAllGameEventControls({
+                getSocket: () => multiplayerState.getMultiplayerSocket(),
+                getActiveRoom: () => multiplayerState.getMultiplayerActiveRoom(),
+                getActiveGameTab,
+                isMultiplayerLaunchPending: (gameId = multiplayerState.getMultiplayerActiveRoom()?.gameId) => multiplayerState.isMultiplayerLaunchPending(gameId),
+                toggleMultiplayerReady,
+                setMultiplayerStatus,
+                showGamePanel,
+                showGamesSection,
+                setSelectedMultiplayerGame,
+                setMultiplayerEntryMode,
+                openSelectedGame,
+                closeGameOverModal
+            });
+        }
+        return lifecycleBundle;
+    }
 
     async function loadCinema() {
         if (!cinemaModule) {
@@ -113,6 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return musicModule;
     }
 
+    // --- Helpers pour modules paresseux ---
+
+    function game(id) { return lifecycleBundle?.getGameModule(id); }
+
+    // --- Transitions de vue ---
+
     function transitionToView(nextView, options = {}) {
         _transitionToView(currentView, nextView, {
             ...options,
@@ -121,9 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     musicModule?.stopAllPianoNotes();
                 }
             },
-            onViewChanged: (view) => {
-                currentView = view;
-            }
+            onViewChanged: (view) => { currentView = view; }
         });
     }
 
@@ -135,11 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     musicModule?.stopAllPianoNotes();
                 }
             },
-            onViewChanged: (view) => {
-                currentView = view;
-            }
+            onViewChanged: (view) => { currentView = view; }
         });
     }
+
+    // --- Navigation principale ---
 
     function showServices() {
         closeGameOverModal();
@@ -159,12 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function showGames() {
-        if (!__mw.isMinesweeperInitialized()) {
-            __mw.initializeGame();
-        }
+    async function showGames() {
         closeGameOverModal();
         saveSession({ lastDestination: 'games' });
+        await loadGamesBundle();
         transitionToView(gamesView, {
             showHeader: true,
             headerMode: 'games',
@@ -244,7 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const _navCbs = {
-        cleanupActiveGameForNavigation: (nextTab) => cleanupActiveGameForNavigation(nextTab, getActiveGameTab()),
+        cleanupActiveGameForNavigation: (nextTab) => {
+            lifecycleBundle?.cleanupActiveGameForNavigation(nextTab, getActiveGameTab());
+        },
         updateMultiplayerChatPanel,
         closeGameOverModal,
         updateMultiplayerLobby
@@ -254,9 +259,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function showGamesHome() { _showGamesHome(_navCbs); }
     function showGamesSection(section) { _showGamesSection(section, _navCbs); }
 
-    function openSelectedGame(nextTab) {
-        _openSelectedGame(nextTab, getActiveGameTab(), { setSelectedMultiplayerGame, closeGameOverModal });
+    async function openSelectedGame(nextTab) {
+        const lifecycle = await loadGamesBundle();
+        lifecycle.openSelectedGame(nextTab, getActiveGameTab(), { setSelectedMultiplayerGame, closeGameOverModal });
     }
+
+    // --- Bindings shell ---
 
     bindAppShellControls({
         onLogin: () => {
@@ -286,23 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showGamesSection
     });
 
-    bindAllGameEventControls({
-        getSocket: () => multiplayerState.getMultiplayerSocket(),
-        getActiveRoom: () => multiplayerState.getMultiplayerActiveRoom(),
-        getActiveGameTab,
-        isMultiplayerLaunchPending: (gameId = multiplayerState.getMultiplayerActiveRoom()?.gameId) => multiplayerState.isMultiplayerLaunchPending(gameId),
-        toggleMultiplayerReady,
-        setMultiplayerStatus,
-        showGamePanel,
-        showGamesSection,
-        setSelectedMultiplayerGame,
-        setMultiplayerEntryMode,
-        openSelectedGame,
-        closeGameOverModal
-    });
-
     bindConfirmModalControls({ onClose: closeConfirmModal });
-
     bindCoreModalControls();
     bindEscapeModalControls({
         closeDeleteModal: closeConfirmModal,
@@ -313,10 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
     bindGlobalKeyboardControls({
         getActiveGameTab,
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
-        isMultiplayerPongActive: __pg.isMultiplayerPongActive,
-        pushMultiplayerPongInput: __pg.pushMultiplayerPongInput,
-        isMultiplayerAirHockeyActive: __ah.isMultiplayerAirHockeyActive,
-        pushMultiplayerAirHockeyInput: __ah.pushMultiplayerAirHockeyInput
+        isMultiplayerPongActive: () => game('pong')?.isMultiplayerPongActive() ?? false,
+        pushMultiplayerPongInput: (i) => game('pong')?.pushMultiplayerPongInput(i),
+        isMultiplayerAirHockeyActive: () => game('airHockey')?.isMultiplayerAirHockeyActive() ?? false,
+        pushMultiplayerAirHockeyInput: (i) => game('airHockey')?.pushMultiplayerAirHockeyInput(i)
     });
 
     bindSessionActivityTracking();
@@ -324,31 +316,31 @@ document.addEventListener('DOMContentLoaded', () => {
     bindGameKeyReleaseControls({
         handlePianoKeyUp: (note) => musicModule?.handlePianoKeyUp(note),
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
-        getPongKeys: () => __pg.getPongKeys(),
-        isMultiplayerPongActive: () => getActiveGameTab() === 'pong' && __pg.isMultiplayerPongActive(),
-        pushMultiplayerPongInput: __pg.pushMultiplayerPongInput,
-        getAirHockeyKeys: () => __ah.getAirHockeyKeys(),
-        isMultiplayerAirHockeyActive: () => getActiveGameTab() === 'airHockey' && __ah.isMultiplayerAirHockeyActive(),
-        pushMultiplayerAirHockeyInput: __ah.pushMultiplayerAirHockeyInput,
-        getBreakoutKeys: () => __bk.getBreakoutKeys()
+        getPongKeys: () => game('pong')?.getPongKeys() ?? [],
+        isMultiplayerPongActive: () => getActiveGameTab() === 'pong' && (game('pong')?.isMultiplayerPongActive() ?? false),
+        pushMultiplayerPongInput: (i) => game('pong')?.pushMultiplayerPongInput(i),
+        getAirHockeyKeys: () => game('airHockey')?.getAirHockeyKeys() ?? [],
+        isMultiplayerAirHockeyActive: () => getActiveGameTab() === 'airHockey' && (game('airHockey')?.isMultiplayerAirHockeyActive() ?? false),
+        pushMultiplayerAirHockeyInput: (i) => game('airHockey')?.pushMultiplayerAirHockeyInput(i),
+        getBreakoutKeys: () => game('breakout')?.getBreakoutKeys() ?? []
     });
 
     bindResponsiveGameResize({
         getActiveGameTab,
         syncAllGameMenuOverlayBounds,
-        renderSnake: __sn.renderSnake,
-        isMultiplayerPongActive: __pg.isMultiplayerPongActive,
-        syncMultiplayerPongState: __pg.syncMultiplayerPongState,
-        resetPongRound: __pg.resetPongRound,
-        initializeAirHockey: __ah.initializeAirHockey,
-        renderAirHockey: __ah.renderAirHockey,
-        render2048: __g2.render2048,
-        renderPacman: __pm.renderPacman,
-        renderFlappy: __fl.renderFlappy,
-        renderHarborRun: __hr.renderHarborRun,
-        renderStacker: __st.renderStacker,
-        drawBaieBerry: __bb2.drawBaieBerry,
-        drawBreakout: __bk.drawBreakout
+        renderSnake: (...a) => game('snake')?.renderSnake(...a),
+        isMultiplayerPongActive: () => game('pong')?.isMultiplayerPongActive() ?? false,
+        syncMultiplayerPongState: (...a) => game('pong')?.syncMultiplayerPongState(...a),
+        resetPongRound: (...a) => game('pong')?.resetPongRound(...a),
+        initializeAirHockey: (...a) => game('airHockey')?.initializeAirHockey(...a),
+        renderAirHockey: (...a) => game('airHockey')?.renderAirHockey(...a),
+        render2048: (...a) => game('game2048')?.render2048(...a),
+        renderPacman: (...a) => game('pacman')?.renderPacman(...a),
+        renderFlappy: (...a) => game('flappy')?.renderFlappy(...a),
+        renderHarborRun: (...a) => game('harborRun')?.renderHarborRun(...a),
+        renderStacker: (...a) => game('stacker')?.renderStacker(...a),
+        drawBaieBerry: (...a) => game('baieBerry')?.drawBaieBerry(...a),
+        drawBreakout: (...a) => game('breakout')?.drawBreakout(...a)
     });
 
     bindMultiplayerLobbyControls({
@@ -361,25 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     showGamePanel('home');
     updateMultiplayerLobby();
-    __mw.initializeGame();
-    __mw.renderMinesweeperMenu();
-    __st.renderStackerMenu();
-    __pm.renderPacmanMenu();
-    __tt.renderTetrisMenu();
-    __bs.renderBattleshipMenu();
-    __hr.renderHarborRunMenu();
-    __cc.renderCoinClickerMenu();
-    __cc2.renderCandyCrushMenu();
-    __ff.renderFlowFreeMenu();
-    __ms.renderMagicSortMenu();
-    __bb.renderBlockBlastMenu();
-    __am.renderAimMenu();
-    __rh.renderRhythmMenu();
-    __sol.renderSolitaireMenu();
-    __bm.renderBombMenu();
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
-    __cc.startCoinClickerAutoLoop();
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');
     syncAllGameMenuOverlayBounds();
@@ -397,10 +372,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         } else if (activeSession.lastDestination === 'games') {
-            showViewImmediately(gamesView, {
-                showHeader: true,
-                headerMode: 'games',
-                onComplete: () => showGamesHome()
+            loadGamesBundle().then(() => {
+                showViewImmediately(gamesView, {
+                    showHeader: true,
+                    headerMode: 'games',
+                    onComplete: () => showGamesHome()
+                });
             });
         } else if (activeSession.lastDestination === 'math') {
             loadMath().then(() => {

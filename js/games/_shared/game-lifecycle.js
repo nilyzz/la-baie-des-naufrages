@@ -194,6 +194,10 @@ export function cleanupActiveGameForNavigation(nextTab, activeGameTab) {
     }
 }
 
+export function getGameModule(id) {
+    return modules[id];
+}
+
 export function openSelectedGame(nextTab, activeGameTab, options = {}) {
     const { setSelectedMultiplayerGame } = options;
 
