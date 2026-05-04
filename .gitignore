@@ -8,3 +8,7 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 *.log
+
+# Fichiers CSS intermédiaires générés par build.mjs (dérivés de style.css)
+style-core.css
+style-games.css

@@ -281,6 +281,48 @@ describe('connect4', () => {
         expect(payload.gameState).toBeDefined();
         expect(payload.gameState.lastMove).toMatchObject({ col: 3 });
     });
+
+    it('détecte la victoire verticale', async () => {
+        const { host, guest } = await readyRoom('connect4');
+        // H col 0 ×3, G col 1 ×3, puis H col 0 → 4 pions verticaux → victoire
+        const sequence = [
+            { player: host, col: 0 }, { player: guest, col: 1 },
+            { player: host, col: 0 }, { player: guest, col: 1 },
+            { player: host, col: 0 }, { player: guest, col: 1 },
+        ];
+        for (const { player, col } of sequence) {
+            const upd = Promise.all([once(host, 'room:updated'), once(guest, 'room:updated')]);
+            player.emit('connect4:move', { col });
+            await upd;
+        }
+        const final = once(host, 'room:updated');
+        host.emit('connect4:move', { col: 0 });
+        const payload = await final;
+        expect(payload.gameState.finished).toBe(true);
+        expect(payload.gameState.winner).toBe('player');
+    });
+});
+
+describe('checkers', () => {
+    it('premier coup valide (rouge) émet room:updated', async () => {
+        const { host, guest } = await readyRoom('checkers');
+        const guestUpd = once(guest, 'room:updated');
+        // Pion rouge en (5,0) → (4,1) : première diagonale libre
+        host.emit('checkers:move', { fromRow: 5, fromCol: 0, toRow: 4, toCol: 1 });
+        const payload = await guestUpd;
+        expect(payload.gameState.board[4][1]).toMatchObject({ color: 'red' });
+        expect(payload.gameState.board[5][0]).toBeNull();
+        expect(payload.gameState.turn).toBe('black');
+    });
+
+    it('coup depuis une case vide est silencieusement ignoré', async () => {
+        const { host } = await readyRoom('checkers');
+        let fired = false;
+        host.once('room:updated', () => { fired = true; });
+        host.emit('checkers:move', { fromRow: 4, fromCol: 0, toRow: 3, toCol: 1 });
+        await new Promise((r) => setTimeout(r, 150));
+        expect(fired).toBe(false);
+    });
 });
 
 describe('room:chat:send', () => {
