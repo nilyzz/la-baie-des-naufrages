@@ -198,9 +198,24 @@ export function bindMultiplayerSession(options = {}) {
         }
 
         await new Promise((resolve, reject) => {
-            const timer = setTimeout(() => reject(new Error('Serveur multijoueur inaccessible.')), 10000);
-            currentSocket.once('connect', () => { clearTimeout(timer); resolve(); });
-            currentSocket.once('connect_error', () => { clearTimeout(timer); reject(new Error('Serveur multijoueur inaccessible.')); });
+            // 35 s pour absorber le réveil du serveur Render (free tier ~30 s de cold start)
+            const timer = setTimeout(() => {
+                currentSocket.off('connect', onConnect);
+                currentSocket.off('connect_error', onError);
+                reject(new Error('Serveur multijoueur inaccessible.'));
+            }, 35000);
+
+            function onConnect() {
+                clearTimeout(timer);
+                currentSocket.off('connect_error', onError);
+                resolve();
+            }
+            function onError() {
+                setMultiplayerStatus('Serveur en cours de démarrage, patientez (~30 s)…');
+            }
+
+            currentSocket.once('connect', onConnect);
+            currentSocket.on('connect_error', onError);
         });
 
         return currentSocket;
@@ -242,7 +257,7 @@ export function bindMultiplayerSession(options = {}) {
                 playerName: getPreferredMultiplayerPlayerName('create')
             });
         } catch (error) {
-            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+            setMultiplayerStatus(`${error.message} Réessaie dans quelques instants.`);
         } finally {
             setMultiplayerBusy(false);
             refreshLobby(true);
@@ -275,7 +290,7 @@ export function bindMultiplayerSession(options = {}) {
                 playerName: getPreferredMultiplayerPlayerName('join')
             });
         } catch (error) {
-            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+            setMultiplayerStatus(`${error.message} Réessaie dans quelques instants.`);
         } finally {
             setMultiplayerBusy(false);
             refreshLobby(true);
@@ -308,7 +323,7 @@ export function bindMultiplayerSession(options = {}) {
             socket.emit('room:toggle-ready');
             setMultiplayerStatus(`${isCurrentPlayerMultiplayerReady() ? 'Retrait du statut prêt' : 'Préparation'} pour ${getMultiplayerGameLabel(activeRoom?.gameId)}...`);
         } catch (error) {
-            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+            setMultiplayerStatus(`${error.message} Réessaie dans quelques instants.`);
         }
     }
 
@@ -321,7 +336,7 @@ export function bindMultiplayerSession(options = {}) {
             socket.emit('room:launch-game');
             setMultiplayerStatus(`Lancement de ${getMultiplayerGameLabel(getMultiplayerActiveRoom()?.gameId)}...`);
         } catch (error) {
-            setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+            setMultiplayerStatus(`${error.message} Réessaie dans quelques instants.`);
         }
     }
 
@@ -358,7 +373,7 @@ export function bindSetSelectedMultiplayerGame({ ensureMultiplayerConnection, up
                 socket.emit('room:update-game', { gameId });
                 setMultiplayerStatus(`Jeu du salon change pour ${getMultiplayerGameLabel(gameId)}...`);
             } catch (error) {
-                setMultiplayerStatus(`${error.message} Verifie que le serveur multijoueur est en ligne puis recharge la page.`);
+                setMultiplayerStatus(`${error.message} Réessaie dans quelques instants.`);
             }
             return;
         }
