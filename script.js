@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let mathModule = null;
     let musicModule = null;
 
+    // Promise-cache : empêche la double-initialisation si appelé deux fois avant resolve
+    let _gamesBundleP = null;
+    let _cinemaP = null;
+    let _mathP = null;
+    let _musicP = null;
+
     let currentView = loginView;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
@@ -39,78 +45,91 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Lazy loaders ---
 
     async function loadGamesBundle() {
-        if (!lifecycleBundle) {
-            [lifecycleBundle, gameEventBundle] = await Promise.all([
+        if (!_gamesBundleP) {
+            _gamesBundleP = Promise.all([
                 import('./js/games/_shared/game-lifecycle.js'),
                 import('./js/games/_shared/game-event-bindings.js'),
-            ]);
+            ]).then(([lb, geb]) => {
+                lifecycleBundle = lb;
+                gameEventBundle = geb;
 
-            const g = (id) => lifecycleBundle.getGameModule(id);
+                const g = (id) => lifecycleBundle.getGameModule(id);
 
-            g('minesweeper')?.initializeGame();
-            g('minesweeper')?.renderMinesweeperMenu();
-            g('stacker')?.renderStackerMenu();
-            g('pacman')?.renderPacmanMenu();
-            g('tetris')?.renderTetrisMenu();
-            g('battleship')?.renderBattleshipMenu();
-            g('harborRun')?.renderHarborRunMenu();
-            g('coinClicker')?.renderCoinClickerMenu();
-            g('candyCrush')?.renderCandyCrushMenu();
-            g('flowFree')?.renderFlowFreeMenu();
-            g('magicSort')?.renderMagicSortMenu();
-            g('blockBlast')?.renderBlockBlastMenu();
-            g('aim')?.renderAimMenu();
-            g('rhythm')?.renderRhythmMenu();
-            g('solitaire')?.renderSolitaireMenu();
-            g('bomb')?.renderBombMenu();
-            g('coinClicker')?.startCoinClickerAutoLoop();
+                g('minesweeper')?.initializeGame();
+                g('minesweeper')?.renderMinesweeperMenu();
+                g('stacker')?.renderStackerMenu();
+                g('pacman')?.renderPacmanMenu();
+                g('tetris')?.renderTetrisMenu();
+                g('battleship')?.renderBattleshipMenu();
+                g('harborRun')?.renderHarborRunMenu();
+                g('coinClicker')?.renderCoinClickerMenu();
+                g('candyCrush')?.renderCandyCrushMenu();
+                g('flowFree')?.renderFlowFreeMenu();
+                g('magicSort')?.renderMagicSortMenu();
+                g('blockBlast')?.renderBlockBlastMenu();
+                g('aim')?.renderAimMenu();
+                g('rhythm')?.renderRhythmMenu();
+                g('solitaire')?.renderSolitaireMenu();
+                g('bomb')?.renderBombMenu();
+                g('coinClicker')?.startCoinClickerAutoLoop();
 
-            gameEventBundle.bindAllGameEventControls({
-                getSocket: () => multiplayerState.getMultiplayerSocket(),
-                getActiveRoom: () => multiplayerState.getMultiplayerActiveRoom(),
-                getActiveGameTab,
-                isMultiplayerLaunchPending: (gameId = multiplayerState.getMultiplayerActiveRoom()?.gameId) => multiplayerState.isMultiplayerLaunchPending(gameId),
-                toggleMultiplayerReady,
-                setMultiplayerStatus,
-                showGamePanel,
-                showGamesSection,
-                setSelectedMultiplayerGame,
-                setMultiplayerEntryMode,
-                openSelectedGame,
-                closeGameOverModal
+                gameEventBundle.bindAllGameEventControls({
+                    getSocket: () => multiplayerState.getMultiplayerSocket(),
+                    getActiveRoom: () => multiplayerState.getMultiplayerActiveRoom(),
+                    getActiveGameTab,
+                    isMultiplayerLaunchPending: (gameId = multiplayerState.getMultiplayerActiveRoom()?.gameId) => multiplayerState.isMultiplayerLaunchPending(gameId),
+                    toggleMultiplayerReady,
+                    setMultiplayerStatus,
+                    showGamePanel,
+                    showGamesSection,
+                    setSelectedMultiplayerGame,
+                    setMultiplayerEntryMode,
+                    openSelectedGame,
+                    closeGameOverModal
+                });
             });
         }
+        await _gamesBundleP;
         return lifecycleBundle;
     }
 
     async function loadCinema() {
-        if (!cinemaModule) {
-            cinemaModule = await import('./js/navires/cinema.js');
-            cinemaModule.initCinemaCatalogState();
-            cinemaModule.renderCinemaCatalogAll();
-            cinemaModule.bindCinemaCatalogControls({
-                getContext: cinemaModule.getCinemaCatalogContext,
-                setState: cinemaModule.applyCinemaCatalogState
+        if (!_cinemaP) {
+            _cinemaP = import('./js/navires/cinema.js').then((mod) => {
+                cinemaModule = mod;
+                mod.initCinemaCatalogState();
+                mod.renderCinemaCatalogAll();
+                mod.bindCinemaCatalogControls({
+                    getContext: mod.getCinemaCatalogContext,
+                    setState: mod.applyCinemaCatalogState
+                });
             });
         }
+        await _cinemaP;
         return cinemaModule;
     }
 
     async function loadMath() {
-        if (!mathModule) {
-            mathModule = await import('./js/navires/math.js');
-            mathModule.bindMathControls();
-            mathModule.initializeConverter();
+        if (!_mathP) {
+            _mathP = import('./js/navires/math.js').then((mod) => {
+                mathModule = mod;
+                mod.bindMathControls();
+                mod.initializeConverter();
+            });
         }
+        await _mathP;
         return mathModule;
     }
 
     async function loadMusic() {
-        if (!musicModule) {
-            musicModule = await import('./js/navires/music.js');
-            musicModule.bindMusicControls({ onActivateMusicPanel: activateMusicPanel });
-            musicModule.renderPiano();
+        if (!_musicP) {
+            _musicP = import('./js/navires/music.js').then((mod) => {
+                musicModule = mod;
+                mod.bindMusicControls({ onActivateMusicPanel: activateMusicPanel });
+                mod.renderPiano();
+            });
         }
+        await _musicP;
         return musicModule;
     }
 

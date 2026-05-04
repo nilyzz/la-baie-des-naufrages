@@ -246,7 +246,7 @@ async function main() {
         entryNames: '[name]',
         chunkNames: 'chunks/[name]-[hash]',
         legalComments: 'none',
-        drop: ['console'],
+        pure: ['console.log', 'console.debug', 'console.info'],
         logLevel: 'info'
     });
 
