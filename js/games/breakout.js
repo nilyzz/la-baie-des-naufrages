@@ -12,7 +12,7 @@ export const BREAKOUT_MAX_STEP_DISTANCE = 4;
 let breakoutState = null;
 let breakoutAnimationFrame = null;
 let breakoutLastFrame = 0;
-let breakoutKeys = new Set();
+const breakoutKeys = new Set();
 let breakoutBestScore = (typeof window !== 'undefined' && Number(window.localStorage.getItem(BREAKOUT_BEST_KEY))) || 0;
 let breakoutRemainingBricks = 0;
 let breakoutMenuVisible = true;

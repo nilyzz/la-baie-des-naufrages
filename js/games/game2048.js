@@ -12,7 +12,7 @@ let game2048Tiles = [];
 let game2048Score = 0;
 let game2048BestScore = (typeof window !== 'undefined' ? Number(window.localStorage.getItem(GAME_2048_BEST_KEY)) : 0) || 0;
 let game2048TileLayer = null;
-let game2048TileElements = new Map();
+const game2048TileElements = new Map();
 let game2048NextTileId = 1;
 let game2048Animating = false;
 let game2048AnimationTimeout = null;

@@ -1,0 +1,2200 @@
+:root {
+    --primary-color: #6366f1;
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --card-bg: #0c1421;
+    --muted-text: #cbd5e1;
+    --border-color: rgba(148, 163, 184, 0.18);
+    --success-color: #10b981;
+    --error-color: #f87171;
+    --shadow-color: rgba(15, 23, 42, 0.45);
+}
+
+/* Utilitaire accessibilité : visible uniquement pour les lecteurs d'écran */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(99, 102, 241, 0.2), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.12), transparent 25%),
+        var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.background-glow {
+    position: fixed;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.15);
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.background-glow-left {
+    top: -80px;
+    left: -60px;
+}
+
+.background-glow-right {
+    right: -90px;
+    bottom: -70px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: rgba(15, 23, 42, 0.86);
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(16px);
+}
+
+.site-header-inner {
+    width: min(1320px, calc(100% - 32px));
+    margin: 0 auto;
+    min-height: 84px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 18px;
+}
+
+.brand-mark {
+    position: fixed;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 320px;
+}
+
+.brand-logo {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 30px -20px rgba(37, 99, 235, 0.55);
+}
+
+.brand-logo-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.app-shell {
+    position: relative;
+    z-index: 1;
+    width: min(1320px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 32px 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-view {
+    width: 100%;
+    padding-top: 92px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.view {
+    width: 100%;
+    display: none;
+    opacity: 0;
+    transform: translateY(24px);
+}
+
+.view-active {
+    display: block;
+    animation: fadeInUp 0.55s ease forwards;
+}
+
+.view-leaving {
+    display: block;
+    animation: fadeOutDown 0.45s ease forwards;
+}
+
+.site-ads {
+    position: fixed;
+    top: 124px;
+    right: max(16px, calc(50vw - 780px));
+    z-index: 15;
+    width: 280px;
+    height: min(740px, calc(100vh - 156px));
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+    transition: opacity 0.45s ease, transform 0.45s ease, visibility 0.45s ease;
+}
+
+.site-ads-entering {
+    animation: siteAdsSlideIn 0.55s ease forwards;
+}
+
+.site-ads-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(20px, 24px);
+    pointer-events: none;
+}
+
+.site-ads-no-transition {
+    transition: none;
+}
+
+.site-ads-consent-blocked {
+    display: none !important;
+}
+
+.ad-card {
+    height: 100%;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-card h3 {
+    margin-bottom: 8px;
+}
+
+.ad-card-copy {
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+.ad-slot-shell {
+    position: relative;
+    width: 100%;
+    min-height: 0;
+    height: 100%;
+    flex: 1 1 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px dashed rgba(125, 211, 252, 0.28);
+    background:
+        linear-gradient(180deg, rgba(14, 48, 86, 0.96), rgba(15, 23, 42, 0.96)),
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.16), transparent 48%);
+}
+
+.ad-slot {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 0;
+    height: 100%;
+}
+
+.ad-placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    gap: 8px;
+    padding: 20px;
+    text-align: center;
+    color: rgba(226, 232, 240, 0.88);
+    letter-spacing: 0.04em;
+}
+
+.ad-placeholder span {
+    font-size: 0.84rem;
+    text-transform: uppercase;
+}
+
+.ad-placeholder strong {
+    font-size: 1.2rem;
+}
+
+.site-ads-ready .ad-placeholder {
+    display: none;
+}
+
+.app-shell:has(#appView.view-active) .site-ads {
+    display: none !important;
+}
+
+.card {
+    background: rgba(12, 20, 33, 0.97);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    box-shadow: 0 22px 45px -30px var(--shadow-color);
+    backdrop-filter: blur(14px);
+}
+
+.login-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    width: min(520px, 100%);
+    margin: 0 auto;
+    padding: 40px;
+    text-align: center;
+}
+
+.login-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.login-eyebrow {
+    margin-top: -2px;
+    margin-bottom: 10px;
+}
+
+.login-version {
+    margin: -2px 0 0;
+    text-align: center;
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(191, 219, 254, 0.76);
+}
+
+.login-bird-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.login-bird-flight {
+    position: absolute;
+    top: clamp(34px, 22%, 96px);
+    left: -96px;
+    width: 88px;
+    height: 52px;
+    opacity: 0.34;
+    filter: blur(0.2px);
+    animation: loginBirdCruise 14s linear infinite;
+}
+
+.login-bird {
+    position: absolute;
+    inset: 0;
+    width: 52px;
+    height: 40px;
+    margin: auto;
+    border-radius: 58% 42% 46% 54% / 44% 46% 54% 56%;
+    background:
+        radial-gradient(circle at 64% 34%, rgba(15, 23, 42, 0.98) 0 8%, transparent 9%),
+        radial-gradient(circle at 58% 74%, rgba(255, 255, 255, 0.18), transparent 20%),
+        linear-gradient(180deg, rgba(239, 68, 68, 0.88), rgba(185, 28, 28, 0.88) 64%, rgba(245, 158, 11, 0.88) 64% 100%);
+    box-shadow:
+        inset -10px 0 0 rgba(14, 165, 233, 0.2),
+        0 10px 18px -12px rgba(15, 23, 42, 0.56);
+    transform-origin: center;
+    animation: loginBirdFlap 0.9s ease-in-out infinite;
+}
+
+.login-bird::before,
+.login-bird::after {
+    content: '';
+    position: absolute;
+}
+
+.login-bird::before {
+    right: -10px;
+    top: 14px;
+    width: 18px;
+    height: 10px;
+    background: linear-gradient(180deg, #facc15, #f97316);
+    clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+
+.login-bird::after {
+    left: 6px;
+    top: -6px;
+    width: 16px;
+    height: 14px;
+    background: linear-gradient(180deg, #1e293b, #020617);
+    border-radius: 8px 8px 2px 2px;
+    box-shadow:
+        6px 4px 0 -4px rgba(255, 255, 255, 0.18),
+        2px 12px 0 -5px rgba(245, 158, 11, 0.96);
+}
+
+@keyframes loginBirdCruise {
+    0% {
+        transform: translate3d(0, 52px, 0) scale(0.94) rotate(5deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.28;
+    }
+    25% {
+        transform: translate3d(180px, 34px, 0) scale(1) rotate(-1deg);
+    }
+    50% {
+        transform: translate3d(320px, 88px, 0) scale(1.04) rotate(3deg);
+        opacity: 0.38;
+    }
+    68% {
+        transform: translate3d(420px, 52px, 0) scale(1) rotate(-2deg);
+        opacity: 0.34;
+    }
+    75% {
+        transform: translate3d(450px, 64px, 0) scale(0.98) rotate(-3deg);
+    }
+    90% {
+        opacity: 0.22;
+    }
+    100% {
+        transform: translate3d(620px, 92px, 0) scale(0.92) rotate(1deg);
+        opacity: 0;
+    }
+}
+
+@keyframes loginBirdFlap {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-8deg) scaleY(1);
+    }
+    50% {
+        transform: translateY(-4px) rotate(8deg) scaleY(0.94);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-bird-flight,
+    .login-bird {
+        animation: none;
+    }
+
+    .multiplayer-entry-button::before,
+    .game-home-tile::before,
+    .game-home-tile.is-domino-entering,
+    .game-home-tile.is-domino-replaying,
+    .pong-pause-indicator:not(.hidden) {
+        animation: none !important;
+    }
+
+    .login-bird-flight {
+        left: auto;
+        right: 28px;
+        top: 28px;
+        opacity: 0.24;
+    }
+}
+
+.services-shell,
+.service-home-card {
+    width: min(980px, 100%);
+    margin: 0 auto;
+}
+
+.page-actions {
+    position: fixed;
+    top: 18px;
+    right: 16px;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.consent-preferences-button {
+    position: fixed;
+    left: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    z-index: 70;
+    min-height: 46px;
+    padding-inline: 16px;
+    box-shadow: 0 18px 32px -24px rgba(15, 23, 42, 0.88);
+}
+
+.consent-preferences-button[data-consent-mode="personalized"] {
+    border-color: rgba(16, 185, 129, 0.36);
+}
+
+.consent-preferences-button[data-consent-mode="non-personalized"] {
+    border-color: rgba(96, 165, 250, 0.36);
+}
+
+.consent-preferences-button[data-consent-mode="rejected"] {
+    border-color: rgba(248, 113, 113, 0.32);
+}
+
+.consent-banner {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+    z-index: 80;
+    width: min(920px, calc(100vw - 32px));
+    margin: 0 auto;
+    padding: 20px 22px;
+    display: grid;
+    gap: 14px;
+    max-height: min(70vh, 520px);
+    overflow-y: auto;
+    background: rgba(8, 15, 29, 0.97);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 26px 42px -28px rgba(15, 23, 42, 0.96);
+}
+
+.consent-banner .section-tag {
+    margin-bottom: 0;
+}
+
+.consent-banner h3,
+.consent-banner p {
+    margin: 0;
+}
+
+.consent-banner-copy,
+.consent-status {
+    color: var(--muted-text);
+    line-height: 1.65;
+}
+
+.consent-status {
+    font-size: 0.94rem;
+}
+
+.consent-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.consent-actions .primary-button,
+.consent-actions .secondary-button {
+    min-height: 46px;
+}
+
+.consent-refuse-button {
+    border-color: rgba(248, 113, 113, 0.28);
+}
+
+.consent-banner-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.consent-banner-links a {
+    display: inline-flex;
+    align-items: center;
+    color: #93c5fd;
+    font-weight: 700;
+}
+
+.consent-close-button {
+    margin-left: auto;
+}
+
+.page-action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding-inline: 18px;
+}
+
+.page-action-button-legal {
+    justify-content: center;
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+    padding: 14px;
+    border-radius: 14px;
+}
+
+.services-legal-button {
+    position: fixed;
+    top: 18px;
+    left: 16px;
+    z-index: 60;
+}
+
+body:has(#servicesView.view-active) .services-legal-button {
+    display: inline-flex !important;
+}
+
+.legal-button-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.legal-button-glyph {
+    display: block;
+    font-size: 1rem;
+    line-height: 1;
+    font-weight: 700;
+    transform: none;
+}
+
+.logout-button-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+}
+
+.logout-button-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.services-copy {
+    text-align: center;
+    margin-bottom: 28px;
+    transform: translateY(-10px);
+}
+
+.services-copy .eyebrow {
+    font-size: 0.92rem;
+    margin-bottom: 8px;
+}
+
+.services-copy h1,
+.services-copy h2 {
+    font-size: clamp(2.6rem, 5.8vw, 4.15rem);
+    margin-bottom: 8px;
+}
+
+.services-copy .intro {
+    margin-bottom: 0;
+}
+
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 26px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.service-card {
+    display: grid;
+    gap: 16px;
+    justify-items: center;
+    padding: 22px;
+    border-radius: 30px;
+    background: transparent;
+    color: var(--text-color);
+}
+
+.service-card:hover,
+.service-card:focus-visible {
+    transform: translateY(-4px) scale(1.01);
+    filter: none;
+}
+
+.service-card-art {
+    width: min(100%, 280px);
+    aspect-ratio: 1 / 1;
+    border-radius: 28px;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    border: none;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.service-card-art img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: auto;
+    filter: drop-shadow(0 10px 18px rgba(15, 23, 42, 0.18));
+}
+
+.service-card:hover .service-card-art,
+.service-card:focus-visible .service-card-art {
+    transform: scale(1.03);
+    box-shadow:
+        inset 0 0 0 1px rgba(99, 102, 241, 0.42),
+        0 30px 50px -36px rgba(15, 23, 42, 0.95);
+}
+
+.service-card-art-cinema {
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.4)),
+        linear-gradient(135deg, #1e293b, #6366f1);
+}
+
+.service-card-art-games {
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.4)),
+        linear-gradient(135deg, #0f766e, #38bdf8);
+}
+
+.service-card-art-math {
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.4)),
+        linear-gradient(135deg, #5f72f6, #2aa9ef);
+}
+
+.service-card-art-music {
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.4)),
+        linear-gradient(135deg, #2dd4bf, #f472b6);
+}
+
+.service-card-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.service-card-subtitle {
+    color: var(--muted-text);
+    font-size: 0.98rem;
+}
+
+.service-home-card {
+    padding: 48px;
+    text-align: center;
+}
+
+.service-home-actions {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+}
+
+.games-layout {
+    width: min(960px, 100%);
+    margin: 0 auto;
+    position: relative;
+    align-items: stretch;
+    height: min(740px, calc(100vh - 88px));
+}
+
+.games-filters-card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 22px 18px;
+    position: absolute;
+    top: 0;
+    right: calc(100% + 20px);
+    width: 280px;
+    height: auto;
+    min-height: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+    transition: opacity 0.45s ease, transform 0.45s ease, visibility 0.45s ease;
+}
+
+.games-filters-card-entering {
+    animation: gamesFiltersSlideIn 0.55s ease forwards;
+}
+
+.games-filters-card-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-20px);
+    pointer-events: none;
+}
+
+.games-filters-card-no-transition {
+    transition: none;
+}
+
+.multiplayer-chat-card {
+    right: calc(100% + 20px);
+    height: 100%;
+    max-height: 100%;
+    justify-content: space-between;
+    background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.15), transparent 42%),
+        linear-gradient(180deg, rgba(6, 10, 20, 0.98), rgba(6, 10, 20, 0.9));
+    border-color: rgba(74, 222, 128, 0.18);
+}
+
+.multiplayer-chat-copy p:last-child {
+    margin-bottom: 0;
+}
+
+.multiplayer-chat-messages {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.multiplayer-chat-empty {
+    margin: 0;
+    padding: 14px;
+    border-radius: 18px;
+    border: 1px dashed rgba(148, 163, 184, 0.24);
+    color: rgba(226, 232, 240, 0.72);
+    background: rgba(15, 23, 42, 0.36);
+}
+
+.multiplayer-chat-message {
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.56);
+}
+
+.multiplayer-chat-message.is-you {
+    border-color: rgba(74, 222, 128, 0.38);
+    background:
+        linear-gradient(135deg, rgba(22, 163, 74, 0.18), rgba(15, 23, 42, 0.72)),
+        rgba(15, 23, 42, 0.62);
+}
+
+.multiplayer-chat-message-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.76rem;
+    color: rgba(191, 219, 254, 0.78);
+}
+
+.multiplayer-chat-message-author {
+    font-weight: 700;
+    color: rgba(248, 250, 252, 0.96);
+}
+
+.multiplayer-chat-message-text {
+    margin: 0;
+    color: rgba(226, 232, 240, 0.92);
+    word-break: break-word;
+}
+
+.multiplayer-chat-form {
+    display: grid;
+    gap: 10px;
+}
+
+.games-filters-copy h3 {
+    margin-bottom: 8px;
+}
+
+.games-filters-copy p:last-child {
+    margin-bottom: 0;
+}
+
+.games-filter-search {
+    display: grid;
+    gap: 8px;
+}
+
+.games-filter-search-label,
+.games-filter-group-label {
+    margin: 0;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(191, 219, 254, 0.8);
+}
+
+.games-filter-search input {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 18px;
+    border: 1px solid rgba(96, 165, 250, 0.24);
+    padding: 0 14px;
+    color: var(--text-color);
+    background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.68)),
+        rgba(15, 23, 42, 0.76);
+}
+
+.games-filter-search input:focus {
+    outline: 2px solid rgba(125, 211, 252, 0.35);
+    outline-offset: 2px;
+}
+
+.games-filter-group {
+    display: grid;
+    gap: 10px;
+}
+
+.games-filter-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.games-filter-chip {
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.56);
+    color: rgba(226, 232, 240, 0.92);
+    font-weight: 700;
+}
+
+.games-filter-chip.is-active {
+    border-color: rgba(125, 211, 252, 0.68);
+    background:
+        linear-gradient(135deg, rgba(56, 189, 248, 0.26), rgba(59, 130, 246, 0.16)),
+        rgba(15, 23, 42, 0.76);
+    box-shadow:
+        0 0 0 1px rgba(125, 211, 252, 0.14),
+        0 16px 30px -26px rgba(56, 189, 248, 0.58);
+}
+
+.games-filter-summary {
+    margin-top: auto;
+    padding: 14px;
+    border-radius: 22px;
+    border: 1px solid rgba(96, 165, 250, 0.16);
+    background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 54%),
+        rgba(15, 23, 42, 0.46);
+}
+
+.games-filter-summary strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 1rem;
+}
+
+.games-filter-summary p {
+    margin: 0;
+    color: rgba(226, 232, 240, 0.8);
+    font-size: 0.92rem;
+}
+
+.games-panel {
+    display: none;
+}
+
+.games-panel.games-panel-active {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.games-layout.games-layout-focus {
+    width: min(960px, 100%);
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+}
+
+.games-layout.games-layout-focus .games-filters-card {
+    display: none;
+}
+
+.games-layout.games-layout-focus .multiplayer-chat-card.is-visible {
+    display: flex;
+}
+
+.games-home-card {
+    padding: 24px;
+    overflow: hidden;
+    background: rgba(12, 20, 33, 0.97);
+}
+
+.games-home-copy {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.multiplayer-lobby-card {
+    width: min(100%, 920px);
+    margin: 0 auto 16px;
+    padding: 12px 18px;
+    border-radius: 28px;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 42%),
+        linear-gradient(180deg, rgba(6, 10, 20, 0.98), rgba(6, 10, 20, 0.9));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.multiplayer-lobby-copy h4 {
+    margin: 0;
+}
+
+.multiplayer-lobby-copy p:last-child {
+    margin-bottom: 0;
+}
+
+.multiplayer-lobby-status {
+    color: rgba(226, 232, 240, 0.86);
+}
+
+.multiplayer-entry-switch {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.multiplayer-entry-button {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 48px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.58);
+    color: rgba(226, 232, 240, 0.9);
+    font-weight: 700;
+}
+
+.multiplayer-entry-button::before,
+.game-home-tile::before {
+    content: '';
+    position: absolute;
+    top: -26%;
+    bottom: -26%;
+    left: -38%;
+    width: 34%;
+    background: linear-gradient(
+        112deg,
+        transparent 0 18%,
+        rgba(255, 255, 255, 0.04) 18% 30%,
+        rgba(255, 255, 255, 0.3) 46%,
+        rgba(167, 243, 208, 0.42) 56%,
+        rgba(255, 255, 255, 0.08) 68%,
+        transparent 78%
+    );
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-160%, 0, 0) rotate(14deg);
+}
+
+.multiplayer-entry-button.is-active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.3), rgba(59, 130, 246, 0.22));
+    border-color: rgba(125, 211, 252, 0.55);
+    box-shadow: 0 12px 30px rgba(14, 165, 233, 0.12);
+}
+
+.multiplayer-entry-button-success {
+    border-color: rgba(16, 185, 129, 0.28);
+    background: rgba(6, 78, 59, 0.26);
+    color: #d1fae5;
+}
+
+.multiplayer-entry-button-success.is-active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.32), rgba(34, 197, 94, 0.2));
+    border-color: rgba(74, 222, 128, 0.58);
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.18);
+}
+
+.multiplayer-entry-button.is-active::before {
+    animation: multiplayerMenuGlowSweep 1.9s ease-in-out infinite;
+}
+
+.multiplayer-entry-panels {
+    margin-top: 10px;
+}
+
+.multiplayer-entry-panel {
+    display: none;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 22px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.48);
+    align-content: start;
+}
+
+.multiplayer-entry-panel.is-active {
+    display: grid;
+}
+
+.multiplayer-entry-panel-copy h5 {
+    margin: 0;
+    font-size: 1.12rem;
+}
+
+.multiplayer-entry-panel-copy p:last-child {
+    margin-bottom: 0;
+    font-size: 0.96rem;
+}
+
+.multiplayer-entry-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.multiplayer-entry-fields-join {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.multiplayer-entry-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.multiplayer-lobby-field {
+    display: grid;
+    gap: 6px;
+}
+
+.multiplayer-lobby-field span {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(191, 219, 254, 0.82);
+}
+
+.multiplayer-lobby-field input {
+    width: 100%;
+    min-height: 42px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    padding: 0 14px;
+    color: var(--text-color);
+    background: rgba(15, 23, 42, 0.62);
+}
+
+.multiplayer-lobby-field select {
+    width: 100%;
+    min-height: 42px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    padding: 0 14px;
+    color: var(--text-color);
+    background: rgba(15, 23, 42, 0.62);
+}
+
+.multiplayer-lobby-field input:focus {
+    outline: 2px solid rgba(56, 189, 248, 0.28);
+    outline-offset: 2px;
+}
+
+.multiplayer-lobby-field select:focus {
+    outline: 2px solid rgba(56, 189, 248, 0.28);
+    outline-offset: 2px;
+}
+
+.multiplayer-room-inline {
+    display: inline-grid;
+    gap: 2px;
+    min-width: 112px;
+    padding: 7px 11px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.58);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.multiplayer-room-inline-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(191, 219, 254, 0.76);
+}
+
+.multiplayer-room-inline-value {
+    font-size: 1rem;
+    color: rgba(248, 250, 252, 0.96);
+}
+
+.multiplayer-lobby-players {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.multiplayer-lobby-players-title {
+    margin: 0 0 10px;
+    color: rgba(226, 232, 240, 0.92);
+}
+
+.multiplayer-lobby-player-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: rgba(226, 232, 240, 0.84);
+}
+
+.multiplayer-lobby-player-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(30, 41, 59, 0.82);
+    border: 1px solid rgba(96, 165, 250, 0.18);
+}
+
+.multiplayer-lobby-player-pill.is-you {
+    border-color: rgba(74, 222, 128, 0.42);
+}
+
+.multiplayer-lobby-player-pill.is-host {
+    box-shadow: inset 0 0 0 1px rgba(250, 204, 21, 0.24);
+}
+
+.games-home-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 8px;
+    width: min(100%, 920px);
+    margin: 0 auto;
+    perspective: 1200px;
+}
+
+.game-home-tile {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    text-align: center;
+    padding: 10px 8px;
+    border-radius: 22px;
+    color: var(--text-color);
+    background:
+        linear-gradient(180deg, rgba(99, 102, 241, 0.12), rgba(15, 23, 42, 0.28)),
+        rgba(15, 23, 42, 0.56);
+    border: 1px solid rgba(99, 102, 241, 0.16);
+    aspect-ratio: 0.92 / 1;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 6px;
+    transform-origin: left center;
+    transition:
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        background 220ms ease,
+        transform 220ms ease,
+        filter 220ms ease;
+    will-change: transform, opacity;
+}
+
+.game-home-tile[hidden] {
+    display: none !important;
+}
+
+.game-home-tile.is-domino-entering {
+    pointer-events: none;
+}
+
+.game-home-tile.is-domino-entering {
+    animation: gameHomeTileDominoIn 560ms cubic-bezier(0.21, 1, 0.32, 1) both;
+    animation-delay: calc(var(--domino-order, 0) * 58ms);
+}
+
+.game-home-tile.is-domino-replaying {
+    animation: gameHomeTileDominoReplay 340ms cubic-bezier(0.24, 0.88, 0.32, 1);
+}
+
+.game-home-tile:hover,
+.game-home-tile:focus-visible,
+.game-home-tile.is-domino-replaying {
+    border-color: rgba(74, 222, 128, 0.58);
+    background:
+        linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(34, 197, 94, 0.2)),
+        rgba(15, 23, 42, 0.68);
+    box-shadow:
+        0 0 0 1px rgba(74, 222, 128, 0.18),
+        0 18px 34px -24px rgba(16, 185, 129, 0.38);
+    filter: none;
+}
+
+.game-home-tile:hover::before,
+.game-home-tile:focus-visible::before,
+.game-home-tile.is-domino-replaying::before {
+    animation: multiplayerMenuGlowSweep 820ms ease;
+}
+
+.multiplayer-game-tile.is-selected {
+    border-color: rgba(125, 211, 252, 0.7);
+    background:
+        linear-gradient(180deg, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.32)),
+        rgba(15, 23, 42, 0.62);
+    box-shadow:
+        0 0 0 1px rgba(125, 211, 252, 0.18),
+        0 18px 36px -26px rgba(56, 189, 248, 0.5);
+}
+
+.game-home-art {
+    width: 64px;
+    height: 64px;
+    border-radius: 19px;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 20px 34px -24px rgba(15, 23, 42, 0.78);
+}
+
+.game-home-art::before,
+.game-home-art::after {
+    content: '';
+    position: absolute;
+}
+
+.game-home-art-minesweeper {
+    background:
+        linear-gradient(180deg, rgba(99, 102, 241, 0.16), rgba(15, 23, 42, 0.22)),
+        rgba(15, 23, 42, 0.62);
+}
+
+.game-home-art-minesweeper::before {
+    inset: 0;
+    content: '\1F3F4\200D\2620\FE0F';
+    display: grid;
+    place-items: center;
+    font-size: 3.35rem;
+    line-height: 1;
+    text-shadow: 0 8px 18px rgba(15, 23, 42, 0.35);
+}
+
+.game-home-art-minesweeper::after {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    height: 10px;
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.28), transparent 72%);
+    opacity: 0.45;
+}
+
+.game-home-art-snake {
+    background:
+        radial-gradient(circle at 74% 24%, rgba(255, 255, 255, 0.16), transparent 16%),
+        linear-gradient(135deg, #0f766e, #2563eb);
+}
+
+.game-home-art-snake::before {
+    inset: 18px 18px 22px 18px;
+    border-radius: 999px 999px 16px 16px;
+    background:
+        radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.95) 0 8%, transparent 9%),
+        radial-gradient(circle at 66% 28%, rgba(255, 255, 255, 0.95) 0 8%, transparent 9%),
+        radial-gradient(circle at 34% 30%, rgba(15, 23, 42, 0.96) 0 3%, transparent 4%),
+        radial-gradient(circle at 66% 30%, rgba(15, 23, 42, 0.96) 0 3%, transparent 4%),
+        linear-gradient(180deg, rgba(94, 234, 212, 0.98), rgba(14, 165, 233, 0.92));
+}
+
+.game-home-art-snake::after {
+    width: 28px;
+    height: 28px;
+    right: 14px;
+    bottom: 14px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #f59e0b, #b45309);
+}
+
+.game-home-art-pong {
+    background: linear-gradient(135deg, #0f172a, #1d4ed8);
+}
+
+.game-home-art-pong::before {
+    left: 10px;
+    top: 11px;
+    width: 6px;
+    height: 32px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(125, 211, 252, 0.78));
+    box-shadow: 28px 0 0 0 rgba(45, 212, 191, 0.94);
+}
+
+.game-home-art-pong::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.18) 49% 51%, transparent 51%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.98) 0 4px, transparent 5px);
+}
+
+.game-home-art-sudoku {
+    background: linear-gradient(135deg, #166534, #1d4ed8);
+}
+
+.game-home-art-sudoku::before {
+    inset: 10px;
+    border-radius: 16px;
+    background:
+        linear-gradient(90deg, transparent 31%, rgba(255, 255, 255, 0.78) 31% 34%, transparent 34% 64%, rgba(255, 255, 255, 0.78) 64% 67%, transparent 67%),
+        linear-gradient(transparent 31%, rgba(255, 255, 255, 0.78) 31% 34%, transparent 34% 64%, rgba(255, 255, 255, 0.78) 64% 67%, transparent 67%),
+        linear-gradient(90deg, transparent 10%, rgba(255, 255, 255, 0.24) 10% 12%, transparent 12% 22%, rgba(255, 255, 255, 0.24) 22% 24%, transparent 24% 43%, rgba(255, 255, 255, 0.24) 43% 45%, transparent 45% 55%, rgba(255, 255, 255, 0.24) 55% 57%, transparent 57% 76%, rgba(255, 255, 255, 0.24) 76% 78%, transparent 78% 88%, rgba(255, 255, 255, 0.24) 88% 90%, transparent 90%),
+        linear-gradient(transparent 10%, rgba(255, 255, 255, 0.24) 10% 12%, transparent 12% 22%, rgba(255, 255, 255, 0.24) 22% 24%, transparent 24% 43%, rgba(255, 255, 255, 0.24) 43% 45%, transparent 45% 55%, rgba(255, 255, 255, 0.24) 55% 57%, transparent 57% 76%, rgba(255, 255, 255, 0.24) 76% 78%, transparent 78% 88%, rgba(255, 255, 255, 0.24) 88% 90%, transparent 90%),
+        rgba(15, 23, 42, 0.22);
+}
+
+.game-home-art-sudoku::after {
+    inset: 0;
+    content: '8';
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 2rem;
+    font-weight: 900;
+    display: grid;
+    place-items: center;
+    text-shadow: 0 0 12px rgba(15, 23, 42, 0.35);
+}
+
+.game-home-art-2048 {
+    background: linear-gradient(135deg, #93c5fd, #3b82f6 52%, #1e3a8a);
+    border: none;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 20px 34px -24px rgba(15, 23, 42, 0.78);
+}
+
+.game-home-art-2048::before {
+    inset: 15px;
+    border-radius: 18px;
+    background:
+        linear-gradient(90deg, rgba(15, 23, 42, 0.28) 0 48%, transparent 48% 52%, rgba(15, 23, 42, 0.28) 52% 100%),
+        linear-gradient(rgba(15, 23, 42, 0.28) 0 48%, transparent 48% 52%, rgba(15, 23, 42, 0.28) 52% 100%);
+}
+
+.game-home-art-2048::after {
+    inset: 21px;
+    content: '2048';
+    color: rgba(255, 255, 255, 0.94);
+    font-size: 1rem;
+    font-weight: 900;
+    display: grid;
+    place-items: center;
+}
+
+.game-home-art-aim {
+    background: linear-gradient(135deg, #0ea5e9, #1e3a8a);
+}
+
+.game-home-art-aim::before {
+    inset: 18px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 32% 30%, rgba(186, 230, 253, 0.18) 0 10%, transparent 11%),
+        radial-gradient(circle at 62% 38%, rgba(125, 211, 252, 0.1) 0 8%, transparent 9%),
+        radial-gradient(circle at 42% 62%, rgba(15, 23, 42, 0.22) 0 11%, transparent 12%),
+        radial-gradient(circle at 58% 56%, rgba(15, 23, 42, 0.2) 0 9%, transparent 10%),
+        radial-gradient(circle at 34% 34%, rgba(255, 255, 255, 0.12), rgba(59, 130, 246, 0.1) 14%, rgba(30, 64, 175, 0.9) 38%, rgba(23, 37, 84, 0.98) 70%, rgba(15, 23, 42, 1) 100%),
+        repeating-conic-gradient(
+            from 4deg,
+            rgba(15, 23, 42, 0.98) 0deg 5deg,
+            transparent 5deg 17deg
+        );
+    box-shadow:
+        0 0 0 1px rgba(17, 24, 39, 0.18),
+        0 10px 18px -12px rgba(15, 23, 42, 0.68);
+}
+
+.game-home-art-aim::after {
+    inset: 10px;
+    border-radius: 50%;
+    background:
+        linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.92) 49% 51%, transparent 51%),
+        linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.92) 49% 51%, transparent 51%),
+        radial-gradient(circle, transparent 18px, rgba(255, 255, 255, 0.92) 18px 20px, transparent 21px);
+}
+
+.game-home-art-memory {
+    background: linear-gradient(135deg, #10b981, #2563eb);
+}
+
+.game-home-art-memory::before {
+    left: 14px;
+    top: 18px;
+    width: 28px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(191, 219, 254, 0.9));
+    box-shadow: 24px 10px 0 0 rgba(255, 255, 255, 0.92);
+}
+
+.game-home-art-memory::after {
+    left: 22px;
+    top: 28px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #0f172a;
+    box-shadow: 23px 11px 0 0 #0f172a;
+}
+
+.game-home-art-tictactoe {
+    background: linear-gradient(135deg, #f97316, #4f46e5);
+}
+
+.game-home-art-tictactoe::before {
+    inset: 14px;
+    border-radius: 16px;
+    background:
+        linear-gradient(90deg, transparent 31%, rgba(255, 255, 255, 0.78) 31% 35%, transparent 35% 65%, rgba(255, 255, 255, 0.78) 65% 69%, transparent 69%),
+        linear-gradient(transparent 31%, rgba(255, 255, 255, 0.78) 31% 35%, transparent 35% 65%, rgba(255, 255, 255, 0.78) 65% 69%, transparent 69%);
+}
+
+.game-home-art-tictactoe::after {
+    inset: 0;
+    background:
+        linear-gradient(45deg, transparent 47%, #fbbf24 47% 53%, transparent 53%) left 22px top 22px / 18px 18px no-repeat,
+        linear-gradient(135deg, transparent 47%, #fbbf24 47% 53%, transparent 53%) left 22px top 22px / 18px 18px no-repeat,
+        radial-gradient(circle, transparent 8px, #67e8f9 8px 11px, transparent 12px) right 18px bottom 18px / 26px 26px no-repeat;
+}
+
+.game-home-art-battleship {
+    background: linear-gradient(135deg, #0f172a, #0f766e);
+}
+
+.game-home-art-battleship::before {
+    inset: 10px;
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at 26% 72%, rgba(255, 255, 255, 0.18) 0 10%, transparent 11%),
+        linear-gradient(180deg, rgba(56, 189, 248, 0.18), rgba(15, 23, 42, 0.24)),
+        rgba(15, 23, 42, 0.3);
+}
+
+.game-home-art-battleship::after {
+    inset: 0;
+    background:
+        linear-gradient(180deg, transparent 20px, rgba(245, 158, 11, 0.96) 20px 58px, transparent 58px) left 18px top 0 / 14px 100% no-repeat,
+        linear-gradient(180deg, transparent 12px, rgba(226, 232, 240, 0.96) 12px 46px, transparent 46px) center top 0 / 16px 100% no-repeat,
+        linear-gradient(180deg, transparent 28px, rgba(16, 185, 129, 0.94) 28px 66px, transparent 66px) right 18px top 0 / 14px 100% no-repeat,
+        radial-gradient(circle at 50% 54%, rgba(255, 255, 255, 0.98) 0 7%, transparent 8%);
+}
+
+.game-home-art-tetris {
+    background: linear-gradient(135deg, #1d4ed8, #0f172a);
+}
+
+.game-home-art-tetris::before {
+    inset: 14px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, rgba(56, 189, 248, 0.95) 0 24%, transparent 24% 30%, rgba(251, 191, 36, 0.95) 30% 54%, transparent 54% 60%, rgba(52, 211, 153, 0.95) 60% 84%, transparent 84%),
+        linear-gradient(180deg, transparent 0 24%, rgba(248, 113, 113, 0.95) 24% 48%, transparent 48% 54%, rgba(168, 85, 247, 0.95) 54% 78%, transparent 78%);
+}
+
+.game-home-art-tetris::after {
+    inset: 14px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.08) 24% 26%, transparent 26% 54%, rgba(255, 255, 255, 0.08) 54% 56%, transparent 56% 84%, rgba(255, 255, 255, 0.08) 84% 86%, transparent 86%),
+        linear-gradient(180deg, transparent 24%, rgba(255, 255, 255, 0.08) 24% 26%, transparent 26% 48%, rgba(255, 255, 255, 0.08) 48% 50%, transparent 50% 78%, rgba(255, 255, 255, 0.08) 78% 80%, transparent 80%);
+}
+
+.game-home-art-pacman {
+    background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.16), transparent 18%),
+        linear-gradient(135deg, #2563eb, #1e3a8a);
+}
+
+.game-home-art-pacman::before {
+    inset: 0;
+    background: transparent;
+}
+
+.game-home-art-pacman::after {
+    left: 50%;
+    top: 50%;
+    width: 36px;
+    height: 36px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: conic-gradient(from 30deg, #facc15 0 310deg, transparent 310deg 360deg);
+}
+
+.game-home-art-solitaire {
+    background: linear-gradient(135deg, #065f46, #0f172a);
+}
+
+.game-home-art-solitaire::before {
+    left: 14px;
+    top: 18px;
+    width: 30px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(226, 232, 240, 0.92));
+    box-shadow:
+        18px 10px 0 0 rgba(255, 255, 255, 0.96),
+        36px 20px 0 0 rgba(255, 255, 255, 0.94);
+}
+
+.game-home-art-solitaire::after {
+    inset: 0;
+    background:
+        radial-gradient(circle at 28px 32px, rgba(190, 24, 93, 0.96) 0 5px, transparent 6px),
+        radial-gradient(circle at 46px 42px, rgba(190, 24, 93, 0.96) 0 5px, transparent 6px),
+        linear-gradient(45deg, transparent 47%, rgba(15, 23, 42, 0.9) 47% 53%, transparent 53%) 56px 52px / 14px 14px no-repeat,
+        linear-gradient(135deg, transparent 47%, rgba(15, 23, 42, 0.9) 47% 53%, transparent 53%) 56px 52px / 14px 14px no-repeat;
+}
+
+.game-home-art-connect4 {
+    background: linear-gradient(135deg, #1d4ed8, #0f172a);
+}
+
+.game-home-art-connect4::before {
+    inset: 11px;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 16% 18%, rgba(15, 23, 42, 0.92) 0 8%, transparent 9%),
+        radial-gradient(circle at 50% 18%, rgba(15, 23, 42, 0.92) 0 8%, transparent 9%),
+        radial-gradient(circle at 84% 18%, rgba(15, 23, 42, 0.92) 0 8%, transparent 9%),
+        radial-gradient(circle at 16% 50%, rgba(248, 250, 252, 0.96) 0 8%, transparent 9%),
+        radial-gradient(circle at 50% 50%, rgba(248, 250, 252, 0.96) 0 8%, transparent 9%),
+        radial-gradient(circle at 84% 50%, rgba(248, 250, 252, 0.96) 0 8%, transparent 9%),
+        radial-gradient(circle at 16% 82%, rgba(251, 191, 36, 0.96) 0 8%, transparent 9%),
+        radial-gradient(circle at 50% 82%, rgba(248, 113, 113, 0.96) 0 8%, transparent 9%),
+        radial-gradient(circle at 84% 82%, rgba(251, 191, 36, 0.96) 0 8%, transparent 9%),
+        linear-gradient(180deg, rgba(96, 165, 250, 0.96), rgba(37, 99, 235, 0.92));
+}
+
+.game-home-art-rhythm {
+    background: linear-gradient(180deg, #0f172a, #1d4ed8 58%, #0f766e);
+}
+
+.game-home-art-rhythm::before {
+    inset: 8px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.1) 32%, transparent 32% 34%, rgba(255, 255, 255, 0.1) 34% 66%, transparent 66% 68%, rgba(255, 255, 255, 0.1) 68%),
+        linear-gradient(180deg, rgba(125, 211, 252, 0.16), rgba(15, 23, 42, 0.16)),
+        rgba(15, 23, 42, 0.42);
+}
+
+.game-home-art-rhythm::after {
+    inset: 0;
+    background:
+        linear-gradient(180deg, transparent 16px, rgba(34, 197, 94, 0.96) 16px 27px, transparent 27px) 12px 0 / 10px 100% no-repeat,
+        linear-gradient(180deg, transparent 10px, rgba(56, 189, 248, 0.96) 10px 21px, transparent 21px) 25px 0 / 10px 100% no-repeat,
+        linear-gradient(180deg, transparent 22px, rgba(251, 191, 36, 0.98) 22px 33px, transparent 33px) 38px 0 / 10px 100% no-repeat,
+        linear-gradient(0deg, transparent 12px, rgba(255, 255, 255, 0.92) 12px 16px, transparent 16px),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0 10px, transparent 11px);
+}
+
+.game-home-art-flappy {
+    background:
+        radial-gradient(circle at 24% 24%, rgba(255, 255, 255, 0.24), transparent 14%),
+        linear-gradient(180deg, #7dd3fc, #2563eb 62%, #0f172a);
+}
+
+.game-home-art-flappy::before {
+    inset: 0;
+    background:
+        linear-gradient(180deg, transparent 0 12px, rgba(21, 128, 61, 0.96) 12px 54px, transparent 54px) left 10px top 0 / 14px 100% no-repeat,
+        linear-gradient(180deg, transparent 22px, rgba(34, 197, 94, 0.96) 22px 74px, transparent 74px) right 12px top 0 / 14px 100% no-repeat;
+}
+
+.game-home-art-flappy::after {
+    left: 27px;
+    top: 28px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50% 50% 45% 45%;
+    background:
+        radial-gradient(circle at 68% 34%, rgba(15, 23, 42, 0.98) 0 7%, transparent 8%),
+        linear-gradient(180deg, #fde68a, #f59e0b);
+    box-shadow:
+        10px 4px 0 -4px rgba(255, 255, 255, 0.96),
+        inset -8px 0 0 rgba(248, 113, 113, 0.78);
+}
+
+.game-home-art-flowfree {
+    background: linear-gradient(135deg, #0f766e, #1d4ed8);
+}
+
+.game-home-art-flowfree::before {
+    inset: 8px;
+    border-radius: 12px;
+    background:
+        radial-gradient(circle at 20% 22%, #fb7185 0 8%, transparent 9%),
+        radial-gradient(circle at 76% 22%, #fb7185 0 8%, transparent 9%),
+        radial-gradient(circle at 24% 76%, #38bdf8 0 8%, transparent 9%),
+        radial-gradient(circle at 76% 76%, #38bdf8 0 8%, transparent 9%),
+        linear-gradient(90deg, transparent 18%, rgba(255, 255, 255, 0.14) 18% 20%, transparent 20% 40%, rgba(255, 255, 255, 0.14) 40% 42%, transparent 42% 62%, rgba(255, 255, 255, 0.14) 62% 64%, transparent 64%),
+        linear-gradient(transparent 18%, rgba(255, 255, 255, 0.14) 18% 20%, transparent 20% 40%, rgba(255, 255, 255, 0.14) 40% 42%, transparent 42% 62%, rgba(255, 255, 255, 0.14) 62% 64%, transparent 64%);
+}
+
+.game-home-art-flowfree::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 16px, rgba(251, 113, 133, 0.92) 16px 22px, transparent 22px) center / 100% 100% no-repeat,
+        linear-gradient(180deg, transparent 29px, rgba(56, 189, 248, 0.92) 29px 35px, transparent 35px) center / 100% 100% no-repeat;
+}
+
+.game-home-art-magicsort {
+    background: linear-gradient(135deg, #312e81, #0f766e);
+}
+
+.game-home-art-magicsort::before {
+    inset: 10px 11px;
+    background:
+        linear-gradient(180deg, transparent 0 12px, rgba(251, 191, 36, 0.96) 12px 21px, rgba(56, 189, 248, 0.96) 21px 30px, rgba(244, 114, 182, 0.96) 30px 39px, transparent 39px) left top / 10px 100% no-repeat,
+        linear-gradient(180deg, transparent 0 15px, rgba(52, 211, 153, 0.96) 15px 24px, rgba(251, 191, 36, 0.96) 24px 33px, rgba(56, 189, 248, 0.96) 33px 42px, transparent 42px) center top / 10px 100% no-repeat,
+        linear-gradient(180deg, transparent 0 10px, rgba(244, 114, 182, 0.96) 10px 19px, rgba(52, 211, 153, 0.96) 19px 28px, rgba(251, 191, 36, 0.96) 28px 37px, transparent 37px) right top / 10px 100% no-repeat;
+}
+
+.game-home-art-magicsort::after {
+    inset: 9px 10px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) left top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) 10px top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) center top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) calc(100% - 12px) top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28)) right top / 2px 100% no-repeat;
+}
+
+.game-home-art-mentalmath {
+    background: linear-gradient(135deg, #1d4ed8, #14b8a6);
+}
+
+.game-home-art-mentalmath::before {
+    inset: 7px;
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent),
+        rgba(15, 23, 42, 0.24);
+}
+
+.game-home-art-mentalmath::after {
+    inset: 0;
+    content: '8 x 7';
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.game-home-art-candycrush {
+    background: linear-gradient(135deg, #ec4899, #2563eb);
+}
+
+.game-home-art-candycrush::before {
+    inset: 12px;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 20% 22%, #facc15 0 11%, transparent 12%),
+        radial-gradient(circle at 52% 28%, #38bdf8 0 11%, transparent 12%),
+        radial-gradient(circle at 76% 26%, #34d399 0 11%, transparent 12%),
+        radial-gradient(circle at 28% 68%, #fb7185 0 11%, transparent 12%),
+        radial-gradient(circle at 70% 70%, #f97316 0 11%, transparent 12%),
+        rgba(15, 23, 42, 0.14);
+}
+
+.game-home-art-candycrush::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 22px, rgba(255, 255, 255, 0.12) 22px 24px, transparent 24px 42px, rgba(255, 255, 255, 0.12) 42px 44px, transparent 44px) center / 100% 100% no-repeat,
+        linear-gradient(transparent 22px, rgba(255, 255, 255, 0.12) 22px 24px, transparent 24px 42px, rgba(255, 255, 255, 0.12) 42px 44px, transparent 44px) center / 100% 100% no-repeat;
+}
+
+.game-home-art-harborrun {
+    background: linear-gradient(180deg, #7dd3fc, #1d4ed8 55%, #0f172a);
+}
+
+.game-home-art-harborrun::before {
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 78%, rgba(255, 255, 255, 0.18) 0 7%, transparent 8%),
+        radial-gradient(circle at 52% 66%, rgba(255, 255, 255, 0.18) 0 6%, transparent 7%),
+        radial-gradient(circle at 78% 28%, rgba(251, 191, 36, 0.9) 0 8%, transparent 9%),
+        linear-gradient(180deg, transparent 70%, rgba(255, 255, 255, 0.16) 70% 73%, transparent 73% 76%, rgba(255, 255, 255, 0.12) 76% 79%, transparent 79%);
+}
+
+.game-home-art-harborrun::after {
+    left: 18px;
+    bottom: 10px;
+    width: 18px;
+    height: 22px;
+    border-radius: 10px 10px 4px 4px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.18), transparent 24%),
+        linear-gradient(180deg, #f97316, #7c2d12);
+    box-shadow:
+        16px -24px 0 -4px rgba(107, 114, 128, 0.98),
+        23px -18px 0 -9px rgba(148, 163, 184, 0.98);
+}
+
+.game-home-art-stacker {
+    background: linear-gradient(135deg, #0f172a, #0f766e);
+}
+
+.game-home-art-stacker::before {
+    left: 12px;
+    right: 12px;
+    bottom: 10px;
+    height: 10px;
+    border-radius: 0;
+    background: linear-gradient(90deg, rgba(212, 161, 93, 0.98), rgba(139, 90, 43, 0.96));
+    box-shadow:
+        0 -12px 0 0 rgba(202, 107, 74, 0.98),
+        4px -24px 0 0 rgba(126, 168, 90, 0.98);
+}
+
+.game-home-art-stacker::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 15px, rgba(83, 45, 18, 0.35) 15px 17px, transparent 17px) 0 calc(100% - 10px) / 100% 10px no-repeat,
+        linear-gradient(90deg, transparent 21px, rgba(83, 45, 18, 0.35) 21px 23px, transparent 23px) 0 calc(100% - 22px) / 100% 10px no-repeat,
+        linear-gradient(90deg, transparent 26px, rgba(83, 45, 18, 0.35) 26px 28px, transparent 28px) 0 calc(100% - 34px) / 100% 10px no-repeat;
+}
+
+.game-home-art-minesweeper::before {
+    inset: 0;
+    content: '\1F3F4\200D\2620\FE0F';
+    display: grid;
+    place-items: center;
+    font-size: 2.4rem;
+    color: #f8fafc;
+    text-shadow: 0 6px 14px rgba(15, 23, 42, 0.35);
+}
+
+.game-home-art-minesweeper::after {
+    left: 18px;
+    right: 18px;
+    bottom: 11px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    opacity: 1;
+}
+
+.game-home-art-snake::before {
+    inset: 13px 12px 17px 12px;
+    border-radius: 999px 999px 14px 14px;
+    background:
+        radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.95) 0 8%, transparent 9%),
+        radial-gradient(circle at 66% 28%, rgba(255, 255, 255, 0.95) 0 8%, transparent 9%),
+        radial-gradient(circle at 34% 30%, rgba(15, 23, 42, 0.96) 0 3%, transparent 4%),
+        radial-gradient(circle at 66% 30%, rgba(15, 23, 42, 0.96) 0 3%, transparent 4%),
+        linear-gradient(180deg, rgba(94, 234, 212, 0.98), rgba(14, 165, 233, 0.92));
+}
+
+.game-home-art-snake::after {
+    width: 14px;
+    height: 14px;
+    right: 8px;
+    bottom: 8px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #f59e0b, #b45309);
+    box-shadow: -20px 2px 0 0 rgba(15, 23, 42, 0.22);
+}
+
+.game-home-art-2048::before {
+    inset: 10px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, rgba(15, 23, 42, 0.22) 0 48%, transparent 48% 52%, rgba(15, 23, 42, 0.22) 52% 100%),
+        linear-gradient(rgba(15, 23, 42, 0.22) 0 48%, transparent 48% 52%, rgba(15, 23, 42, 0.22) 52% 100%);
+}
+
+.game-home-art-2048::after {
+    inset: 0;
+    content: '2048';
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    display: grid;
+    place-items: center;
+    text-shadow: 0 2px 8px rgba(15, 23, 42, 0.28);
+}
+
+.game-home-art-aim::before {
+    inset: 14px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.94) 0 12%, transparent 13%),
+        radial-gradient(circle at 50% 50%, transparent 0 28%, rgba(255, 255, 255, 0.86) 28% 33%, transparent 34%),
+        radial-gradient(circle at 50% 50%, transparent 0 50%, rgba(255, 255, 255, 0.66) 50% 55%, transparent 56%),
+        radial-gradient(circle at 50% 50%, rgba(30, 64, 175, 0.92), rgba(15, 23, 42, 0.98));
+}
+
+.game-home-art-aim::after {
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 50%, transparent 0 16px, rgba(255, 255, 255, 0.92) 16px 17px, transparent 18px),
+        linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.92) 49% 51%, transparent 51%),
+        linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.92) 49% 51%, transparent 51%);
+}
+
+.game-home-art-tictactoe::before {
+    inset: 9px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, transparent 31%, rgba(255, 255, 255, 0.84) 31% 35%, transparent 35% 65%, rgba(255, 255, 255, 0.84) 65% 69%, transparent 69%),
+        linear-gradient(transparent 31%, rgba(255, 255, 255, 0.84) 31% 35%, transparent 35% 65%, rgba(255, 255, 255, 0.84) 65% 69%, transparent 69%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08), transparent 70%);
+}
+
+.game-home-art-tictactoe::after {
+    inset: 0;
+    background:
+        linear-gradient(45deg, transparent 46%, #fbbf24 46% 54%, transparent 54%) left 14px top 13px / 14px 14px no-repeat,
+        linear-gradient(135deg, transparent 46%, #fbbf24 46% 54%, transparent 54%) left 14px top 13px / 14px 14px no-repeat,
+        linear-gradient(45deg, transparent 46%, #fb7185 46% 54%, transparent 54%) left 30px top 31px / 14px 14px no-repeat,
+        linear-gradient(135deg, transparent 46%, #fb7185 46% 54%, transparent 54%) left 30px top 31px / 14px 14px no-repeat,
+        radial-gradient(circle, transparent 5px, #67e8f9 5px 7px, transparent 8px) right 10px top 14px / 18px 18px no-repeat,
+        radial-gradient(circle, transparent 5px, #67e8f9 5px 7px, transparent 8px) right 12px bottom 10px / 18px 18px no-repeat;
+}
+
+.game-home-art-battleship::before {
+    inset: 8px;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, transparent 24%, rgba(255,255,255,0.16) 24% 26%, transparent 26% 49%, rgba(255,255,255,0.16) 49% 51%, transparent 51% 74%, rgba(255,255,255,0.16) 74% 76%, transparent 76%),
+        linear-gradient(transparent 24%, rgba(255,255,255,0.16) 24% 26%, transparent 26% 49%, rgba(255,255,255,0.16) 49% 51%, transparent 51% 74%, rgba(255,255,255,0.16) 74% 76%, transparent 76%),
+        linear-gradient(180deg, rgba(125, 211, 252, 0.34), rgba(8, 47, 73, 0.42)),
+        rgba(15, 23, 42, 0.32);
+}
+
+.game-home-art-battleship::after {
+    inset: 0;
+    background:
+        linear-gradient(180deg, transparent 16px, rgba(226, 232, 240, 0.98) 16px 38px, transparent 38px) center / 20px 100% no-repeat,
+        linear-gradient(90deg, transparent 12px, rgba(148, 163, 184, 0.96) 12px 32px, transparent 32px) center 31px / 100% 8px no-repeat,
+        radial-gradient(circle at 41px 16px, rgba(248, 113, 113, 0.98) 0 4px, transparent 5px),
+        radial-gradient(circle at 18px 40px, rgba(255, 255, 255, 0.96) 0 3px, transparent 4px),
+        radial-gradient(circle at 48px 44px, rgba(250, 204, 21, 0.96) 0 2px, transparent 3px);
+}
+
+.game-home-art-tetris::before {
+    inset: 8px;
+    border-radius: 12px;
+    background:
+        linear-gradient(90deg, transparent 18%, rgba(255,255,255,0.09) 18% 20%, transparent 20% 40%, rgba(255,255,255,0.09) 40% 42%, transparent 42% 62%, rgba(255,255,255,0.09) 62% 64%, transparent 64%),
+        linear-gradient(transparent 18%, rgba(255,255,255,0.09) 18% 20%, transparent 20% 40%, rgba(255,255,255,0.09) 40% 42%, transparent 42% 62%, rgba(255,255,255,0.09) 62% 64%, transparent 64%),
+        linear-gradient(180deg, rgba(15,23,42,0.16), rgba(15,23,42,0.28));
+}
+
+.game-home-art-tetris::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, #38bdf8 0 50%, transparent 50%) 10px 10px / 24px 12px no-repeat,
+        linear-gradient(180deg, #38bdf8 0 50%, transparent 50%) 22px 10px / 12px 24px no-repeat,
+        linear-gradient(90deg, #fbbf24 0 75%, transparent 75%) 24px 22px / 24px 12px no-repeat,
+        linear-gradient(180deg, #34d399 0 100%, transparent 100%) 10px 34px / 12px 12px no-repeat,
+        linear-gradient(90deg, #a855f7 0 100%, transparent 100%) 22px 34px / 24px 12px no-repeat,
+        linear-gradient(180deg, #fb7185 0 100%, transparent 100%) 34px 34px / 12px 12px no-repeat;
+}
+
+.game-home-art-pacman::before {
+    inset: 0;
+    background: transparent;
+}
+
+.game-home-art-pacman::after {
+    left: 50%;
+    top: 50%;
+    width: 36px;
+    height: 36px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 58% 32%, #0f172a 0 2px, transparent 2.4px),
+        conic-gradient(from 34deg at 50% 50%, transparent 0 58deg, #facc15 58deg 302deg, transparent 302deg 360deg);
+}
+
+.game-home-art-flappy::before {
+    inset: 0;
+    background:
+        radial-gradient(circle at 26% 24%, rgba(255, 255, 255, 0.26), transparent 14%),
+        linear-gradient(180deg, rgba(125, 211, 252, 0.96), rgba(37, 99, 235, 0.88));
+}
+
+.game-home-art-flappy::after {
+    left: 18px;
+    top: 18px;
+    width: 18px;
+    height: 16px;
+    border-radius: 58% 42% 46% 54% / 44% 46% 54% 56%;
+    background:
+        radial-gradient(circle at 64% 34%, rgba(15, 23, 42, 0.98) 0 2px, transparent 3px),
+        linear-gradient(180deg, #ef4444, #b91c1c 62%, #f59e0b 62% 100%);
+    box-shadow:
+        inset -4px 0 0 rgba(14, 165, 233, 0.28),
+        9px 4px 0 -6px rgba(250, 204, 21, 0.98),
+        -3px -5px 0 -5px rgba(15, 23, 42, 0.98);
+}
+
+.game-home-art-flowfree::before {
+    inset: 7px;
+    border-radius: 12px;
+    background:
+        radial-gradient(circle at 22% 22%, #fb7185 0 7%, transparent 8%),
+        radial-gradient(circle at 78% 22%, #fb7185 0 7%, transparent 8%),
+        radial-gradient(circle at 22% 78%, #38bdf8 0 7%, transparent 8%),
+        radial-gradient(circle at 78% 78%, #38bdf8 0 7%, transparent 8%),
+        radial-gradient(circle at 50% 50%, #34d399 0 7%, transparent 8%),
+        linear-gradient(90deg, transparent 16%, rgba(255,255,255,0.14) 16% 18%, transparent 18% 40%, rgba(255,255,255,0.14) 40% 42%, transparent 42% 64%, rgba(255,255,255,0.14) 64% 66%, transparent 66%),
+        linear-gradient(transparent 16%, rgba(255,255,255,0.14) 16% 18%, transparent 18% 40%, rgba(255,255,255,0.14) 40% 42%, transparent 42% 64%, rgba(255,255,255,0.14) 64% 66%, transparent 66%);
+}
+
+.game-home-art-flowfree::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 14px, rgba(251, 113, 133, 0.94) 14px 19px, transparent 19px) top 14px center / 100% 100% no-repeat,
+        linear-gradient(180deg, transparent 28px, rgba(56, 189, 248, 0.94) 28px 33px, transparent 33px) left 14px center / 100% 100% no-repeat,
+        linear-gradient(90deg, transparent 28px, rgba(52, 211, 153, 0.94) 28px 33px, transparent 33px) center 30px / 100% 100% no-repeat;
+}
+
+.game-home-art-magicsort::before {
+    inset: 8px 9px;
+    background:
+        linear-gradient(180deg, transparent 0 10px, rgba(251,191,36,0.98) 10px 18px, rgba(56,189,248,0.98) 18px 26px, rgba(244,114,182,0.98) 26px 34px, transparent 34px) left top / 10px 100% no-repeat,
+        linear-gradient(180deg, transparent 0 15px, rgba(52,211,153,0.98) 15px 23px, rgba(251,191,36,0.98) 23px 31px, rgba(56,189,248,0.98) 31px 39px, transparent 39px) center top / 10px 100% no-repeat,
+        linear-gradient(180deg, transparent 0 8px, rgba(244,114,182,0.98) 8px 16px, rgba(52,211,153,0.98) 16px 24px, rgba(251,191,36,0.98) 24px 32px, transparent 32px) right top / 10px 100% no-repeat;
+}
+
+.game-home-art-magicsort::after {
+    inset: 8px 9px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.32)) left top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.32)) 10px top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.32)) center top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.32)) calc(100% - 12px) top / 2px 100% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.32)) right top / 2px 100% no-repeat,
+        radial-gradient(circle at 50% 100%, rgba(255,255,255,0.22) 0 30%, transparent 31%);
+}
+
+.game-home-art-candycrush::before {
+    inset: 8px;
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at 24% 24%, #facc15 0 8%, transparent 9%),
+        radial-gradient(circle at 52% 28%, #38bdf8 0 8%, transparent 9%),
+        radial-gradient(circle at 76% 24%, #34d399 0 8%, transparent 9%),
+        radial-gradient(circle at 28% 72%, #fb7185 0 8%, transparent 9%),
+        radial-gradient(circle at 70% 72%, #f97316 0 8%, transparent 9%),
+        radial-gradient(circle at 50% 50%, #fde68a 0 6%, transparent 7%),
+        rgba(15, 23, 42, 0.14);
+}
+
+.game-home-art-candycrush::after {
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 16px, rgba(255,255,255,0.12) 16px 18px, transparent 18px 32px, rgba(255,255,255,0.12) 32px 34px, transparent 34px) center / 100% 100% no-repeat,
+        linear-gradient(transparent 16px, rgba(255,255,255,0.12) 16px 18px, transparent 18px 32px, rgba(255,255,255,0.12) 32px 34px, transparent 34px) center / 100% 100% no-repeat,
+        radial-gradient(circle at 24% 24%, rgba(255,255,255,0.28) 0 3px, transparent 4px),
+        radial-gradient(circle at 76% 24%, rgba(255,255,255,0.28) 0 3px, transparent 4px);
+}
+
+.game-home-art-harborrun::before {
+    inset: 0;
+    background:
+        radial-gradient(circle at 18% 80%, rgba(255,255,255,0.18) 0 6%, transparent 7%),
+        radial-gradient(circle at 76% 28%, rgba(107,114,128,0.96) 0 7%, transparent 8%),
+        linear-gradient(180deg, transparent 70%, rgba(255,255,255,0.16) 70% 73%, transparent 73% 76%, rgba(255,255,255,0.12) 76% 79%, transparent 79%);
+}
+
+.game-home-art-harborrun::after {
+    left: 18px;
+    bottom: 10px;
+    width: 18px;
+    height: 22px;
+    border-radius: 10px 10px 4px 4px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.18), transparent 24%),
+        linear-gradient(180deg, #f97316, #7c2d12);
+    box-shadow: 18px -18px 0 -6px rgba(148,163,184,0.98);
+}
+
+.game-home-art-2048 {
+    background: url("assets/games/game-2048.svg") center / cover no-repeat;
+}
+
+.game-home-art-2048::before,
+.game-home-art-2048::after,
+.game-home-art-battleship::before,
+.game-home-art-battleship::after,
+.game-home-art-minesweeper::before,
+.game-home-art-minesweeper::after,
+.game-home-art-tictactoe::before,
+.game-home-art-tictactoe::after,
+.game-home-art-pacman::before,
+.game-home-art-pacman::after,
+.game-home-art-snake::before,
+.game-home-art-snake::after,
+.game-home-art-connect4::before,
+.game-home-art-connect4::after,
+.game-home-art-tetris::before,
+.game-home-art-tetris::after {
+    content: none;
+}
+
+.game-home-art-battleship {
+    background: url("assets/games/game-battleship.svg") center / cover no-repeat;
+}
+
+.game-home-art-minesweeper {
+    background: url("assets/games/game-minesweeper.svg") center / cover no-repeat;
+}
+
+.game-home-art-tictactoe {
+    background: url("assets/games/game-tictactoe.svg") center / cover no-repeat;
+}
+
+.game-home-art-pacman {
+    background: url("assets/games/game-baie-man.svg") center / cover no-repeat;
+}
+
+.game-home-art-snake {
+    background: url("assets/games/game-snake.svg") center / cover no-repeat;
+}
+
+.game-home-art-connect4 {
+    background: url("assets/games/game-coin4.svg") center / cover no-repeat;
+}
+
+.game-home-art-tetris {
+    background: url("assets/games/game-baietris.svg") center / cover no-repeat;
+}
+
+.game-home-art-pong,
+.game-home-art-sudoku,
+.game-home-art-aim,
+.game-home-art-memory,
+.game-home-art-solitaire,
+.game-home-art-rhythm,
+.game-home-art-flappy,
+.game-home-art-flowfree,
+.game-home-art-magicsort,
+.game-home-art-mentalmath,
+.game-home-art-candycrush,
+.game-home-art-harborrun,
+.game-home-art-stacker {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.game-home-art-pong {
+    background-image: url("assets/games/game-pong.svg");
+}
+
+.game-home-art-sudoku {
+    background-image: url("assets/games/game-sudoku.svg");
+}
+
+.game-home-art-aim {
+    background-image: url("assets/games/game-aim.svg");
+}
+
+.game-home-art-memory {
+    background-image: url("assets/games/game-memory.svg");
+}
+
+.game-home-art-solitaire {
+    background-image: url("assets/games/game-solitaire.svg");
+}
+
+.game-home-art-rhythm {
+    background-image: url("assets/games/game-rhythm.svg");
+}
+
+.game-home-art-flappy {
+    background-image: url("assets/games/game-flappy.svg");
+}
+
+.game-home-art-flowfree {
+    background-image: url("assets/games/game-flowfree.svg");
+}
+
+.game-home-art-magicsort {
+    background-image: url("assets/games/game-magicsort.svg");
+}
+
+.game-home-art-mentalmath {
+    background-image: url("assets/games/game-mentalmath.svg");
+}
+
+.game-home-art-candycrush {
+    background-image: url("assets/games/game-candycrush.svg");
+}
+
+.game-home-art-harborrun {
+    background-image: url("assets/games/game-harborrun.svg");
+}
+
+.game-home-art-stacker {
+    background-image: url("assets/games/game-stacker.svg");
+}
+
+.game-home-art-pong::before,
+.game-home-art-pong::after,
+.game-home-art-sudoku::before,
+.game-home-art-sudoku::after,
+.game-home-art-aim::before,
+.game-home-art-aim::after,
+.game-home-art-memory::before,
+.game-home-art-memory::after,
+.game-home-art-solitaire::before,
+.game-home-art-solitaire::after,
+.game-home-art-rhythm::before,
+.game-home-art-rhythm::after,
+.game-home-art-flappy::before,
+.game-home-art-flappy::after,
+.game-home-art-flowfree::before,
+.game-home-art-flowfree::after,
+.game-home-art-magicsort::before,
+.game-home-art-magicsort::after,
+.game-home-art-mentalmath::before,
+.game-home-art-mentalmath::after,
+.game-home-art-candycrush::before,
+.game-home-art-candycrush::after,
+.game-home-art-harborrun::before,
+.game-home-art-harborrun::after,
+.game-home-art-stacker::before,
+.game-home-art-stacker::after {
+    content: none;
+}
+
+.game-home-title {
+    display: block;
+    font-size: 0.84rem;
+    font-weight: 800;
+    position: relative;
+    z-index: 1;
+}
+
