@@ -30,8 +30,6 @@ const TRACKED_ROOT_FILES = [
 const TRACKED_DIRECTORIES = ['assets', 'js'];
 const IGNORED_TRACKED_FILES = new Set([
     'style.min.css',
-    'style-core.min.css',
-    'style-games.min.css',
     'js/main.bundle.min.js',
     VERSION_STATE_PATH
 ]);
@@ -127,9 +125,7 @@ function getTrackedSourceFiles() {
 
 function normalizeIndexContent(content) {
     return content
-        .replace(/style-core\.min\.css\?v=[^"'\s>]+/g, 'style-core.min.css?v=__SITE_CACHE_KEY__')
         .replace(/style\.min\.css\?v=[^"'\s>]+/g, 'style.min.css?v=__SITE_CACHE_KEY__')
-        .replace(/(<meta name="site-cachekey" content=")[^"]*(")/g, '$1__SITE_CACHE_KEY__$2')
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^"'\s>]+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/consent\.js\?v=[^"'\s>]+/g, '/js/core/consent.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/sw-register\.js\?v=[^"'\s>]+/g, '/js/core/sw-register.js?v=__SITE_CACHE_KEY__')
@@ -140,8 +136,6 @@ function normalizeIndexContent(content) {
 function normalizeSwContent(content) {
     return content
         .replace(/const CACHE_NAME = 'baie-des-naufrages-v[^']+';/, "const CACHE_NAME = 'baie-des-naufrages-v__SITE_CACHE_KEY__';")
-        .replace(/\/style-core\.min\.css\?v=[^']+/g, '/style-core.min.css?v=__SITE_CACHE_KEY__')
-        .replace(/\/style-games\.min\.css\?v=[^']+/g, '/style-games.min.css?v=__SITE_CACHE_KEY__')
         .replace(/\/style\.min\.css\?v=[^']+/g, '/style.min.css?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/consent\.js\?v=[^']+/g, '/js/core/consent.js?v=__SITE_CACHE_KEY__')
@@ -178,9 +172,7 @@ function computeSourceHash() {
 
 function applyVersionToIndex(content, displayVersion, cacheKey) {
     return content
-        .replace(/style-core\.min\.css\?v=[^"'\s>]+/g, `style-core.min.css?v=${cacheKey}`)
         .replace(/style\.min\.css\?v=[^"'\s>]+/g, `style.min.css?v=${cacheKey}`)
-        .replace(/(<meta name="site-cachekey" content=")[^"]*(")/g, `$1${cacheKey}$2`)
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^"'\s>]+/g, `/js/main.bundle.min.js?v=${cacheKey}`)
         .replace(/\/js\/core\/consent\.js\?v=[^"'\s>]+/g, `/js/core/consent.js?v=${cacheKey}`)
         .replace(/\/js\/core\/sw-register\.js\?v=[^"'\s>]+/g, `/js/core/sw-register.js?v=${cacheKey}`)
@@ -190,8 +182,6 @@ function applyVersionToIndex(content, displayVersion, cacheKey) {
 function applyVersionToSw(content, cacheKey) {
     return content
         .replace(/const CACHE_NAME = 'baie-des-naufrages-[^']+';/, `const CACHE_NAME = 'baie-des-naufrages-${cacheKey}';`)
-        .replace(/\/style-core\.min\.css\?v=[^']+/g, `/style-core.min.css?v=${cacheKey}`)
-        .replace(/\/style-games\.min\.css\?v=[^']+/g, `/style-games.min.css?v=${cacheKey}`)
         .replace(/\/style\.min\.css\?v=[^']+/g, `/style.min.css?v=${cacheKey}`)
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, `/js/main.bundle.min.js?v=${cacheKey}`)
         .replace(/\/js\/core\/consent\.js\?v=[^']+/g, `/js/core/consent.js?v=${cacheKey}`)
@@ -260,30 +250,11 @@ async function main() {
         logLevel: 'info'
     });
 
-    // Scinder style.css en core + games au marqueur GAMES_CSS_SPLIT
-    const fullCss = readFileSync('style.css', 'utf8');
-    const splitMarker = '/* GAMES_CSS_SPLIT */';
-    const splitIndex = fullCss.indexOf(splitMarker);
-    if (splitIndex === -1) {
-        throw new Error('Marqueur GAMES_CSS_SPLIT introuvable dans style.css');
-    }
-    writeFileSync('style-core.css', fullCss.slice(0, splitIndex), 'utf8');
-    writeFileSync('style-games.css', fullCss.slice(splitIndex + splitMarker.length), 'utf8');
-
     await build({
-        entryPoints: ['style-core.css'],
+        entryPoints: ['style.css'],
         bundle: false,
         minify: true,
-        outfile: 'style-core.min.css',
-        legalComments: 'none',
-        logLevel: 'info'
-    });
-
-    await build({
-        entryPoints: ['style-games.css'],
-        bundle: false,
-        minify: true,
-        outfile: 'style-games.min.css',
+        outfile: 'style.min.css',
         legalComments: 'none',
         logLevel: 'info'
     });
@@ -301,15 +272,13 @@ async function main() {
 
     const after = {
         bundle: gzipSize('js/main.bundle.min.js'),
-        cssCore: gzipSize('style-core.min.css'),
-        cssGames: gzipSize('style-games.min.css')
+        css: gzipSize('style.min.css')
     };
 
-    // Injecter les prefetch links dans index.html (chunks + style-games)
+    // Injecter les prefetch links dans index.html (chunks JS uniquement)
     const chunkFiles = readdirSync('js/chunks').sort();
-    const gamesCssPrefetch = `    <link rel="prefetch" href="style-games.min.css?v=${cacheKey}" as="style">`;
     const chunkPrefetchLinks = chunkFiles.map((f) => `    <link rel="prefetch" href="/js/chunks/${f}" as="script" crossorigin>`);
-    const prefetchBlock = [gamesCssPrefetch, ...chunkPrefetchLinks].join('\n');
+    const prefetchBlock = chunkPrefetchLinks.join('\n');
     const indexFinal = readFileSync('index.html', 'utf8').replace(
         /    <!-- PREFETCH_LINKS_START -->[\s\S]*?<!-- PREFETCH_LINKS_END -->/,
         `    <!-- PREFETCH_LINKS_START -->\n${prefetchBlock}\n    <!-- PREFETCH_LINKS_END -->`
@@ -321,16 +290,13 @@ async function main() {
     console.log(`Cle de cache    : ${cacheKey}`);
 
     console.log('\n=== Tailles ===');
-    console.log(`script.js         : ${formatKilobytes(before.script.raw)} raw / ${formatKilobytes(before.script.gz)} gz`);
-    console.log(`main.bundle.min   : ${formatKilobytes(after.bundle.raw)} raw / ${formatKilobytes(after.bundle.gz)} gz  (bundle principal)`);
-    console.log(`style.css         : ${formatKilobytes(before.css.raw)} raw / ${formatKilobytes(before.css.gz)} gz`);
-    console.log(`style-core.min    : ${formatKilobytes(after.cssCore.raw)} raw / ${formatKilobytes(after.cssCore.gz)} gz  (chargement initial)`);
-    console.log(`style-games.min   : ${formatKilobytes(after.cssGames.raw)} raw / ${formatKilobytes(after.cssGames.gz)} gz  (lazy + prefetch)`);
-    const totalMinGz = after.cssCore.gz + after.cssGames.gz;
-    const savedCssGzip = before.css.gz - totalMinGz;
-    console.log(`\nGain CSS gz total : ${formatKilobytes(savedCssGzip)} (-${(100 * savedCssGzip / before.css.gz).toFixed(1)}%)`);
-    console.log(`CSS initial (core): ${formatKilobytes(after.cssCore.gz)} gz  (${(100 * after.cssCore.gz / before.css.gz).toFixed(1)}% du total)`);
-    console.log(`\nPrefetch injectés : ${chunkFiles.length} chunks + style-games.min.css`);
+    console.log(`script.js       : ${formatKilobytes(before.script.raw)} raw / ${formatKilobytes(before.script.gz)} gz`);
+    console.log(`main.bundle.min : ${formatKilobytes(after.bundle.raw)} raw / ${formatKilobytes(after.bundle.gz)} gz  (bundle principal)`);
+    console.log(`style.css       : ${formatKilobytes(before.css.raw)} raw / ${formatKilobytes(before.css.gz)} gz`);
+    console.log(`style.min.css   : ${formatKilobytes(after.css.raw)} raw / ${formatKilobytes(after.css.gz)} gz`);
+    const savedCssGzip = before.css.gz - after.css.gz;
+    console.log(`\nGain CSS gz     : ${formatKilobytes(savedCssGzip)} (-${(100 * savedCssGzip / before.css.gz).toFixed(1)}%)`);
+    console.log(`\nPrefetch injectés : ${chunkFiles.length} chunks JS`);
 }
 
 main().catch((error) => {

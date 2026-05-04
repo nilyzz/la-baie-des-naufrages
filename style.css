@@ -2198,7 +2198,6 @@ body:has(#servicesView.view-active) .services-legal-button {
     z-index: 1;
 }
 
-/* GAMES_CSS_SPLIT */
 .minesweeper-card,
 .snake-card,
 .pong-card,

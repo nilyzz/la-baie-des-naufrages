@@ -25,24 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplayerChatInput = document.getElementById('multiplayerChatInput');
     const multiplayerGameTiles = document.querySelectorAll('[data-multiplayer-game-select]');
 
-    const SITE_CACHE_KEY = document.head.querySelector('meta[name="site-cachekey"]')?.content || '';
-
     // Chunks lazy — chargés à la première navigation vers la section correspondante
     let lifecycleBundle = null;
     let gameEventBundle = null;
     let cinemaModule = null;
     let mathModule = null;
     let musicModule = null;
-    let gamesCssLoaded = false;
-
-    function loadGamesCss() {
-        if (gamesCssLoaded) return;
-        gamesCssLoaded = true;
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = `style-games.min.css?v=${SITE_CACHE_KEY}`;
-        document.head.appendChild(link);
-    }
 
     let currentView = loginView;
     let activeMathTab = 'mathCalculatorPanel';
@@ -51,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Lazy loaders ---
 
     async function loadGamesBundle() {
-        loadGamesCss();
         if (!lifecycleBundle) {
             [lifecycleBundle, gameEventBundle] = await Promise.all([
                 import('./js/games/_shared/game-lifecycle.js'),
@@ -97,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadCinema() {
-        loadGamesCss();
         if (!cinemaModule) {
             cinemaModule = await import('./js/navires/cinema.js');
             cinemaModule.initCinemaCatalogState();
@@ -111,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadMath() {
-        loadGamesCss();
         if (!mathModule) {
             mathModule = await import('./js/navires/math.js');
             mathModule.bindMathControls();
@@ -121,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadMusic() {
-        loadGamesCss();
         if (!musicModule) {
             musicModule = await import('./js/navires/music.js');
             musicModule.bindMusicControls({ onActivateMusicPanel: activateMusicPanel });
