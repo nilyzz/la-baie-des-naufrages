@@ -3449,6 +3449,15 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
+process.on('uncaughtException', (err) => {
+  console.error('[FATAL uncaughtException]', err);
+  // Ne pas quitter : le process Node.js reste stable, les connexions actives continuent
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[FATAL unhandledRejection]', reason);
+});
+
 process.on('SIGTERM', async () => {
   if (postersPersistTimer) {
     clearTimeout(postersPersistTimer);
