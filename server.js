@@ -3485,10 +3485,20 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-server.listen(PORT, () => {
-  console.log(`La Baie des Naufrages multiplayer server listening on port ${PORT}`);
-  console.log(`CORS origin: ${Array.isArray(CORS_ORIGIN) ? CORS_ORIGIN.join(', ') : CORS_ORIGIN}`);
-  if (CORS_ORIGIN === '*') {
-    console.warn('[SECURITE] CORS_ORIGIN est en wildcard (*). Definir la variable env CORS_ORIGIN=https://labaiedesnaufrages.fr sur Render.');
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`La Baie des Naufrages multiplayer server listening on port ${PORT}`);
+    console.log(`CORS origin: ${Array.isArray(CORS_ORIGIN) ? CORS_ORIGIN.join(', ') : CORS_ORIGIN}`);
+    if (CORS_ORIGIN === '*') {
+      console.warn('[SECURITE] CORS_ORIGIN est en wildcard (*). Definir la variable env CORS_ORIGIN=https://labaiedesnaufrages.fr sur Render.');
+    }
+  });
+}
+
+module.exports = {
+  app,
+  _resetRateLimitsForTest() {
+    roomCreationRateMap.clear();
+    posterResolveRateMap.clear();
   }
-});
+};
