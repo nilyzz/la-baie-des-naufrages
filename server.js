@@ -3497,8 +3497,12 @@ if (require.main === module) {
 
 module.exports = {
   app,
+  server,
   _resetRateLimitsForTest() {
     roomCreationRateMap.clear();
     posterResolveRateMap.clear();
+  },
+  _resetRoomsForTest() {
+    rooms.clear();
   }
 };
