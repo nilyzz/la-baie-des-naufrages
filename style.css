@@ -111,6 +111,11 @@ body {
     height: 100%;
 }
 
+body.is-lazy-loading,
+body.is-lazy-loading * {
+    cursor: wait !important;
+}
+
 .app-shell {
     position: relative;
     z-index: 1;
@@ -12493,7 +12498,7 @@ button:hover {
     display: grid;
     place-items: center;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 100;
     transform: translate(-50%, -50%) scale(1.08);
     filter: drop-shadow(0 10px 18px rgba(15, 23, 42, 0.36));
 }
@@ -12532,7 +12537,7 @@ button:hover {
     display: grid;
     place-items: center;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 100;
     transform: translate(-50%, -50%) scale(1.12);
     filter: drop-shadow(0 10px 18px rgba(15, 23, 42, 0.38));
 }

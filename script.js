@@ -174,7 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function showCinema() {
         closeGameOverModal();
         saveSession({ lastDestination: 'cinema' });
-        const cin = await loadCinema();
+        document.body.classList.add('is-lazy-loading');
+        const cin = await loadCinema().finally(() => document.body.classList.remove('is-lazy-loading'));
         cin.ensureMoviesLoaded();
         transitionToView(appView, {
             showHeader: true,
@@ -186,7 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function showGames() {
         closeGameOverModal();
         saveSession({ lastDestination: 'games' });
-        await loadGamesBundle();
+        document.body.classList.add('is-lazy-loading');
+        await loadGamesBundle().finally(() => document.body.classList.remove('is-lazy-loading'));
         transitionToView(gamesView, {
             showHeader: true,
             headerMode: 'games',
@@ -197,7 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function showMath() {
         closeGameOverModal();
         saveSession({ lastDestination: 'math' });
-        await loadMath();
+        document.body.classList.add('is-lazy-loading');
+        await loadMath().finally(() => document.body.classList.remove('is-lazy-loading'));
         transitionToView(mathView, {
             showHeader: true,
             headerMode: 'math',
@@ -208,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function showMusic() {
         closeGameOverModal();
         saveSession({ lastDestination: 'music' });
-        await loadMusic();
+        document.body.classList.add('is-lazy-loading');
+        await loadMusic().finally(() => document.body.classList.remove('is-lazy-loading'));
         transitionToView(musicView, {
             showHeader: true,
             headerMode: 'music',
