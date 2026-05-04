@@ -7,9 +7,7 @@ import {
     getChessKingPositionForState,
     isChessSquareUnderAttack,
     isChessKingInCheckForState,
-    applyChessMoveToState,
-    getChessAttackMoves,
-    cloneChessStateSnapshot
+    applyChessMoveToState
 } from '../js/games/chess.js';
 
 function emptyState() {

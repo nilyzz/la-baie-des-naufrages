@@ -30,7 +30,7 @@
                 };
             }
             return storedConsent;
-        } catch (error) {
+        } catch (_error) {
             return null;
         }
     }
@@ -100,7 +100,7 @@
             adsQueue.push({});
             adRequestIssued = true;
             adContainer.classList.add('site-ads-ready');
-        } catch (error) {
+        } catch (_error) {
             adContainer.classList.add('site-ads-unconfigured');
         }
     }

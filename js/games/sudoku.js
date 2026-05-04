@@ -23,7 +23,7 @@ let sudokuMistakes = 0;
 let sudokuCombo = 0;
 let sudokuElapsedMs = 0;
 let sudokuTimerInterval = null;
-let sudokuTimerStarted = false;
+let _sudokuTimerStarted = false;
 let sudokuFeedbackCell = null;
 let sudokuFeedbackTimeout = null;
 let sudokuStatusTimeout = null;
@@ -64,12 +64,12 @@ export function stopSudokuTimer() {
         window.clearInterval(sudokuTimerInterval);
         sudokuTimerInterval = null;
     }
-    sudokuTimerStarted = false;
+    _sudokuTimerStarted = false;
 }
 
 export function startSudokuTimer() {
     stopSudokuTimer();
-    sudokuTimerStarted = true;
+    _sudokuTimerStarted = true;
     sudokuTimerInterval = window.setInterval(() => {
         sudokuElapsedMs += 100;
         refreshSudokuHud();

@@ -143,7 +143,7 @@ export function generateMagicSortLevel() {
                 continue;
             }
 
-            const { index: destinationIndex, tube: destinationTube } = destinationOptions[Math.floor(Math.random() * destinationOptions.length)];
+            const { tube: destinationTube } = destinationOptions[Math.floor(Math.random() * destinationOptions.length)];
             const movableCount = Math.min(top.count, MAGIC_SORT_TUBE_CAPACITY - destinationTube.length);
             const amount = 1 + Math.floor(Math.random() * movableCount);
 

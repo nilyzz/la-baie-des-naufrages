@@ -24,7 +24,6 @@ import {
 } from './status.js';
 import {
     getMultiplayerActiveRoom,
-    getMultiplayerEntryMode,
     setMultiplayerEntryMode as setStateEntryMode,
     getMultiplayerBusy,
     isCurrentMultiplayerHost,

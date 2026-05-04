@@ -28,11 +28,11 @@ let pongAnimationFrame = null;
 let pongLastFrame = 0;
 let pongRenderAnimationFrame = null;
 let pongRenderLastFrame = 0;
-let pongLastNetworkSyncAt = 0;
+let _pongLastNetworkSyncAt = 0;
 let pongLocalPredictedPaddleY = null;
 let pongPlayerScore = 0;
 let pongAiScore = 0;
-let pongKeys = new Set();
+const pongKeys = new Set();
 let pongState = null;
 let pongDisplayState = null;
 let pongPaused = false;
@@ -292,7 +292,7 @@ export function syncMultiplayerPongState() {
 
     const room = getMultiplayerActiveRoom();
     const nextState = room.gameState;
-    pongLastNetworkSyncAt = Date.now();
+    _pongLastNetworkSyncAt = Date.now();
     pongState = {
         boardWidth: Number(nextState.boardWidth || (pongBoard?.clientWidth || 700)),
         boardHeight: Number(nextState.boardHeight || (pongBoard?.clientHeight || 394)),
@@ -867,7 +867,7 @@ export function stopPong() {
     pongRenderMetrics = null;
     pongDisplayState = null;
     pongLocalPredictedPaddleY = null;
-    pongLastNetworkSyncAt = 0;
+    _pongLastNetworkSyncAt = 0;
     pongCountdownEndsAt = 0;
     updatePongHud();
 }
@@ -1026,7 +1026,7 @@ export function startPong() {
 
     closeGameOverModal();
     pongKeys.clear();
-    pongLastNetworkSyncAt = 0;
+    _pongLastNetworkSyncAt = 0;
     pongMenuResult = null;
     hidePongPauseIndicator();
     resetPongMatch();

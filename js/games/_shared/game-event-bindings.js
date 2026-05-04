@@ -30,6 +30,7 @@ import * as blockBlast from '../blockBlast.js';
 import * as uno from '../uno.js';
 import * as bomb from '../bomb.js';
 import { bindTouchGameControls } from './touch-controls.js';
+import { UNO_MENU_CLOSE_DURATION_MS } from '../../core/constants.js';
 
 // options: { getSocket, getActiveRoom, getActiveGameTab,
 //   isMultiplayerLaunchPending, toggleMultiplayerReady, setMultiplayerStatus,

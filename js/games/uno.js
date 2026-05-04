@@ -7,9 +7,7 @@ import { getActiveGameTab } from './_shared/navigation.js';
 import { closeGameOverModal } from '../core/modals.js';
 import {
     getMultiplayerActiveRoom,
-    getMultiplayerSocket,
-    getMultiplayerReadySummary,
-    isCurrentPlayerMultiplayerReady
+    getMultiplayerSocket
 } from '../multiplayer/state.js';
 import { setMultiplayerStatus } from '../multiplayer/status.js';
 

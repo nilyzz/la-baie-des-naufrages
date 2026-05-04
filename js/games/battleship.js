@@ -8,7 +8,6 @@ import { closeGameOverModal } from '../core/modals.js';
 import { shuffleArray } from '../core/utils.js';
 import {
     getMultiplayerActiveRoom,
-    getMultiplayerSocket,
     isCurrentPlayerMultiplayerReady,
     getMultiplayerReadySummary
 } from '../multiplayer/state.js';
@@ -241,7 +240,6 @@ export function renderBattleshipBoard(boardElement, grid, revealShips = false, b
     boardElement.innerHTML = grid.map((row, rowIndex) => row.map((cell, colIndex) => {
         const classes = ['battleship-cell'];
         let innerMarkup = '';
-        let label = '';
         const shouldShowShip = (revealShips && cell.hasShip) || (cell.hit && cell.hasShip);
 
         if (shouldShowShip) {
@@ -251,10 +249,8 @@ export function renderBattleshipBoard(boardElement, grid, revealShips = false, b
 
         if (cell.hit && cell.hasShip) {
             classes.push('is-hit');
-            label = 'âœ•';
         } else if (cell.hit) {
             classes.push('is-miss');
-            label = 'â€¢';
         }
 
         return `
