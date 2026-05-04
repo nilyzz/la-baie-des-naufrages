@@ -138,7 +138,9 @@ function normalizeSwContent(content) {
         .replace(/\/style\.min\.css\?v=[^']+/g, '/style.min.css?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^']+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/consent\.js\?v=[^']+/g, '/js/core/consent.js?v=__SITE_CACHE_KEY__')
-        .replace(/\/js\/core\/sw-register\.js\?v=[^']+/g, '/js/core/sw-register.js?v=__SITE_CACHE_KEY__');
+        .replace(/\/js\/core\/sw-register\.js\?v=[^']+/g, '/js/core/sw-register.js?v=__SITE_CACHE_KEY__')
+        // Neutraliser les chemins de chunks pour le calcul du hash (ils changent à chaque build)
+        .replace(/\/\/ CHUNKS_START[\s\S]*?\/\/ CHUNKS_END/, '// CHUNKS_START\n    // CHUNKS_END');
 }
 
 function getNormalizedFileContent(filePath) {
@@ -255,6 +257,17 @@ async function main() {
         legalComments: 'none',
         logLevel: 'info'
     });
+
+    // Injecter les chunks dans sw.js pour le précache PWA offline
+    const chunkPaths = readdirSync('js/chunks')
+        .sort()
+        .map((f) => `    '/js/chunks/${f}',`);
+    const swContent = readFileSync('sw.js', 'utf8');
+    const swUpdated = swContent.replace(
+        /\/\/ CHUNKS_START[\s\S]*?\/\/ CHUNKS_END/,
+        `// CHUNKS_START\n${chunkPaths.join('\n')}\n    // CHUNKS_END`
+    );
+    writeFileSync('sw.js', swUpdated, 'utf8');
 
     const after = {
         bundle: gzipSize('js/main.bundle.min.js'),

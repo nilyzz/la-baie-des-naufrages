@@ -1,20 +1,33 @@
-const CACHE_NAME = 'baie-des-naufrages-v2-17';
+const CACHE_NAME = 'baie-des-naufrages-v2-18';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
     '/confidentialite.html',
     '/mentions-legales.html',
     '/ads.txt',
-    '/style.min.css?v=v2-17',
-    '/js/main.bundle.min.js?v=v2-17',
-    '/js/core/consent.js?v=v2-17',
-    '/js/core/sw-register.js?v=v2-17',
+    '/style.min.css?v=v2-18',
+    '/js/main.bundle.min.js?v=v2-18',
+    '/js/core/consent.js?v=v2-18',
+    '/js/core/sw-register.js?v=v2-18',
     '/site.webmanifest',
     '/assets/branding/logo-baie-cartoon.svg',
     '/assets/navires/navire-cinema.svg',
     '/assets/navires/navire-jeux.svg',
     '/assets/navires/navire-math.svg',
-    '/assets/navires/navire-musique.svg'
+    '/assets/navires/navire-musique.svg',
+    // CHUNKS_START
+    '/js/chunks/chunk-FIS477AU.js',
+    '/js/chunks/chunk-P7MRUFFC.js',
+    '/js/chunks/chunk-V2AZNKNT.js',
+    '/js/chunks/chunk-VC46IEJQ.js',
+    '/js/chunks/chunk-W4TJQMPG.js',
+    '/js/chunks/chunk-ZQH3MLCO.js',
+    '/js/chunks/cinema-QF6NPQNM.js',
+    '/js/chunks/game-event-bindings-4X6RV272.js',
+    '/js/chunks/game-lifecycle-5XVGRFHT.js',
+    '/js/chunks/math-4IXABKSN.js',
+    '/js/chunks/music-5ZEZPDUJ.js',
+    // CHUNKS_END
 ];
 
 self.addEventListener('install', (event) => {
