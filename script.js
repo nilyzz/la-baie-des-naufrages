@@ -22,9 +22,6 @@ import * as stacker from './js/games/stacker.js';
 import * as tetris from './js/games/tetris.js';
 
 import * as multiplayerState from './js/multiplayer/state.js';
-import * as musicModule from './js/navires/music.js';
-import * as mathModule from './js/navires/math.js';
-import * as cinemaModule from './js/navires/cinema.js';
 
 import { loadSession, saveSession, clearSession, scheduleSessionTimeout } from './js/core/session.js';
 import { closeGameOverModal, closeLegalNoticeModal, closeConfirmModal, bindCoreModalControls, bindConfirmModalControls } from './js/core/modals.js';
@@ -75,20 +72,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const __bm = bomb;
     const __ah = airHockey;
     const __pg = pong;
-    const __math = mathModule;
-    const __music = musicModule;
-    const __cin = cinemaModule;
+
+    // Navires chargés à la demande (lazy)
+    let cinemaModule = null;
+    let mathModule = null;
+    let musicModule = null;
 
     let currentView = loginView;
     let activeMathTab = 'mathCalculatorPanel';
     let activeMusicTab = 'musicHomePanel';
+
+    async function loadCinema() {
+        if (!cinemaModule) {
+            cinemaModule = await import('./js/navires/cinema.js');
+            cinemaModule.initCinemaCatalogState();
+            cinemaModule.renderCinemaCatalogAll();
+            cinemaModule.bindCinemaCatalogControls({
+                getContext: cinemaModule.getCinemaCatalogContext,
+                setState: cinemaModule.applyCinemaCatalogState
+            });
+        }
+        return cinemaModule;
+    }
+
+    async function loadMath() {
+        if (!mathModule) {
+            mathModule = await import('./js/navires/math.js');
+            mathModule.bindMathControls();
+            mathModule.initializeConverter();
+        }
+        return mathModule;
+    }
+
+    async function loadMusic() {
+        if (!musicModule) {
+            musicModule = await import('./js/navires/music.js');
+            musicModule.bindMusicControls({ onActivateMusicPanel: activateMusicPanel });
+            musicModule.renderPiano();
+        }
+        return musicModule;
+    }
 
     function transitionToView(nextView, options = {}) {
         _transitionToView(currentView, nextView, {
             ...options,
             onBeforeLeave: () => {
                 if (currentView === musicView && nextView !== musicView) {
-                    __music.stopAllPianoNotes();
+                    musicModule?.stopAllPianoNotes();
                 }
             },
             onViewChanged: (view) => {
@@ -102,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ...options,
             onBeforeLeave: () => {
                 if (currentView === musicView && nextView !== musicView) {
-                    __music.stopAllPianoNotes();
+                    musicModule?.stopAllPianoNotes();
                 }
             },
             onViewChanged: (view) => {
@@ -117,10 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
         transitionToView(servicesView, { headerMode: 'none' });
     }
 
-    function showCinema() {
+    async function showCinema() {
         closeGameOverModal();
         saveSession({ lastDestination: 'cinema' });
-        __cin.ensureMoviesLoaded();
+        const cin = await loadCinema();
+        cin.ensureMoviesLoaded();
         transitionToView(appView, {
             showHeader: true,
             headerMode: 'cinema',
@@ -141,9 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function showMath() {
+    async function showMath() {
         closeGameOverModal();
         saveSession({ lastDestination: 'math' });
+        await loadMath();
         transitionToView(mathView, {
             showHeader: true,
             headerMode: 'math',
@@ -151,9 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function showMusic() {
+    async function showMusic() {
         closeGameOverModal();
         saveSession({ lastDestination: 'music' });
+        await loadMusic();
         transitionToView(musicView, {
             showHeader: true,
             headerMode: 'music',
@@ -167,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function activateMusicPanel(targetId) {
         activeMusicTab = _activateMusicPanel(targetId, {
-            onPianoPanel: () => __music.renderPiano()
+            onPianoPanel: () => musicModule?.renderPiano()
         });
     }
 
@@ -253,8 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showGamesSection
     });
 
-    __music.bindMusicControls({ onActivateMusicPanel: activateMusicPanel });
-
     bindAllGameEventControls({
         getSocket: () => multiplayerState.getMultiplayerSocket(),
         getActiveRoom: () => multiplayerState.getMultiplayerActiveRoom(),
@@ -268,13 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setMultiplayerEntryMode,
         openSelectedGame,
         closeGameOverModal
-    });
-
-    __math.bindMathControls();
-
-    cinemaModule.bindCinemaCatalogControls({
-        getContext: __cin.getCinemaCatalogContext,
-        setState: __cin.applyCinemaCatalogState
     });
 
     bindConfirmModalControls({ onClose: closeConfirmModal });
@@ -298,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bindSessionActivityTracking();
 
     bindGameKeyReleaseControls({
-        handlePianoKeyUp: __music.handlePianoKeyUp,
+        handlePianoKeyUp: (note) => musicModule?.handlePianoKeyUp(note),
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
         getPongKeys: () => __pg.getPongKeys(),
         isMultiplayerPongActive: () => getActiveGameTab() === 'pong' && __pg.isMultiplayerPongActive(),
@@ -335,14 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
         onSyncPlayerNames: syncMultiplayerPlayerNames
     });
 
-    __cin.initCinemaCatalogState();
-    __cin.renderCinemaCatalogAll();
-    // film.xlsx (~137KB) n'est chargé qu'à la première visite du cinéma
-    // (voir ensureMoviesLoaded dans showCinema). Si la session précédente
-    // s'est terminée sur le cinéma, on le précharge pour éviter l'attente.
-    if (loadSession()?.lastDestination === 'cinema') {
-        __cin.importMoviesFromCinema();
-    }
     showGamePanel('home');
     updateMultiplayerLobby();
     __mw.initializeGame();
@@ -364,20 +380,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setMultiplayerEntryMode('create');
     setSelectedMultiplayerGame(multiplayerGameTiles[0]?.dataset.multiplayerGameSelect || 'ticTacToe');
     __cc.startCoinClickerAutoLoop();
-    __math.initializeConverter();
     activateMathPanel('mathCalculatorPanel');
     activateMusicPanel('musicHomePanel');
-    __music.renderPiano();
     syncAllGameMenuOverlayBounds();
 
     const activeSession = loadSession();
 
     if (activeSession) {
         if (activeSession.lastDestination === 'cinema') {
-            showViewImmediately(appView, {
-                showHeader: true,
-                headerMode: 'cinema',
-                onComplete: () => activatePanel('dashboardSection')
+            loadCinema().then((cin) => {
+                cin.importMoviesFromCinema();
+                showViewImmediately(appView, {
+                    showHeader: true,
+                    headerMode: 'cinema',
+                    onComplete: () => activatePanel('dashboardSection')
+                });
             });
         } else if (activeSession.lastDestination === 'games') {
             showViewImmediately(gamesView, {
@@ -386,16 +403,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 onComplete: () => showGamesHome()
             });
         } else if (activeSession.lastDestination === 'math') {
-            showViewImmediately(mathView, {
-                showHeader: true,
-                headerMode: 'math',
-                onComplete: () => activateMathPanel(activeMathTab)
+            loadMath().then(() => {
+                showViewImmediately(mathView, {
+                    showHeader: true,
+                    headerMode: 'math',
+                    onComplete: () => activateMathPanel(activeMathTab)
+                });
             });
         } else if (activeSession.lastDestination === 'music') {
-            showViewImmediately(musicView, {
-                showHeader: true,
-                headerMode: 'music',
-                onComplete: () => activateMusicPanel(activeMusicTab)
+            loadMusic().then(() => {
+                showViewImmediately(musicView, {
+                    showHeader: true,
+                    headerMode: 'music',
+                    onComplete: () => activateMusicPanel(activeMusicTab)
+                });
             });
         } else {
             showViewImmediately(servicesView, { headerMode: 'none' });

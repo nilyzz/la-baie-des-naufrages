@@ -33,6 +33,7 @@ const IGNORED_TRACKED_FILES = new Set([
     'js/main.bundle.min.js',
     VERSION_STATE_PATH
 ]);
+const IGNORED_TRACKED_DIRS = new Set(['js/chunks']);
 
 function gzipSize(filePath) {
     const buffer = readFileSync(filePath);
@@ -102,6 +103,9 @@ function walkDirectory(directoryPath) {
             const normalizedEntryPath = entryPath.replace(/\\/g, '/');
 
             if (entry.isDirectory()) {
+                if (IGNORED_TRACKED_DIRS.has(normalizedEntryPath)) {
+                    return [];
+                }
                 return walkDirectory(entryPath);
             }
 
@@ -224,13 +228,17 @@ async function main() {
     };
 
     await build({
-        entryPoints: ['script.js'],
+        entryPoints: { 'main.bundle.min': 'script.js' },
         bundle: true,
+        splitting: true,
         minify: true,
         format: 'esm',
         target: ['es2020'],
-        outfile: 'js/main.bundle.min.js',
+        outdir: 'js',
+        entryNames: '[name]',
+        chunkNames: 'chunks/[name]-[hash]',
         legalComments: 'none',
+        drop: ['console'],
         logLevel: 'info'
     });
 
@@ -256,7 +264,7 @@ async function main() {
 
     console.log('\n=== Tailles ===');
     console.log(`script.js       : ${formatKilobytes(before.script.raw)} raw / ${formatKilobytes(before.script.gz)} gz`);
-    console.log(`main.bundle.min : ${formatKilobytes(after.bundle.raw)} raw / ${formatKilobytes(after.bundle.gz)} gz  (bundle complet)`);
+    console.log(`main.bundle.min : ${formatKilobytes(after.bundle.raw)} raw / ${formatKilobytes(after.bundle.gz)} gz  (bundle principal)`);
     console.log(`style.css       : ${formatKilobytes(before.css.raw)} raw / ${formatKilobytes(before.css.gz)} gz`);
     console.log(`style.min.css   : ${formatKilobytes(after.css.raw)} raw / ${formatKilobytes(after.css.gz)} gz`);
     console.log(`\nGain CSS gz       : ${formatKilobytes(savedCssGzip)} (-${(100 * savedCssGzip / before.css.gz).toFixed(1)}%)`);
