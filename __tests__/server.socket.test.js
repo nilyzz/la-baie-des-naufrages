@@ -325,6 +325,39 @@ describe('checkers', () => {
     });
 });
 
+describe('chess', () => {
+    it('coup de pion valide (e2→e4) émet room:updated', async () => {
+        const { host, guest } = await readyRoom('chess');
+        const guestUpd = once(guest, 'room:updated');
+        // Blanc (host) : pion en (6,4) → (4,4) — avance de 2 cases
+        host.emit('chess:move', { fromRow: 6, fromCol: 4, toRow: 4, toCol: 4 });
+        const payload = await guestUpd;
+        expect(payload.gameState.board[4][4]).toMatchObject({ type: 'pawn', color: 'white' });
+        expect(payload.gameState.board[6][4]).toBeNull();
+        expect(payload.gameState.turn).toBe('black');
+    });
+
+    it("jouer hors de son tour est silencieusement ignoré", async () => {
+        const { guest } = await readyRoom('chess');
+        let fired = false;
+        guest.once('room:updated', () => { fired = true; });
+        // Noir (guest) essaie de jouer alors que c'est le tour du blanc
+        guest.emit('chess:move', { fromRow: 1, fromCol: 4, toRow: 3, toCol: 4 });
+        await new Promise((r) => setTimeout(r, 150));
+        expect(fired).toBe(false);
+    });
+
+    it('coup illégal est silencieusement ignoré', async () => {
+        const { host } = await readyRoom('chess');
+        let fired = false;
+        host.once('room:updated', () => { fired = true; });
+        // Pion blanc ne peut pas reculer
+        host.emit('chess:move', { fromRow: 6, fromCol: 4, toRow: 7, toCol: 4 });
+        await new Promise((r) => setTimeout(r, 150));
+        expect(fired).toBe(false);
+    });
+});
+
 describe('room:chat:send', () => {
     it('les deux joueurs reçoivent le message (game lancée)', async () => {
         const { host, guest } = await readyRoom();

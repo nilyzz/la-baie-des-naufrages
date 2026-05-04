@@ -801,14 +801,20 @@ export function bindCinemaCatalogControls(options = {}) {
         catalogResetFiltersButton
     } = context;
 
+    let searchDebounceTimer = null;
+    const debouncedRefreshCatalog = () => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(refreshCatalog, 150);
+    };
+
     searchInput?.addEventListener('input', (event) => {
         updateState({ searchTerm: event.target.value });
-        refreshCatalog();
+        debouncedRefreshCatalog();
     });
 
     catalogDirectorFilterInput?.addEventListener('input', (event) => {
         updateState({ catalogDirectorTerm: event.target.value });
-        refreshCatalog();
+        debouncedRefreshCatalog();
     });
 
     catalogReleaseFilterSelect?.addEventListener('change', (event) => {
