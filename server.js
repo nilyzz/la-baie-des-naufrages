@@ -147,7 +147,24 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname), {
+  setHeaders(res, filePath) {
+    const base = path.basename(filePath);
+    const normalized = filePath.replace(/\\/g, '/');
+
+    if (base === 'sw.js' || base.endsWith('.html')) {
+      // SW et HTML : toujours vérifier la fraîcheur
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (normalized.includes('/js/chunks/') || base.endsWith('.min.js') || base.endsWith('.min.css')) {
+      // Assets versionnés (chunks hash-based, bundles min avec ?v=) : 1 an immutable
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (/\.(svg|webmanifest|png|ico|jpg|jpeg|gif|woff2|woff|ttf|txt|xml)$/i.test(base)) {
+      // Assets statiques sans version : 1 semaine
+      res.setHeader('Cache-Control', 'public, max-age=604800');
+    }
+    // Autres fichiers : comportement par défaut d'express.static (max-age=0)
+  }
+}));
 
 function normalizePosterCacheKey(title, year = '') {
   return `${String(title || '')

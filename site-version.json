@@ -1,8 +1,8 @@
 {
   "major": 2,
-  "minor": 20,
-  "displayVersion": "2.20",
-  "cacheKey": "v2-20",
-  "sourceHash": "21522629d4887eb23e41822041f777e4c685fbdb1d42918f7d4ce8fb1902c0a5",
-  "updatedAt": "2026-05-04T15:55:05.510Z"
+  "minor": 21,
+  "displayVersion": "2.21",
+  "cacheKey": "v2-21",
+  "sourceHash": "00e76cac3e722faf42ccb8bf2eae58446f30c276e006699398251280e54a010a",
+  "updatedAt": "2026-05-04T15:57:57.183Z"
 }
