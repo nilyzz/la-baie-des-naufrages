@@ -133,7 +133,8 @@ function normalizeIndexContent(content) {
         .replace(/\/js\/main\.bundle\.min\.js\?v=[^"'\s>]+/g, '/js/main.bundle.min.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/consent\.js\?v=[^"'\s>]+/g, '/js/core/consent.js?v=__SITE_CACHE_KEY__')
         .replace(/\/js\/core\/sw-register\.js\?v=[^"'\s>]+/g, '/js/core/sw-register.js?v=__SITE_CACHE_KEY__')
-        .replace(/(<span id="siteVersionDisplay"[^>]*>)([^<]*)(<\/span>)/, '$1Version __SITE_VERSION__$3');
+        .replace(/(<span id="siteVersionDisplay"[^>]*>)([^<]*)(<\/span>)/, '$1Version __SITE_VERSION__$3')
+        .replace(/    <!-- PREFETCH_LINKS_START -->[\s\S]*?<!-- PREFETCH_LINKS_END -->/, '    <!-- PREFETCH_LINKS_START -->\n    <!-- PREFETCH_LINKS_END -->');
 }
 
 function normalizeSwContent(content) {
@@ -304,6 +305,17 @@ async function main() {
         cssGames: gzipSize('style-games.min.css')
     };
 
+    // Injecter les prefetch links dans index.html (chunks + style-games)
+    const chunkFiles = readdirSync('js/chunks').sort();
+    const gamesCssPrefetch = `    <link rel="prefetch" href="style-games.min.css?v=${cacheKey}" as="style">`;
+    const chunkPrefetchLinks = chunkFiles.map((f) => `    <link rel="prefetch" href="/js/chunks/${f}" as="script" crossorigin>`);
+    const prefetchBlock = [gamesCssPrefetch, ...chunkPrefetchLinks].join('\n');
+    const indexFinal = readFileSync('index.html', 'utf8').replace(
+        /    <!-- PREFETCH_LINKS_START -->[\s\S]*?<!-- PREFETCH_LINKS_END -->/,
+        `    <!-- PREFETCH_LINKS_START -->\n${prefetchBlock}\n    <!-- PREFETCH_LINKS_END -->`
+    );
+    writeFileSync('index.html', indexFinal, 'utf8');
+
     console.log('\n=== Version ===');
     console.log(`Version site    : ${displayVersion}${shouldBumpVersion ? ' (mise a jour)' : ' (inchangée)'}`);
     console.log(`Cle de cache    : ${cacheKey}`);
@@ -313,11 +325,12 @@ async function main() {
     console.log(`main.bundle.min   : ${formatKilobytes(after.bundle.raw)} raw / ${formatKilobytes(after.bundle.gz)} gz  (bundle principal)`);
     console.log(`style.css         : ${formatKilobytes(before.css.raw)} raw / ${formatKilobytes(before.css.gz)} gz`);
     console.log(`style-core.min    : ${formatKilobytes(after.cssCore.raw)} raw / ${formatKilobytes(after.cssCore.gz)} gz  (chargement initial)`);
-    console.log(`style-games.min   : ${formatKilobytes(after.cssGames.raw)} raw / ${formatKilobytes(after.cssGames.gz)} gz  (lazy)`);
+    console.log(`style-games.min   : ${formatKilobytes(after.cssGames.raw)} raw / ${formatKilobytes(after.cssGames.gz)} gz  (lazy + prefetch)`);
     const totalMinGz = after.cssCore.gz + after.cssGames.gz;
     const savedCssGzip = before.css.gz - totalMinGz;
     console.log(`\nGain CSS gz total : ${formatKilobytes(savedCssGzip)} (-${(100 * savedCssGzip / before.css.gz).toFixed(1)}%)`);
     console.log(`CSS initial (core): ${formatKilobytes(after.cssCore.gz)} gz  (${(100 * after.cssCore.gz / before.css.gz).toFixed(1)}% du total)`);
+    console.log(`\nPrefetch injectés : ${chunkFiles.length} chunks + style-games.min.css`);
 }
 
 main().catch((error) => {
