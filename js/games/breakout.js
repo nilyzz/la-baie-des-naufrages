@@ -13,6 +13,7 @@ let breakoutState = null;
 let breakoutAnimationFrame = null;
 let breakoutLastFrame = 0;
 const breakoutKeys = new Set();
+let _breakoutTouchX = null;
 let breakoutBestScore = (typeof window !== 'undefined' && Number(window.localStorage.getItem(BREAKOUT_BEST_KEY))) || 0;
 let breakoutRemainingBricks = 0;
 let breakoutMenuVisible = true;
@@ -428,11 +429,19 @@ export function updateBreakout(timestamp) {
 
     if (breakoutState.running) {
         const speed = 360;
-        if (breakoutKeys.has('arrowleft') || breakoutKeys.has('q')) {
-            breakoutState.paddle.x -= speed * delta;
-        }
-        if (breakoutKeys.has('arrowright') || breakoutKeys.has('d')) {
-            breakoutState.paddle.x += speed * delta;
+        if (_breakoutTouchX !== null) {
+            const paddleCenter = breakoutState.paddle.x + breakoutState.paddle.width / 2;
+            const diff = _breakoutTouchX - paddleCenter;
+            if (Math.abs(diff) > 1) {
+                breakoutState.paddle.x += Math.sign(diff) * Math.min(Math.abs(diff), speed * delta);
+            }
+        } else {
+            if (breakoutKeys.has('arrowleft') || breakoutKeys.has('q')) {
+                breakoutState.paddle.x -= speed * delta;
+            }
+            if (breakoutKeys.has('arrowright') || breakoutKeys.has('d')) {
+                breakoutState.paddle.x += speed * delta;
+            }
         }
         breakoutState.paddle.x = Math.max(0, Math.min(breakoutCanvas.width - breakoutState.paddle.width, breakoutState.paddle.x));
 
@@ -539,6 +548,8 @@ export function updateBreakout(timestamp) {
 
 export function getBreakoutKeys() { return breakoutKeys; }
 export function getBreakoutState() { return breakoutState; }
+export function setBreakoutTouchX(canvasX) { _breakoutTouchX = canvasX; }
+export function clearBreakoutTouchX() { _breakoutTouchX = null; }
 export function getBreakoutMenuVisible() { return breakoutMenuVisible; }
 export function setBreakoutMenuVisible(v) { breakoutMenuVisible = Boolean(v); }
 export function setBreakoutMenuShowingRules(v) { breakoutMenuShowingRules = Boolean(v); }

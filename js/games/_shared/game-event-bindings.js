@@ -1050,6 +1050,26 @@ export function bindAllGameEventControls(options = {}) {
         baieBerry.dropBaieBerryAt((event.clientX - bounds.left) * scaleX);
     });
     
+    const breakoutCanvas = document.getElementById('breakoutCanvas');
+    if (breakoutCanvas) {
+        const onBreakoutTouch = (event) => {
+            event.preventDefault();
+            const touch = event.touches[0] || event.changedTouches[0];
+            if (!touch) return;
+            const rect = breakoutCanvas.getBoundingClientRect();
+            const scaleX = (breakoutCanvas.width || rect.width) / rect.width;
+            breakout.setBreakoutTouchX((touch.clientX - rect.left) * scaleX);
+            if (!breakout.getBreakoutMenuVisible() && !breakout.getBreakoutMenuClosing()) {
+                breakout.resumeBreakoutLoop();
+            }
+        };
+        breakoutCanvas.addEventListener('touchstart', onBreakoutTouch, { passive: false });
+        breakoutCanvas.addEventListener('touchmove', onBreakoutTouch, { passive: false });
+        breakoutCanvas.addEventListener('touchend', () => {
+            breakout.clearBreakoutTouchX();
+        }, { passive: true });
+    }
+
     document.getElementById('breakoutMenuActionButton')?.addEventListener('click', () => {
         if (breakout.getBreakoutMenuShowingRules()) {
             breakout.setBreakoutMenuShowingRules(false);
