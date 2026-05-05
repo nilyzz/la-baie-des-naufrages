@@ -11162,10 +11162,12 @@ button:hover {
 
     .nav-button {
         min-height: 46px;
-        padding: 10px 10px;
-        font-size: 0.9rem;
+        padding: 10px 6px;
+        font-size: 0.88rem;
         border-radius: 16px;
-        flex: 1 1 calc(50% - 8px);
+        flex: 1 1 0;
+        min-width: 0;
+        text-align: center;
     }
 
     .page-actions {
@@ -11639,6 +11641,45 @@ button:hover {
 
     .uno-hand .uno-card-face + .uno-card-face {
         margin-left: -12px;
+    }
+
+    .catalog-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .movie-card-body {
+        min-height: auto;
+        padding: 7px 8px 9px;
+    }
+
+    .movie-card-body h4 {
+        font-size: 0.76rem;
+        margin-bottom: 4px;
+    }
+
+    .section-header-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+
+    .catalog-tools {
+        width: 100%;
+    }
+
+    .catalog-genre-list {
+        grid-template-columns: 1fr;
+        max-height: 200px;
+    }
+
+    .catalog-layout {
+        gap: 14px;
+    }
+
+    .piano-stage {
+        padding: 10px;
     }
 }
 
