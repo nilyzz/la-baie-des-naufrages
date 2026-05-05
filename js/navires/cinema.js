@@ -1085,7 +1085,12 @@ export function parseMoviesFromWorkbook(arrayBuffer) {
     if (!worksheet) return [];
 
     const byRows = parseMoviesFromWorksheetRows(worksheet);
-    if (byRows.length) return byRows;
+    if (byRows.length) {
+        const shouldUseTwentyPointScale = byRows.some((movie) => Number(movie.rating) > 5);
+        return shouldUseTwentyPointScale
+            ? byRows.map((movie) => ({ ...movie, ratingScale: 20 }))
+            : byRows;
+    }
 
     const fallbackRows = parseMoviesFromFixedColumns(worksheet);
     const shouldUseTwentyPointScale = fallbackRows.some((movie) => Number(movie.rating) > 5);

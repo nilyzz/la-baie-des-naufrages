@@ -139,7 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Transitions de vue ---
 
+    let _transitioning = false;
+
     function transitionToView(nextView, options = {}) {
+        if (_transitioning || currentView === nextView) return;
+        _transitioning = true;
         _transitionToView(currentView, nextView, {
             ...options,
             onBeforeLeave: () => {
@@ -147,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     musicModule?.stopAllPianoNotes();
                 }
             },
-            onViewChanged: (view) => { currentView = view; }
+            onViewChanged: (view) => { currentView = view; _transitioning = false; }
         });
     }
 
@@ -330,7 +334,11 @@ document.addEventListener('DOMContentLoaded', () => {
     bindGamesNavigationControls({
         openSelectedGame,
         setSelectedMultiplayerGame,
-        setMultiplayerEntryMode,
+        setMultiplayerEntryMode: (mode) => {
+            const room = multiplayerState.getMultiplayerActiveRoom();
+            if (room?.code && !multiplayerState.isCurrentMultiplayerHost()) return;
+            setMultiplayerEntryMode(mode);
+        },
         showGamesSection
     });
 
