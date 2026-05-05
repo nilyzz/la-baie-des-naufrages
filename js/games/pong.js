@@ -24,6 +24,7 @@ export const PONG_MAX_STEP_SECONDS = 1 / 120;
 
 let pongLastFinishedStateKey = '';
 let pongRunning = false;
+let _pongTouchY = null;
 let pongAnimationFrame = null;
 let pongLastFrame = 0;
 let pongRenderAnimationFrame = null;
@@ -88,6 +89,16 @@ export function getMultiplayerPongRole() {
 }
 
 export function getMultiplayerPongInputDirection() {
+    if (_pongTouchY !== null && pongState) {
+        const role = getMultiplayerPongRole();
+        const currentY = role === 'right' ? pongState.aiY : pongState.playerY;
+        const touchAbsY = _pongTouchY * pongState.boardHeight;
+        const paddleCenterY = currentY + pongState.paddleHeight / 2;
+        const diff = touchAbsY - paddleCenterY;
+        if (Math.abs(diff) < pongState.paddleHeight * 0.15) return 0;
+        return diff > 0 ? 1 : -1;
+    }
+
     const upPressed = pongKeys.has('z') || pongKeys.has('Z') || pongKeys.has('ArrowUp');
     const downPressed = pongKeys.has('s') || pongKeys.has('S') || pongKeys.has('ArrowDown');
 
@@ -100,6 +111,14 @@ export function getMultiplayerPongInputDirection() {
     }
 
     return 0;
+}
+
+export function setPongTouchInput(boardYFraction) {
+    _pongTouchY = Math.max(0, Math.min(1, boardYFraction));
+}
+
+export function clearPongTouchInput() {
+    _pongTouchY = null;
 }
 
 export function getPongRulesText() {
@@ -583,24 +602,32 @@ export function ensureMultiplayerPongRenderLoop() {
         }
 
         if (role === 'left') {
-            pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
-            if (Math.abs(pongState.playerY - pongLocalPredictedPaddleY) > 6) {
-                pongLocalPredictedPaddleY = pongState.playerY;
-            }
-            if (inputDirection === 0) {
-                const catchupGap = pongState.playerY - pongLocalPredictedPaddleY;
-                pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 16);
+            if (_pongTouchY !== null) {
+                pongLocalPredictedPaddleY = clampPongY(_pongTouchY * pongState.boardHeight - pongState.paddleHeight / 2);
+            } else {
+                pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
+                if (Math.abs(pongState.playerY - pongLocalPredictedPaddleY) > 6) {
+                    pongLocalPredictedPaddleY = pongState.playerY;
+                }
+                if (inputDirection === 0) {
+                    const catchupGap = pongState.playerY - pongLocalPredictedPaddleY;
+                    pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 16);
+                }
             }
             pongDisplayState.playerY = pongLocalPredictedPaddleY;
             pongDisplayState.aiY = Math.abs(pongState.aiY - pongDisplayState.aiY) > 6
                 ? pongState.aiY
                 : (pongDisplayState.aiY + ((pongState.aiY - pongDisplayState.aiY) * paddleSmoothing));
         } else if (role === 'right') {
-            pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
-            if (Math.abs(pongState.aiY - pongLocalPredictedPaddleY) > 6) {
-                pongLocalPredictedPaddleY = pongState.aiY;
+            if (_pongTouchY !== null) {
+                pongLocalPredictedPaddleY = clampPongY(_pongTouchY * pongState.boardHeight - pongState.paddleHeight / 2);
+            } else {
+                pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
+                if (Math.abs(pongState.aiY - pongLocalPredictedPaddleY) > 6) {
+                    pongLocalPredictedPaddleY = pongState.aiY;
+                }
             }
-            if (inputDirection === 0) {
+            if (inputDirection === 0 && _pongTouchY === null) {
                 const catchupGap = pongState.aiY - pongLocalPredictedPaddleY;
                 pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 16);
             }
@@ -743,11 +770,16 @@ export function getPongReturnVelocityY(impact, serveBoostPending) {
 }
 
 export function updatePongStep(delta) {
-    const leftDirection = (pongKeys.has('z') || pongKeys.has('Z') || (pongMode === 'solo' && pongKeys.has('ArrowUp')) ? -1 : 0)
-        + (pongKeys.has('s') || pongKeys.has('S') || (pongMode === 'solo' && pongKeys.has('ArrowDown')) ? 1 : 0);
+    if (_pongTouchY !== null) {
+        const targetY = _pongTouchY * pongState.boardHeight - pongState.paddleHeight / 2;
+        pongState.playerY = Math.max(0, Math.min(targetY, pongState.boardHeight - pongState.paddleHeight));
+    } else {
+        const leftDirection = (pongKeys.has('z') || pongKeys.has('Z') || (pongMode === 'solo' && pongKeys.has('ArrowUp')) ? -1 : 0)
+            + (pongKeys.has('s') || pongKeys.has('S') || (pongMode === 'solo' && pongKeys.has('ArrowDown')) ? 1 : 0);
 
-    pongState.playerY += leftDirection * pongState.playerSpeed * delta;
-    pongState.playerY = Math.max(0, Math.min(pongState.playerY, pongState.boardHeight - pongState.paddleHeight));
+        pongState.playerY += leftDirection * pongState.playerSpeed * delta;
+        pongState.playerY = Math.max(0, Math.min(pongState.playerY, pongState.boardHeight - pongState.paddleHeight));
+    }
 
     if (pongMode === 'duo') {
         const rightDirection = (pongKeys.has('ArrowUp') ? -1 : 0) + (pongKeys.has('ArrowDown') ? 1 : 0);

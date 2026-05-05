@@ -22,6 +22,7 @@ export const AIR_HOCKEY_PUCK_MAX_SPEED = 700;
 
 let airHockeyMode = 'solo';
 let airHockeyState = null;
+let _airHockeyTouchPos = null;
 let airHockeyDisplayState = null;
 const airHockeyKeys = new Set();
 let airHockeyAnimationFrame = null;
@@ -75,6 +76,19 @@ export function getMultiplayerAirHockeyRole() {
 }
 
 export function getMultiplayerAirHockeyInput() {
+    if (_airHockeyTouchPos && airHockeyState) {
+        const role = getMultiplayerAirHockeyRole();
+        const paddle = role === 'right' ? airHockeyState.right : airHockeyState.left;
+        const touchX = _airHockeyTouchPos.x * airHockeyState.width;
+        const touchY = _airHockeyTouchPos.y * airHockeyState.height;
+        const dx = touchX - paddle.x;
+        const dy = touchY - paddle.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 4) return { x: 0, y: 0 };
+        const scale = Math.min(1, dist / 40);
+        return { x: (dx / dist) * scale, y: (dy / dist) * scale };
+    }
+
     const vertical = (airHockeyKeys.has('s') || airHockeyKeys.has('arrowdown') ? 1 : 0) - (airHockeyKeys.has('z') || airHockeyKeys.has('arrowup') ? 1 : 0);
     const horizontal = (airHockeyKeys.has('d') || airHockeyKeys.has('arrowright') ? 1 : 0) - (airHockeyKeys.has('q') || airHockeyKeys.has('arrowleft') ? 1 : 0);
     const magnitude = Math.hypot(horizontal, vertical);
@@ -87,6 +101,14 @@ export function getMultiplayerAirHockeyInput() {
     }
 
     return { x: horizontal, y: vertical };
+}
+
+export function setAirHockeyTouchPos(boardX, boardY) {
+    _airHockeyTouchPos = { x: boardX, y: boardY };
+}
+
+export function clearAirHockeyTouchPos() {
+    _airHockeyTouchPos = null;
 }
 
 export function pushMultiplayerAirHockeyInput() {
@@ -704,7 +726,22 @@ export function updateAirHockey(timestamp) {
         paddle.vy = delta ? (paddle.y - previousY) / delta : 0;
     };
 
-    movePaddle(airHockeyState.left, 'z', 's', 'q', 'd');
+    if (_airHockeyTouchPos && !isMultiplayerAirHockeyActive() && !airHockeyControlsLocked) {
+        const prev = { x: airHockeyState.left.x, y: airHockeyState.left.y };
+        const speed = 560;
+        const dx = _airHockeyTouchPos.x - airHockeyState.left.x;
+        const dy = _airHockeyTouchPos.y - airHockeyState.left.y;
+        const dist = Math.hypot(dx, dy);
+        const step = Math.min(dist, speed * delta);
+        if (dist > 1) {
+            airHockeyState.left.x += (dx / dist) * step;
+            airHockeyState.left.y += (dy / dist) * step;
+        }
+        airHockeyState.left.vx = delta ? (airHockeyState.left.x - prev.x) / delta : 0;
+        airHockeyState.left.vy = delta ? (airHockeyState.left.y - prev.y) / delta : 0;
+    } else {
+        movePaddle(airHockeyState.left, 'z', 's', 'q', 'd');
+    }
     airHockeyState.left.x = Math.max(airHockeyState.left.radius, Math.min((width * 0.5) - AIR_HOCKEY_CENTER_GAP - airHockeyState.left.radius, airHockeyState.left.x));
     airHockeyState.left.vx = delta ? Math.max(-280, Math.min(280, airHockeyState.left.vx)) : 0;
     airHockeyState.left.vy = delta ? Math.max(-280, Math.min(280, airHockeyState.left.vy)) : 0;

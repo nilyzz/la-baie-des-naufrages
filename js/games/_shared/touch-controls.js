@@ -66,8 +66,56 @@ export function bindTouchGameControls(options = {}) {
         isTetrisBlocked,
         moveTetrisHorizontally,
         dropTetrisStep,
-        rotateTetrisPiece
+        rotateTetrisPiece,
+        setPongTouchInput,
+        clearPongTouchInput,
+        pushMultiplayerPongInput,
+        setAirHockeyTouchPos,
+        clearAirHockeyTouchPos,
+        pushMultiplayerAirHockeyInput,
+        isMultiplayerAirHockeyActive
     } = options;
+
+    const pongBoard = document.getElementById('pongBoard');
+    if (pongBoard) {
+        const onPongTouch = (event) => {
+            if (getActiveGameTab?.() !== 'pong') return;
+            event.preventDefault();
+            const touch = event.touches[0] || event.changedTouches[0];
+            if (!touch) return;
+            const rect = pongBoard.getBoundingClientRect();
+            const fraction = Math.max(0, Math.min(1, (touch.clientY - rect.top) / rect.height));
+            setPongTouchInput?.(fraction);
+            pushMultiplayerPongInput?.();
+        };
+        pongBoard.addEventListener('touchstart', onPongTouch, { passive: false });
+        pongBoard.addEventListener('touchmove', onPongTouch, { passive: false });
+        pongBoard.addEventListener('touchend', () => {
+            clearPongTouchInput?.();
+            pushMultiplayerPongInput?.();
+        }, { passive: true });
+    }
+
+    const airHockeyBoard = document.getElementById('airHockeyBoard');
+    if (airHockeyBoard) {
+        const onAirHockeyTouch = (event) => {
+            if (getActiveGameTab?.() !== 'airHockey') return;
+            event.preventDefault();
+            const touch = event.touches[0] || event.changedTouches[0];
+            if (!touch) return;
+            const rect = airHockeyBoard.getBoundingClientRect();
+            const fracX = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+            const fracY = Math.max(0, Math.min(1, (touch.clientY - rect.top) / rect.height));
+            setAirHockeyTouchPos?.(fracX, fracY);
+            pushMultiplayerAirHockeyInput?.();
+        };
+        airHockeyBoard.addEventListener('touchstart', onAirHockeyTouch, { passive: false });
+        airHockeyBoard.addEventListener('touchmove', onAirHockeyTouch, { passive: false });
+        airHockeyBoard.addEventListener('touchend', () => {
+            clearAirHockeyTouchPos?.();
+            pushMultiplayerAirHockeyInput?.();
+        }, { passive: true });
+    }
 
     bindSwipe(document.getElementById('game2048Board'), {
         canStart: () => getActiveGameTab?.() === '2048' && !is2048Blocked?.(),

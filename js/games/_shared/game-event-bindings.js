@@ -221,7 +221,14 @@ export function bindAllGameEventControls(options = {}) {
         isTetrisBlocked: () => tetris.getTetrisMenuVisible() || tetris.getTetrisMenuClosing(),
         moveTetrisHorizontally: tetris.moveTetrisHorizontally,
         dropTetrisStep: tetris.dropTetrisStep,
-        rotateTetrisPiece: tetris.rotateTetrisPiece
+        rotateTetrisPiece: tetris.rotateTetrisPiece,
+        setPongTouchInput: pong.setPongTouchInput,
+        clearPongTouchInput: pong.clearPongTouchInput,
+        pushMultiplayerPongInput: pong.pushMultiplayerPongInput,
+        setAirHockeyTouchPos: airHockey.setAirHockeyTouchPos,
+        clearAirHockeyTouchPos: airHockey.clearAirHockeyTouchPos,
+        pushMultiplayerAirHockeyInput: airHockey.pushMultiplayerAirHockeyInput,
+        isMultiplayerAirHockeyActive: airHockey.isMultiplayerAirHockeyActive
     });
     
     document.getElementById('aimMenuActionButton')?.addEventListener('click', () => {
