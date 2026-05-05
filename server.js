@@ -2401,6 +2401,10 @@ app.post('/api/rooms', (request, response) => {
     return response.status(429).json({ error: 'too-many-requests' });
   }
 
+  if (rooms.size >= 500) {
+    return response.status(503).json({ error: 'server-full' });
+  }
+
   const requestedGameId = String(request.body?.gameId || '').trim();
 
   if (!requestedGameId || !MAX_PLAYERS_BY_GAME[requestedGameId]) {
@@ -2908,6 +2912,15 @@ io.on('connection', (socket) => {
     const playerColor = getChessPlayerColor(room, socket.id);
 
     if (!playerColor || playerColor !== room.gameState.turn || room.gameState.winner) {
+      return;
+    }
+
+    if (
+      !Number.isInteger(fromRow) || !Number.isInteger(fromCol) ||
+      !Number.isInteger(toRow)   || !Number.isInteger(toCol)   ||
+      !isInsideGameGrid(fromRow, fromCol, CHESS_SIZE) ||
+      !isInsideGameGrid(toRow, toCol, CHESS_SIZE)
+    ) {
       return;
     }
 
