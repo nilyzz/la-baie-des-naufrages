@@ -348,9 +348,9 @@ export function renderAirHockey() {
 
     airHockeyLeftScoreDisplay.textContent = String(currentAirHockeyState.leftScore);
     airHockeyRightScoreDisplay.textContent = String(currentAirHockeyState.rightScore);
-    airHockeyLeftPaddle.style.transform = `translate(${currentAirHockeyState.left.x - currentAirHockeyState.left.radius}px, ${currentAirHockeyState.left.y - currentAirHockeyState.left.radius}px)`;
-    airHockeyRightPaddle.style.transform = `translate(${currentAirHockeyState.right.x - currentAirHockeyState.right.radius}px, ${currentAirHockeyState.right.y - currentAirHockeyState.right.radius}px)`;
-    airHockeyPuck.style.transform = `translate(${currentAirHockeyState.puck.x - currentAirHockeyState.puck.radius}px, ${currentAirHockeyState.puck.y - currentAirHockeyState.puck.radius}px)`;
+    airHockeyLeftPaddle.style.transform = `translate3d(${currentAirHockeyState.left.x - currentAirHockeyState.left.radius}px, ${currentAirHockeyState.left.y - currentAirHockeyState.left.radius}px, 0)`;
+    airHockeyRightPaddle.style.transform = `translate3d(${currentAirHockeyState.right.x - currentAirHockeyState.right.radius}px, ${currentAirHockeyState.right.y - currentAirHockeyState.right.radius}px, 0)`;
+    airHockeyPuck.style.transform = `translate3d(${currentAirHockeyState.puck.x - currentAirHockeyState.puck.radius}px, ${currentAirHockeyState.puck.y - currentAirHockeyState.puck.radius}px, 0)`;
 }
 
 export function stopAirHockeyRuntime() {
