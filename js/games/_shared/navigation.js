@@ -282,8 +282,10 @@ export function bindGamesNavigationControls(options = {}) {
         });
     });
 
+    let _filterDebounce = null;
     getById('gamesFilterSearchInput')?.addEventListener('input', () => {
-        updateGamesFilters();
+        clearTimeout(_filterDebounce);
+        _filterDebounce = setTimeout(updateGamesFilters, 150);
     });
 
     document.querySelectorAll('[data-games-filter]').forEach((button) => {

@@ -171,11 +171,19 @@ document.addEventListener('DOMContentLoaded', () => {
         transitionToView(servicesView, { headerMode: 'none' });
     }
 
+    function _onLazyLoadError(err) {
+        console.error('[lazy] Échec du chargement du module :', err);
+    }
+
     async function showCinema() {
         closeGameOverModal();
         saveSession({ lastDestination: 'cinema' });
         document.body.classList.add('is-lazy-loading');
-        const cin = await loadCinema().finally(() => document.body.classList.remove('is-lazy-loading'));
+        let cin;
+        try {
+            cin = await loadCinema();
+        } catch (err) { _onLazyLoadError(err); return; }
+        finally { document.body.classList.remove('is-lazy-loading'); }
         cin.ensureMoviesLoaded();
         transitionToView(appView, {
             showHeader: true,
@@ -188,7 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
         closeGameOverModal();
         saveSession({ lastDestination: 'games' });
         document.body.classList.add('is-lazy-loading');
-        await loadGamesBundle().finally(() => document.body.classList.remove('is-lazy-loading'));
+        try {
+            await loadGamesBundle();
+        } catch (err) { _onLazyLoadError(err); return; }
+        finally { document.body.classList.remove('is-lazy-loading'); }
         transitionToView(gamesView, {
             showHeader: true,
             headerMode: 'games',
@@ -200,7 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
         closeGameOverModal();
         saveSession({ lastDestination: 'math' });
         document.body.classList.add('is-lazy-loading');
-        await loadMath().finally(() => document.body.classList.remove('is-lazy-loading'));
+        try {
+            await loadMath();
+        } catch (err) { _onLazyLoadError(err); return; }
+        finally { document.body.classList.remove('is-lazy-loading'); }
         transitionToView(mathView, {
             showHeader: true,
             headerMode: 'math',
@@ -212,7 +226,10 @@ document.addEventListener('DOMContentLoaded', () => {
         closeGameOverModal();
         saveSession({ lastDestination: 'music' });
         document.body.classList.add('is-lazy-loading');
-        await loadMusic().finally(() => document.body.classList.remove('is-lazy-loading'));
+        try {
+            await loadMusic();
+        } catch (err) { _onLazyLoadError(err); return; }
+        finally { document.body.classList.remove('is-lazy-loading'); }
         transitionToView(musicView, {
             showHeader: true,
             headerMode: 'music',
@@ -398,6 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeSession = loadSession();
 
     if (activeSession) {
+        const fallback = () => showViewImmediately(servicesView, { headerMode: 'none' });
         if (activeSession.lastDestination === 'cinema') {
             loadCinema().then((cin) => {
                 cin.importMoviesFromCinema();
@@ -406,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headerMode: 'cinema',
                     onComplete: () => activatePanel('dashboardSection')
                 });
-            });
+            }).catch(fallback);
         } else if (activeSession.lastDestination === 'games') {
             loadGamesBundle().then(() => {
                 showViewImmediately(gamesView, {
@@ -414,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headerMode: 'games',
                     onComplete: () => showGamesHome()
                 });
-            });
+            }).catch(fallback);
         } else if (activeSession.lastDestination === 'math') {
             loadMath().then(() => {
                 showViewImmediately(mathView, {
@@ -422,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headerMode: 'math',
                     onComplete: () => activateMathPanel(activeMathTab)
                 });
-            });
+            }).catch(fallback);
         } else if (activeSession.lastDestination === 'music') {
             loadMusic().then(() => {
                 showViewImmediately(musicView, {
@@ -430,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headerMode: 'music',
                     onComplete: () => activateMusicPanel(activeMusicTab)
                 });
-            });
+            }).catch(fallback);
         } else {
             showViewImmediately(servicesView, { headerMode: 'none' });
         }
