@@ -29,18 +29,18 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="preconnect" href="https://la-baie-des-naufrages.onrender.com">
     <link rel="preconnect" href="https://image.tmdb.org">
-    <link rel="stylesheet" href="style.min.css?v=v2-30">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v2-30">
+    <link rel="stylesheet" href="style.min.css?v=v2-32">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v2-32">
     <!-- PREFETCH_LINKS_START -->
-    <link rel="prefetch" href="/js/chunks/chunk-2HZFNBJ4.js" as="script" crossorigin>
+    <link rel="prefetch" href="/js/chunks/chunk-KXJW57KP.js" as="script" crossorigin>
+    <link rel="prefetch" href="/js/chunks/chunk-N3QHIL6Q.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/chunk-V2AZNKNT.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/chunk-VC46IEJQ.js" as="script" crossorigin>
-    <link rel="prefetch" href="/js/chunks/chunk-VOAPVLOB.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/chunk-W4TJQMPG.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/chunk-ZQH3MLCO.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/cinema-L2HPFVZV.js" as="script" crossorigin>
-    <link rel="prefetch" href="/js/chunks/game-event-bindings-Q5FSQVE2.js" as="script" crossorigin>
-    <link rel="prefetch" href="/js/chunks/game-lifecycle-45Y7C2IT.js" as="script" crossorigin>
+    <link rel="prefetch" href="/js/chunks/game-event-bindings-4T7SZCQR.js" as="script" crossorigin>
+    <link rel="prefetch" href="/js/chunks/game-lifecycle-OK2VRUQ5.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/math-4IXABKSN.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/music-5ZEZPDUJ.js" as="script" crossorigin>
     <!-- PREFETCH_LINKS_END -->
@@ -144,7 +144,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 2.30</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 2.32</span>
                     </p>
                 </form>
             </div>
@@ -232,7 +232,7 @@
 
                         <div id="catalogDirectorFilterBlock" class="catalog-filter-block hidden">
                             <label class="field-label" for="catalogDirectorFilterInput">R&eacute;alisateur</label>
-                            <input id="catalogDirectorFilterInput" class="catalog-filter-input" type="search" placeholder="Nom du r&eacute;alisateur" list="catalogDirectorSuggestions">
+                            <input id="catalogDirectorFilterInput" class="catalog-filter-input" type="search" placeholder="Nom du r&eacute;alisateur" list="catalogDirectorSuggestions" autocomplete="off">
                             <datalist id="catalogDirectorSuggestions"></datalist>
                         </div>
 
@@ -271,6 +271,7 @@
                                     id="searchInput"
                                     type="search"
                                     placeholder="Titre ou r&eacute;alisateur"
+                                    autocomplete="off"
                                 >
                             </div>
                         </div>
@@ -320,7 +321,7 @@
 
                     <label class="games-filter-search" for="gamesFilterSearchInput">
                         <span class="games-filter-search-label">Nom du jeu</span>
-                        <input id="gamesFilterSearchInput" type="search" placeholder="Ex. Sudoku, Pong, Memory">
+                        <input id="gamesFilterSearchInput" type="search" placeholder="Ex. Sudoku, Pong, Memory" autocomplete="off">
                     </label>
 
                     <div class="games-filter-group">
@@ -2015,7 +2016,7 @@
 
                                 <div class="field-group">
                                     <label class="field-label" for="converterValue">Valeur</label>
-                                    <input id="converterValue" type="number" step="any" placeholder="Ex: 12.5">
+                                    <input id="converterValue" type="number" step="any" placeholder="Ex: 12.5" autocomplete="off">
                                 </div>
 
                                 <div class="field-group">
@@ -2055,11 +2056,11 @@
                             <div class="form-grid math-form-grid">
                                 <div class="field-group">
                                     <label class="field-label" for="percentageRate">Pourcentage</label>
-                                    <input id="percentageRate" type="number" step="any" placeholder="Ex: 15">
+                                    <input id="percentageRate" type="number" step="any" placeholder="Ex: 15" autocomplete="off">
                                 </div>
                                 <div class="field-group">
                                     <label class="field-label" for="percentageBase">Valeur</label>
-                                    <input id="percentageBase" type="number" step="any" placeholder="Ex: 240">
+                                    <input id="percentageBase" type="number" step="any" placeholder="Ex: 240" autocomplete="off">
                                 </div>
                             </div>
                             <button id="percentageButton" type="button" class="primary-button">Calculer</button>
@@ -2072,15 +2073,15 @@
                             <div class="form-grid math-form-grid">
                                 <div class="field-group">
                                     <label class="field-label" for="ruleThreeA">a</label>
-                                    <input id="ruleThreeA" type="number" step="any" placeholder="Ex: 4">
+                                    <input id="ruleThreeA" type="number" step="any" placeholder="Ex: 4" autocomplete="off">
                                 </div>
                                 <div class="field-group">
                                     <label class="field-label" for="ruleThreeB">b</label>
-                                    <input id="ruleThreeB" type="number" step="any" placeholder="Ex: 12">
+                                    <input id="ruleThreeB" type="number" step="any" placeholder="Ex: 12" autocomplete="off">
                                 </div>
                                 <div class="field-group">
                                     <label class="field-label" for="ruleThreeC">c</label>
-                                    <input id="ruleThreeC" type="number" step="any" placeholder="Ex: 9">
+                                    <input id="ruleThreeC" type="number" step="any" placeholder="Ex: 9" autocomplete="off">
                                 </div>
                             </div>
                             <button id="ruleThreeButton" type="button" class="primary-button">Trouver x</button>
@@ -2092,7 +2093,7 @@
                             <h4>Rayon vers mesures</h4>
                             <div class="field-group">
                                 <label class="field-label" for="circleRadius">Rayon</label>
-                                <input id="circleRadius" type="number" step="any" placeholder="Ex: 7">
+                                <input id="circleRadius" type="number" step="any" placeholder="Ex: 7" autocomplete="off">
                             </div>
                             <button id="circleButton" type="button" class="primary-button">Calculer</button>
                             <p id="circleResult" class="math-result" aria-live="polite">Le résultat apparaîtra ici.</p>
@@ -2252,8 +2253,8 @@
         </div>
     </section>
 
-    <script defer src="/js/core/consent.js?v=v2-30"></script>
-    <script type="module" src="/js/main.bundle.min.js?v=v2-30"></script>
-    <script defer src="/js/core/sw-register.js?v=v2-30"></script>
+    <script defer src="/js/core/consent.js?v=v2-32"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v2-32"></script>
+    <script defer src="/js/core/sw-register.js?v=v2-32"></script>
 </body>
 </html>

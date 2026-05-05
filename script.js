@@ -395,10 +395,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.service-card').forEach((card) => {
         const prefetch = () => {
             const svc = card.dataset.service;
-            if (svc === 'cinema') loadCinema();
-            else if (svc === 'math') loadMath();
-            else if (svc === 'music') loadMusic();
-            else loadGamesBundle();
+            const p = svc === 'cinema' ? loadCinema()
+                : svc === 'math' ? loadMath()
+                : svc === 'music' ? loadMusic()
+                : loadGamesBundle();
+            p.catch(() => {});
         };
         card.addEventListener('mouseenter', prefetch, { once: true });
         card.addEventListener('touchstart', prefetch, { once: true, passive: true });
