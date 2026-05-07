@@ -789,8 +789,28 @@ export function startPacman() {
     startPacmanCountdown(() => {
         pacmanRunning = true;
         updatePacmanHud();
-        pacmanInterval = window.setInterval(runPacmanTick, GAME_TICK_MS);
+        pacmanNextTick = performance.now() + GAME_TICK_MS;
+        pacmanRafId = window.requestAnimationFrame(pacmanLoop);
     });
+}
+
+export function startPacmanLaunchSequence() {
+    initializePacman();
+    closePacmanMenu();
+    window.setTimeout(() => {
+        const STAGGER_MS = 80;
+        const entities = [pacmanHeroElement, ...pacmanGhostElements];
+        entities.forEach((el, i) => {
+            if (!el) return;
+            el.style.setProperty('--spawn-delay', `${i * STAGGER_MS}ms`);
+            el.classList.add('is-spawning');
+            el.addEventListener('animationend', () => {
+                el.classList.remove('is-spawning');
+                el.style.removeProperty('--spawn-delay');
+            }, { once: true });
+        });
+        startPacman();
+    }, UNO_MENU_CLOSE_DURATION_MS);
 }
 
 // ── Exports ───────────────────────────────────────────────────────────────────

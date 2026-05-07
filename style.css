@@ -7025,6 +7025,21 @@ body:has(#servicesView.view-active) .services-legal-button {
     pointer-events: none;
 }
 
+.pacman-table.is-menu-open .pacman-overlay {
+    visibility: hidden;
+}
+
+@keyframes pacman-entity-spawn {
+    from { opacity: 0; scale: 0.15; }
+    to   { opacity: 1; scale: 1; }
+}
+
+.pacman-hero.is-spawning,
+.pacman-ghost.is-spawning {
+    animation: pacman-entity-spawn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--spawn-delay, 0ms);
+}
+
 .pacman-countdown {
     position: absolute;
     inset: 0;

@@ -423,11 +423,7 @@ export function bindAllGameEventControls(options = {}) {
             return;
         }
     
-        pacman.initializePacman();
-        pacman.closePacmanMenu();
-        window.setTimeout(() => {
-            pacman.startPacman();
-        }, UNO_MENU_CLOSE_DURATION_MS);
+        pacman.startPacmanLaunchSequence();
     });
     
     document.getElementById('pacmanMenuRulesButton')?.addEventListener('click', () => {
