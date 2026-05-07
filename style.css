@@ -2231,7 +2231,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .pacman-card {
-    width: min(100%, 820px);
+    width: min(100%, 960px);
     padding: 16px;
     height: 100%;
     min-height: 0;
@@ -6874,7 +6874,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 .pacman-table {
     position: relative;
     z-index: 1;
-    width: min(100%, 786px);
+    width: min(100%, 926px);
     margin: 0 auto;
     border-radius: 20px;
 }
