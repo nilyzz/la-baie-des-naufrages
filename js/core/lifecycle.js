@@ -40,8 +40,6 @@ export function bindResponsiveGameResize(options = {}) {
         getActiveGameTab,
         syncAllGameMenuOverlayBounds,
         renderSnake,
-        isMultiplayerPongActive,
-        syncMultiplayerPongState,
         resetPongRound,
         initializeAirHockey,
         renderAirHockey,
@@ -71,11 +69,7 @@ export function bindResponsiveGameResize(options = {}) {
             }
 
             if (activeGameTab === 'pong') {
-                if (isMultiplayerPongActive?.()) {
-                    syncMultiplayerPongState?.();
-                } else {
-                    resetPongRound?.();
-                }
+                resetPongRound?.();
             }
 
             if (activeGameTab === 'airHockey') {

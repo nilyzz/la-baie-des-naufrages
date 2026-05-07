@@ -352,11 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bindGlobalKeyboardControls({
         getActiveGameTab,
-        isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
-        isMultiplayerPongActive: () => game('pong')?.isMultiplayerPongActive() ?? false,
-        pushMultiplayerPongInput: (i) => game('pong')?.pushMultiplayerPongInput(i),
-        isMultiplayerAirHockeyActive: () => game('airHockey')?.isMultiplayerAirHockeyActive() ?? false,
-        pushMultiplayerAirHockeyInput: (i) => game('airHockey')?.pushMultiplayerAirHockeyInput(i)
+        isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel'
     });
 
     bindSessionActivityTracking();
@@ -365,11 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handlePianoKeyUp: (note) => musicModule?.handlePianoKeyUp(note),
         isPianoActive: () => currentView === musicView && activeMusicTab === 'pianoPanel',
         getPongKeys: () => game('pong')?.getPongKeys() ?? [],
-        isMultiplayerPongActive: () => getActiveGameTab() === 'pong' && (game('pong')?.isMultiplayerPongActive() ?? false),
-        pushMultiplayerPongInput: (i) => game('pong')?.pushMultiplayerPongInput(i),
         getAirHockeyKeys: () => game('airHockey')?.getAirHockeyKeys() ?? [],
-        isMultiplayerAirHockeyActive: () => getActiveGameTab() === 'airHockey' && (game('airHockey')?.isMultiplayerAirHockeyActive() ?? false),
-        pushMultiplayerAirHockeyInput: (i) => game('airHockey')?.pushMultiplayerAirHockeyInput(i),
         getBreakoutKeys: () => game('breakout')?.getBreakoutKeys() ?? []
     });
 
@@ -377,8 +369,6 @@ document.addEventListener('DOMContentLoaded', () => {
         getActiveGameTab,
         syncAllGameMenuOverlayBounds,
         renderSnake: (...a) => game('snake')?.renderSnake(...a),
-        isMultiplayerPongActive: () => game('pong')?.isMultiplayerPongActive() ?? false,
-        syncMultiplayerPongState: (...a) => game('pong')?.syncMultiplayerPongState(...a),
         resetPongRound: (...a) => game('pong')?.resetPongRound(...a),
         initializeAirHockey: (...a) => game('airHockey')?.initializeAirHockey(...a),
         renderAirHockey: (...a) => game('airHockey')?.renderAirHockey(...a),

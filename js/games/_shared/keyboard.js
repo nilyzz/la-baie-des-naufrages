@@ -53,11 +53,7 @@ export function bindGameKeyReleaseControls(options = {}) {
         handlePianoKeyUp,
         isPianoActive,
         getPongKeys,
-        isMultiplayerPongActive,
-        pushMultiplayerPongInput,
         getAirHockeyKeys,
-        isMultiplayerAirHockeyActive,
-        pushMultiplayerAirHockeyInput,
         getBreakoutKeys
     } = options;
 
@@ -67,15 +63,7 @@ export function bindGameKeyReleaseControls(options = {}) {
         }
 
         getPongKeys?.()?.delete(event.key);
-        if (isMultiplayerPongActive?.()) {
-            pushMultiplayerPongInput?.();
-        }
-
         getAirHockeyKeys?.()?.delete(event.key.toLowerCase());
-        if (isMultiplayerAirHockeyActive?.()) {
-            pushMultiplayerAirHockeyInput?.();
-        }
-
         getBreakoutKeys?.()?.delete(event.key.toLowerCase());
     });
 }
@@ -83,11 +71,7 @@ export function bindGameKeyReleaseControls(options = {}) {
 export function bindGlobalKeyboardControls(options = {}) {
     const {
         getActiveGameTab,
-        isPianoActive,
-        isMultiplayerPongActive,
-        pushMultiplayerPongInput,
-        isMultiplayerAirHockeyActive,
-        pushMultiplayerAirHockeyInput
+        isPianoActive
     } = options;
 
     const directionalRepeatGuard = createDirectionalRepeatGuard();
@@ -155,17 +139,11 @@ export function bindGlobalKeyboardControls(options = {}) {
         if (activeGameTab === 'pong' && ['ArrowUp', 'ArrowDown', 'z', 'Z', 's', 'S'].includes(event.key)) {
             event.preventDefault();
             getPongKeys().add(event.key);
-            if (isMultiplayerPongActive?.()) {
-                pushMultiplayerPongInput?.();
-            }
             return;
         }
 
         if (activeGameTab === 'pong' && event.code === 'Space') {
             event.preventDefault();
-            if (isMultiplayerPongActive?.()) {
-                return;
-            }
             if (getPongPaused()) {
                 resumePong();
             } else {
@@ -274,9 +252,6 @@ export function bindGlobalKeyboardControls(options = {}) {
             if (['z', 'q', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(normalizedKey)) {
                 event.preventDefault();
                 getAirHockeyKeys().add(normalizedKey);
-                if (isMultiplayerAirHockeyActive?.()) {
-                    pushMultiplayerAirHockeyInput?.();
-                }
                 return;
             }
         }

@@ -3,16 +3,7 @@
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
-import { getActiveGameTab } from './_shared/navigation.js';
 import { closeGameOverModal } from '../core/modals.js';
-import {
-    getMultiplayerActiveRoom,
-    getMultiplayerSocket,
-    getMultiplayerReadySummary,
-    isCurrentPlayerMultiplayerReady,
-    getCurrentMultiplayerPlayer
-} from '../multiplayer/state.js';
-import { setMultiplayerStatus } from '../multiplayer/status.js';
 
 export const PONG_TARGET_SCORE = 7;
 export const PONG_SERVE_SPEED_X = 388;
@@ -22,24 +13,16 @@ export const PONG_FIRST_RETURN_Y_MULTIPLIER = 1.6;
 export const PONG_RALLY_SPEED_INCREMENT = 20;
 export const PONG_MAX_STEP_SECONDS = 1 / 120;
 
-let pongLastFinishedStateKey = '';
 let pongRunning = false;
 let _pongTouchY = null;
 let pongAnimationFrame = null;
 let pongLastFrame = 0;
-let pongRenderAnimationFrame = null;
-let pongRenderLastFrame = 0;
-let _pongLastNetworkSyncAt = 0;
-let pongLocalPredictedPaddleY = null;
 let pongPlayerScore = 0;
 let pongAiScore = 0;
 const pongKeys = new Set();
 let pongState = null;
-let pongDisplayState = null;
 let pongPaused = false;
 let pongPauseIndicatorTimer = null;
-let pongMultiplayerInputDirection = 0;
-let pongCountdownEndsAt = 0;
 let pongCountdownTimer = null;
 let pongCountdownCompleteTimer = null;
 let pongMode = 'solo';
@@ -79,40 +62,6 @@ function dom() {
     };
 }
 
-export function isMultiplayerPongActive() {
-    const room = getMultiplayerActiveRoom();
-    return room?.gameId === 'pong' && Boolean(room?.gameState);
-}
-
-export function getMultiplayerPongRole() {
-    return getMultiplayerActiveRoom()?.players?.find((player) => player.isYou)?.symbol || null;
-}
-
-export function getMultiplayerPongInputDirection() {
-    if (_pongTouchY !== null && pongState) {
-        const role = getMultiplayerPongRole();
-        const currentY = role === 'right' ? pongState.aiY : pongState.playerY;
-        const touchAbsY = _pongTouchY * pongState.boardHeight;
-        const paddleCenterY = currentY + pongState.paddleHeight / 2;
-        const diff = touchAbsY - paddleCenterY;
-        if (Math.abs(diff) < pongState.paddleHeight * 0.15) return 0;
-        return diff > 0 ? 1 : -1;
-    }
-
-    const upPressed = pongKeys.has('z') || pongKeys.has('Z') || pongKeys.has('ArrowUp');
-    const downPressed = pongKeys.has('s') || pongKeys.has('S') || pongKeys.has('ArrowDown');
-
-    if (upPressed && !downPressed) {
-        return -1;
-    }
-
-    if (downPressed && !upPressed) {
-        return 1;
-    }
-
-    return 0;
-}
-
 export function setPongTouchInput(boardYFraction) {
     _pongTouchY = Math.max(0, Math.min(1, boardYFraction));
 }
@@ -126,25 +75,6 @@ export function getPongRulesText() {
 }
 
 export function getPongMenuOutcomeContent() {
-    if (isMultiplayerPongActive()) {
-        const gameState = getMultiplayerActiveRoom()?.gameState;
-        if (!gameState?.finished) {
-            return null;
-        }
-
-        return gameState.winner === getMultiplayerPongRole()
-            ? {
-                eyebrow: 'Victoire',
-                title: 'Tu remportes le duel',
-                text: 'Belle trajectoire. Remets-toi en selle pour une nouvelle manche.'
-            }
-            : {
-                eyebrow: 'D\u00e9faite',
-                title: "C'est perdu",
-                text: "L'adversaire remporte le duel. Tu peux patienter ou relancer si tu es l'hôte."
-            };
-    }
-
     if (!pongMenuResult) {
         return null;
     }
@@ -183,28 +113,10 @@ export function renderPongMenu() {
     }
 
     syncGameMenuOverlayBounds(pongMenuOverlay, pongTable);
-    const room = getMultiplayerActiveRoom();
-    const isOnline = room?.gameId === 'pong';
-    const gameState = room?.gameState || null;
-    const countdownActive = Boolean(gameState?.countdownEndsAt && Number(gameState.countdownEndsAt) > Date.now());
-    const roomStarted = Boolean(gameState?.running || countdownActive);
-    const roomFinished = Boolean(gameState?.finished);
-    const waitingForReady = isOnline && !room?.gameLaunched;
-    const hasEnoughPlayers = Number(room?.playerCount || 0) >= 2;
     const outcomeContent = getPongMenuOutcomeContent();
     const hasResult = Boolean(outcomeContent);
-    const actionLabel = waitingForReady
-        ? `${isCurrentPlayerMultiplayerReady() ? 'Retirer pr\u00eat' : 'Mettre pr\u00eat'} (${getMultiplayerReadySummary()})`
-        : (isOnline
-            ? (roomFinished ? 'Relancer le duel' : 'Lancer le duel')
-            : (hasResult ? 'Relancer le duel' : 'Lancer le duel'));
-    const baseText = waitingForReady
-        ? 'Quand tous les joueurs sont pr\u00eats, toute la room bascule automatiquement sur le terrain.'
-        : (isOnline
-            ? 'Quand le duel se lance, toute la room bascule sur le terrain.'
-            : 'Choisis ton mode, puis lance le duel dans la baie.');
-
-    pongMenuVisible = isOnline ? (!roomStarted || roomFinished) : pongMenuVisible;
+    const actionLabel = hasResult ? 'Relancer le duel' : 'Lancer le duel';
+    const baseText = 'Choisis ton mode, puis lance le duel dans la baie.';
 
     pongMenuOverlay.classList.toggle('hidden', !pongMenuVisible);
     pongMenuOverlay.classList.toggle('is-closing', pongMenuClosing);
@@ -226,9 +138,7 @@ export function renderPongMenu() {
     }
     if (pongMenuActionButton) {
         pongMenuActionButton.textContent = pongMenuShowingRules ? 'Retour' : actionLabel;
-        pongMenuActionButton.disabled = pongMenuShowingRules
-            ? false
-            : (waitingForReady ? false : (isOnline ? !hasEnoughPlayers : false));
+        pongMenuActionButton.disabled = false;
     }
     if (pongMenuRulesButton) {
         pongMenuRulesButton.textContent = 'R\u00e8gles';
@@ -270,157 +180,10 @@ export function revealPongOutcomeMenuWithDelay() {
     }, 420);
 }
 
-export function pushMultiplayerPongInput() {
-    const socket = getMultiplayerSocket();
-    if (!isMultiplayerPongActive() || !socket?.connected) {
-        return;
-    }
-
-    const nextDirection = getMultiplayerPongInputDirection();
-    if (nextDirection === pongMultiplayerInputDirection) {
-        return;
-    }
-
-    pongMultiplayerInputDirection = nextDirection;
-    socket.emit('pong:input', { direction: nextDirection });
-}
-
-export function syncMultiplayerPongState() {
-    const { pongBoard } = dom();
-    if (!isMultiplayerPongActive()) {
-        pongLastFinishedStateKey = '';
-        pongMultiplayerInputDirection = 0;
-        pongCountdownEndsAt = 0;
-        pongDisplayState = null;
-        pongLocalPredictedPaddleY = null;
-        pongRenderLastFrame = 0;
-        hidePongPauseIndicator();
-        return;
-    }
-
-    if (pongAnimationFrame) {
-        window.cancelAnimationFrame(pongAnimationFrame);
-        pongAnimationFrame = null;
-    }
-    pongRunning = false;
-    pongPaused = false;
-    pongLastFrame = 0;
-    clearPongCountdownTimers();
-    hidePongPauseIndicator();
-    closeGameOverModal();
-
-    const room = getMultiplayerActiveRoom();
-    const nextState = room.gameState;
-    _pongLastNetworkSyncAt = Date.now();
-    pongState = {
-        boardWidth: Number(nextState.boardWidth || (pongBoard?.clientWidth || 700)),
-        boardHeight: Number(nextState.boardHeight || (pongBoard?.clientHeight || 394)),
-        paddleHeight: Number(nextState.paddleHeight || 104),
-        paddleWidth: Number(nextState.paddleWidth || 24),
-        paddleOffset: Number(nextState.paddleOffset || 22),
-        ballSize: Number(nextState.ballSize || 16),
-        playerY: Number(nextState.leftY || 0),
-        aiY: Number(nextState.rightY || 0),
-        aiTargetY: Number(nextState.rightY || 0),
-        playerSpeed: 380,
-        aiSpeed: 380,
-        ballX: Number(nextState.ballX || 0),
-        ballY: Number(nextState.ballY || 0),
-        ballVelocityX: Number(nextState.ballVelocityX || 0),
-        ballVelocityY: Number(nextState.ballVelocityY || 0),
-        countdownActive: Boolean(nextState.countdownEndsAt && nextState.countdownEndsAt > Date.now()),
-        round: Number(nextState.round || 0)
-    };
-    const shouldSnapDisplay = !pongDisplayState
-        || pongDisplayState.round !== pongState.round
-        || Math.abs(pongDisplayState.ballX - pongState.ballX) > 140
-        || Math.abs(pongDisplayState.ballY - pongState.ballY) > 120;
-    const role = getMultiplayerPongRole();
-
-    if (shouldSnapDisplay) {
-        pongDisplayState = { ...pongState };
-        pongLocalPredictedPaddleY = role === 'right' ? pongState.aiY : pongState.playerY;
-    } else {
-        pongDisplayState = {
-            ...pongDisplayState,
-            boardWidth: pongState.boardWidth,
-            boardHeight: pongState.boardHeight,
-            paddleHeight: pongState.paddleHeight,
-            paddleWidth: pongState.paddleWidth,
-            paddleOffset: pongState.paddleOffset,
-            ballSize: pongState.ballSize,
-            round: pongState.round
-        };
-
-        if (pongLocalPredictedPaddleY === null) {
-            pongLocalPredictedPaddleY = role === 'right' ? pongState.aiY : pongState.playerY;
-        }
-    }
-
-    pongPlayerScore = Number(nextState.leftScore || 0);
-    pongAiScore = Number(nextState.rightScore || 0);
-    pongRunning = Boolean(nextState.running);
-    pongPaused = false;
-    pongCountdownEndsAt = Number(nextState.countdownEndsAt || 0);
-
-    // Le menu « Mettre prêt » se ferme automatiquement une fois la partie
-    // réellement lancée côté serveur.
-    if (room.gameLaunched && pongMenuVisible && !pongMenuResult) {
-        pongMenuVisible = false;
-    }
-    renderPongMenu();
-
-    if (!pongState.countdownActive) {
-        hidePongCountdown();
-    }
-
-    updatePongHud();
-    renderPong();
-    ensureMultiplayerPongRenderLoop();
-    pushMultiplayerPongInput();
-
-    if (!nextState.finished) {
-        pongLastFinishedStateKey = '';
-        return;
-    }
-
-    const finishedStateKey = `${nextState.round}:${nextState.winner || 'none'}`;
-    if (finishedStateKey === pongLastFinishedStateKey || getActiveGameTab() !== 'pong') {
-        return;
-    }
-
-    pongLastFinishedStateKey = finishedStateKey;
-    revealPongOutcomeMenuWithDelay();
-}
-
 export function updatePongHud() {
     const { pongPlayerScoreDisplay, pongAiScoreDisplay, pongLeftLabel, pongRightLabel, pongHelpText, pongModeButtons } = dom();
     pongPlayerScoreDisplay.textContent = String(pongPlayerScore);
     pongAiScoreDisplay.textContent = String(pongAiScore);
-    if (isMultiplayerPongActive()) {
-        const room = getMultiplayerActiveRoom();
-        const currentRole = getMultiplayerPongRole();
-        pongLeftLabel.textContent = currentRole === 'left' ? 'Toi' : 'Adversaire';
-        pongRightLabel.textContent = currentRole === 'right' ? 'Toi' : 'Adversaire';
-        if (room?.playerCount < 2) {
-            pongHelpText.innerHTML = 'Salon en attente. Il faut deux joueurs pour lancer le duel.';
-        } else if (room?.gameState?.finished) {
-            pongHelpText.innerHTML = room.gameState.winner === currentRole
-                ? "Victoire. Clique sur le bouton central si tu es l'hôte pour relancer."
-                : "D\u00e9faite. Attends que l'h\u00f4te relance un nouveau duel.";
-        } else if (room?.gameState?.running) {
-            pongHelpText.innerHTML = 'Utilise Z/S ou les flèches pour déplacer ta raquette. Premier à 7.';
-        } else {
-            pongHelpText.innerHTML = "Attends que l'hôte lance le duel de Pong.";
-        }
-        pongModeButtons.forEach((button) => {
-            button.classList.remove('is-active');
-            button.disabled = true;
-        });
-        renderPongMenu();
-        return;
-    }
-
     pongLeftLabel.textContent = pongMode === 'duo' ? 'Joueur 1' : 'Toi';
     pongRightLabel.textContent = pongMode === 'duo' ? 'Joueur 2' : 'IA';
     pongHelpText.innerHTML = pongPaused
@@ -543,122 +306,12 @@ export function showPongCountdownValue(label) {
     pongCountdown.setAttribute('aria-hidden', 'false');
 }
 
-export function getMultiplayerPongCountdownLabel() {
-    const remainingMs = Math.max(0, pongCountdownEndsAt - Date.now());
-
-    if (!remainingMs) {
-        return null;
-    }
-
-    if (remainingMs > 1860) {
-        return '3';
-    }
-
-    if (remainingMs > 1240) {
-        return '2';
-    }
-
-    if (remainingMs > 620) {
-        return '1';
-    }
-
-    return 'Partez';
-}
-
 export function clampPongY(y, activeState = pongState) {
     if (!activeState) {
         return y;
     }
 
     return Math.max(0, Math.min(y, activeState.boardHeight - activeState.paddleHeight));
-}
-
-export function ensureMultiplayerPongRenderLoop() {
-    if (pongRenderAnimationFrame || !isMultiplayerPongActive()) {
-        return;
-    }
-
-    const tick = (timestamp) => {
-        pongRenderAnimationFrame = null;
-
-        if (!isMultiplayerPongActive() || !pongState || !pongDisplayState) {
-            pongRenderLastFrame = 0;
-            return;
-        }
-
-        if (!pongRenderLastFrame) {
-            pongRenderLastFrame = timestamp;
-        }
-
-        const delta = Math.min((timestamp - pongRenderLastFrame) / 1000, 0.05);
-        pongRenderLastFrame = timestamp;
-        const role = getMultiplayerPongRole();
-        const inputDirection = getMultiplayerPongInputDirection();
-        const paddleSmoothing = Math.min(1, delta * 22);
-        const ownServerY = role === 'right' ? pongState.aiY : pongState.playerY;
-
-        if (pongLocalPredictedPaddleY === null) {
-            pongLocalPredictedPaddleY = ownServerY;
-        }
-
-        if (role === 'left') {
-            if (_pongTouchY !== null) {
-                pongLocalPredictedPaddleY = clampPongY(_pongTouchY * pongState.boardHeight - pongState.paddleHeight / 2);
-            } else {
-                pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
-                if (Math.abs(pongState.playerY - pongLocalPredictedPaddleY) > 6) {
-                    pongLocalPredictedPaddleY = pongState.playerY;
-                }
-                if (inputDirection === 0) {
-                    const catchupGap = pongState.playerY - pongLocalPredictedPaddleY;
-                    pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 16);
-                }
-            }
-            pongDisplayState.playerY = pongLocalPredictedPaddleY;
-            pongDisplayState.aiY = Math.abs(pongState.aiY - pongDisplayState.aiY) > 6
-                ? pongState.aiY
-                : (pongDisplayState.aiY + ((pongState.aiY - pongDisplayState.aiY) * paddleSmoothing));
-        } else if (role === 'right') {
-            if (_pongTouchY !== null) {
-                pongLocalPredictedPaddleY = clampPongY(_pongTouchY * pongState.boardHeight - pongState.paddleHeight / 2);
-            } else {
-                pongLocalPredictedPaddleY = clampPongY(pongLocalPredictedPaddleY + (inputDirection * pongState.playerSpeed * delta));
-                if (Math.abs(pongState.aiY - pongLocalPredictedPaddleY) > 6) {
-                    pongLocalPredictedPaddleY = pongState.aiY;
-                }
-            }
-            if (inputDirection === 0 && _pongTouchY === null) {
-                const catchupGap = pongState.aiY - pongLocalPredictedPaddleY;
-                pongLocalPredictedPaddleY += catchupGap * Math.min(1, delta * 16);
-            }
-            pongDisplayState.aiY = pongLocalPredictedPaddleY;
-            pongDisplayState.playerY = Math.abs(pongState.playerY - pongDisplayState.playerY) > 6
-                ? pongState.playerY
-                : (pongDisplayState.playerY + ((pongState.playerY - pongDisplayState.playerY) * paddleSmoothing));
-        } else {
-            pongDisplayState.playerY = Math.abs(pongState.playerY - pongDisplayState.playerY) > 6
-                ? pongState.playerY
-                : (pongDisplayState.playerY + ((pongState.playerY - pongDisplayState.playerY) * paddleSmoothing));
-            pongDisplayState.aiY = Math.abs(pongState.aiY - pongDisplayState.aiY) > 6
-                ? pongState.aiY
-                : (pongDisplayState.aiY + ((pongState.aiY - pongDisplayState.aiY) * paddleSmoothing));
-        }
-
-        pongDisplayState.ballX = pongState.ballX;
-        pongDisplayState.ballY = pongState.ballY;
-
-        const countdownLabel = getMultiplayerPongCountdownLabel();
-        if (countdownLabel) {
-            showPongCountdownValue(countdownLabel);
-        } else {
-            hidePongCountdown();
-        }
-
-        renderPong();
-        pongRenderAnimationFrame = window.requestAnimationFrame(tick);
-    };
-
-    pongRenderAnimationFrame = window.requestAnimationFrame(tick);
 }
 
 export function startPongCountdown(onComplete) {
@@ -697,7 +350,7 @@ export function startPongCountdown(onComplete) {
 
 export function renderPong() {
     const { pongBoard, pongPlayerPaddle, pongAiPaddle, pongBall } = dom();
-    const activePongState = isMultiplayerPongActive() && pongDisplayState ? pongDisplayState : pongState;
+    const activePongState = pongState;
 
     if (!activePongState) {
         return;
@@ -884,23 +537,13 @@ export function stopPong() {
         pongAnimationFrame = null;
     }
 
-    if (pongRenderAnimationFrame) {
-        window.cancelAnimationFrame(pongRenderAnimationFrame);
-        pongRenderAnimationFrame = null;
-    }
-
     hidePongCountdown();
     hidePongPauseIndicator();
     pongRunning = false;
     pongPaused = false;
     pongLastFrame = 0;
-    pongRenderLastFrame = 0;
     pongBoardMetrics = null;
     pongRenderMetrics = null;
-    pongDisplayState = null;
-    pongLocalPredictedPaddleY = null;
-    _pongLastNetworkSyncAt = 0;
-    pongCountdownEndsAt = 0;
     updatePongHud();
 }
 
@@ -1002,18 +645,6 @@ export function updatePongFrame(timestamp) {
 }
 
 export function initializePong() {
-    if (isMultiplayerPongActive()) {
-        pongMenuResult = null;
-        const room = getMultiplayerActiveRoom();
-        pongMenuVisible = !room?.gameLaunched;
-        pongMenuShowingRules = false;
-        pongMenuClosing = false;
-        pongMenuEntering = false;
-        renderPongMenu();
-        syncMultiplayerPongState();
-        return;
-    }
-
     stopPong();
     resetPongMatch();
     pongMenuResult = null;
@@ -1025,11 +656,6 @@ export function initializePong() {
 }
 
 export function setPongMode(nextMode) {
-    if (isMultiplayerPongActive()) {
-        setMultiplayerStatus('Le mode est piloté par le salon en ligne.');
-        return;
-    }
-
     if (!['solo', 'duo'].includes(nextMode)) {
         return;
     }
@@ -1039,26 +665,8 @@ export function setPongMode(nextMode) {
 }
 
 export function startPong() {
-    if (isMultiplayerPongActive()) {
-        const socket = getMultiplayerSocket();
-        if (!socket?.connected) {
-            setMultiplayerStatus('Connexion au serveur multijoueur interrompue.');
-            return;
-        }
-
-        if (!getCurrentMultiplayerPlayer()?.isHost) {
-            setMultiplayerStatus("Seul l'hôte peut lancer le duel.");
-            return;
-        }
-
-        socket.emit('pong:start');
-        setMultiplayerStatus('Le duel de Pong se prepare pour tout le salon.');
-        return;
-    }
-
     closeGameOverModal();
     pongKeys.clear();
-    _pongLastNetworkSyncAt = 0;
     pongMenuResult = null;
     hidePongPauseIndicator();
     resetPongMatch();

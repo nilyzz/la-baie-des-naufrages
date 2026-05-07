@@ -69,11 +69,8 @@ export function bindTouchGameControls(options = {}) {
         rotateTetrisPiece,
         setPongTouchInput,
         clearPongTouchInput,
-        pushMultiplayerPongInput,
         setAirHockeyTouchPos,
-        clearAirHockeyTouchPos,
-        pushMultiplayerAirHockeyInput,
-        isMultiplayerAirHockeyActive
+        clearAirHockeyTouchPos
     } = options;
 
     const pongBoard = document.getElementById('pongBoard');
@@ -86,13 +83,11 @@ export function bindTouchGameControls(options = {}) {
             const rect = pongBoard.getBoundingClientRect();
             const fraction = Math.max(0, Math.min(1, (touch.clientY - rect.top) / rect.height));
             setPongTouchInput?.(fraction);
-            pushMultiplayerPongInput?.();
         };
         pongBoard.addEventListener('touchstart', onPongTouch, { passive: false });
         pongBoard.addEventListener('touchmove', onPongTouch, { passive: false });
         pongBoard.addEventListener('touchend', () => {
             clearPongTouchInput?.();
-            pushMultiplayerPongInput?.();
         }, { passive: true });
     }
 
@@ -107,13 +102,11 @@ export function bindTouchGameControls(options = {}) {
             const fracX = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
             const fracY = Math.max(0, Math.min(1, (touch.clientY - rect.top) / rect.height));
             setAirHockeyTouchPos?.(fracX, fracY);
-            pushMultiplayerAirHockeyInput?.();
         };
         airHockeyBoard.addEventListener('touchstart', onAirHockeyTouch, { passive: false });
         airHockeyBoard.addEventListener('touchmove', onAirHockeyTouch, { passive: false });
         airHockeyBoard.addEventListener('touchend', () => {
             clearAirHockeyTouchPos?.();
-            pushMultiplayerAirHockeyInput?.();
         }, { passive: true });
     }
 

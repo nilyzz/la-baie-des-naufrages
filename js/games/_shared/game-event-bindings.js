@@ -118,17 +118,7 @@ export function bindAllGameEventControls(options = {}) {
             pong.renderPongMenu();
             return;
         }
-    
-        if (pong.isMultiplayerPongActive()) {
-            if (options.isMultiplayerLaunchPending('pong')) {
-                options.toggleMultiplayerReady();
-                return;
-            }
-    
-            pong.startPong();
-            return;
-        }
-    
+
         pong.initializePong();
         pong.startPongLaunchSequence(() => {
             pong.startPong();
@@ -224,11 +214,8 @@ export function bindAllGameEventControls(options = {}) {
         rotateTetrisPiece: tetris.rotateTetrisPiece,
         setPongTouchInput: pong.setPongTouchInput,
         clearPongTouchInput: pong.clearPongTouchInput,
-        pushMultiplayerPongInput: pong.pushMultiplayerPongInput,
         setAirHockeyTouchPos: airHockey.setAirHockeyTouchPos,
-        clearAirHockeyTouchPos: airHockey.clearAirHockeyTouchPos,
-        pushMultiplayerAirHockeyInput: airHockey.pushMultiplayerAirHockeyInput,
-        isMultiplayerAirHockeyActive: airHockey.isMultiplayerAirHockeyActive
+        clearAirHockeyTouchPos: airHockey.clearAirHockeyTouchPos
     });
     
     document.getElementById('aimMenuActionButton')?.addEventListener('click', () => {
@@ -935,11 +922,6 @@ export function bindAllGameEventControls(options = {}) {
     
     document.querySelectorAll('[data-airhockey-mode]').forEach((button) => {
         button.addEventListener('click', () => {
-            if (airHockey.isMultiplayerAirHockeyActive()) {
-                options.setMultiplayerStatus('Le mode est piloté par le salon en ligne.');
-                return;
-            }
-    
             const mode = button.dataset.airhockeyMode;
             airHockey.setAirHockeyMode(mode);
             document.querySelectorAll('[data-airhockey-mode]').forEach((item) => item.classList.toggle('is-active', item === button));
@@ -949,29 +931,20 @@ export function bindAllGameEventControls(options = {}) {
             airHockey.initializeAirHockey();
         });
     });
-    
+
     document.getElementById('airHockeyStartButton')?.addEventListener('click', () => {
-        if (!airHockey.isMultiplayerAirHockeyActive()) {
-            airHockey.initializeAirHockey(false);
-        }
+        airHockey.initializeAirHockey(false);
         airHockey.launchAirHockeyPuck();
     });
-    
+
     document.getElementById('airHockeyMenuActionButton')?.addEventListener('click', () => {
         if (airHockey.getAirHockeyMenuShowingRules()) {
             airHockey.setAirHockeyMenuShowingRules(false);
             airHockey.renderAirHockeyMenu();
             return;
         }
-    
-        if (airHockey.isMultiplayerAirHockeyActive() && options.isMultiplayerLaunchPending('airHockey')) {
-            options.toggleMultiplayerReady();
-            return;
-        }
-    
-        if (!airHockey.isMultiplayerAirHockeyActive()) {
-            airHockey.initializeAirHockey(false);
-        }
+
+        airHockey.initializeAirHockey(false);
         airHockey.launchAirHockeyPuck();
         airHockey.closeAirHockeyMenu();
     });

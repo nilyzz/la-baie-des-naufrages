@@ -159,11 +159,7 @@ export function cleanupActiveGameForNavigation(nextTab, activeGameTab) {
 
     if (prev === 'airHockey' && nextTab !== 'airHockey') {
         modules.airHockey?.setAirHockeyMenuVisible(true);
-        if (modules.airHockey?.isMultiplayerAirHockeyActive()) {
-            modules.airHockey?.stopAirHockeyRuntime();
-        } else {
-            modules.airHockey?.initializeAirHockey();
-        }
+        modules.airHockey?.initializeAirHockey();
     }
 
     if (prev === 'reaction' && nextTab !== 'reaction') {
