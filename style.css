@@ -14476,7 +14476,6 @@ button:hover {
 }
 
 .blockblast-topbar,
-.uno-topbar,
 .bomb-topbar {
     position: relative;
     z-index: 1;
@@ -14488,7 +14487,13 @@ button:hover {
 }
 
 .uno-topbar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 16px;
+    align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .blockblast-counter-block,
