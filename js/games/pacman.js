@@ -1,4 +1,4 @@
-// Game module — Baie-Man (Pac-Man) — remaster v2.44
+// Game module — Baie-Man (Pac-Man) — remaster v2.57
 
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
@@ -34,6 +34,8 @@ const GHOST_HOUSE_EXIT_COL = 13;
 const FRIGHTENED_DURATION = 38;
 const FRIGHTENED_FLASH_AT = 10;
 const GAME_TICK_MS = 180;
+const SCATTER_TICKS = 40;
+const CHASE_TICKS = 111;
 
 const GHOST_DEFS = [
     { id: 'ghost-a', ai: 'blinky', startRow: 8, startCol: 13, startDir: { row: 0, col: 1 },  releaseDelay: 8  },
@@ -74,6 +76,11 @@ let pacmanMenuEntering = false;
 let pacmanMenuResult = null;
 let pacmanFrightenedTimer = 0;
 let pacmanGhostEatenCombo = 0;
+let pacmanPhaseMode = 'scatter';
+let pacmanPhaseTimer = SCATTER_TICKS;
+let pacmanDying = false;
+let pacmanDyingTimer = null;
+let pacmanHighScore = Number(localStorage.getItem('pacman-best') || '0');
 
 // ── DOM helpers ─────────────────────────────────────────────────────────────
 const $ = (id) => document.getElementById(id);
@@ -153,6 +160,7 @@ function bfsNextMove(startRow, startCol, targetRow, targetCol, ghost) {
 
 // ── Ghost AI ─────────────────────────────────────────────────────────────────
 function getGhostTarget(ghost) {
+    if (pacmanPhaseMode === 'scatter') return SCATTER_TARGETS[ghost.ai] || SCATTER_TARGETS.blinky;
     const blinky = pacmanGhosts[0]; // always index 0
     switch (ghost.ai) {
         case 'blinky':
@@ -279,6 +287,8 @@ function resetPacmanActors() {
     pacmanNextDirection = { row: 0, col: 0 };
     pacmanFrightenedTimer = 0;
     pacmanGhostEatenCombo = 0;
+    pacmanPhaseMode = 'scatter';
+    pacmanPhaseTimer = SCATTER_TICKS;
     pacmanGhosts = GHOST_DEFS.map((def) => ({
         id: def.id,
         ai: def.ai,
@@ -290,11 +300,21 @@ function resetPacmanActors() {
     }));
 }
 
+// ── High score ────────────────────────────────────────────────────────────────
+function saveHighScore() {
+    if (pacmanScore > pacmanHighScore) {
+        pacmanHighScore = pacmanScore;
+        localStorage.setItem('pacman-best', String(pacmanHighScore));
+    }
+}
+
 // ── HUD ───────────────────────────────────────────────────────────────────────
 export function updatePacmanHud() {
     const { pacmanScoreDisplay, pacmanLivesDisplay, pacmanStartButton } = dom();
     if (pacmanScoreDisplay) pacmanScoreDisplay.textContent = String(pacmanScore);
     if (pacmanLivesDisplay) pacmanLivesDisplay.textContent = String(pacmanLives);
+    const hsd = $('pacmanHighScoreDisplay');
+    if (hsd) hsd.textContent = String(pacmanHighScore);
     if (pacmanStartButton) {
         pacmanStartButton.textContent = (pacmanRunning || pacmanCountdownActive)
             ? 'Chasse en cours' : 'Lancer la chasse';
@@ -459,6 +479,8 @@ export function stopPacman() {
     pacmanCountdownActive = false;
     hidePacmanCountdown();
     if (pacmanInterval) { window.clearInterval(pacmanInterval); pacmanInterval = null; }
+    if (pacmanDyingTimer) { window.clearTimeout(pacmanDyingTimer); pacmanDyingTimer = null; }
+    pacmanDying = false;
     pacmanRunning = false;
     updatePacmanHud();
 }
@@ -468,6 +490,23 @@ export function trySetPacmanDirection(direction) {
     const n = getNextPos(pacmanPosition.row, pacmanPosition.col, direction);
     if (!isPacmanWall(n.row, n.col)) { pacmanDirection = direction; return true; }
     return false;
+}
+
+// ── Score popup ───────────────────────────────────────────────────────────────
+function showScorePopup(row, col, pts) {
+    const { pacmanBoard } = dom();
+    if (!pacmanBoard) return;
+    const geo = getPacmanGeometry();
+    const x = geo.padding + col * (geo.cellSize + geo.gap);
+    const y = geo.padding + row * (geo.cellSize + geo.gap);
+    const el = document.createElement('span');
+    el.className = 'pacman-score-popup';
+    el.textContent = `+${pts}`;
+    el.style.left = `${x}px`;
+    el.style.top  = `${y}px`;
+    const overlay = pacmanBoard.querySelector('.pacman-overlay');
+    (overlay || pacmanBoard).appendChild(el);
+    window.setTimeout(() => el.remove(), 900);
 }
 
 // ── Collision ─────────────────────────────────────────────────────────────────
@@ -481,48 +520,66 @@ function handlePacmanCollision() {
             const pts = 200 * (1 << Math.min(pacmanGhostEatenCombo, 3));
             pacmanScore += pts;
             pacmanGhostEatenCombo++;
+            showScorePopup(ghost.row, ghost.col, pts);
             return false;
         }
 
         // Normal ghost — lose life
         pacmanLives--;
-        if (pacmanLives <= 0) {
-            resetPacmanAfterHit();
-            revealPacmanOutcomeMenu(
-                'Chasse terminée',
-                `Les esprits du brouillard t’ont capturé. Perles ramassées : ${pacmanScore}.`,
-                'Cap sur le port'
-            );
-            return true;
-        }
-        resetPacmanAfterHit();
+        resetPacmanAfterHit(pacmanLives <= 0);
         return true;
     }
     return false;
 }
 
-function resetPacmanAfterHit() {
+function resetPacmanAfterHit(gameOver) {
     stopPacman();
-    resetPacmanActors();
     const { pacmanHelpText } = dom();
     if (pacmanHelpText) {
         pacmanHelpText.textContent = pacmanLives > 0
             ? "Un esprit t’a touché. Relance la chasse pour reprendre la baie."
             : "Les esprits du brouillard t’ont rattrapé.";
     }
-    renderPacman();
-    if (pacmanLives > 0) {
-        startPacmanCountdown(() => {
-            pacmanRunning = true;
-            updatePacmanHud();
-            pacmanInterval = window.setInterval(runPacmanTick, GAME_TICK_MS);
-        });
-    }
+    if (pacmanHeroElement) pacmanHeroElement.classList.add('is-dying');
+    pacmanDying = true;
+    pacmanDyingTimer = window.setTimeout(() => {
+        pacmanDyingTimer = null;
+        pacmanDying = false;
+        if (pacmanHeroElement) pacmanHeroElement.classList.remove('is-dying');
+        if (gameOver) {
+            saveHighScore();
+            revealPacmanOutcomeMenu(
+                'Chasse terminée',
+                `Les esprits du brouillard t’ont capturé. Score final : ${pacmanScore}.`,
+                'Cap sur le port'
+            );
+        } else {
+            resetPacmanActors();
+            renderPacman();
+            startPacmanCountdown(() => {
+                pacmanRunning = true;
+                updatePacmanHud();
+                pacmanInterval = window.setInterval(runPacmanTick, GAME_TICK_MS);
+            });
+        }
+    }, 700);
 }
-
 // ── Game tick ─────────────────────────────────────────────────────────────────
 function runPacmanTick() {
     if (!pacmanRunning || pacmanCountdownActive) return;
+
+    // Scatter/chase phase timer
+    if (pacmanFrightenedTimer === 0) {
+        pacmanPhaseTimer--;
+        if (pacmanPhaseTimer <= 0) {
+            const wasScatter = pacmanPhaseMode === 'scatter';
+            pacmanPhaseMode = wasScatter ? 'chase' : 'scatter';
+            pacmanPhaseTimer = wasScatter ? CHASE_TICKS : SCATTER_TICKS;
+            pacmanGhosts.forEach((g) => {
+                if (g.state === 'normal') g.direction = { row: -g.direction.row, col: -g.direction.col };
+            });
+        }
+    }
 
     // Frightened timer
     if (pacmanFrightenedTimer > 0) {
@@ -572,6 +629,7 @@ function runPacmanTick() {
 
     if (pacmanPellets === 0) {
         stopPacman();
+        saveHighScore();
         const { pacmanHelpText } = dom();
         if (pacmanHelpText) pacmanHelpText.textContent = 'La baie est nettoyée !';
         revealPacmanOutcomeMenu(
