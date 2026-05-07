@@ -239,7 +239,7 @@ function finishFlappy(reason = 'pipe', impactY = null) {
 }
 
 export function flapFlappyBird() {
-    if (flappyMenuVisible || flappyMenuClosing) return;
+    if (flappyMenuVisible || flappyMenuClosing || flappySpawning) return;
     if (!flappyRunning) {
         startFlappy();
         return;
