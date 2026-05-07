@@ -36,10 +36,10 @@ const FRIGHTENED_FLASH_AT = 10;
 const GAME_TICK_MS = 180;
 
 const GHOST_DEFS = [
-    { id: 'ghost-a', ai: 'blinky', startRow: 8, startCol: 13, startDir: { row: 0, col: 1 },  releaseDelay: 0  },
-    { id: 'ghost-b', ai: 'pinky',  startRow: 8, startCol: 13, startDir: { row: 0, col: -1 }, releaseDelay: 5  },
-    { id: 'ghost-c', ai: 'inky',   startRow: 8, startCol: 11, startDir: { row: 0, col: 1 },  releaseDelay: 12 },
-    { id: 'ghost-d', ai: 'clyde',  startRow: 8, startCol: 15, startDir: { row: 0, col: -1 }, releaseDelay: 20 },
+    { id: 'ghost-a', ai: 'blinky', startRow: 8, startCol: 13, startDir: { row: 0, col: 1 },  releaseDelay: 8  },
+    { id: 'ghost-b', ai: 'pinky',  startRow: 8, startCol: 13, startDir: { row: 0, col: -1 }, releaseDelay: 16 },
+    { id: 'ghost-c', ai: 'inky',   startRow: 8, startCol: 11, startDir: { row: 0, col: 1 },  releaseDelay: 26 },
+    { id: 'ghost-d', ai: 'clyde',  startRow: 8, startCol: 15, startDir: { row: 0, col: -1 }, releaseDelay: 38 },
 ];
 
 const SCATTER_TARGETS = {
@@ -274,7 +274,7 @@ function moveGhost(ghost) {
 
 // ── Actors reset ──────────────────────────────────────────────────────────────
 function resetPacmanActors() {
-    pacmanPosition    = { row: 1, col: 1 };
+    pacmanPosition    = { row: 1, col: 13 };
     pacmanDirection   = { row: 0, col: 0 };
     pacmanNextDirection = { row: 0, col: 0 };
     pacmanFrightenedTimer = 0;
