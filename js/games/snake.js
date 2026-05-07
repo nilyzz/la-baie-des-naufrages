@@ -545,12 +545,11 @@ export function startSnakeLaunchSequence() {
 
         const foodDoneMs = (foodCount - 1) * FOOD_STAGGER + FOOD_ANIM + 50;
 
-        // Phase 2 : serpent apparaît après les lanternes
-        window.setTimeout(() => {
-            snakeSegmentElements.forEach((el, index) => {
-                spawnSnakeEntity(el, index * SEG_STAGGER);
-            });
-        }, foodDoneMs);
+        // Phase 2 : segments ajoutés immédiatement avec un délai = fin phase 1
+        // Le fill mode "both" les maintient à opacity:0 pendant tout le délai
+        snakeSegmentElements.forEach((el, index) => {
+            spawnSnakeEntity(el, foodDoneMs + index * SEG_STAGGER);
+        });
 
         const totalMs = foodDoneMs + (snakeSegmentElements.length - 1) * SEG_STAGGER + SEG_ANIM + 50;
 
