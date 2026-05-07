@@ -25,7 +25,8 @@ let snakeScore = 0;
 let snakeGridSize = loadSnakeGridSize();
 const snakeBestScoresBySize = loadSnakeBestScores();
 let snakeBestScore = getSnakeBestScoreForSize(snakeGridSize);
-let snakeInterval = null;
+let snakeRafId = null;
+let snakeNextTick = 0;
 let snakeRunning = false;
 let snakeJustAte = false;
 let snakeDirectionQueue = [];
@@ -152,11 +153,20 @@ function renderSnakeGridSizeButtons() {
 }
 
 export function stopSnake() {
-    if (snakeInterval) {
-        window.clearInterval(snakeInterval);
-        snakeInterval = null;
+    if (snakeRafId) {
+        window.cancelAnimationFrame(snakeRafId);
+        snakeRafId = null;
     }
     snakeRunning = false;
+}
+
+function snakeLoop(timestamp) {
+    if (!snakeRunning) return;
+    if (timestamp >= snakeNextTick) {
+        snakeNextTick = timestamp + SNAKE_TICK_MS;
+        moveSnake();
+    }
+    snakeRafId = window.requestAnimationFrame(snakeLoop);
 }
 
 export function getSnakeRulesText() {
@@ -520,7 +530,8 @@ export function startSnakeLaunchSequence() {
                 el.style.removeProperty('--snake-ty');
             });
             snakeRunning = true;
-            snakeInterval = window.setInterval(moveSnake, SNAKE_TICK_MS);
+            snakeNextTick = performance.now() + SNAKE_TICK_MS;
+            snakeRafId = window.requestAnimationFrame(snakeLoop);
         }, 480);
     }, UNO_MENU_CLOSE_DURATION_MS);
 }
@@ -530,7 +541,8 @@ export function startSnake() {
     initializeSnake();
     snakeRunning = true;
     updateSnakeHud();
-    snakeInterval = window.setInterval(moveSnake, SNAKE_TICK_MS);
+    snakeNextTick = performance.now() + SNAKE_TICK_MS;
+    snakeRafId = window.requestAnimationFrame(snakeLoop);
 }
 
 export function setSnakeGridSize(nextSize) {
