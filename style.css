@@ -15249,6 +15249,7 @@ button:hover {
 .uno-mode-switch {
     display: flex;
     justify-content: center;
+    width: 100%;
     gap: 10px;
     flex-wrap: wrap;
     margin: 0 0 12px;
