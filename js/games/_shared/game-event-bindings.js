@@ -223,7 +223,9 @@ export function bindAllGameEventControls(options = {}) {
             aim.renderAimMenu();
             return;
         }
-        aim.startAimLaunchSequence();
+        aim.initializeAim();
+        aim.closeAimMenu();
+        window.setTimeout(() => { aim.startAimRound(); }, UNO_MENU_CLOSE_DURATION_MS);
     });
     
     document.getElementById('aimMenuRulesButton')?.addEventListener('click', () => {
