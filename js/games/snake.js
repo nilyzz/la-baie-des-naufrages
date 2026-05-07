@@ -493,6 +493,33 @@ function moveSnake() {
     renderSnake();
 }
 
+export function startSnakeLaunchSequence() {
+    closeGameOverModal();
+    snakeMenuClosing = true;
+    renderSnakeMenu();
+    window.setTimeout(() => {
+        snakeMenuClosing = false;
+        snakeMenuVisible = false;
+        snakeMenuShowingRules = false;
+        snakeMenuEntering = false;
+        snakeMenuResult = null;
+        renderSnakeMenu();
+        initializeSnake();
+        snakeSegmentElements.forEach((el, index) => {
+            el.classList.add('is-spawning');
+            el.style.setProperty('--spawn-index', String(index));
+        });
+        window.setTimeout(() => {
+            snakeSegmentElements.forEach((el) => {
+                el.classList.remove('is-spawning');
+                el.style.removeProperty('--spawn-index');
+            });
+            snakeRunning = true;
+            snakeInterval = window.setInterval(moveSnake, SNAKE_TICK_MS);
+        }, 600);
+    }, UNO_MENU_CLOSE_DURATION_MS);
+}
+
 export function startSnake() {
     closeGameOverModal();
     initializeSnake();

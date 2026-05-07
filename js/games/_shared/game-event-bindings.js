@@ -96,9 +96,8 @@ export function bindAllGameEventControls(options = {}) {
             snake.renderSnakeMenu();
             return;
         }
-    
-        snake.startSnake();
-        snake.closeSnakeMenu();
+
+        snake.startSnakeLaunchSequence();
     });
     
     document.getElementById('snakeMenuRulesButton')?.addEventListener('click', () => {

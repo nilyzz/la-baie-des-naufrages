@@ -3407,6 +3407,19 @@ body:has(#servicesView.view-active) .services-legal-button {
     animation: snakeFoodPulse 0.24s ease-out;
 }
 
+@keyframes snake-entity-spawn {
+    0%   { opacity: 0; scale: 0.1; }
+    58%  { opacity: 1; scale: 1.22; }
+    78%  { scale: 0.88; }
+    92%  { scale: 1.06; }
+    100% { opacity: 1; scale: 1; }
+}
+
+.snake-entity.is-spawning {
+    animation: snake-entity-spawn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--spawn-index, 0) * 55ms);
+}
+
 .pong-card {
     position: relative;
     width: min(100%, 760px);
