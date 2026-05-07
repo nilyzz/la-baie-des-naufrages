@@ -90,6 +90,7 @@ function getHarborRunPlayerPosition() {
 export function renderHarborRun() {
     const { harborRunBoard } = dom();
     if (!harborRunBoard) return;
+    if (harborRunMenuVisible) { harborRunBoard.innerHTML = ''; return; }
     const farOffset = (harborRunBackdropOffset * 0.22) % 180;
     const midOffset = (harborRunBackdropOffset * 0.42) % 210;
     const nearOffset = (harborRunBackdropOffset * 0.72) % 160;

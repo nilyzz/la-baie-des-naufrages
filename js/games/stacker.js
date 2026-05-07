@@ -74,6 +74,7 @@ export function updateStackerHud() {
 export function renderStacker() {
     const { stackerBoard } = dom();
     if (!stackerBoard) return;
+    if (stackerMenuVisible) { stackerBoard.innerHTML = ''; return; }
     const cameraOffset = getStackerCameraOffset();
     const backdropOffset = Math.min(cameraOffset * 0.18, 48);
     const foregroundOffset = Math.min(cameraOffset * 0.28, 72);
@@ -212,6 +213,7 @@ export function closeStackerMenu() {
         stackerMenuEntering = false;
         stackerMenuResult = null;
         renderStackerMenu();
+        renderStacker();
     }, UNO_MENU_CLOSE_DURATION_MS);
 }
 
