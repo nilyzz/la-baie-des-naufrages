@@ -4,53 +4,49 @@ import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 import { closeGameOverModal } from '../core/modals.js';
 
-// ── Map (21 × 21) ──────────────────────────────────────────────────────────
+// ── Map (27 × 17) ──────────────────────────────────────────────────────────
 // # wall  . pellet  O power-pellet  D ghost-door  G ghost-spawn  (space) empty
 export const PACMAN_LAYOUT = [
-    '#####################',
-    '#.........#.........#',
-    '#.###.###.#.###.###.#',
-    '#O.................O#',
-    '#.###.###.#.###.###.#',
-    '#...................#',
-    '#.###.#.#####.#.###.#',
-    '#.###.#.#####.#.###.#',
-    '#.....#.......#.....#',
-    '#####.###DDD###.#####',
-    '      # GGGGG #      ',
-    '#####.#########.#####',
-    '#.....#.......#.....#',
-    '#.###.#.#####.#.###.#',
-    '#.###.#.#####.#.###.#',
-    '#...................#',
-    '#.###.###.#.###.###.#',
-    '#O.................O#',
-    '#.###.###.#.###.###.#',
-    '#.........#.........#',
-    '#####################',
+    '###########################',
+    '#............#............#',
+    '#.####.####.###.####.####.#',
+    '#O..........###..........O#',
+    '#.####.####.###.####.####.#',
+    '#.........................#',
+    '#.####.####.....####.####.#',
+    '######.####DDDDD####.######',
+    '          #GGGGG#          ',
+    '######.#############.######',
+    '#.####.####.....####.####.#',
+    '#.........................#',
+    '#.####.####.###.####.####.#',
+    '#O..........###..........O#',
+    '#.####.####.###.####.####.#',
+    '#............#............#',
+    '###########################',
 ];
 
-const GRID_ROWS = 21;
-const GRID_COLS = 21;
-const TUNNEL_ROW = 10;
-const GHOST_HOUSE_ROW = 10;
-const GHOST_HOUSE_EXIT_COL = 10;
+const GRID_ROWS = 17;
+const GRID_COLS = 27;
+const TUNNEL_ROW = 8;
+const GHOST_HOUSE_ROW = 8;
+const GHOST_HOUSE_EXIT_COL = 13;
 const FRIGHTENED_DURATION = 38;
 const FRIGHTENED_FLASH_AT = 10;
 const GAME_TICK_MS = 180;
 
 const GHOST_DEFS = [
-    { id: 'ghost-a', ai: 'blinky', startRow: 10, startCol: 10, startDir: { row: 0, col: 1 },  releaseDelay: 0  },
-    { id: 'ghost-b', ai: 'pinky',  startRow: 10, startCol: 10, startDir: { row: 0, col: -1 }, releaseDelay: 5  },
-    { id: 'ghost-c', ai: 'inky',   startRow: 10, startCol: 8,  startDir: { row: 0, col: 1 },  releaseDelay: 12 },
-    { id: 'ghost-d', ai: 'clyde',  startRow: 10, startCol: 12, startDir: { row: 0, col: -1 }, releaseDelay: 20 },
+    { id: 'ghost-a', ai: 'blinky', startRow: 8, startCol: 13, startDir: { row: 0, col: 1 },  releaseDelay: 0  },
+    { id: 'ghost-b', ai: 'pinky',  startRow: 8, startCol: 13, startDir: { row: 0, col: -1 }, releaseDelay: 5  },
+    { id: 'ghost-c', ai: 'inky',   startRow: 8, startCol: 11, startDir: { row: 0, col: 1 },  releaseDelay: 12 },
+    { id: 'ghost-d', ai: 'clyde',  startRow: 8, startCol: 15, startDir: { row: 0, col: -1 }, releaseDelay: 20 },
 ];
 
 const SCATTER_TARGETS = {
-    blinky: { row: 0,  col: 20 },
+    blinky: { row: 0,  col: 26 },
     pinky:  { row: 0,  col: 0  },
-    inky:   { row: 20, col: 20 },
-    clyde:  { row: 20, col: 0  },
+    inky:   { row: 16, col: 26 },
+    clyde:  { row: 16, col: 0  },
 };
 
 // ── State ───────────────────────────────────────────────────────────────────
@@ -364,6 +360,8 @@ function buildPacmanBoard() {
     const rows = pacmanGrid.length;
     const cols = pacmanGrid[0].length;
     pacmanBoard.style.setProperty('--pacman-cols', String(cols));
+    pacmanBoard.style.setProperty('--pacman-rows', String(rows));
+    pacmanBoard.style.aspectRatio = `${cols} / ${rows}`;
 
     const cellsHtml = Array.from({ length: rows * cols }, (_, idx) => {
         const r = Math.floor(idx / cols);
