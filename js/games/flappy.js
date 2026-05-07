@@ -241,6 +241,7 @@ export function flapFlappyBird() {
 }
 
 export function startFlappy(shouldReset = true) {
+    stopFlappy();
     if (shouldReset) initializeFlappy();
     flappyRunning = true;
     flappyLastFrame = performance.now();

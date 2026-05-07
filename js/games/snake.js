@@ -37,6 +37,7 @@ let snakeMenuShowingRules = false;
 let snakeMenuClosing = false;
 let snakeMenuEntering = false;
 let snakeMenuResult = null;
+let snakeHeadAngle = 90; // accumulated angle — évite le bug CSS arc le plus long
 
 const $ = (id) => document.getElementById(id);
 
@@ -329,11 +330,17 @@ function placeSnakeEntity(element, row, col, geometry) {
     element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
 }
 
-function getSnakeHeadRotation() {
-    if (snakeDirection.x === 1) return 'rotate(90deg)';
-    if (snakeDirection.x === -1) return 'rotate(-90deg)';
-    if (snakeDirection.y === 1) return 'rotate(180deg)';
-    return 'rotate(0deg)';
+function updateSnakeHeadAngle() {
+    let target;
+    if      (snakeDirection.x === 1)  target = 90;
+    else if (snakeDirection.x === -1) target = 270;
+    else if (snakeDirection.y === 1)  target = 180;
+    else                              target = 0;
+    const current = ((snakeHeadAngle % 360) + 360) % 360;
+    let delta = target - current;
+    if (delta > 180)  delta -= 360;
+    if (delta < -180) delta += 360;
+    snakeHeadAngle += delta;
 }
 
 export function renderSnake() {
@@ -359,7 +366,8 @@ export function renderSnake() {
         segmentElement.classList.toggle('snake-entity-head', index === 0);
         segmentElement.classList.toggle('snake-entity-body', index !== 0);
         placeSnakeEntity(segmentElement, segment.row, segment.col, geometry);
-        segmentElement.style.setProperty('--snake-head-rotation', index === 0 ? getSnakeHeadRotation() : 'rotate(0deg)');
+        if (index === 0) { updateSnakeHeadAngle(); segmentElement.style.setProperty('--snake-head-angle', `${snakeHeadAngle}deg`); }
+        else segmentElement.style.setProperty('--snake-head-angle', '90deg');
     });
 
     const nextFoodKeys = new Set();
@@ -390,6 +398,7 @@ export function initializeSnake() {
     const centerRow = Math.floor(snakeGridSize / 2);
     const centerCol = Math.floor(snakeGridSize / 2);
     stopSnake();
+    snakeHeadAngle = 90;
     snakeMenuResult = null;
     snakeMenuShowingRules = false;
     snakeMenuClosing = false;

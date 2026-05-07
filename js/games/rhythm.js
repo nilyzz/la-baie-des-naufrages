@@ -33,6 +33,8 @@ let rhythmAnimationFrame = null;
 let rhythmPadHighlightTimeout = null;
 let rhythmBoardEffectTimeout = null;
 let rhythmBursts = [];
+const rhythmNoteEls = new Map();
+const rhythmBurstEls = new Map();
 
 
 const $ = (id) => document.getElementById(id);
@@ -141,6 +143,8 @@ export function revealRhythmOutcomeMenu(title, text, eyebrow) {
 export function initializeRhythm() {
     stopRhythm();
     closeGameOverModal();
+    rhythmNoteEls.clear();
+    rhythmBurstEls.clear();
     rhythmNotes = [];
     rhythmScore = 0;
     rhythmStreak = 0;
@@ -204,20 +208,41 @@ export function renderRhythmNotes() {
     const { rhythmBoard } = dom();
     const notesLayer = rhythmBoard.querySelector('.rhythm-notes');
     const feedbackLayer = rhythmBoard.querySelector('.rhythm-feedback');
-    if (!notesLayer) {
-        return;
+    if (!notesLayer) return;
+
+    const activeNoteIds = new Set(rhythmNotes.map((n) => n.id));
+    for (const [id, el] of rhythmNoteEls) {
+        if (!activeNoteIds.has(id)) { el.remove(); rhythmNoteEls.delete(id); }
+    }
+    for (const note of rhythmNotes) {
+        let el = rhythmNoteEls.get(note.id);
+        if (!el) {
+            el = document.createElement('div');
+            el.className = `rhythm-note lane-${note.lane}`;
+            el.style.left = `${((note.lane + 0.5) * 100) / RHYTHM_LANES.length}%`;
+            notesLayer.appendChild(el);
+            rhythmNoteEls.set(note.id, el);
+        }
+        el.style.top = `${note.y}px`;
     }
 
-    notesLayer.innerHTML = rhythmNotes.map((note) => {
-        const laneCenter = ((note.lane + 0.5) * 100) / RHYTHM_LANES.length;
-        return `<div class="rhythm-note lane-${note.lane}" style="left:${laneCenter}%; top:${note.y}px"></div>`;
-    }).join('');
-
     if (feedbackLayer) {
-        feedbackLayer.innerHTML = rhythmBursts.map((burst) => {
-            const laneCenter = ((burst.lane + 0.5) * 100) / RHYTHM_LANES.length;
-            return `<div class="rhythm-burst ${burst.type}" style="left:${laneCenter}%; top:${burst.y}px">${burst.label}</div>`;
-        }).join('');
+        const activeBurstIds = new Set(rhythmBursts.map((b) => b.id));
+        for (const [id, el] of rhythmBurstEls) {
+            if (!activeBurstIds.has(id)) { el.remove(); rhythmBurstEls.delete(id); }
+        }
+        for (const burst of rhythmBursts) {
+            let el = rhythmBurstEls.get(burst.id);
+            if (!el) {
+                el = document.createElement('div');
+                el.className = `rhythm-burst ${burst.type}`;
+                el.style.left = `${((burst.lane + 0.5) * 100) / RHYTHM_LANES.length}%`;
+                el.textContent = burst.label;
+                feedbackLayer.appendChild(el);
+                rhythmBurstEls.set(burst.id, el);
+            }
+            el.style.top = `${burst.y}px`;
+        }
     }
 }
 

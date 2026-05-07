@@ -665,6 +665,7 @@ export function setPongMode(nextMode) {
 }
 
 export function startPong() {
+    stopPong();
     closeGameOverModal();
     pongKeys.clear();
     pongMenuResult = null;
