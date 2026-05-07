@@ -504,20 +504,13 @@ function moveSnake() {
 }
 
 function spawnSnakeEntity(el, delay) {
-    const m = (el.style.transform || '').match(/translate\(([^,]+),([^)]+)\)/);
-    el.style.setProperty('--snake-tx', m ? m[1].trim() : '0px');
-    el.style.setProperty('--snake-ty', m ? m[2].trim() : '0px');
     el.style.setProperty('--spawn-delay', `${delay}ms`);
     el.classList.add('is-spawning');
 }
 
 function cleanupSnakeSpawn(el) {
-    el.style.setProperty('transition', 'none');
     el.classList.remove('is-spawning');
     el.style.removeProperty('--spawn-delay');
-    el.style.removeProperty('--snake-tx');
-    el.style.removeProperty('--snake-ty');
-    window.requestAnimationFrame(() => el.style.removeProperty('transition'));
 }
 
 export function startSnakeLaunchSequence() {
