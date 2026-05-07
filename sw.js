@@ -1,4 +1,4 @@
-const CACHE_NAME = 'baie-des-naufrages-v2-70';
+const CACHE_NAME = 'baie-des-naufrages-v2-71';
 const PRECACHE_URLS = [
     '/',
     '/index.html',

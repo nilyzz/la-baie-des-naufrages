@@ -15,10 +15,12 @@ import { setMultiplayerStatus } from '../multiplayer/status.js';
 
 export const CONNECT4_ROWS = 6;
 export const CONNECT4_COLS = 7;
+export const CONNECT4_BEST_KEY = 'baie-des-naufrages-connect4-best';
 
 let connect4BoardState = [];
 let connect4CurrentPlayer = 'player';
 let connect4Scores = { player: 0, ai: 0 };
+let connect4BestWins = (typeof window !== 'undefined' ? Number(window.localStorage.getItem(CONNECT4_BEST_KEY)) : 0) || 0;
 let connect4Finished = false;
 let connect4AiTimeout = null;
 let connect4Mode = 'solo';
@@ -43,6 +45,7 @@ function dom() {
         connect4Table: $('connect4Table'),
         connect4TurnDisplay: $('connect4TurnDisplay'),
         connect4ScoreDisplay: $('connect4ScoreDisplay'),
+        connect4BestWinsDisplay: $('connect4BestWinsDisplay'),
         connect4HelpText: $('connect4HelpText'),
         connect4ModeButtons: document.querySelectorAll('[data-connect4-mode]'),
         connect4MenuOverlay: $('connect4MenuOverlay'),
@@ -329,7 +332,8 @@ export function syncMultiplayerConnect4State() {
 }
 
 export function updateConnect4Hud() {
-    const { connect4TurnDisplay, connect4ScoreDisplay, connect4HelpText, connect4ModeButtons } = dom();
+    const { connect4TurnDisplay, connect4ScoreDisplay, connect4BestWinsDisplay, connect4HelpText, connect4ModeButtons } = dom();
+    if (connect4BestWinsDisplay) connect4BestWinsDisplay.textContent = connect4BestWins > 0 ? String(connect4BestWins) : '—';
     if (isMultiplayerConnect4Active()) {
         if (connect4TurnDisplay) connect4TurnDisplay.textContent = getMultiplayerConnect4TurnLabel();
         if (connect4ScoreDisplay) connect4ScoreDisplay.textContent = getMultiplayerConnect4ScoreLabel();
@@ -756,6 +760,10 @@ function finishConnect4(winner, line = null) {
 
     if (winner === 'player') {
         connect4Scores.player += 1;
+        if (connect4Mode === 'solo' && connect4Scores.player > connect4BestWins) {
+            connect4BestWins = connect4Scores.player;
+            if (typeof window !== 'undefined') window.localStorage.setItem(CONNECT4_BEST_KEY, String(connect4BestWins));
+        }
         if (connect4HelpText) connect4HelpText.textContent = connect4Mode === 'duo' ? 'Le joueur 1 aligne quatre jetons.' : 'Victoire. Tu controles la colonne du pont.';
     } else if (winner === 'ai') {
         connect4Scores.ai += 1;

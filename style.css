@@ -14487,6 +14487,10 @@ button:hover {
     flex-wrap: wrap;
 }
 
+.uno-topbar {
+    justify-content: center;
+}
+
 .blockblast-counter-block,
 .uno-counter-block,
 .bomb-counter-block {
