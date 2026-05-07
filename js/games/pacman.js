@@ -76,6 +76,7 @@ let pacmanMenuEntering = false;
 let pacmanMenuResult = null;
 let pacmanFrightenedTimer = 0;
 let pacmanGhostEatenCombo = 0;
+let pacmanRotationAngle = 90; // accumulated degrees — avoids CSS shortest-arc bug
 let pacmanPhaseMode = 'scatter';
 let pacmanPhaseTimer = SCATTER_TICKS;
 let pacmanDying = false;
@@ -292,6 +293,7 @@ function resetPacmanActors() {
     pacmanPosition      = { row: 1, col: 1 };
     pacmanDirection     = { row: 0, col: 1 }; // start moving right
     pacmanNextDirection = { row: 0, col: 0 };
+    pacmanRotationAngle = 90; // facing right
     pacmanFrightenedTimer = 0;
     pacmanGhostEatenCombo = 0;
     pacmanPhaseMode = 'scatter';
@@ -328,12 +330,19 @@ export function updatePacmanHud() {
     }
 }
 
-function getPacmanRotation() {
-    if (pacmanDirection.col === 1)  return '90deg';
-    if (pacmanDirection.col === -1) return '-90deg';
-    if (pacmanDirection.row === -1) return '0deg';
-    if (pacmanDirection.row === 1)  return '180deg';
-    return '90deg';
+function updatePacmanRotation() {
+    let target;
+    if      (pacmanDirection.col === 1)  target = 90;
+    else if (pacmanDirection.col === -1) target = 270;
+    else if (pacmanDirection.row === -1) target = 0;
+    else if (pacmanDirection.row === 1)  target = 180;
+    else return; // stationary — keep current angle
+    // Compute shortest-arc delta to avoid full-loop CSS transitions
+    const current = ((pacmanRotationAngle % 360) + 360) % 360;
+    let delta = target - current;
+    if (delta > 180)  delta -= 360;
+    if (delta < -180) delta += 360;
+    pacmanRotationAngle += delta;
 }
 
 // ── Countdown ────────────────────────────────────────────────────────────────
@@ -462,8 +471,9 @@ export function renderPacman() {
 
     const geo = getPacmanGeometry();
 
+    updatePacmanRotation();
     placePacmanEntity(pacmanHeroElement, pacmanPosition.row, pacmanPosition.col, geo);
-    pacmanHeroElement?.style.setProperty('--pacman-rotation', getPacmanRotation());
+    pacmanHeroElement?.style.setProperty('--pacman-rotation', `${pacmanRotationAngle}deg`);
 
     pacmanGhosts.forEach((ghost, i) => {
         const el = pacmanGhostElements[i];
