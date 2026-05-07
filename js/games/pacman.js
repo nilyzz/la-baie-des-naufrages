@@ -274,7 +274,7 @@ function moveGhost(ghost) {
 
 // ── Actors reset ──────────────────────────────────────────────────────────────
 function resetPacmanActors() {
-    pacmanPosition    = { row: 1, col: 13 };
+    pacmanPosition    = { row: 1, col: 1 };
     pacmanDirection   = { row: 0, col: 0 };
     pacmanNextDirection = { row: 0, col: 0 };
     pacmanFrightenedTimer = 0;
@@ -360,8 +360,6 @@ function buildPacmanBoard() {
     const rows = pacmanGrid.length;
     const cols = pacmanGrid[0].length;
     pacmanBoard.style.setProperty('--pacman-cols', String(cols));
-    pacmanBoard.style.setProperty('--pacman-rows', String(rows));
-    pacmanBoard.style.aspectRatio = `${cols} / ${rows}`;
 
     const cellsHtml = Array.from({ length: rows * cols }, (_, idx) => {
         const r = Math.floor(idx / cols);

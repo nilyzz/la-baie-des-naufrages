@@ -2231,7 +2231,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .pacman-card {
-    width: min(100%, 630px);
+    width: min(100%, 740px);
     padding: 16px;
     height: 100%;
     min-height: 0;
@@ -6866,7 +6866,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 .pacman-table {
     position: relative;
     z-index: 1;
-    width: min(100%, 594px);
+    width: min(100%, 706px);
     margin: 0 auto;
     border-radius: 20px;
 }
@@ -6947,12 +6947,10 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .pacman-board {
     --pacman-cols: 27;
-    --pacman-rows: 17;
     --pacman-gap: 2px;
     --pacman-padding: 8px;
     position: relative;
     width: 100%;
-    aspect-ratio: 27 / 17;
     margin: 0 auto;
     padding: 0;
     touch-action: none;
@@ -6966,12 +6964,9 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .pacman-grid {
-    position: absolute;
-    inset: 0;
     padding: var(--pacman-padding);
     display: grid;
     grid-template-columns: repeat(var(--pacman-cols), minmax(0, 1fr));
-    grid-template-rows: repeat(var(--pacman-rows, 17), minmax(0, 1fr));
     gap: var(--pacman-gap);
 }
 
