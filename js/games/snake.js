@@ -516,7 +516,7 @@ export function startSnakeLaunchSequence() {
             });
             snakeRunning = true;
             snakeInterval = window.setInterval(moveSnake, SNAKE_TICK_MS);
-        }, 600);
+        }, 480);
     }, UNO_MENU_CLOSE_DURATION_MS);
 }
 
