@@ -71,7 +71,7 @@ function readVersionState() {
         const minor = Number.parseInt(parsed.minor, 10);
         return {
             major: Number.isInteger(major) ? major : baseVersion.major,
-            minor: Number.isInteger(minor) ? Math.min(Math.max(minor, 0), 99) : baseVersion.minor,
+            minor: Number.isInteger(minor) ? Math.min(Math.max(minor, 0), 999) : baseVersion.minor,
             sourceHash: typeof parsed.sourceHash === 'string' ? parsed.sourceHash : null
         };
     } catch {
@@ -81,7 +81,7 @@ function readVersionState() {
 
 function incrementVersion({ major, minor }) {
     const nextMinor = minor + 1;
-    if (nextMinor <= 99) {
+    if (nextMinor <= 999) {
         return { major, minor: nextMinor };
     }
 
@@ -89,7 +89,7 @@ function incrementVersion({ major, minor }) {
 }
 
 function formatDisplayVersion({ major, minor }) {
-    return `${major}.${String(minor).padStart(2, '0')}`;
+    return `${major}.${String(minor).padStart(3, '0')}`;
 }
 
 function walkDirectory(directoryPath) {
