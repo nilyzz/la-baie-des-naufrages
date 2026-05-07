@@ -506,6 +506,9 @@ export function startSnakeLaunchSequence() {
         renderSnakeMenu();
         initializeSnake();
         snakeSegmentElements.forEach((el, index) => {
+            const m = (el.style.transform || '').match(/translate\(([^,]+),([^)]+)\)/);
+            el.style.setProperty('--snake-tx', m ? m[1].trim() : '0px');
+            el.style.setProperty('--snake-ty', m ? m[2].trim() : '0px');
             el.classList.add('is-spawning');
             el.style.setProperty('--spawn-index', String(index));
         });
@@ -513,6 +516,8 @@ export function startSnakeLaunchSequence() {
             snakeSegmentElements.forEach((el) => {
                 el.classList.remove('is-spawning');
                 el.style.removeProperty('--spawn-index');
+                el.style.removeProperty('--snake-tx');
+                el.style.removeProperty('--snake-ty');
             });
             snakeRunning = true;
             snakeInterval = window.setInterval(moveSnake, SNAKE_TICK_MS);
