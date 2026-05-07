@@ -76,7 +76,7 @@ export function renderFlappy() {
         <div class="flappy-beach" style="transform:translateX(${beachOffset}px);"></div>
         <div class="flappy-palm flappy-palm-left" style="transform:translateX(${beachOffset}px) scale(0.92);"></div>
         <div class="flappy-palm flappy-palm-right" style="transform:translateX(${beachOffset}px) scale(1.04);"></div>
-        <div class="flappy-bird${flappySpawning ? ' is-spawning' : ''}" style="left:${birdX}px; top:${birdY}px;${flappySpawning ? '' : ` transform:rotate(${birdRotation}deg);`}"></div>
+        ${!flappyMenuVisible ? `<div class="flappy-bird${flappySpawning ? ' is-spawning' : ''}" style="left:${birdX}px; top:${birdY}px;${flappySpawning ? '' : ` transform:rotate(${birdRotation}deg);`}"></div>` : ''}
         ${flappyPipes.map((pipe) => `
             <div class="flappy-pipe flappy-pipe-top" style="left:${pipe.x}px; top:0; height:${pipe.gapTop}px;"></div>
             <div class="flappy-pipe flappy-pipe-bottom" style="left:${pipe.x}px; bottom:0; height:${boardHeight - pipe.gapBottom}px;"></div>
