@@ -823,11 +823,6 @@
                         </div>
                     </div>
 
-                    <div class="pong-mode-switch" role="group" aria-label="Mode de jeu Pong">
-                        <button type="button" class="secondary-button pong-mode-button is-active" data-pong-mode="solo">1 joueur</button>
-                        <button type="button" class="secondary-button pong-mode-button" data-pong-mode="duo">2 joueurs</button>
-                    </div>
-
                     <p class="pong-help" id="pongHelpText">Mode 1 joueur: Z/S ou fl&egrave;ches pour jouer contre l'IA. Mode 2 joueurs: gauche avec Z/S, droite avec fl&egrave;ches haut/bas.</p>
                     <div id="pongTable" class="pong-table">
                         <div id="pongMenuOverlay" class="pong-menu-overlay">
@@ -835,6 +830,10 @@
                                 <span id="pongMenuEyebrow" class="pong-menu-eyebrow">Baie d'arcade</span>
                                 <h3 id="pongMenuTitle" class="pong-menu-title">Pong</h3>
                                 <p id="pongMenuText" class="pong-menu-text">Choisis ton mode, puis lance le duel dans la baie.</p>
+                                <div class="pong-mode-switch" role="group" aria-label="Mode de jeu Pong">
+                                    <button type="button" class="secondary-button pong-mode-button is-active" data-pong-mode="solo">1 joueur</button>
+                                    <button type="button" class="secondary-button pong-mode-button" data-pong-mode="duo">2 joueurs</button>
+                                </div>
                                 <div class="pong-menu-actions">
                                     <button id="pongMenuActionButton" type="button" class="game-menu-primary-button">Lancer le duel</button>
                                     <button id="pongMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -871,7 +870,6 @@
                         </div>
                     </div>
                     <div class="sudoku-controls">
-                        <button id="sudokuDifficultyButton" type="button" class="sudoku-face sudoku-face-secondary">Difficulte : Moussaillon</button>
                         <button id="sudokuRestartButton" type="button" class="sudoku-face" hidden>Nouvelle grille</button>
                     </div>
 
@@ -882,6 +880,7 @@
                                 <span id="sudokuMenuEyebrow" class="sudoku-menu-eyebrow">Carte de navigation</span>
                                 <h3 id="sudokuMenuTitle" class="sudoku-menu-title">Sudoku</h3>
                                 <p id="sudokuMenuText" class="sudoku-menu-text">Complete la carte sans repeter de chiffre sur une ligne, une colonne ou un carre de 3 par 3.</p>
+                                <button id="sudokuDifficultyButton" type="button" class="sudoku-face sudoku-face-secondary">Difficulte : Moussaillon</button>
                                 <div class="sudoku-menu-actions">
                                     <button id="sudokuMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
                                     <button id="sudokuMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1015,11 +1014,6 @@
                         </div>
                     </div>
 
-                    <div class="tictactoe-mode-switch" role="group" aria-label="Mode de jeu Morpion">
-                        <button type="button" class="secondary-button tictactoe-mode-button is-active" data-tictactoe-mode="solo">1 joueur</button>
-                        <button type="button" class="secondary-button tictactoe-mode-button" data-tictactoe-mode="duo">2 joueurs</button>
-                    </div>
-
                     <p id="ticTacToeHelpText" class="tictactoe-help">Mode 1 joueur: aligne trois symboles contre l'IA pirate.</p>
                     <div id="ticTacToeTable" class="tictactoe-table">
                         <div id="ticTacToeMenuOverlay" class="tictactoe-menu-overlay">
@@ -1027,6 +1021,10 @@
                                 <span id="ticTacToeMenuEyebrow" class="tictactoe-menu-eyebrow">Baie strat&eacute;gique</span>
                                 <h3 id="ticTacToeMenuTitle" class="tictactoe-menu-title">Morpion</h3>
                                 <p id="ticTacToeMenuText" class="tictactoe-menu-text">Aligne trois symboles avant l&rsquo;&eacute;quipage adverse pour prendre le pont.</p>
+                                <div class="tictactoe-mode-switch" role="group" aria-label="Mode de jeu Morpion">
+                                    <button type="button" class="secondary-button tictactoe-mode-button is-active" data-tictactoe-mode="solo">1 joueur</button>
+                                    <button type="button" class="secondary-button tictactoe-mode-button" data-tictactoe-mode="duo">2 joueurs</button>
+                                </div>
                                 <div class="tictactoe-menu-actions">
                                     <button id="ticTacToeMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
                                     <button id="ticTacToeMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1215,11 +1213,6 @@
                         </div>
                     </div>
 
-                    <div class="connect4-mode-switch" role="group" aria-label="Mode de jeu Coin 4">
-                        <button type="button" class="secondary-button connect4-mode-button is-active" data-connect4-mode="solo">1 joueur</button>
-                        <button type="button" class="secondary-button connect4-mode-button" data-connect4-mode="duo">2 joueurs</button>
-                    </div>
-
                     <p id="connect4HelpText" class="connect4-help">Mode 1 joueur: clique une colonne pour y larguer un jeton contre l'IA.</p>
                     <div id="connect4Table" class="connect4-table">
                         <div id="connect4MenuOverlay" class="connect4-menu-overlay">
@@ -1227,6 +1220,10 @@
                                 <span id="connect4MenuEyebrow" class="connect4-menu-eyebrow">Pont des corsaires</span>
                                 <h3 id="connect4MenuTitle" class="connect4-menu-title">Coin 4</h3>
                                 <p id="connect4MenuText" class="connect4-menu-text">Choisis ton mode puis aligne quatre jetons avant ton rival sur le pont.</p>
+                                <div class="connect4-mode-switch" role="group" aria-label="Mode de jeu Coin 4">
+                                    <button type="button" class="secondary-button connect4-mode-button is-active" data-connect4-mode="solo">1 joueur</button>
+                                    <button type="button" class="secondary-button connect4-mode-button" data-connect4-mode="duo">2 joueurs</button>
+                                </div>
                                 <div class="connect4-menu-actions">
                                     <button id="connect4MenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
                                     <button id="connect4MenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1582,10 +1579,6 @@
                             <strong id="chessStatusDisplay" class="chess-counter-value">En cours</strong>
                         </div>
                     </div>
-                    <div class="chess-mode-switch" role="group" aria-label="Mode échecs">
-                        <button type="button" class="secondary-button chess-mode-button is-active" data-chess-mode="solo">1 joueur</button>
-                        <button type="button" class="secondary-button chess-mode-button" data-chess-mode="duo">2 joueurs</button>
-                    </div>
                     <p id="chessHelpText" class="chess-help">Échecs local à deux joueurs. Roque et prise en passant disponibles.</p>
                     <div id="chessTable" class="chess-table">
                         <div id="chessPromotionOverlay" class="chess-promotion-overlay hidden" role="dialog" aria-modal="true" aria-label="Promotion du pion">
@@ -1602,6 +1595,10 @@
                                 <span id="chessMenuEyebrow" class="chess-menu-eyebrow">Baie stratégique</span>
                                 <h3 id="chessMenuTitle" class="chess-menu-title">Échecs</h3>
                                 <p id="chessMenuText" class="chess-menu-text">Installe les pièces et choisis ton mode avant d'engager la partie.</p>
+                                <div class="chess-mode-switch" role="group" aria-label="Mode échecs">
+                                    <button type="button" class="secondary-button chess-mode-button is-active" data-chess-mode="solo">1 joueur</button>
+                                    <button type="button" class="secondary-button chess-mode-button" data-chess-mode="duo">2 joueurs</button>
+                                </div>
                                 <div class="chess-menu-actions">
                                     <button id="chessMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
                                     <button id="chessMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1623,10 +1620,6 @@
                             <strong id="checkersCountDisplay" class="checkers-counter-value">12</strong>
                         </div>
                     </div>
-                    <div class="checkers-mode-switch" role="group" aria-label="Mode dames">
-                        <button type="button" class="secondary-button checkers-mode-button is-active" data-checkers-mode="solo">1 joueur</button>
-                        <button type="button" class="secondary-button checkers-mode-button" data-checkers-mode="duo">2 joueurs</button>
-                    </div>
                     <p id="checkersHelpText" class="checkers-help">Dames local à deux joueurs. Les captures sont possibles, et un pion promu devient roi en arrivant au bout.</p>
                     <div id="checkersTable" class="checkers-table">
                         <div id="checkersMenuOverlay" class="checkers-menu-overlay">
@@ -1634,6 +1627,10 @@
                                 <span id="checkersMenuEyebrow" class="checkers-menu-eyebrow">Baie stratégique</span>
                                 <h3 id="checkersMenuTitle" class="checkers-menu-title">Dames</h3>
                                 <p id="checkersMenuText" class="checkers-menu-text">Installe les pions et choisis ton mode avant d'engager la partie.</p>
+                                <div class="checkers-mode-switch" role="group" aria-label="Mode dames">
+                                    <button type="button" class="secondary-button checkers-mode-button is-active" data-checkers-mode="solo">1 joueur</button>
+                                    <button type="button" class="secondary-button checkers-mode-button" data-checkers-mode="duo">2 joueurs</button>
+                                </div>
                                 <div class="checkers-menu-actions">
                                     <button id="checkersMenuActionButton" type="button" class="game-menu-primary-button">Lancer la partie</button>
                                     <button id="checkersMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1656,10 +1653,6 @@
                             <strong id="airHockeyRightScoreDisplay" class="airhockey-counter-value">0</strong>
                         </div>
                     </div>
-                    <div class="airhockey-mode-switch" role="group" aria-label="Mode air hockey">
-                        <button type="button" class="secondary-button airhockey-mode-button is-active" data-airhockey-mode="solo">1 joueur</button>
-                        <button type="button" class="secondary-button airhockey-mode-button" data-airhockey-mode="duo">2 joueurs</button>
-                    </div>
                     <p id="airHockeyHelpText" class="airhockey-help">Joueur gauche : ZQSD. Joueur droit : flèches. En solo, la droite est pilotée par l'IA.</p>
                     <div id="airHockeyBoard" class="airhockey-board" aria-label="Plateau de Sea Hockey">
                         <div id="airHockeyMenuOverlay" class="airhockey-menu-overlay">
@@ -1667,6 +1660,10 @@
                                 <span id="airHockeyMenuEyebrow" class="airhockey-menu-eyebrow">Duel de pont</span>
                                 <h3 id="airHockeyMenuTitle" class="airhockey-menu-title">Sea Hockey</h3>
                                 <p id="airHockeyMenuText" class="airhockey-menu-text">Choisis ton mode puis engage le palet sur le pont glissant de la baie.</p>
+                                <div class="airhockey-mode-switch" role="group" aria-label="Mode air hockey">
+                                    <button type="button" class="secondary-button airhockey-mode-button is-active" data-airhockey-mode="solo">1 joueur</button>
+                                    <button type="button" class="secondary-button airhockey-mode-button" data-airhockey-mode="duo">2 joueurs</button>
+                                </div>
                                 <div class="airhockey-menu-actions">
                                     <button id="airHockeyMenuActionButton" type="button" class="game-menu-primary-button">Lancer le duel</button>
                                     <button id="airHockeyMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1839,10 +1836,6 @@
                             <span class="uno-counter-label">Mode</span>
                             <strong id="unoModeDisplay" class="uno-counter-value">Solo IA</strong>
                         </div>
-                        <div class="uno-mode-switch" role="group" aria-label="Mode de jeu Buno">
-                            <button type="button" class="secondary-button is-active" data-uno-mode="solo">Contre IA</button>
-                            <button type="button" class="secondary-button" data-uno-mode="online">Online</button>
-                        </div>
                         <div class="uno-counter-block">
                             <span class="uno-counter-label">Main</span>
                             <strong id="unoHandCountDisplay" class="uno-counter-value">0</strong>
@@ -1855,6 +1848,10 @@
                                 <span id="unoMenuEyebrow" class="uno-menu-eyebrow">Baie des cartes</span>
                                 <h3 id="unoMenuTitle" class="uno-menu-title">Buno</h3>
                                 <p id="unoMenuText" class="uno-menu-text">Prépare ta partie avant de larguer les amarres.</p>
+                                <div class="uno-mode-switch" role="group" aria-label="Mode de jeu Buno">
+                                    <button type="button" class="secondary-button is-active" data-uno-mode="solo">Contre IA</button>
+                                    <button type="button" class="secondary-button" data-uno-mode="online">Online</button>
+                                </div>
                                 <div class="uno-menu-actions">
                                     <button id="unoMenuActionButton" type="button" class="uno-face">Lancer la partie</button>
                                     <button id="unoMenuRulesButton" type="button" class="secondary-button">R&egrave;gles</button>
