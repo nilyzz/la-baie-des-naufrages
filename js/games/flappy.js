@@ -161,7 +161,7 @@ export function startFlappyLaunchSequence() {
         window.setTimeout(() => {
             flappySpawning = false;
             startFlappy(false);
-        }, 620);
+        }, 700);
     }, UNO_MENU_CLOSE_DURATION_MS);
 }
 
