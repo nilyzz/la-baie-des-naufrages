@@ -8917,6 +8917,15 @@ body:has(#servicesView.view-active) .services-legal-button {
     opacity: 0.88;
 }
 
+@keyframes stacker-current-spawn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.stacker-current.is-spawning {
+    animation: stacker-current-spawn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .stacker-waterline {
     position: absolute;
     left: 0;
@@ -13206,6 +13215,16 @@ button:hover {
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #f8fafc, #cbd5e1 42%, #0f172a 100%);
     box-shadow: 0 12px 20px -14px rgba(15, 23, 42, 0.9);
+}
+
+@keyframes airhockey-piece-spawn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.airhockey-puck.is-spawning,
+.airhockey-paddle.is-spawning {
+    animation: airhockey-piece-spawn 0.35s ease-out both;
 }
 
 .reaction-lantern {

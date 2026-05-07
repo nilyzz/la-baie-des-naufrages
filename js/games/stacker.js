@@ -24,6 +24,7 @@ let stackerMenuShowingRules = false;
 let stackerMenuClosing = false;
 let stackerMenuEntering = false;
 let stackerMenuResult = null;
+let stackerIsLaunching = false;
 
 const $ = (id) => document.getElementById(id);
 
@@ -106,7 +107,7 @@ export function renderStacker() {
     `).join('');
     const currentMarkup = stackerCurrentLayer ? `
         <div
-            class="stacker-current"
+            class="stacker-current${stackerIsLaunching ? ' is-spawning' : ''}"
             style="
                 width: ${stackerCurrentLayer.width}%;
                 left: ${stackerCurrentLayer.left}%;
@@ -299,6 +300,16 @@ export function runStackerFrame(timestamp) {
 
     renderStacker();
     stackerAnimationFrame = window.requestAnimationFrame(runStackerFrame);
+}
+
+export function startStackerLaunchSequence() {
+    initializeStacker();
+    closeStackerMenu();
+    window.setTimeout(() => {
+        stackerIsLaunching = true;
+        renderStacker();
+        window.setTimeout(() => { stackerIsLaunching = false; }, 500);
+    }, UNO_MENU_CLOSE_DURATION_MS);
 }
 
 export function startStacker() {

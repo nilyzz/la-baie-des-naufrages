@@ -456,6 +456,14 @@ export function finishAimRound() {
     );
 }
 
+export function startAimLaunchSequence() {
+    initializeAim();
+    closeAimMenu();
+    window.setTimeout(() => {
+        startAimCountdown(() => startAimRound());
+    }, UNO_MENU_CLOSE_DURATION_MS);
+}
+
 export function startAimRound() {
     closeGameOverModal();
     if (aimRoundCompleted || aimTimeRemaining <= 0 || aimRoundRunning || aimCountdownActive) {

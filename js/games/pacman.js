@@ -61,7 +61,8 @@ let pacmanScore = 0;
 let pacmanLives = 3;
 let pacmanPellets = 0;
 let pacmanRunning = false;
-let pacmanInterval = null;
+let pacmanRafId = null;
+let pacmanNextTick = 0;
 let pacmanCountdownActive = false;
 let pacmanCountdownTimer = null;
 let pacmanCountdownCompleteTimer = null;
@@ -519,11 +520,20 @@ export function stopPacman() {
     clearPacmanCountdownTimers();
     pacmanCountdownActive = false;
     hidePacmanCountdown();
-    if (pacmanInterval) { window.clearInterval(pacmanInterval); pacmanInterval = null; }
+    if (pacmanRafId) { window.cancelAnimationFrame(pacmanRafId); pacmanRafId = null; }
     if (pacmanDyingTimer) { window.clearTimeout(pacmanDyingTimer); pacmanDyingTimer = null; }
     pacmanDying = false;
     pacmanRunning = false;
     updatePacmanHud();
+}
+
+function pacmanLoop(timestamp) {
+    if (!pacmanRunning) return;
+    if (timestamp >= pacmanNextTick) {
+        pacmanNextTick = timestamp + GAME_TICK_MS;
+        runPacmanTick();
+    }
+    pacmanRafId = window.requestAnimationFrame(pacmanLoop);
 }
 
 // ── Direction ─────────────────────────────────────────────────────────────────
@@ -600,7 +610,8 @@ function resetPacmanAfterHit(gameOver) {
             startPacmanCountdown(() => {
                 pacmanRunning = true;
                 updatePacmanHud();
-                pacmanInterval = window.setInterval(runPacmanTick, GAME_TICK_MS);
+                pacmanNextTick = performance.now() + GAME_TICK_MS;
+                pacmanRafId = window.requestAnimationFrame(pacmanLoop);
             });
         }
     }, 700);

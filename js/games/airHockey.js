@@ -315,6 +315,20 @@ export function launchAirHockeyPuck() {
     });
 }
 
+export function startAirHockeyLaunchSequence() {
+    initializeAirHockey(false);
+    closeAirHockeyMenu();
+    window.setTimeout(() => {
+        const { airHockeyPuck, airHockeyLeftPaddle, airHockeyRightPaddle } = dom();
+        for (const el of [airHockeyPuck, airHockeyLeftPaddle, airHockeyRightPaddle]) {
+            if (!el) continue;
+            el.classList.add('is-spawning');
+            el.addEventListener('animationend', () => el.classList.remove('is-spawning'), { once: true });
+        }
+        launchAirHockeyPuck();
+    }, UNO_MENU_CLOSE_DURATION_MS);
+}
+
 export function handleAirHockeyPoint(side) {
     const { airHockeyHelpText } = dom();
     airHockeyState[side === 'left' ? 'leftScore' : 'rightScore'] += 1;

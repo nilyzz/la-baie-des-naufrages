@@ -223,9 +223,7 @@ export function bindAllGameEventControls(options = {}) {
             aim.renderAimMenu();
             return;
         }
-        aim.initializeAim();
-        aim.closeAimMenu();
-        window.setTimeout(() => { aim.startAimRound(); }, UNO_MENU_CLOSE_DURATION_MS);
+        aim.startAimLaunchSequence();
     });
     
     document.getElementById('aimMenuRulesButton')?.addEventListener('click', () => {
@@ -699,8 +697,7 @@ export function bindAllGameEventControls(options = {}) {
             return;
         }
     
-        stacker.initializeStacker();
-        stacker.closeStackerMenu();
+        stacker.startStackerLaunchSequence();
     });
     
     document.getElementById('stackerMenuRulesButton')?.addEventListener('click', () => {
@@ -943,9 +940,7 @@ export function bindAllGameEventControls(options = {}) {
             return;
         }
 
-        airHockey.initializeAirHockey(false);
-        airHockey.launchAirHockeyPuck();
-        airHockey.closeAirHockeyMenu();
+        airHockey.startAirHockeyLaunchSequence();
     });
     
     document.getElementById('airHockeyMenuRulesButton')?.addEventListener('click', () => {

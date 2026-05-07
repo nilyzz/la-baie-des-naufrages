@@ -27,7 +27,8 @@ let tetrisNextQueue = [];
 let tetrisScore = 0;
 let tetrisLines = 0;
 let tetrisRunning = false;
-let tetrisInterval = null;
+let tetrisRafId = null;
+let tetrisNextTick = 0;
 let tetrisMenuVisible = true;
 let tetrisMenuShowingRules = false;
 let tetrisMenuClosing = false;
@@ -313,12 +314,21 @@ export function renderTetris() {
 }
 
 export function stopTetris() {
-    if (tetrisInterval) {
-        window.clearInterval(tetrisInterval);
-        tetrisInterval = null;
+    if (tetrisRafId) {
+        window.cancelAnimationFrame(tetrisRafId);
+        tetrisRafId = null;
     }
     tetrisRunning = false;
     updateTetrisHud();
+}
+
+function tetrisLoop(timestamp) {
+    if (!tetrisRunning) return;
+    if (timestamp >= tetrisNextTick) {
+        tetrisNextTick = timestamp + TETRIS_TICK_MS;
+        dropTetrisStep();
+    }
+    tetrisRafId = window.requestAnimationFrame(tetrisLoop);
 }
 
 function clearTetrisLines() {
@@ -534,7 +544,8 @@ export function startTetris() {
     tetrisRunning = true;
     renderTetris();
     updateTetrisHud();
-    tetrisInterval = window.setInterval(dropTetrisStep, TETRIS_TICK_MS);
+    tetrisNextTick = performance.now() + TETRIS_TICK_MS;
+    tetrisRafId = window.requestAnimationFrame(tetrisLoop);
 }
 
 export function setTetrisMenuVisible(v) { tetrisMenuVisible = Boolean(v); }
