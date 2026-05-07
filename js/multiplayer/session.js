@@ -29,11 +29,7 @@ import {
     leaveMultiplayerRoom as lobbyLeaveMultiplayerRoom,
     copyMultiplayerRoomCode as lobbyCopyMultiplayerRoomCode
 } from './lobby.js';
-import {
-    syncMultiplayerAirHockeyState, resetAirHockeyMultiplayerTrackers, initializeAirHockey
-} from '../games/airHockey.js';
 import { syncMultiplayerBattleshipState, initializeBattleship } from '../games/battleship.js';
-import { syncMultiplayerPongState, initializePong } from '../games/pong.js';
 import {
     syncMultiplayerTicTacToeState, resetTicTacToeLastFinishedStateKey
 } from '../games/ticTacToe.js';
@@ -67,9 +63,7 @@ function getMultiplayerRoomUiSignature(room) {
 }
 
 function syncAllPerGameState() {
-    syncMultiplayerAirHockeyState();
     syncMultiplayerBattleshipState();
-    syncMultiplayerPongState();
     syncMultiplayerTicTacToeState();
     syncMultiplayerConnect4State();
     syncMultiplayerChessState();
@@ -155,7 +149,6 @@ export function bindMultiplayerSession(options = {}) {
             currentSocket.on('room:left', () => {
                 setMultiplayerActiveRoom(null);
                 setMultiplayerEntryMode('create');
-                resetAirHockeyMultiplayerTrackers();
                 resetTicTacToeLastFinishedStateKey();
                 setBombState(null);
                 stopBombTimerLoop();
@@ -167,8 +160,6 @@ export function bindMultiplayerSession(options = {}) {
 
                 const activeTab = getActiveGameTab?.();
                 if (activeTab === 'battleship') initializeBattleship();
-                if (activeTab === 'airHockey') initializeAirHockey();
-                if (activeTab === 'pong') initializePong();
                 if (activeTab === 'uno') initializeUno();
                 if (activeTab === 'bomb') initializeBomb();
 

@@ -21,9 +21,7 @@ export const EXCEL_FILE_CANDIDATES = [
 ];
 
 export const MULTIPLAYER_SUPPORTED_GAMES = {
-    airHockey: 'Sea Hockey',
     battleship: 'Bataille',
-    pong: 'Pong',
     ticTacToe: 'Morpion',
     connect4: 'Coin 4',
     chess: '\u00c9checs',
