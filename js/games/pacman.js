@@ -478,8 +478,8 @@ export function renderPacman() {
     updatePacmanRotation();
     const heroTunnel = Math.abs(pacmanPosition.col - pacmanPrevPosition.col) > GRID_COLS / 2;
     if (heroTunnel && pacmanHeroElement) {
-        pacmanHeroElement.style.transition = 'none';
-        void pacmanHeroElement.offsetWidth;
+        // Disable left/top transition for this frame so the snap is instant
+        pacmanHeroElement.style.transition = 'transform 0.18s linear';
     }
     placePacmanEntity(pacmanHeroElement, pacmanPosition.row, pacmanPosition.col, geo);
     pacmanHeroElement?.style.setProperty('--pacman-rotation', `${pacmanRotationAngle}deg`);
@@ -502,7 +502,6 @@ export function renderPacman() {
         const ghostTunnel = Math.abs(ghost.col - prevCol) > GRID_COLS / 2;
         if (ghostTunnel) {
             el.style.transition = 'none';
-            void el.offsetWidth;
         }
         placePacmanEntity(el, ghost.row, ghost.col, geo);
         if (ghostTunnel) {
