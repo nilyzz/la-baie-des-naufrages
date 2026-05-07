@@ -9,6 +9,7 @@ import { formatTenthsTimer } from '../core/utils.js';
 export const BOARD_SIZE = 13;
 export const TOTAL_MINES = 30;
 export const MINESWEEPER_GRID_SIZE_KEY = 'baie-des-naufrages-minesweeper-grid-size';
+export const MINESWEEPER_BEST_TIMES_KEY = 'baie-des-naufrages-minesweeper-best-times';
 export const MINESWEEPER_GRID_SIZES = [10, 13, 16];
 
 const MINESWEEPER_MINE_COUNTS = {
@@ -16,6 +17,12 @@ const MINESWEEPER_MINE_COUNTS = {
     13: 30,
     16: 45
 };
+
+function loadMinesweeperBestTimes() {
+    if (typeof window === 'undefined') return {};
+    try { return JSON.parse(window.localStorage.getItem(MINESWEEPER_BEST_TIMES_KEY) || '{}'); } catch { return {}; }
+}
+let minesweeperBestTimes = loadMinesweeperBestTimes();
 
 let gameBoard = [];
 let currentBoardSize = loadMinesweeperGridSize();
@@ -38,6 +45,7 @@ function dom() {
         minesweeperBoard: $('minesweeperBoard'),
         mineCountDisplay: $('mineCountDisplay'),
         timerDisplay: $('timerDisplay'),
+        minesweeperBestTimeDisplay: $('minesweeperBestTimeDisplay'),
         restartGameButton: $('restartGameButton'),
         minesweeperHelpText: $('minesweeperHelpText'),
         minesweeperTable: $('minesweeperTable'),
@@ -161,9 +169,11 @@ function placeMines(firstRow, firstCol) {
 }
 
 export function updateCounters() {
-    const { mineCountDisplay, timerDisplay } = dom();
+    const { mineCountDisplay, timerDisplay, minesweeperBestTimeDisplay } = dom();
     if (mineCountDisplay) mineCountDisplay.textContent = String(currentTotalMines - flagsPlaced);
     if (timerDisplay) timerDisplay.textContent = formatTenthsTimer(timer);
+    const best = minesweeperBestTimes[currentBoardSize];
+    if (minesweeperBestTimeDisplay) minesweeperBestTimeDisplay.textContent = (best != null) ? formatTenthsTimer(best) : '—';
 }
 
 export function getMinesweeperRulesText() {
@@ -329,11 +339,17 @@ function checkWin() {
         });
     });
     flagsPlaced = currentTotalMines;
+    const prevBest = minesweeperBestTimes[currentBoardSize];
+    if (prevBest == null || timer < prevBest) {
+        minesweeperBestTimes[currentBoardSize] = timer;
+        if (typeof window !== 'undefined') window.localStorage.setItem(MINESWEEPER_BEST_TIMES_KEY, JSON.stringify(minesweeperBestTimes));
+    }
     updateCounters();
     renderBoard();
+    const best = minesweeperBestTimes[currentBoardSize];
     revealMinesweeperOutcomeMenu(
         'R\u00e9cif travers\u00e9',
-        `Toutes les zones s\u00fbres ont \u00e9t\u00e9 d\u00e9gag\u00e9es en ${formatTenthsTimer(timer)}.`,
+        `Toutes les zones s\u00fbres ont \u00e9t\u00e9 d\u00e9gag\u00e9es en ${formatTenthsTimer(timer)}. Record : ${formatTenthsTimer(best)}.`,
         'Travers\u00e9e r\u00e9ussie'
     );
 }

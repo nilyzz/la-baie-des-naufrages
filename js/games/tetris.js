@@ -5,6 +5,7 @@ import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 import { closeGameOverModal } from '../core/modals.js';
 
+export const TETRIS_BEST_KEY = 'baie-des-naufrages-tetris-best';
 export const TETRIS_ROWS = 18;
 export const TETRIS_COLS = 10;
 export const TETRIS_TICK_MS = 420;
@@ -19,6 +20,7 @@ export const TETRIS_PIECES = {
     Z: { color: '#f87171', shape: [[1, 1, 0], [0, 1, 1]] }
 };
 
+let tetrisBestScore = (typeof window !== 'undefined' ? Number(window.localStorage.getItem(TETRIS_BEST_KEY)) : 0) || 0;
 let tetrisGrid = [];
 let tetrisPiece = null;
 let tetrisNextQueue = [];
@@ -49,6 +51,7 @@ function dom() {
         tetrisNextQueue: $('tetrisNextQueue'),
         tetrisScoreDisplay: $('tetrisScoreDisplay'),
         tetrisLinesDisplay: $('tetrisLinesDisplay'),
+        tetrisBestScoreDisplay: $('tetrisBestScoreDisplay'),
         tetrisStartButton: $('tetrisStartButton'),
         tetrisHelpText: $('tetrisHelpText'),
         tetrisTable: $('tetrisTable'),
@@ -201,9 +204,10 @@ function createRandomTetrisType() {
 }
 
 export function updateTetrisHud() {
-    const { tetrisScoreDisplay, tetrisLinesDisplay, tetrisStartButton } = dom();
+    const { tetrisScoreDisplay, tetrisLinesDisplay, tetrisBestScoreDisplay, tetrisStartButton } = dom();
     if (tetrisScoreDisplay) tetrisScoreDisplay.textContent = String(tetrisScore);
     if (tetrisLinesDisplay) tetrisLinesDisplay.textContent = String(tetrisLines);
+    if (tetrisBestScoreDisplay) tetrisBestScoreDisplay.textContent = String(tetrisBestScore);
     if (tetrisStartButton) tetrisStartButton.textContent = tetrisRunning ? 'Cale en cours' : 'Lancer la cale';
 }
 
@@ -366,11 +370,16 @@ function spawnTetrisPiece() {
     if (!canPlaceTetrisPiece(tetrisPiece)) {
         stopTetris();
         tetrisPiece = null;
+        if (tetrisScore > tetrisBestScore) {
+            tetrisBestScore = tetrisScore;
+            if (typeof window !== 'undefined') window.localStorage.setItem(TETRIS_BEST_KEY, String(tetrisBestScore));
+        }
+        updateTetrisHud();
         const { tetrisHelpText } = dom();
         if (tetrisHelpText) tetrisHelpText.textContent = 'La cale est pleine. Relance une traversée.';
         revealTetrisOutcomeMenu(
             'Cale pleine',
-            `La cargaison a dépassé le pont. Score final : ${tetrisScore}. Lignes nettoyées : ${tetrisLines}.`,
+            `La cargaison a dépassé le pont. Score : ${tetrisScore}. Record : ${tetrisBestScore}. Lignes : ${tetrisLines}.`,
             'Fin de cargaison'
         );
         renderTetris();

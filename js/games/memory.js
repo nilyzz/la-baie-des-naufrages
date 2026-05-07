@@ -6,9 +6,11 @@ import { shuffleArray } from '../core/utils.js';
 import { UNO_MENU_CLOSE_DURATION_MS } from '../core/constants.js';
 import { syncGameMenuOverlayBounds } from './_shared/menu-overlay.js';
 
+export const MEMORY_BEST_KEY = 'baie-des-naufrages-memory-best';
 export const MEMORY_ICONS = ['\u2693', '\u{1F980}', '\u{1F419}', '\u{1F991}', '\u{1FAB8}', '\u{1F99E}', '\u{1F420}', '\u{1F9ED}'];
 
 // --- module-level state ---
+let memoryBestMoves = (typeof window !== 'undefined' ? Number(window.localStorage.getItem(MEMORY_BEST_KEY)) : 0) || 0;
 let memoryCards = [];
 let memoryFlippedIndices = [];
 let memoryMatchedPairs = 0;
@@ -29,6 +31,7 @@ function dom() {
         memoryBoard: $('memoryBoard'),
         memoryPairsDisplay: $('memoryPairsDisplay'),
         memoryMovesDisplay: $('memoryMovesDisplay'),
+        memoryBestMovesDisplay: $('memoryBestMovesDisplay'),
         memoryHelpText: $('memoryHelpText'),
         memoryTable: $('memoryTable'),
         memoryMenuOverlay: $('memoryMenuOverlay'),
@@ -41,9 +44,10 @@ function dom() {
 }
 
 export function updateMemoryHud() {
-    const { memoryPairsDisplay, memoryMovesDisplay, memoryHelpText } = dom();
+    const { memoryPairsDisplay, memoryMovesDisplay, memoryBestMovesDisplay, memoryHelpText } = dom();
     if (memoryPairsDisplay) memoryPairsDisplay.textContent = `${memoryMatchedPairs} / 8`;
     if (memoryMovesDisplay) memoryMovesDisplay.textContent = String(memoryMoves);
+    if (memoryBestMovesDisplay) memoryBestMovesDisplay.textContent = memoryBestMoves > 0 ? String(memoryBestMoves) : '—';
     if (memoryHelpText && !memoryMenuResult) {
         memoryHelpText.textContent = 'Retourne les cartes du pont et retrouve toutes les paires marines.';
     }
@@ -80,7 +84,7 @@ export function renderMemoryMenu() {
         memoryMenuText.textContent = memoryMenuShowingRules
             ? getMemoryRulesText()
             : (hasResult
-                ? `Toutes les paires ont \u00e9t\u00e9 retrouv\u00e9es en ${memoryMoves} coups.`
+                ? `Toutes les paires ont \u00e9t\u00e9 retrouv\u00e9es en ${memoryMoves} coups. Record\u00a0: ${memoryBestMoves} coups.`
                 : 'Retourne les cartes du pont et retrouve toutes les paires marines.');
     }
     if (memoryMenuActionButton) {
@@ -177,6 +181,11 @@ export function initializeMemory() {
 }
 
 export function finishMemory() {
+    if (memoryBestMoves === 0 || memoryMoves < memoryBestMoves) {
+        memoryBestMoves = memoryMoves;
+        if (typeof window !== 'undefined') window.localStorage.setItem(MEMORY_BEST_KEY, String(memoryBestMoves));
+    }
+    updateMemoryHud();
     revealMemoryOutcomeMenu();
 }
 
