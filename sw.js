@@ -1,14 +1,14 @@
-const CACHE_NAME = 'baie-des-naufrages-v2-45';
+const CACHE_NAME = 'baie-des-naufrages-v2-46';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
     '/confidentialite.html',
     '/mentions-legales.html',
     '/ads.txt',
-    '/style.min.css?v=v2-45',
-    '/js/main.bundle.min.js?v=v2-45',
-    '/js/core/consent.js?v=v2-45',
-    '/js/core/sw-register.js?v=v2-45',
+    '/style.min.css?v=v2-46',
+    '/js/main.bundle.min.js?v=v2-46',
+    '/js/core/consent.js?v=v2-46',
+    '/js/core/sw-register.js?v=v2-46',
     '/site.webmanifest',
     '/assets/branding/logo-baie-cartoon.svg',
     '/assets/navires/navire-cinema.svg',

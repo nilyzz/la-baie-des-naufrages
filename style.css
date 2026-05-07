@@ -6859,7 +6859,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 .pacman-table {
     position: relative;
     z-index: 1;
-    width: min(100%, 500px);
+    width: min(100%, 720px);
     margin: 0 auto;
     border-radius: 20px;
 }
