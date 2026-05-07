@@ -503,6 +503,21 @@ function moveSnake() {
     renderSnake();
 }
 
+function spawnSnakeEntity(el, delay) {
+    const m = (el.style.transform || '').match(/translate\(([^,]+),([^)]+)\)/);
+    el.style.setProperty('--snake-tx', m ? m[1].trim() : '0px');
+    el.style.setProperty('--snake-ty', m ? m[2].trim() : '0px');
+    el.style.setProperty('--spawn-delay', `${delay}ms`);
+    el.classList.add('is-spawning');
+}
+
+function cleanupSnakeSpawn(el) {
+    el.classList.remove('is-spawning');
+    el.style.removeProperty('--spawn-delay');
+    el.style.removeProperty('--snake-tx');
+    el.style.removeProperty('--snake-ty');
+}
+
 export function startSnakeLaunchSequence() {
     closeGameOverModal();
     snakeMenuClosing = true;
@@ -515,24 +530,38 @@ export function startSnakeLaunchSequence() {
         snakeMenuResult = null;
         renderSnakeMenu();
         initializeSnake();
-        snakeSegmentElements.forEach((el, index) => {
-            const m = (el.style.transform || '').match(/translate\(([^,]+),([^)]+)\)/);
-            el.style.setProperty('--snake-tx', m ? m[1].trim() : '0px');
-            el.style.setProperty('--snake-ty', m ? m[2].trim() : '0px');
-            el.classList.add('is-spawning');
-            el.style.setProperty('--spawn-index', String(index));
+
+        const FOOD_STAGGER = 22;
+        const FOOD_ANIM = 260;
+        const SEG_STAGGER = 65;
+        const SEG_ANIM = 260;
+
+        // Phase 1 : lanternes apparaissent une par une
+        let foodCount = 0;
+        snakeFoodElements.forEach((el) => {
+            spawnSnakeEntity(el, foodCount * FOOD_STAGGER);
+            foodCount++;
         });
+
+        const foodDoneMs = (foodCount - 1) * FOOD_STAGGER + FOOD_ANIM + 50;
+
+        // Phase 2 : serpent apparaît après les lanternes
         window.setTimeout(() => {
-            snakeSegmentElements.forEach((el) => {
-                el.classList.remove('is-spawning');
-                el.style.removeProperty('--spawn-index');
-                el.style.removeProperty('--snake-tx');
-                el.style.removeProperty('--snake-ty');
+            snakeSegmentElements.forEach((el, index) => {
+                spawnSnakeEntity(el, index * SEG_STAGGER);
             });
+        }, foodDoneMs);
+
+        const totalMs = foodDoneMs + (snakeSegmentElements.length - 1) * SEG_STAGGER + SEG_ANIM + 50;
+
+        // Phase 3 : démarrer le jeu
+        window.setTimeout(() => {
+            snakeFoodElements.forEach(cleanupSnakeSpawn);
+            snakeSegmentElements.forEach(cleanupSnakeSpawn);
             snakeRunning = true;
             snakeNextTick = performance.now() + SNAKE_TICK_MS;
             snakeRafId = window.requestAnimationFrame(snakeLoop);
-        }, 480);
+        }, totalMs);
     }, UNO_MENU_CLOSE_DURATION_MS);
 }
 

@@ -3417,8 +3417,8 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .snake-entity.is-spawning {
-    animation: snake-entity-spawn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: calc(var(--spawn-index, 0) * 70ms);
+    animation: snake-entity-spawn 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--spawn-delay, 0ms);
 }
 
 .pong-card {
