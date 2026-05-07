@@ -3417,6 +3417,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .snake-entity.is-spawning {
+    transition: none;
     animation: snake-entity-spawn 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--spawn-delay, 0ms);
 }

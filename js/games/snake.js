@@ -512,10 +512,12 @@ function spawnSnakeEntity(el, delay) {
 }
 
 function cleanupSnakeSpawn(el) {
+    el.style.setProperty('transition', 'none');
     el.classList.remove('is-spawning');
     el.style.removeProperty('--spawn-delay');
     el.style.removeProperty('--snake-tx');
     el.style.removeProperty('--snake-ty');
+    window.requestAnimationFrame(() => el.style.removeProperty('transition'));
 }
 
 export function startSnakeLaunchSequence() {
