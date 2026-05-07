@@ -6901,11 +6901,11 @@ body:has(#servicesView.view-active) .services-legal-button {
     padding: 26px 24px;
     border-radius: 28px;
     background:
-        radial-gradient(circle at 14% 18%, rgba(250, 204, 21, 0.18), transparent 22%),
-        radial-gradient(circle at 82% 18%, rgba(96, 165, 250, 0.18), transparent 22%),
-        radial-gradient(circle at 26% 78%, rgba(52, 211, 153, 0.12), transparent 22%),
-        linear-gradient(180deg, rgba(30, 41, 85, 0.98), rgba(8, 47, 73, 0.98));
-    box-shadow: 0 24px 48px -30px rgba(15, 23, 42, 0.94);
+        radial-gradient(circle at 18% 16%, rgba(0, 173, 181, 0.22), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(0, 109, 119, 0.18), transparent 28%),
+        radial-gradient(circle at 50% 80%, rgba(244, 162, 97, 0.12), transparent 30%),
+        linear-gradient(180deg, rgba(5, 18, 38, 0.98), rgba(3, 12, 28, 0.98));
+    box-shadow: 0 24px 48px -30px rgba(0, 0, 0, 0.95);
     display: grid;
     gap: 14px;
     text-align: center;
@@ -6915,7 +6915,7 @@ body:has(#servicesView.view-active) .services-legal-button {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: #facc15;
+    color: #2dd4bf;
 }
 
 .pacman-menu-title {
@@ -6926,7 +6926,7 @@ body:has(#servicesView.view-active) .services-legal-button {
 
 .pacman-menu-text {
     margin: 0;
-    color: #e2e8f0 !important;
+    color: #cbd5e1 !important;
     font-weight: 600;
     line-height: 1.45;
 }
@@ -6939,9 +6939,9 @@ body:has(#servicesView.view-active) .services-legal-button {
 }
 
 .pacman-board {
-    --pacman-cols: 13;
-    --pacman-gap: 4px;
-    --pacman-padding: 10px;
+    --pacman-cols: 21;
+    --pacman-gap: 2px;
+    --pacman-padding: 8px;
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -6951,9 +6951,10 @@ body:has(#servicesView.view-active) .services-legal-button {
     border-radius: 20px;
     overflow: hidden;
     background:
-        radial-gradient(circle at 50% 20%, rgba(59, 130, 246, 0.18), transparent 40%),
-        rgba(15, 23, 42, 0.86);
-    border: 1px solid rgba(59, 130, 246, 0.18);
+        radial-gradient(ellipse at 30% 20%, rgba(0, 109, 119, 0.22) 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, rgba(0, 173, 181, 0.14) 0%, transparent 50%),
+        #05101e;
+    border: 2px solid rgba(0, 173, 181, 0.35);
 }
 
 .pacman-grid {
@@ -6980,9 +6981,9 @@ body:has(#servicesView.view-active) .services-legal-button {
     font-size: clamp(3.8rem, 11vw, 6.4rem);
     font-weight: 900;
     letter-spacing: 0.04em;
-    color: rgba(254, 240, 138, 0.98);
-    text-shadow: 0 0 22px rgba(250, 204, 21, 0.28);
-    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.04) 48%, transparent 72%);
+    color: rgba(45, 212, 191, 0.98);
+    text-shadow: 0 0 22px rgba(0, 173, 181, 0.5);
+    background: radial-gradient(circle at center, rgba(5, 16, 30, 0.22), rgba(5, 16, 30, 0.04) 48%, transparent 72%);
     pointer-events: none;
 }
 
@@ -6990,18 +6991,34 @@ body:has(#servicesView.view-active) .services-legal-button {
     animation: pongCountdownReveal 0.52s cubic-bezier(0.2, 0.9, 0.22, 1);
 }
 
+/* ── Cells ─────────────────────────────────────────────────────────────── */
 .pacman-cell {
     position: relative;
     aspect-ratio: 1 / 1;
-    border-radius: 8px;
-    background: rgba(15, 23, 42, 0.42);
+    border-radius: 4px;
+    background: rgba(5, 16, 30, 0.55);
 }
 
 .pacman-cell-wall {
-    background: linear-gradient(180deg, rgba(37, 99, 235, 0.72), rgba(30, 64, 175, 0.92));
-    box-shadow: inset 0 0 0 1px rgba(191, 219, 254, 0.08);
+    background: linear-gradient(145deg, #0d2b40 0%, #1a4560 60%, #0d2b40 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(0, 173, 181, 0.18),
+        inset 0 0 0 1px rgba(0, 80, 100, 0.4);
+    border-radius: 4px;
 }
 
+.pacman-cell-door {
+    background: linear-gradient(180deg, rgba(0, 200, 210, 0.28), rgba(0, 150, 165, 0.18));
+    box-shadow: inset 0 2px 0 rgba(0, 210, 230, 0.55);
+    border-radius: 4px;
+}
+
+.pacman-cell-spawn {
+    background: rgba(3, 10, 22, 0.88);
+    border-radius: 4px;
+}
+
+/* ── Entities base ────────────────────────────────────────────────────── */
 .pacman-pellet,
 .pacman-hero,
 .pacman-ghost {
@@ -7010,59 +7027,119 @@ body:has(#servicesView.view-active) .services-legal-button {
     top: 0;
 }
 
+/* ── Pellets (petites perles nacrées) ────────────────────────────────── */
 .pacman-pellet {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 18%;
-    height: 18%;
+    width: 20%;
+    height: 20%;
     border-radius: 50%;
-    background: rgba(254, 240, 138, 0.96);
+    background: radial-gradient(circle, #f0f7ff 0%, #a8d4f0 55%, transparent 100%);
+    box-shadow: 0 0 3px rgba(168, 212, 240, 0.6);
 }
 
+/* Grosse perle de pouvoir */
+.pacman-cell-power .pacman-pellet {
+    width: 58%;
+    height: 58%;
+    background: radial-gradient(circle, #ffffff 0%, #7dd3fc 40%, rgba(56, 189, 248, 0.4) 75%, transparent 100%);
+    box-shadow:
+        0 0 6px rgba(125, 211, 252, 0.9),
+        0 0 14px rgba(56, 189, 248, 0.45);
+    animation: pacman-pearl-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes pacman-pearl-pulse {
+    0%, 100% { opacity: 1;   transform: translate(-50%, -50%) scale(1);    }
+    50%       { opacity: 0.7; transform: translate(-50%, -50%) scale(0.82); }
+}
+
+/* ── Player (Baie-Man) ────────────────────────────────────────────────── */
 .pacman-hero {
     transform: translate(var(--pacman-x, 0), var(--pacman-y, 0)) rotate(var(--pacman-rotation, 0deg));
     border-radius: 50%;
-    transition: transform 0.21s linear;
-    background:
-        conic-gradient(from 30deg, #facc15 0 310deg, transparent 310deg 360deg);
+    transition: transform 0.18s linear;
+    background: conic-gradient(from 30deg, #f4a261 0 310deg, transparent 310deg 360deg);
+    box-shadow: 0 0 8px rgba(244, 162, 97, 0.45);
 }
 
+/* ── Ghosts (esprits du brouillard) ──────────────────────────────────── */
 .pacman-ghost {
     transform: translate(var(--pacman-x, 0), var(--pacman-y, 0));
-    transition: transform 0.21s linear;
-    border-radius: 50% 50% 30% 30%;
+    transition: transform 0.18s linear;
+    border-radius: 50% 50% 32% 32%;
 }
 
 .pacman-ghost::before,
 .pacman-ghost::after {
     content: '';
     position: absolute;
-    top: 24%;
-    width: 14%;
-    height: 14%;
+    top: 22%;
+    width: 16%;
+    height: 16%;
     border-radius: 50%;
-    background: white;
+    background: rgba(255, 255, 255, 0.92);
 }
 
-.pacman-ghost::before {
-    left: 26%;
-}
-
-.pacman-ghost::after {
-    right: 26%;
-}
+.pacman-ghost::before { left: 24%; }
+.pacman-ghost::after  { right: 24%; }
 
 .pacman-ghost.ghost-a {
-    background: linear-gradient(180deg, #f87171, #991b1b);
+    background: linear-gradient(180deg, #ef4444 0%, #7f1d1d 100%);
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.22);
 }
 
 .pacman-ghost.ghost-b {
-    background: linear-gradient(180deg, #60a5fa, #1d4ed8);
+    background: linear-gradient(180deg, #2dd4bf 0%, #0f766e 100%);
+    box-shadow: 0 0 14px rgba(45, 212, 191, 0.22);
 }
 
 .pacman-ghost.ghost-c {
-    background: linear-gradient(180deg, #c084fc, #7c3aed);
+    background: linear-gradient(180deg, #60a5fa 0%, #1d4ed8 100%);
+    box-shadow: 0 0 14px rgba(96, 165, 250, 0.22);
+}
+
+.pacman-ghost.ghost-d {
+    background: linear-gradient(180deg, #fb923c 0%, #9a3412 100%);
+    box-shadow: 0 0 14px rgba(251, 146, 60, 0.22);
+}
+
+/* Frightened (vulnérable) */
+.pacman-ghost.is-frightened {
+    background: linear-gradient(180deg, #1e3a8a 0%, #0f172a 100%) !important;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.28) !important;
+}
+
+.pacman-ghost.is-frightened::before,
+.pacman-ghost.is-frightened::after {
+    background: rgba(147, 197, 253, 0.85);
+}
+
+/* Flash (fin de pouvoir imminente) */
+.pacman-ghost.is-frightened-flash {
+    animation: pacman-ghost-flash 0.28s ease-in-out infinite !important;
+}
+
+@keyframes pacman-ghost-flash {
+    0%, 100% { background: linear-gradient(180deg, #1e3a8a, #0f172a); box-shadow: 0 0 10px rgba(59, 130, 246, 0.28); }
+    50%       { background: linear-gradient(180deg, #f8fafc, #cbd5e1); box-shadow: 0 0 10px rgba(255, 255, 255, 0.4); }
+}
+
+/* Eaten (yeux seulement) */
+.pacman-ghost.is-eaten {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.pacman-ghost.is-eaten::before,
+.pacman-ghost.is-eaten::after {
+    width: 24%;
+    height: 24%;
+    top: 28%;
+    background: white;
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.7);
 }
 
 .solitaire-table {
