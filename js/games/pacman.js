@@ -215,11 +215,18 @@ function moveGhostNormal(ghost) {
 }
 
 function moveGhostFrightened(ghost) {
-    const options = MOVE_DIRS.filter((d) => {
+    const reverse = { row: -ghost.direction.row, col: -ghost.direction.col };
+    let options = MOVE_DIRS.filter((d) => {
+        if (d.row === reverse.row && d.col === reverse.col) return false;
         const n = getNextPos(ghost.row, ghost.col, d);
         return !isGhostWall(n.row, n.col, ghost);
     });
-    if (!options.length) return;
+    // dead end — allow reversal
+    if (!options.length) {
+        const nr = getNextPos(ghost.row, ghost.col, reverse);
+        if (!isGhostWall(nr.row, nr.col, ghost)) options = [reverse];
+        else return;
+    }
     const d = options[Math.floor(Math.random() * options.length)];
     const n = getNextPos(ghost.row, ghost.col, d);
     ghost.row = n.row; ghost.col = n.col; ghost.direction = d;
@@ -282,8 +289,8 @@ function moveGhost(ghost) {
 
 // ── Actors reset ──────────────────────────────────────────────────────────────
 function resetPacmanActors() {
-    pacmanPosition    = { row: 1, col: 1 };
-    pacmanDirection   = { row: 0, col: 0 };
+    pacmanPosition      = { row: 1, col: 1 };
+    pacmanDirection     = { row: 0, col: 1 }; // start moving right
     pacmanNextDirection = { row: 0, col: 0 };
     pacmanFrightenedTimer = 0;
     pacmanGhostEatenCombo = 0;
@@ -614,7 +621,7 @@ function runPacmanTick() {
         pacmanFrightenedTimer = FRIGHTENED_DURATION;
         pacmanGhostEatenCombo = 0;
         pacmanGhosts.forEach((g) => {
-            if (g.state === 'normal') {
+            if (g.state === 'normal' || g.state === 'leaving') {
                 g.state = 'frightened';
                 g.direction = { row: -g.direction.row, col: -g.direction.col };
             }
@@ -732,7 +739,7 @@ export function initializePacman() {
 
 export function startPacman() {
     closeGameOverModal();
-    if (pacmanRunning || pacmanCountdownActive) return;
+    if (pacmanRunning || pacmanCountdownActive || pacmanDying) return;
     if (pacmanLives <= 0 || pacmanPellets <= 0) initializePacman();
     startPacmanCountdown(() => {
         pacmanRunning = true;
