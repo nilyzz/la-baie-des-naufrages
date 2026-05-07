@@ -32,6 +32,7 @@ let flappyMenuShowingRules = false;
 let flappyMenuClosing = false;
 let flappyMenuEntering = false;
 let flappyMenuResultReason = '';
+let flappySpawning = false;
 
 const $ = (id) => document.getElementById(id);
 
@@ -75,7 +76,7 @@ export function renderFlappy() {
         <div class="flappy-beach" style="transform:translateX(${beachOffset}px);"></div>
         <div class="flappy-palm flappy-palm-left" style="transform:translateX(${beachOffset}px) scale(0.92);"></div>
         <div class="flappy-palm flappy-palm-right" style="transform:translateX(${beachOffset}px) scale(1.04);"></div>
-        <div class="flappy-bird" style="left:${birdX}px; top:${birdY}px; transform:rotate(${birdRotation}deg);"></div>
+        <div class="flappy-bird${flappySpawning ? ' is-spawning' : ''}" style="left:${birdX}px; top:${birdY}px;${flappySpawning ? '' : ` transform:rotate(${birdRotation}deg);`}"></div>
         ${flappyPipes.map((pipe) => `
             <div class="flappy-pipe flappy-pipe-top" style="left:${pipe.x}px; top:0; height:${pipe.gapTop}px;"></div>
             <div class="flappy-pipe flappy-pipe-bottom" style="left:${pipe.x}px; bottom:0; height:${boardHeight - pipe.gapBottom}px;"></div>
@@ -154,8 +155,13 @@ export function startFlappyLaunchSequence() {
         flappyMenuShowingRules = false;
         flappyMenuEntering = false;
         flappyMenuResultReason = '';
-        startFlappy(false);
         renderFlappyMenu();
+        flappySpawning = true;
+        renderFlappy();
+        window.setTimeout(() => {
+            flappySpawning = false;
+            startFlappy(false);
+        }, 620);
     }, UNO_MENU_CLOSE_DURATION_MS);
 }
 
@@ -176,6 +182,7 @@ export function initializeFlappy() {
     if (flappyHelpText) flappyHelpText.textContent = 'Espace, clic ou tap pour faire battre les ailes du perroquet pirate et passer entre les mats.';
     if (flappyScoreDisplay) flappyScoreDisplay.textContent = '0';
     if (flappyBestDisplay) flappyBestDisplay.textContent = String(flappyBestScore);
+    flappySpawning = false;
     flappyMenuVisible = true;
     flappyMenuShowingRules = false;
     flappyMenuClosing = false;
