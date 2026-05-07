@@ -77,6 +77,8 @@ let pacmanMenuResult = null;
 let pacmanFrightenedTimer = 0;
 let pacmanGhostEatenCombo = 0;
 let pacmanRotationAngle = 90; // accumulated degrees — avoids CSS shortest-arc bug
+let pacmanPrevPosition = { row: 1, col: 1 };
+let pacmanGhostPrevCols = [];
 let pacmanPhaseMode = 'scatter';
 let pacmanPhaseTimer = SCATTER_TICKS;
 let pacmanDying = false;
@@ -294,6 +296,8 @@ function resetPacmanActors() {
     pacmanDirection     = { row: 0, col: 1 }; // start moving right
     pacmanNextDirection = { row: 0, col: 0 };
     pacmanRotationAngle = 90; // facing right
+    pacmanPrevPosition  = { row: 1, col: 1 };
+    pacmanGhostPrevCols = GHOST_DEFS.map((d) => d.startCol);
     pacmanFrightenedTimer = 0;
     pacmanGhostEatenCombo = 0;
     pacmanPhaseMode = 'scatter';
@@ -472,8 +476,18 @@ export function renderPacman() {
     const geo = getPacmanGeometry();
 
     updatePacmanRotation();
+    const heroTunnel = Math.abs(pacmanPosition.col - pacmanPrevPosition.col) > GRID_COLS / 2;
+    if (heroTunnel && pacmanHeroElement) {
+        pacmanHeroElement.style.transition = 'none';
+        void pacmanHeroElement.offsetWidth;
+    }
     placePacmanEntity(pacmanHeroElement, pacmanPosition.row, pacmanPosition.col, geo);
     pacmanHeroElement?.style.setProperty('--pacman-rotation', `${pacmanRotationAngle}deg`);
+    if (heroTunnel && pacmanHeroElement) {
+        const h = pacmanHeroElement;
+        window.requestAnimationFrame(() => { h.style.transition = ''; });
+    }
+    pacmanPrevPosition = { row: pacmanPosition.row, col: pacmanPosition.col };
 
     pacmanGhosts.forEach((ghost, i) => {
         const el = pacmanGhostElements[i];
@@ -484,7 +498,18 @@ export function renderPacman() {
         } else if (ghost.state === 'eaten') {
             el.classList.add('is-eaten');
         }
+        const prevCol = pacmanGhostPrevCols[i] ?? ghost.col;
+        const ghostTunnel = Math.abs(ghost.col - prevCol) > GRID_COLS / 2;
+        if (ghostTunnel) {
+            el.style.transition = 'none';
+            void el.offsetWidth;
+        }
         placePacmanEntity(el, ghost.row, ghost.col, geo);
+        if (ghostTunnel) {
+            const ge = el;
+            window.requestAnimationFrame(() => { ge.style.transition = ''; });
+        }
+        pacmanGhostPrevCols[i] = ghost.col;
     });
 
     updatePacmanHud();
