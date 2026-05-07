@@ -3172,6 +3172,10 @@ body:has(#servicesView.view-active) .services-legal-button {
     user-select: none;
 }
 
+.snake-table.is-menu-open .snake-overlay {
+    visibility: hidden;
+}
+
 .snake-menu-overlay {
     position: absolute;
     inset: 0;
