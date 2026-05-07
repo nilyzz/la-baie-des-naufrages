@@ -14476,6 +14476,7 @@ button:hover {
 }
 
 .blockblast-topbar,
+.uno-topbar,
 .bomb-topbar {
     position: relative;
     z-index: 1;
@@ -14483,16 +14484,6 @@ button:hover {
     gap: 16px;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-.uno-topbar {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    justify-content: center;
     flex-wrap: wrap;
 }
 
@@ -15254,6 +15245,7 @@ button:hover {
 .uno-mode-switch {
     display: flex;
     justify-content: center;
+    align-items: center;
     width: 100%;
     gap: 10px;
     flex-wrap: wrap;
