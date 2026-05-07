@@ -45,6 +45,7 @@ let aimMenuClosing = false;
 let aimMenuEntering = false;
 let aimMenuResult = null;
 let aimLayoutFrame = null;
+let aimAllSpawning = false;
 
 const $ = (id) => document.getElementById(id);
 
@@ -324,6 +325,7 @@ export function createAimTargets() {
 export function renderAimBoard() {
     const { aimBoard } = dom();
     if (!aimBoard) return;
+    if (aimMenuVisible) { aimBoard.innerHTML = ''; return; }
 
     const { maxLeft, maxTop, visualSize, shellPadding } = getAimBoardMetrics(aimBoard);
     const renderTargetInner = (className) => `<span class="${className}" style="--aim-target-padding:${shellPadding}px;" aria-hidden="true"></span>`;
@@ -367,7 +369,7 @@ export function renderAimBoard() {
     };
 
     aimBoard.innerHTML = [
-        ...aimTargets.map((target) => renderTargetButton(target, aimSpawnEffectPosition?.id === target.id ? 'is-spawning' : '')),
+        ...aimTargets.map((target) => renderTargetButton(target, (aimAllSpawning || aimSpawnEffectPosition?.id === target.id) ? 'is-spawning' : '')),
         renderEffect(aimHitEffectPosition, 'aim-hit-flash', Boolean(aimHitEffectPosition))
     ].join('');
 }
@@ -575,6 +577,9 @@ export function closeAimMenu() {
         aimMenuEntering = false;
         aimMenuResult = null;
         renderAimMenu();
+        aimAllSpawning = true;
+        renderAimBoard();
+        window.setTimeout(() => { aimAllSpawning = false; }, 400);
     }, UNO_MENU_CLOSE_DURATION_MS);
 }
 
@@ -594,6 +599,7 @@ export function initializeAim() {
     if (aimSpawnEffectTimeout) { window.clearTimeout(aimSpawnEffectTimeout); aimSpawnEffectTimeout = null; }
     aimHitEffectPosition = null;
     aimSpawnEffectPosition = null;
+    aimAllSpawning = false;
     aimScore = 0;
     aimTimeRemaining = aimRoundSeconds * 1000;
     aimTimerStarted = false;
