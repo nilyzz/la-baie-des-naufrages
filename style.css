@@ -15248,8 +15248,10 @@ button:hover {
 
 .uno-mode-switch {
     display: flex;
+    justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
+    margin: 0 0 12px;
 }
 
 .uno-table {
