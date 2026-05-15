@@ -29,18 +29,18 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="preconnect" href="https://la-baie-des-naufrages.onrender.com">
     <link rel="preconnect" href="https://image.tmdb.org">
-    <link rel="stylesheet" href="style.min.css?v=v0-281">
-    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v0-281">
+    <link rel="stylesheet" href="style.min.css?v=v0-323">
+    <link rel="modulepreload" href="/js/main.bundle.min.js?v=v0-323">
     <!-- PREFETCH_LINKS_START -->
     <link rel="prefetch" href="/js/chunks/chunk-6RBSMNAM.js" as="script" crossorigin>
-    <link rel="prefetch" href="/js/chunks/chunk-76AT4AGQ.js" as="script" crossorigin>
-    <link rel="prefetch" href="/js/chunks/chunk-G6HTV4LM.js" as="script" crossorigin>
+    <link rel="prefetch" href="/js/chunks/chunk-A56WQDIP.js" as="script" crossorigin>
+    <link rel="prefetch" href="/js/chunks/chunk-GKDEM3NH.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/chunk-V2AZNKNT.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/chunk-VC46IEJQ.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/chunk-W4TJQMPG.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/cinema-PBMNF7JY.js" as="script" crossorigin>
-    <link rel="prefetch" href="/js/chunks/game-event-bindings-LSKYGEEH.js" as="script" crossorigin>
-    <link rel="prefetch" href="/js/chunks/game-lifecycle-INLIG5ZS.js" as="script" crossorigin>
+    <link rel="prefetch" href="/js/chunks/game-event-bindings-SNQW2AYF.js" as="script" crossorigin>
+    <link rel="prefetch" href="/js/chunks/game-lifecycle-R2LTI5D6.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/math-4IXABKSN.js" as="script" crossorigin>
     <link rel="prefetch" href="/js/chunks/music-5ZEZPDUJ.js" as="script" crossorigin>
     <!-- PREFETCH_LINKS_END -->
@@ -144,7 +144,7 @@
                 <form id="loginForm" class="login-form">
                     <button type="submit" class="primary-button">Entrer dans la baie</button>
                     <p class="login-version">
-                        <span id="siteVersionDisplay" data-site-version>Version 0.281</span>
+                        <span id="siteVersionDisplay" data-site-version>Version 0.323</span>
                     </p>
                 </form>
             </div>
@@ -969,12 +969,12 @@
                 <div id="memoryGame" class="card memory-card games-panel">
                     <div class="memory-topbar">
                         <div class="memory-counter-block">
-                            <span class="memory-counter-label">Paires</span>
-                            <strong id="memoryPairsDisplay" class="memory-counter-value">0 / 8</strong>
-                        </div>
-                        <div class="memory-counter-block">
                             <span class="memory-counter-label">Coups</span>
                             <strong id="memoryMovesDisplay" class="memory-counter-value">0</strong>
+                        </div>
+                        <div class="memory-counter-block">
+                            <span class="memory-counter-label">Temps</span>
+                            <strong id="memoryTimerDisplay" class="memory-counter-value">00:00</strong>
                         </div>
                         <div class="memory-counter-block">
                             <span class="memory-counter-label">Record</span>
@@ -1161,20 +1161,6 @@
                 </div>
 
                 <div id="solitaireGame" class="card solitaire-card games-panel">
-                    <div class="solitaire-topbar">
-                        <div class="solitaire-counter-block">
-                            <span class="solitaire-counter-label">Pioche</span>
-                            <strong id="solitaireStockDisplay" class="solitaire-counter-value">24</strong>
-                        </div>
-
-                        <button id="solitaireRestartButton" type="button" class="solitaire-face" hidden>Nouvelle donne</button>
-
-                        <div class="solitaire-counter-block">
-                            <span class="solitaire-counter-label">Fondations</span>
-                            <strong id="solitaireFoundationsDisplay" class="solitaire-counter-value">0 / 52</strong>
-                        </div>
-                    </div>
-
                     <p id="solitaireHelpText" class="solitaire-help">Clique une carte pour la sélectionner puis clique sa destination. La pioche se recycle quand elle est vide.</p>
 
                     <div id="solitaireTable" class="solitaire-table">
@@ -1193,6 +1179,19 @@
                             <div class="solitaire-top-row">
                                 <div id="solitaireStock" class="solitaire-slot solitaire-stock" aria-label="Pioche"></div>
                                 <div id="solitaireWaste" class="solitaire-slot solitaire-waste" aria-label="Défausse"></div>
+                                <div class="solitaire-topbar">
+                                    <div class="solitaire-counter-block">
+                                        <span class="solitaire-counter-label">Temps</span>
+                                        <strong id="solitaireTimerDisplay" class="solitaire-counter-value">00:00</strong>
+                                    </div>
+
+                                    <div class="solitaire-counter-block">
+                                        <span class="solitaire-counter-label">Score</span>
+                                        <strong id="solitaireScoreDisplay" class="solitaire-counter-value">0</strong>
+                                    </div>
+
+                                    <button id="solitaireRestartButton" type="button" class="solitaire-face" hidden>Nouvelle donne</button>
+                                </div>
                                 <div id="solitaireFoundations" class="solitaire-foundations" aria-label="Fondations"></div>
                             </div>
 
@@ -1248,7 +1247,7 @@
                         <button id="rhythmStartButton" type="button" class="rhythm-face" hidden>Lancer la cadence</button>
 
                         <div class="rhythm-counter-block">
-                            <span class="rhythm-counter-label">Serie</span>
+                            <span class="rhythm-counter-label">Record</span>
                             <strong id="rhythmStreakDisplay" class="rhythm-counter-value">0</strong>
                         </div>
 
@@ -1259,17 +1258,17 @@
 
                         <div class="rhythm-counter-block">
                             <span class="rhythm-counter-label">Temps</span>
-                            <strong id="rhythmTimerDisplay" class="rhythm-counter-value">30</strong>
+                            <strong id="rhythmTimerDisplay" class="rhythm-counter-value">0.0s</strong>
                         </div>
                     </div>
 
-                    <p id="rhythmHelpText" class="rhythm-help">Garde le pont en rythme avec Q, S et D. Trop de fautes et la traversée s'arrête.</p>
+                    <p id="rhythmHelpText" class="rhythm-help">Vise la ligne lumineuse avec les flèches. Le tempo accélère jusqu'à 10 fautes.</p>
                     <div id="rhythmTable" class="rhythm-table">
                         <div id="rhythmMenuOverlay" class="rhythm-menu-overlay">
                             <div class="rhythm-menu-card">
                                 <span id="rhythmMenuEyebrow" class="rhythm-menu-eyebrow">Cadence des marins</span>
                                 <h3 id="rhythmMenuTitle" class="rhythm-menu-title">Rythme</h3>
-                                <p id="rhythmMenuText" class="rhythm-menu-text">Garde le tempo avec Q, S et D pour accompagner la chanson des marins. Trop de fautes et la cadence s&rsquo;arrête.</p>
+                                <p id="rhythmMenuText" class="rhythm-menu-text">Survis au tempo avec les flèches gauche, bas et droite. La cadence accélère jusqu&rsquo;à 10 fautes.</p>
                                 <div class="rhythm-menu-actions">
                                     <button id="rhythmMenuActionButton" type="button" class="game-menu-primary-button">Lancer la cadence</button>
                                     <button id="rhythmMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1368,6 +1367,10 @@
                                     <button id="magicSortMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
                                 </div>
                             </div>
+                        </div>
+                        <div class="magicsort-controls">
+                            <button id="magicSortUndoButton" type="button" class="magicsort-control-button">Annuler</button>
+                            <span id="magicSortLevelDisplay" class="magicsort-level-pill">Niveau 1</span>
                         </div>
                         <div id="magicSortBoard" class="magicsort-board" aria-label="Plateau de Magic Sort"></div>
                     </div>
@@ -1474,13 +1477,13 @@
                         </div>
                     </div>
 
-                    <p id="harborRunHelpText" class="harborrun-help">Guide le navire entre rochers, épaves et autres bateaux pendant que la vitesse monte.</p>
+                    <p id="harborRunHelpText" class="harborrun-help">Traverse toute la baie : évite les obstacles, ramasse les pièces et vise le phare.</p>
                     <div id="harborRunTable" class="harborrun-table">
                         <div id="harborRunMenuOverlay" class="harborrun-menu-overlay">
                             <div class="harborrun-menu-card">
                                 <span id="harborRunMenuEyebrow" class="harborrun-menu-eyebrow">Course dans le chenal</span>
                                 <h3 id="harborRunMenuTitle" class="harborrun-menu-title">Navire 2D</h3>
-                                <p id="harborRunMenuText" class="harborrun-menu-text">Guide ton navire entre rochers, épaves et autres bateaux pendant que la vitesse monte.</p>
+                                <p id="harborRunMenuText" class="harborrun-menu-text">Toute la carte devient ton chenal. Glisse entre les bateaux, ramasse les pièces et tiens jusqu'au phare.</p>
                                 <div class="harborrun-menu-actions">
                                     <button id="harborRunMenuActionButton" type="button" class="game-menu-primary-button">Prendre la mer</button>
                                     <button id="harborRunMenuRulesButton" type="button" class="game-menu-secondary-button">R&egrave;gles</button>
@@ -1526,7 +1529,7 @@
                 <div id="coinClickerGame" class="card coinclicker-card games-panel">
                     <div class="coinclicker-topbar">
                         <div class="coinclicker-counter-block">
-                            <span class="coinclicker-counter-label">Pièces</span>
+                            <span class="coinclicker-counter-label">Butin</span>
                             <strong id="coinClickerScoreDisplay" class="coinclicker-counter-value">0</strong>
                         </div>
                         <button id="coinClickerResetButton" type="button" class="coinclicker-face">Nouvelle fortune</button>
@@ -1535,7 +1538,7 @@
                             <strong id="coinClickerPowerDisplay" class="coinclicker-counter-value">1</strong>
                         </div>
                     </div>
-                    <p id="coinClickerHelpText" class="coinclicker-help">Clique sur la pièce de la baie, puis achète des améliorations pour gagner plus vite.</p>
+                    <p id="coinClickerHelpText" class="coinclicker-help">Clique la grande pièce, remplis la marée, puis achète une amélioration.</p>
                     <div id="coinClickerTable" class="coinclicker-table">
                         <div id="coinClickerMenuOverlay" class="coinclicker-menu-overlay">
                             <div class="coinclicker-menu-card">
@@ -1550,11 +1553,19 @@
                         </div>
                         <div class="coinclicker-layout">
                             <div class="coinclicker-mint">
+                                <div class="coinclicker-rank-card">
+                                    <span id="coinClickerRankLabel" class="coinclicker-rank-label">Mousse fauché</span>
+                                    <div class="coinclicker-rank-meter" aria-hidden="true">
+                                        <span id="coinClickerRankProgress"></span>
+                                    </div>
+                                    <span id="coinClickerRankNext" class="coinclicker-rank-next">Prochain rang : 250 pièces</span>
+                                </div>
                                 <button id="coinClickerButton" type="button" class="coin-clicker-button" aria-label="Cliquer pour gagner des pieces">
                                     <span class="coin-clicker-skull" aria-hidden="true">☠</span>
                                     <span class="coin-clicker-rim" aria-hidden="true"></span>
                                     <span class="coin-clicker-title">Baie Coin</span>
                                     <span class="coin-clicker-subtitle">Clique pour piller</span>
+                                    <span id="coinClickerFloatLayer" class="coinclicker-float-layer" aria-hidden="true"></span>
                                 </button>
                                 <div class="coinclicker-stats">
                                     <div class="coinclicker-stat-card">
@@ -1566,8 +1577,25 @@
                                         <strong id="coinClickerAutoDisplay" class="coinclicker-stat-value">0</strong>
                                     </div>
                                 </div>
+                                <div class="coinclicker-tide-card">
+                                    <div class="coinclicker-tide-heading">
+                                        <span>Marée du butin</span>
+                                        <strong id="coinClickerTideValue">0%</strong>
+                                    </div>
+                                    <div class="coinclicker-tide-meter" aria-hidden="true">
+                                        <span id="coinClickerTideProgress"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div id="coinClickerShop" class="coinclicker-shop"></div>
+                            <div class="coinclicker-command">
+                                <div id="coinClickerEventBanner" class="coinclicker-event-banner">
+                                    <span class="coinclicker-event-kicker">Quart calme</span>
+                                    <strong>Objectif simple</strong>
+                                    <span>Clique jusqu'à 100% de marée pour déclencher le bonus.</span>
+                                </div>
+                                <div id="coinClickerContracts" class="coinclicker-contracts" aria-label="Contrats du capitaine"></div>
+                                <div id="coinClickerShop" class="coinclicker-shop"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2265,8 +2293,8 @@
         </div>
     </section>
 
-    <script defer src="/js/core/consent.js?v=v0-281"></script>
-    <script type="module" src="/js/main.bundle.min.js?v=v0-281"></script>
-    <script defer src="/js/core/sw-register.js?v=v0-281"></script>
+    <script defer src="/js/core/consent.js?v=v0-323"></script>
+    <script type="module" src="/js/main.bundle.min.js?v=v0-323"></script>
+    <script defer src="/js/core/sw-register.js?v=v0-323"></script>
 </body>
 </html>

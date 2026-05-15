@@ -211,7 +211,7 @@ export function bindGlobalKeyboardControls(options = {}) {
 
         if (activeGameTab === 'rhythm') {
             if (getRhythmMenuVisible() || getRhythmMenuClosing()) return;
-            const rhythmLane = { q: 0, Q: 0, s: 1, S: 1, d: 2, D: 2 }[event.key];
+            const rhythmLane = { ArrowLeft: 0, ArrowDown: 1, ArrowRight: 2 }[event.key];
             if (rhythmLane !== undefined) {
                 event.preventDefault();
                 handleRhythmHit(rhythmLane);

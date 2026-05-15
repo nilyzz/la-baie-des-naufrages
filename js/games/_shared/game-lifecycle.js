@@ -99,7 +99,7 @@ export function cleanupActiveGameForNavigation(nextTab, activeGameTab) {
 
     if (prev === 'solitaire' && nextTab !== 'solitaire') {
         modules.solitaire?.setSolitaireMenuVisible(true);
-        modules.solitaire?.initializeSolitaire();
+        modules.solitaire?.prepareSolitaireMenuState();
     }
 
     if (prev === 'connect4' && nextTab !== 'connect4') {
@@ -265,7 +265,7 @@ export function openSelectedGame(nextTab, activeGameTab, options = {}) {
 
     if (nextTab === 'solitaire') {
         modules.solitaire?.setSolitaireMenuVisible(true);
-        modules.solitaire?.initializeSolitaire();
+        modules.solitaire?.prepareSolitaireMenuState();
         return;
     }
 

@@ -37,6 +37,60 @@ import { UNO_MENU_CLOSE_DURATION_MS } from '../../core/constants.js';
 //   showGamePanel, showGamesSection, setSelectedMultiplayerGame,
 //   setMultiplayerEntryMode, openSelectedGame, closeGameOverModal }
 export function bindAllGameEventControls(options = {}) {
+    const solitaireTableElement = document.getElementById('solitaireTable');
+    const solitairePointerState = {
+        pending: null,
+        suppressNextClick: false
+    };
+
+    function isSolitaireInteractionBlocked() {
+        return solitaire.getSolitaireMenuVisible() || solitaire.getSolitaireMenuClosing();
+    }
+
+    function consumeSuppressedSolitaireClick() {
+        if (!solitairePointerState.suppressNextClick) {
+            return false;
+        }
+
+        solitairePointerState.suppressNextClick = false;
+        return true;
+    }
+
+    function getSolitairePointerSource(eventTarget) {
+        const tableauCard = eventTarget.closest('.solitaire-playing-card[data-solitaire-tableau]');
+        if (tableauCard) {
+            return {
+                source: {
+                    type: 'tableau',
+                    col: Number(tableauCard.dataset.solitaireTableau),
+                    index: Number(tableauCard.dataset.solitaireIndex)
+                },
+                anchorElement: tableauCard
+            };
+        }
+
+        const wasteCard = eventTarget.closest('.solitaire-playing-card[data-solitaire-source="waste"]');
+        if (wasteCard) {
+            return {
+                source: { type: 'waste' },
+                anchorElement: wasteCard
+            };
+        }
+
+        const foundationCard = eventTarget.closest('.solitaire-playing-card[data-solitaire-foundation]');
+        if (foundationCard) {
+            return {
+                source: {
+                    type: 'foundation',
+                    suit: foundationCard.dataset.solitaireFoundation
+                },
+                anchorElement: foundationCard
+            };
+        }
+
+        return null;
+    }
+
     document.getElementById('minesweeperBoard').addEventListener('click', (event) => {
         const cellButton = event.target.closest('.minesweeper-cell');
     
@@ -551,7 +605,7 @@ export function bindAllGameEventControls(options = {}) {
             magicSort.renderMagicSortMenu();
             return;
         }
-        magicSort.initializeMagicSort();
+        magicSort.initializeMagicSort({ nextLevel: true });
         magicSort.closeMagicSortMenu();
     });
     
@@ -562,7 +616,11 @@ export function bindAllGameEventControls(options = {}) {
     
     document.getElementById('magicSortRestartButton').addEventListener('click', () => {
         options.closeGameOverModal();
-        magicSort.initializeMagicSort();
+        magicSort.initializeMagicSort({ resetLevel: true });
+    });
+
+    document.getElementById('magicSortUndoButton')?.addEventListener('click', () => {
+        magicSort.undoMagicSortMove();
     });
     
     document.getElementById('mentalMathMenuActionButton')?.addEventListener('click', () => {
@@ -704,23 +762,13 @@ export function bindAllGameEventControls(options = {}) {
     });
     
     document.getElementById('coinClickerButton')?.addEventListener('pointerdown', (event) => {
-        if (event.pointerType !== 'mouse' || event.button !== 0) {
-            return;
-        }
-    
-        if (coinClicker.getCoinClickerMenuVisible() || coinClicker.getCoinClickerMenuClosing()) {
-            return;
-        }
-    
-        const state = coinClicker.getCoinClickerState();
-        state.coins += coinClicker.getCoinClickerCoinsPerClick();
-        coinClicker.saveCoinClickerState();
-        coinClicker.renderCoinClicker();
+        coinClicker.handleCoinClickerPress(event);
     });
     
     document.getElementById('coinClickerButton')?.addEventListener('keydown', (event) => {
         if (event.code === 'Space' || event.code === 'Enter') {
             event.preventDefault();
+            coinClicker.handleCoinClickerPress(event);
         }
     });
     
@@ -780,7 +828,17 @@ export function bindAllGameEventControls(options = {}) {
         coinClicker.saveCoinClickerState();
         coinClicker.renderCoinClicker();
     });
-    
+
+    document.getElementById('coinClickerContracts')?.addEventListener('click', (event) => {
+        const contractButton = event.target.closest('[data-coin-contract]');
+
+        if (!contractButton) {
+            return;
+        }
+
+        coinClicker.claimCoinClickerContract(contractButton.dataset.coinContract);
+    });
+
     document.getElementById('chessMenuActionButton')?.addEventListener('click', () => {
         if (chess.getChessMenuShowingRules()) {
             chess.setChessMenuShowingRules(false);
@@ -1408,9 +1466,91 @@ export function bindAllGameEventControls(options = {}) {
     
         solitaire.drawSolitaireCard();
     });
+
+    solitaireTableElement?.addEventListener('pointerdown', (event) => {
+        if (isSolitaireInteractionBlocked()) {
+            return;
+        }
+
+        const pointerSource = getSolitairePointerSource(event.target);
+        if (!pointerSource) {
+            return;
+        }
+
+        solitairePointerState.pending = {
+            ...pointerSource,
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            dragging: false
+        };
+    });
+
+    solitaireTableElement?.addEventListener('pointermove', (event) => {
+        const pending = solitairePointerState.pending;
+
+        if (!pending || pending.pointerId !== event.pointerId || isSolitaireInteractionBlocked()) {
+            return;
+        }
+
+        if (!pending.dragging) {
+            const distance = Math.hypot(event.clientX - pending.startX, event.clientY - pending.startY);
+
+            if (distance < solitaire.getSolitaireDragThreshold()) {
+                return;
+            }
+
+            if (typeof solitaireTableElement.setPointerCapture === 'function') {
+                solitaireTableElement.setPointerCapture(event.pointerId);
+            }
+
+            pending.dragging = solitaire.beginSolitaireDrag(pending.source, pending.anchorElement, event);
+
+            if (!pending.dragging) {
+                solitairePointerState.pending = null;
+                return;
+            }
+        }
+
+        event.preventDefault();
+        solitaire.updateSolitaireDrag(event);
+    });
+
+    solitaireTableElement?.addEventListener('pointerup', (event) => {
+        const pending = solitairePointerState.pending;
+
+        if (!pending || pending.pointerId !== event.pointerId) {
+            return;
+        }
+
+        if (typeof solitaireTableElement.releasePointerCapture === 'function'
+            && solitaireTableElement.hasPointerCapture?.(event.pointerId)) {
+            solitaireTableElement.releasePointerCapture(event.pointerId);
+        }
+
+        if (pending.dragging) {
+            event.preventDefault();
+            solitaire.dropSolitaireDrag(event);
+            solitairePointerState.suppressNextClick = true;
+        }
+
+        solitairePointerState.pending = null;
+    });
+
+    solitaireTableElement?.addEventListener('pointercancel', (event) => {
+        const pending = solitairePointerState.pending;
+
+        if (!pending || pending.pointerId !== event.pointerId) {
+            return;
+        }
+
+        solitaire.cancelSolitaireDrag();
+        solitairePointerState.pending = null;
+        solitairePointerState.suppressNextClick = true;
+    });
     
     document.getElementById('solitaireWaste').addEventListener('click', (event) => {
-        if (solitaire.getSolitaireMenuVisible() || solitaire.getSolitaireMenuClosing()) return;
+        if (solitaire.getSolitaireMenuVisible() || solitaire.getSolitaireMenuClosing() || consumeSuppressedSolitaireClick()) return;
         const wasteCard = event.target.closest('[data-solitaire-source="waste"]');
     
         if (!wasteCard) {
@@ -1422,12 +1562,16 @@ export function bindAllGameEventControls(options = {}) {
             solitaire.renderSolitaire();
             return;
         }
-    
+
+        if (!solitaire.getSolitaireSelectedSource() && solitaire.tryAutoMoveSolitaireSource({ type: 'waste' }, { allowEmptyFoundation: true })) {
+            return;
+        }
+
         solitaire.selectSolitaireSource({ type: 'waste' });
     });
     
     document.getElementById('solitaireFoundations').addEventListener('click', (event) => {
-        if (solitaire.getSolitaireMenuVisible() || solitaire.getSolitaireMenuClosing()) return;
+        if (solitaire.getSolitaireMenuVisible() || solitaire.getSolitaireMenuClosing() || consumeSuppressedSolitaireClick()) return;
         const foundationButton = event.target.closest('[data-solitaire-foundation]');
     
         if (!foundationButton) {
@@ -1447,30 +1591,43 @@ export function bindAllGameEventControls(options = {}) {
         }
     
         if (solitaire.getSolitaireFoundationCount(suit)) {
+            if (solitaire.tryAutoMoveSolitaireSource({ type: 'foundation', suit })) {
+                return;
+            }
+
             solitaire.selectSolitaireSource({ type: 'foundation', suit });
         }
     });
     
     document.getElementById('solitaireTableau').addEventListener('click', (event) => {
-        if (solitaire.getSolitaireMenuVisible() || solitaire.getSolitaireMenuClosing()) return;
+        if (solitaire.getSolitaireMenuVisible() || solitaire.getSolitaireMenuClosing() || consumeSuppressedSolitaireClick()) return;
         const tableauCard = event.target.closest('[data-solitaire-tableau]');
         const columnTarget = event.target.closest('[data-solitaire-column]');
     
         if (tableauCard) {
-            const col = Number(tableauCard.dataset.document.getElementById('solitaireTableau'));
+            const col = Number(tableauCard.dataset.solitaireTableau);
             const index = Number(tableauCard.dataset.solitaireIndex);
+            const nextSource = { type: 'tableau', col, index };
     
             if (solitaire.getSolitaireSelectedSource()) {
+                if (solitaire.isSameSolitaireSource(solitaire.getSolitaireSelectedSource(), nextSource)) {
+                    solitaire.clearSolitaireSelection();
+                    solitaire.renderSolitaire();
+                    return;
+                }
+
                 if (solitaire.moveSelectedSolitaireToTableau(col)) {
                     return;
                 }
     
                 solitaire.clearSolitaireSelection();
-                solitaire.renderSolitaire();
-                return;
             }
     
-            solitaire.selectSolitaireSource({ type: 'tableau', col, index });
+            if (solitaire.tryAutoMoveSolitaireSource(nextSource, { allowEmptyFoundation: true })) {
+                return;
+            }
+
+            solitaire.selectSolitaireSource(nextSource);
             return;
         }
     
